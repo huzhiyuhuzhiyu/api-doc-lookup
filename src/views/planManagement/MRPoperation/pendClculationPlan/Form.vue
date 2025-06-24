@@ -101,7 +101,7 @@
                       </el-col>
                 </template>
              </el-col>
-          
+
                 <el-col :span="15">
                   <el-form-item label="计算BOM级别">
                     <el-select v-model="dataForm.calcBomLevel" placeholder="计算BOM级别">
@@ -169,14 +169,7 @@
               <el-table-column prop="qualificationRate" label="合格率(%)" min-width="120" />
               <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="120" />
               <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" />
-              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" v-if="sealingCoverTypingFlag == 1" />
-              <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" v-if="accuracyLevelFlag == 1" />
-              <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1" />
-              <el-table-column prop="oil" label="油脂" width="100" v-if="oilFlag == 1" />
-              <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" />
-              <el-table-column prop="clearance" label="游隙" width="100" v-if="clearanceFlag == 1" />
-              <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1" />
-              <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" v-if="specialRequireFlag == 1" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
               <el-table-column prop="createTime" label="创建时间" min-width="180" />
 
 
@@ -236,21 +229,7 @@
                   <el-table-column prop="outputQuantity" label="需组装数量" min-width="140" sortable="custom" />
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                   <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-                    v-if="sealingCoverTypingFlag == 1" />
-                  <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-                    v-if="accuracyLevelFlag == 1" />
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-                    v-if="vibrationLevelFlag == 1" />
-                  <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-                  <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
-                    v-if="oilQuantityFlag == 1" />
-                  <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"
-                    v-if="clearanceFlag == 1" />
-                  <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-                    v-if="packagingMethodFlag == 1" />
-                  <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-                    v-if="specialRequireFlag == 1" />
+                  <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" :disabled="!scope.row.bomFlag"
@@ -478,7 +457,7 @@
                   highlight-current-row :setColumnDisplayList="columnList4" :fixedNO="true" class="dataTable" border
                   ref="outRef">
 
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -582,7 +561,7 @@
                 <JNPF-table custom-column v-if="activeNameIss == 'assemble'" @sort-change="sortChange5"
                   :partentOrChild="'assemble'" :data="assembleDataIss" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -609,21 +588,7 @@
                   <el-table-column prop="outputQuantity" label="需组装数量" min-width="140" sortable="custom" />
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                   <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-                    v-if="sealingCoverTypingFlag == 1" />
-                  <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-                    v-if="accuracyLevelFlag == 1" />
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-                    v-if="vibrationLevelFlag == 1" />
-                  <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-                  <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
-                    v-if="oilQuantityFlag == 1" />
-                  <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"
-                    v-if="clearanceFlag == 1" />
-                  <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-                    v-if="packagingMethodFlag == 1" />
-                  <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-                    v-if="specialRequireFlag == 1" />
+                  <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" :disabled="!scope.row.bomFlag"
@@ -658,7 +623,7 @@
                 </div>
                 <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange6" :data="produceDataIss"
                   v-if="activeNameIss == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
-                  :fixedNO="true" class="dataTable" border ref="produceRef"> 
+                  :fixedNO="true" class="dataTable" border ref="produceRef">
                   <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
@@ -761,7 +726,7 @@
                 <JNPF-table v-if="activeNameIss == 'purchase'" custom-column :partentOrChild="'purchase'"
                   @sort-change="sortChange7" :data="purchaseDataIss" :setColumnDisplayList="columnList3"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="purchaseRef">
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -851,7 +816,7 @@
                   @sort-change="sortChange8" :data="outDataIss" highlight-current-row :setColumnDisplayList="columnList4"
                   :fixedNO="true" class="dataTable" border ref="outRef">
 
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -1002,20 +967,7 @@
                 <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="160" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-                  v-if="sealingCoverTypingFlag == 1" />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-                  v-if="accuracyLevelFlag == 1" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-                  v-if="vibrationLevelFlag == 1" />
-                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
-                  v-if="oilQuantityFlag == 1" />
-                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-                  v-if="packagingMethodFlag == 1" />
-                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-                  v-if="specialRequireFlag == 1" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="total" :page.sync="planForm.pageNum" :limit.sync="planForm.pageSize"
@@ -1307,7 +1259,7 @@ export default {
       activeStep: 0,
       maxStep: 1,
       outerMaterNumRules: [
-      { 
+      {
         validator: (rule, value, callback) => {
           if (this.dataForm.outerMaterName) {
             if (!value) {
@@ -1324,12 +1276,12 @@ export default {
           } else {
             callback(); // 如果outerMaterName为空，跳过验证
           }
-        }, 
+        },
         trigger: 'blur'
       }
     ],
      ringMaterNum: [
-      { 
+      {
         validator: (rule, value, callback) => {
           if (this.dataForm.ringMaterName) {
             if (!value) {
@@ -1346,11 +1298,11 @@ export default {
           } else {
             callback(); // 如果outerMaterName为空，跳过验证
           }
-        }, 
+        },
         trigger: 'blur'
       }
     ],
-   
+
       issForm: {
         outDeliveryDate: "",
         purchaseDeliveryDate: "",
@@ -1364,16 +1316,6 @@ export default {
       planIdList: [],
       selectDateDialogVisible: false,
       isProductNameSwitch: "",
-      // 属性字段  控制属性字段显示隐藏
-      accuracyLevelFlag: "",
-      clearanceFlag: "",
-      oilFlag: "",
-      oilQuantityFlag: "",
-      packagingMethodFlag: "",
-      sealingCoverTypingFlag: "",
-      specialRequireFlag: "",
-      vibrationLevelFlag: "",
-      bimProductAttributesList: [],
       isPairingModeSwitch: '', // 配对方式显示隐藏
       rawMaterialList:[],
 
@@ -1383,8 +1325,6 @@ export default {
     ...mapGetters(['userInfo'])
   },
   async created() {
-    await this.getProductClassFun()
-    await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -1410,7 +1350,7 @@ export default {
         if (index !== -1) {
           if(type=='inner_ring_blank')this.rawMaterialList[index].qty=this.dataForm.ringMaterNum;
           if(type=='outer_ring_blank')this.rawMaterialList[index].qty=this.dataForm.outerMaterNum;
-          
+
         }
       }
       console.log("this.rawMaterialList",this.rawMaterialList);
@@ -1432,7 +1372,7 @@ export default {
           productsId:row.id,
           qty:this.dataForm.ringMaterNum,
         }
-        this.dataForm.ringMaterName=row.name 
+        this.dataForm.ringMaterName=row.name
         const index = this.rawMaterialList.findIndex(item => item.productType === "inner_ring_blank");
         if (index !== -1) {
           this.rawMaterialList.splice(index, 1);
@@ -1454,7 +1394,7 @@ export default {
         this.rawMaterialList.push(obj)
       }
     },
-  
+
      // 配对方式显示隐藏
      async getPairingModeSwitch(code, type) {
       try {
@@ -1462,51 +1402,9 @@ export default {
         this.tableDataFlag = true
       } catch (error) { }
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
-      // 产品属性
-      getbimProductAttributesListMap().then((res) => {
-        this.bimProductAttributesList = res.data
-      })
-
-    },
-
-    // 获取业务参数中 属性字段动态显示
-    getProductAttributeFun() {
-      getOrderFiledMap('sale').then(res => {
-        console.log("产品属性", res, this.bimProductAttributesList);
-        // sealingCoverTypingFlag list1  pa007
-        // accuracyLevelFlag list2  pa006
-        // vibrationLevelFlag list3 pa005
-        // oilFlag list4 pa002
-        // oilQuantityFlag list5 pa003
-        // clearanceFlag list6 pa001
-        // packagingMethodFlag list7 pa015
-        // specialRequireFlag list8 pa016
-
-        this.accuracyLevelFlag = res.data.accuracyLevel //list1
-
-        this.clearanceFlag = res.data.clearance
-
-        console.log("this.list6", this.list6);
-        this.oilFlag = res.data.oil
-
-        this.oilQuantityFlag = res.data.oilQuantity
-
-        this.packagingMethodFlag = res.data.packagingMethod
-
-        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-
-        this.specialRequireFlag = res.data.specialRequire
-
-        this.vibrationLevelFlag = res.data.vibrationLevel
-
-        console.log(this.list3);
 
 
 
-      })
-    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -2000,7 +1898,7 @@ export default {
       this.planVisible = true
       this.searchPlan()
     },
-  
+
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
@@ -2240,20 +2138,20 @@ export default {
       if(this.isProjectSwitch == 1 && !this.dataForm.projectId){
         this.btnLoading = false
         return this.$message.error("请选择所属项目")
-      } 
+      }
       if (!this.dataForm.arithmeticNo){
         this.btnLoading = false
         return this.$message.error("运算单号不能为空")
-      } 
+      }
       if (!this.tableData.length){
         this.btnLoading = false
         return this.$message.error("已选择的计划数据不能为空")
-      } 
+      }
       let hasFalseBomFlag = this.tableData.some(item => !item.bomFlag )
       if(hasFalseBomFlag&&this.dataForm.calcBomLevel!=='not_calc_bom'){
         this.btnLoading = false
         return this.$message.error("存在无BOM的数据，BOM计算级别错误，请检查后重试")
-      } 
+      }
       if(this.dataForm.outerMaterName&&!this.dataForm.outerMaterNum){
         this.btnLoading = false
         return this.$message.error("请输入外圈原材料数量")

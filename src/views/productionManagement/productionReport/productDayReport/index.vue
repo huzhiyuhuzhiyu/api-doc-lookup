@@ -16,7 +16,7 @@
                   <el-form-item>
                     <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                       @keyup.enter.native="search('basic')" />
-                  
+
                     <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                       clearable>
                       <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -29,7 +29,7 @@
                   </el-form-item>
                 </el-col>
               </template>
-           
+
                 <el-col :span="4">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -37,7 +37,7 @@
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                     </el-button>
                   </el-form-item>
-                </el-col> 
+                </el-col>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -57,7 +57,7 @@
                   </el-tooltip>
                 </div>
               </div>
- 
+
               <JNPF-table ref="dataTableProduce" v-loading="listLoading" :data=" produceData" :fixedNO="true" @sort-change="sortChange" custom-column  :setColumnDisplayList="columnList">
                 <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="productionOrderNo" label="生产任务单号" width="180" sortable="custom"></el-table-column>
@@ -84,12 +84,11 @@
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" />
                 <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" />
                 <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"></el-table-column>
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="pairingModeName" label="配对方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="greaseMethod" label="注脂方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"></el-table-column>
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="mainUnit" label="单位" width="100" sortable="custom"></el-table-column>
               </JNPF-table>
               <pagination :total="produceTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize" @pagination="initData" />
@@ -147,7 +146,7 @@ export default {
             matchLogic: "AND",
             condition: []
         }
-      }, 
+      },
       searchList1:[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
@@ -164,18 +163,18 @@ export default {
           prop: 'productionOrderNo',
           label: "生产任务单号",
           type: 'input'
-        }, 
+        },
         {
           prop: 'workNo',
           label: "工单单号",
           type: 'input'
-        }, 
+        },
         {
           prop: 'orderNo',
           label: "报工单号",
           type: 'input'
-        }, 
-        { 
+        },
+        {
           prop: 'reportingTime',
           label: '报工时间',
           type: 'datetimerange',
@@ -188,7 +187,7 @@ export default {
           prop: 'producerName',
           label: "生产人",
           type: 'input'
-        }, 
+        },
         {
           prop: 'processName',
           label: "工序名称",
@@ -198,37 +197,37 @@ export default {
           prop: 'processCode',
           label: "工序编码",
           type: 'input'
-        }, 
+        },
           {
           prop: 'equipmentName',
           label: "设备名称",
           type: 'input'
-        }, 
+        },
              {
           prop: 'equipmentCode',
           label: "设备编码",
           type: 'input'
-        }, 
+        },
         {
           prop: 'productName',
           label: "产品名称",
           type: 'input'
-        },   
+        },
           {
           prop: 'productCode',
           label: "产品编码",
           type: 'input'
-        }, 
+        },
         {
           prop: 'productDrawingNo',
           label: "品名规格",
           type: 'input'
-        }, 
+        },
         {
           prop: 'vibrationLevel',
           label: "振动等级",
           type: 'input'
-        }, 
+        },
         {
           prop: 'accuracyLevel',
           label: "精度等级",
@@ -258,15 +257,15 @@ export default {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
-        },  
+        },
       ],
       superQueryVisible: false,
 
 
 
-      
 
-  
+
+
 
 
 
@@ -278,17 +277,17 @@ export default {
       listLoading: false,
       activeName: "produce",
       reportCode:'',
-    
-    
+
+
       total: 0,
       formVisible: false,
       exportFormVisible:false,
     }
   },
-  async created() { 
- 
+  async created() {
+
     this.superForm=this.productForm = JSON.parse(JSON.stringify(this.productFormList))
-    
+
    this.search('basic')
   },
   watch: {
@@ -332,10 +331,10 @@ export default {
         }).catch(() => {
           this.listLoading = false
         })
-    
-       
-    }, 
-  
+
+
+    },
+
     search(type) {
         if (this.productionDate && this.productionDate.length > 0) {
           this.productForm.produceStartDate = this.productionDate[0].replace(/ 0(?!0)/g, " ")
@@ -360,15 +359,15 @@ export default {
                   fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
                 }
               })
-          } 
+          }
           this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-   
-      
-    
+
+
+
       this.initData()
     },
     reset() {
@@ -382,7 +381,7 @@ export default {
         { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.$refs.SuperQuery.conditionList = []
-     
+
       this.search('basic')
     },
       // 导出
@@ -405,8 +404,8 @@ export default {
         targetListQuery=this.productForm
         exportName='每日生产'
       }
-  
-         
+
+
       let _data = {
         ...targetListQuery,
         exportType: this.reportCode,

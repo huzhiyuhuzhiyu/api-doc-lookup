@@ -96,28 +96,7 @@
           <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
           <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-          <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
-          <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
-          <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" sortable="custom" :key="603"></el-table-column>
-          <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column>
-          <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
-          <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" />
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="sealingCoverTypingFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="aperture" label="孔径" min-width="120" v-if="apertureFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" v-if="specialRequireFlag == 1"
-            sortable="custom"></el-table-column>
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right" sortable="custom" />
 
         </JNPF-table>
@@ -140,7 +119,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -339,7 +318,7 @@ export default {
       })
     },
 
-    
+
     // 获取仓库
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {

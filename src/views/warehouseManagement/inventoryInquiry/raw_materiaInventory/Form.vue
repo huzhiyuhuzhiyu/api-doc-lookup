@@ -12,7 +12,7 @@
                     @keyup.enter.native="search()" />
                 </el-form-item>
               </el-col>
-           
+
               <el-col :span="6">
                 <el-form-item>
                   <el-select v-model="listQuery.standardValue" placeholder="规值" clearable>
@@ -50,8 +50,8 @@
               <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
               <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-             
-              <el-table-column prop="standardValue" label="规值" min-width="120" sortable="custom" />
+
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
                 <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
                   <template slot-scope="scope">
@@ -104,7 +104,7 @@ export default {
       visible: false,
       treeLoading: false,
       listLoading: false,
-      standardValueList: [], 
+      standardValueList: [],
       originalListQuery: {},
       total: 0,
       totalData: {
@@ -128,15 +128,15 @@ export default {
         warehouseId: '',
         productDrawingNo: "",
         productsId: "",
-        batchNumber: "", 
+        batchNumber: "",
         standardValue: '',
       }
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-    
-    
+
+
   },
   methods: {
     // 导出
@@ -201,7 +201,7 @@ export default {
 
         this.standardValueList = arr
       })
-    
+
     },
     init(id, type) {
       this.getProductClassFun()
@@ -224,7 +224,7 @@ export default {
           column: "latest_storage_time"
         }],
         pageNum: 1,
-        pageSize: 20, 
+        pageSize: 20,
         standardValue: '',
       }
       tempListQuery[type] = 1
@@ -257,7 +257,7 @@ export default {
         totalAvailable:0,
         totalOccupancy:0,
       }
-        
+
       }).catch(err => {
         this.treeLoading = false
         this.listLoading = false

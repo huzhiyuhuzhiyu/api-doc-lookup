@@ -111,7 +111,7 @@
           @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList" customKey="JNPFTableKey_966907">
           <el-table-column prop="productsCode" label="物料编号" min-width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" min-width="130" sortable="custom" />
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="130" sortable="custom" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="pairingModeName" label="配对方式" width="130" sortable="custom" />
 
 
@@ -144,7 +144,7 @@
           <el-table-column prop="endInventoryQuantity" label="本期结存" width="120" />
              <el-table-column prop="outboundQuantity" label="总出库数量" width="120" />
           <el-table-column prop="inboundQuantity" label="总入库数量" width="120" />
-          
+
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
           @pagination="initData()" :pageSizes="[50, 100, 500,1000]">
@@ -186,7 +186,7 @@ export default {
       superQuery: {},
       basicQuery: {},
       searchList: [
-    
+
       { field: 'productsCode', fieldValue: '', label: '物料编号', symbol: 'like', searchType: 1, width: 120 },
         // {
         //   field: 'excludeProcessFlag',
@@ -321,10 +321,10 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
-    this.isProjectSwitchFlag = true 
+    this.isProjectSwitchFlag = true
 
     this.$nextTick(function () {
-  
+
       this.getShelvesName()
     })
   },
@@ -356,7 +356,7 @@ export default {
         } else {
           processedName = firstChar; // 非中文，直接取首字母（区分大小写）
         }
-      
+
         // 去重
         if (!newData.some(obj => obj.name === processedName)) {
           newData.push({ name: processedName });
@@ -372,7 +372,7 @@ export default {
       }
       this.search('basic', 'search')
       console.log(this.shelvesData,'this.shelvesData')
-    
+
     },
     // 点击高级查询
     advancedQueryFun() {
@@ -424,7 +424,7 @@ export default {
     excludeProcessFlagChange(){
       this.search('basic', 'search')
     },
- 
+
     columnSetFun() {
       this.$refs.tabForm.showDrawer()
     },
@@ -476,7 +476,7 @@ export default {
       this.initData()
     },
     async reset() {
- 
+
       this.tableQuery = {
 
         accountPeriod: this.jnpf.getToday('YYYY-MM'),
@@ -500,7 +500,7 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
- 
+
       { field: 'productsCode', fieldValue: '', label: '物料编号', symbol: 'like', searchType: 1, width: 120 },
         // {
         //   field: 'excludeProcessFlag',
@@ -515,7 +515,7 @@ export default {
         //     { label: '无工序', value: 1 }
         //   ]
         // }
-      ] 
+      ]
 
       this.$nextTick(function () {
 

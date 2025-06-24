@@ -96,12 +96,7 @@
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" min-width="120" sortable="custom" />
-
-            <el-table-column prop="material" label="材质" width="130" sortable="custom"
-              v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour"  width="130" sortable="custom"
-              v-if="colourFlag == 1"></el-table-column>
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />

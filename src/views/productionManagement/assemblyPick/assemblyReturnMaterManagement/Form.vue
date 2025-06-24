@@ -59,7 +59,7 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-              
+
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -85,14 +85,11 @@
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
-                      <el-table-column prop="material" label="保持架材质" width="130"
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour"  width="120"
-                        v-if="colourFlag == 1"></el-table-column>
+                      <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
-                     
+
                       <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'order'">
                         <template slot="header">
                           <span class="required">*</span>退料数量
@@ -102,7 +99,7 @@
                             <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
                           </el-form-item>
                         </template>
-                      </el-table-column> 
+                      </el-table-column>
                       <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'process'">
                         <template slot="header">
                           <span class="required">*</span>退料数量
@@ -198,14 +195,11 @@
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
-                      <el-table-column prop="material" label="保持架材质" width="130"
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour"  width="120"
-                        v-if="colourFlag == 1"></el-table-column>
+                      <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
-                     
+
                       <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'order'">
                         <template slot="header">
                           <span class="required">*</span>退料数量
@@ -215,7 +209,7 @@
                             <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
                           </el-form-item>
                         </template>
-                      </el-table-column> 
+                      </el-table-column>
                       <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'process'">
                         <template slot="header">
                           <span class="required">*</span>退料数量
@@ -342,7 +336,7 @@ export default {
 
       detailDataList: [],
       detailDiaFlag: false,
-      previousReceiveType: null,  // 存储上一次选择的退料类型  
+      previousReceiveType: null,  // 存储上一次选择的退料类型
       isSame: false,
       flowTemplateJson: {},
       flowData:{},
@@ -352,7 +346,7 @@ export default {
       isProductNameSwitch:"",
       materialFlag:'',
       colourFlag:'',
-        
+
     }
   },
   computed: {
@@ -374,7 +368,7 @@ async  created() {
     },
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     getBimBusinessDetail() {
@@ -387,7 +381,7 @@ async  created() {
       })
     },
     checkSelection() {
-      this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同  
+      this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同
       this.previousReceiveType = this.dataForm.receiveType; // 更新上一次选择
       console.log(9999);
       if (!this.isSame && this.dataForm.productionOrderNo) {
@@ -414,7 +408,7 @@ async  created() {
       this.dataForm.productionOrderNo = data.orderNo
 
       this.dataForm.productionOrderId = data.id
-    
+
 
 
     },
@@ -495,7 +489,7 @@ async  created() {
     // 所选的工序物料
     selectProcessMaterialFun(data) {
       console.log("所选的工序物料", data);
-     
+
       if (this.dataFormTwo.data.length) {
         let uniqueArr = [];
         let idSet = new Set();
@@ -512,13 +506,13 @@ async  created() {
       }
 
     },
- 
+
     dateFormat(dateData) {
       var date = new Date(dateData);
       var year = date.getFullYear();
       var month = (date.getMonth() + 1).toString().padStart(2, "0");
       var day = date.getDate().toString().padStart(2, "0");
-    
+
       const formattedDate = `${year}-${month}-${day}`;
       return formattedDate
     },
@@ -583,7 +577,7 @@ async  created() {
         if (id) {
           this.getDetailWithdrawal(id)
         }
-      
+
 
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
@@ -712,7 +706,7 @@ async  created() {
           }
         }
       }).catch(()=>{})
-    },     
+    },
   }
 }
 </script>

@@ -31,7 +31,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-          
+
 
 
             <el-col :span="6">
@@ -88,14 +88,7 @@
             <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" sortable="custom" />
-            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="160" sortable="custom" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
             <el-table-column label="操作" width="220" fixed="right">
@@ -116,7 +109,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-  
+
   </div>
 </template>
 
@@ -196,7 +189,7 @@ export default {
           type: 'input'
         },
 
- 
+
         {
           prop: 'productDrawingNo',
           label: "品名规格",
@@ -329,7 +322,7 @@ export default {
       ],
     }
   },
- 
+
   watch: {
     activeName() {
       this.search()
@@ -343,11 +336,11 @@ export default {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
-      }) 
+      })
     }
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -376,7 +369,7 @@ export default {
     dispurchaseData(row) {
       return !row.selectFlag;
     },
-     
+
     selectFun(val) {
       console.log(val);
       if (val.length) {
@@ -422,7 +415,7 @@ export default {
           });
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
           if (oilObj) {
-            // 将options赋值为5  
+            // 将options赋值为5
             oilObj.options = JSON.parse(JSON.stringify(arr));
           }
         })
@@ -464,7 +457,7 @@ export default {
     initData() {
       this.listLoading = true
 
- 
+
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
@@ -485,7 +478,7 @@ export default {
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
       this.orderForm.pageNum = 1 // 重置页码
-      
+
       if (type === 'basic') {
         this.basicQuery = {
           matchLogic: 'AND',
@@ -506,7 +499,7 @@ export default {
       this.initData()
     },
     reset() {
-     
+
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
       this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))

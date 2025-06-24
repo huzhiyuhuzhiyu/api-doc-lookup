@@ -97,25 +97,7 @@
             <el-table-column prop="waitReceiptNum" label="待收货数量" width="130" sortable="custom" />
 
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" :label="$store.getters.sealingCoverTyping"  sortable="custom"
-              v-if="sealingCoverTypingFlag === '1'" />
-            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" sortable="custom"
-              v-if="accuracyLevelFlag === '1'" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom"
-              v-if="vibrationLevelFlag === '1'" />
-            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" v-if="oilFlag === '1'" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom"
-              v-if="oilQuantityFlag === '1'" />
-            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom"
-              v-if="clearanceFlag === '1'" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom"
-              v-if="packagingMethodFlag === '1'" />
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" sortable="custom"
-              v-if="specialRequireFlag === '1'" />
-            <el-table-column prop="material" label="材质" width="130" sortable="custom"
-              v-if="materialFlag === '1'"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour"  width="130" sortable="custom"
-              v-if="colourFlag === '1'"></el-table-column>
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
@@ -469,7 +451,7 @@ export default {
         })
       })
     }
- 
+
     if (this.isDeputyUnitSwitch === '1') {
       let mainUnitIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
       this.superQueryJson.forEach((item) => {
@@ -790,7 +772,7 @@ export default {
       // 产品属性
       const res = await  getbimProductAttributesListMap()
       this.bimProductAttributesList = res.data
-      
+
 
       // 工序
       let obj8 = {

@@ -93,24 +93,7 @@
                 <el-table-column prop="outputQuantity" label="需组装数量" min-width="160" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-                  v-if="sealingCoverTypingFlag == 1" />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-                  v-if="accuracyLevelFlag == 1" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-                  v-if="vibrationLevelFlag == 1" />
-                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
-                  v-if="oilQuantityFlag == 1" />
-                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-                  v-if="packagingMethodFlag == 1" />
-                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-                  v-if="specialRequireFlag == 1" />
-                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-                  v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-                  v-if="colourFlag == 1"></el-table-column>
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column label="操作" width="120" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text"
@@ -354,10 +337,7 @@
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-                  v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-                  v-if="colourFlag == 1"></el-table-column>
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
@@ -599,7 +579,6 @@ import RetrospectForm from '../materialRequirements/retrospectForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { index } from 'mathjs';
 import getProjectList from '@/mixins/generator/getProjectList'
-import { getOrderFiledMap } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 export default {
   name: "historyRecord",
@@ -782,7 +761,6 @@ export default {
   },
   async created() {
     await this.getProductClassFun()
-    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     this.superForm1 = this.assembleForm
@@ -805,20 +783,6 @@ export default {
         this.tableDataFlag = true
       } catch (error) { }
     },
-    getOrderFiledMap() {
-      getOrderFiledMap('sale').then((res) => {
-        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-        this.accuracyLevelFlag = res.data.accuracyLevel
-        this.vibrationLevelFlag = res.data.vibrationLevel
-        this.oilFlag = res.data.oil
-        this.oilQuantityFlag = res.data.oilQuantity
-        this.clearanceFlag = res.data.clearance
-        this.packagingMethodFlag = res.data.packagingMethod
-        this.specialRequireFlag = res.data.specialRequire
-        this.materialFlag = res.data.material
-        this.colourFlag = res.data.colour
-      })
-    },
     getProductClassFun() {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
@@ -833,7 +797,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       //     material // 保持架材质
       //     colour  //  颜色

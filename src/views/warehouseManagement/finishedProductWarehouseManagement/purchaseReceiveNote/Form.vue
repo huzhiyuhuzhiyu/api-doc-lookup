@@ -165,14 +165,7 @@
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" sortable="custom" />
-                    <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" sortable="custom" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                    <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                    <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                    <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                     <el-table-column prop="processName" label="工序" width="160" />
                     <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
 
@@ -319,14 +312,7 @@
                 <el-table-column prop="purchaseQuantity" label="数量" width="160" sortable="custom" />
                 <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
                 <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
-                <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />

@@ -51,7 +51,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data') 
+                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')
                       && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -114,7 +114,7 @@
                     批量删除
                   </el-button>
                     <div class="JNPF-common-head-right" style="margin-right: 8px;float: right;">
-                    
+
                         <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                           <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                             @click="columnSetFun()" />
@@ -250,24 +250,11 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="material" label="材质" width="130" :key="1015"
-                      v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
-                      v-if="colourFlag == 1"></el-table-column>
-                    <el-table-column prop="standardValue" label="规值"  min-width="130" key="standardValue"
-                      v-if="standardValueFlag == 1">
-                      <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择" style="width: 100%;"
-                            :disabled="type == 'look' ? true : false" clearable >
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                    </el-table-column>
+                    <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                     <el-table-column prop="processName" label="工序" width="110" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" v-if="isMS">
                       <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" 
+                        <el-input :disabled="btnType == 'look'"
                         v-model="scope.row.batchNumber" placeholder="批次号"></el-input>
                       </template>
                     </el-table-column>
@@ -388,7 +375,7 @@
                 批量删除
               </el-button>
                <div class="JNPF-common-head-right" style="margin-right: 8px;float: right;">
-                    
+
                         <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                           <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                             @click="columnSetFun()" />
@@ -534,24 +521,11 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="material" label="材质" width="130" :key="1015"
-                  v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
-                  v-if="colourFlag == 1"></el-table-column>
-                  <el-table-column prop="standardValue" label="规值"  min-width="130" key="standardValue"
-                      v-if="standardValueFlag == 1">
-                      <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择" style="width: 100%;"
-                            :disabled="type == 'look' ? true : false" clearable>
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                    </el-table-column>
+                <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                 <el-table-column prop="processName" label="工序" width="110" />
                 <el-table-column prop="batchNumber" label="批次号" width="200" v-if="isMS">
                   <template slot-scope="scope">
-                    <el-input :disabled="btnType == 'look'" 
+                    <el-input :disabled="btnType == 'look'"
                     v-model="scope.row.batchNumber" placeholder="批次号"></el-input>
                   </template>
                 </el-table-column>
@@ -1157,7 +1131,7 @@ export default {
     this.getAttributeline()
     this.getWarehouseList()
     this.$nextTick(() => { this.$refs.product.doLayout()
-   
+
      })
   },
   mounted() {
@@ -1168,7 +1142,7 @@ export default {
   methods: {
       columnSetFun() {
         this.$refs.product.showDrawer()
-      
+
     },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
@@ -1201,7 +1175,7 @@ export default {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
-      }) 
+      })
     },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
@@ -1305,7 +1279,7 @@ export default {
             this.dataFormTwo.productData = Array.from(mergedMap.values())
             this.dataFormTwo.productData.forEach(item => {
             if(this.isXBN)  this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
-              
+
             });
           }
         } else {
@@ -2083,7 +2057,7 @@ export default {
               }
             }
           }
-        
+
         }
 
         this.dataFormTwo.productData.forEach((item, index) => {

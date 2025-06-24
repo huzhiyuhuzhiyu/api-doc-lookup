@@ -7,6 +7,7 @@ import jnpf from '@/utils/jnpf';
 import { getBimBusinessDetail, getOrderFiledMap, getBimBusinessSwitchConfigList } from '@/api/basicData'
 import { getWebCache } from '@/api/system/system'
 import { getBillRuleConfig } from '@/api/system/billRule'
+import { getbimProductAttributesListMap } from '@/api/masterDataManagement'
 
 const state = {
   dictionaryList: [],
@@ -23,7 +24,8 @@ const state = {
   specialRequire:'',
   colour:'',
   configData: {},
-  configGlobal:{}
+  configGlobal:{},
+  bimProductAttributesList:[]
 }
 
 const mutations = {
@@ -100,6 +102,9 @@ const mutations = {
     };
     state.configData = createProxy(configData);
   },
+  SET_ATTRIBUTE(state, bimProductAttributesList) {
+    state.bimProductAttributesList = bimProductAttributesList || []
+  }
 }
 
 const actions = {
@@ -356,6 +361,17 @@ const actions = {
                 code
             }
             getBillRuleConfig(obj).then(res => {
+                resolve(res.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
+    // 获取产品属性
+    getAttribute({ commit }) {
+        return new Promise((resolve, reject) => {
+            getbimProductAttributesListMap().then(res => {
+                commit('SET_ATTRIBUTE',res.data)
                 resolve(res.data)
             }).catch(error => {
                 reject(error)

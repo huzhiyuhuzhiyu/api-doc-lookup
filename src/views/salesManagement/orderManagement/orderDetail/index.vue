@@ -71,7 +71,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="tableDataFlag" 
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="tableDataFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_473980">
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
@@ -98,30 +98,14 @@
             <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
             </el-table-column>
             <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-          
+
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom"></el-table-column>
             <el-table-column prop="taxRate" label="税率" width="120" sortable="custom"></el-table-column>
             <el-table-column prop="totalAmount" label="金额(含税)" width="140" sortable="custom"></el-table-column>
             <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" sortable="custom"></el-table-column>
             <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" sortable="custom"></el-table-column>
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" min-width="150" sortable="custom"
-              v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="120" sortable="custom"
-              v-if="accuracyLevelFlag == 1" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-              v-if="vibrationLevelFlag == 1" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-              v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120" sortable="custom"
-              v-if="specialRequireFlag == 1" />
-            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-              v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour" width="120" sortable="custom"
-              v-if="colourFlag == 1"></el-table-column>
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
 
             <el-table-column prop="remark" label="备注" width="120" sortable="custom" />
@@ -129,8 +113,8 @@
               <el-table-column prop="shipmentStatus" label="订单状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.shipmentStatus == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
-                <div v-else-if="scope.row.shipmentStatus == 'finish'"><el-tag type="success">已完成</el-tag></div> 
-                <div v-else-if="scope.row.shipmentStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div> 
+                <div v-else-if="scope.row.shipmentStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
+                <div v-else-if="scope.row.shipmentStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
@@ -218,15 +202,15 @@ import {
 
 export default {
   name: 'orderDetails',
-  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery }, 
+  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
   mixins: [AbProjectMixin,tenantMinix],
   data() {
-    return { 
+    return {
       superQuery: {},
       superForm: {},
       basicQuery: {},
       searchList: [
-      
+
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
@@ -234,7 +218,7 @@ export default {
       ],
       orderStateList: [
         { label: "未完成", value: "not_finish" },
-        { label: "已完成", value: "finish" }, 
+        { label: "已完成", value: "finish" },
         { label: "所有", value: "" },
       ],
 
@@ -357,8 +341,8 @@ export default {
           type: 'select',
           options: [
             { label: "未完成", value: "not_finish" },
-            { label: "已完成", value: "finish" }, 
-            { label: "已停止", value: "stopped" }, 
+            { label: "已完成", value: "finish" },
+            { label: "已停止", value: "stopped" },
           ]
         },
         {
@@ -439,7 +423,7 @@ export default {
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
     this.orderForm.shipmentStatus=this.isZY?'not_finish':''
-        
+
     if(this.isZY) this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },)
   },
   computed: {
@@ -526,9 +510,9 @@ if (classAttributeObj) {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
-      //     material //保持架材质          
+      //     material //保持架材质
       //     colour //颜色
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'contractNo')
       if (this.colourFlag === '1') {
@@ -687,7 +671,7 @@ if (classAttributeObj) {
       this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-       
+
 
 
       } catch (error) {
@@ -719,7 +703,7 @@ if (classAttributeObj) {
         let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })

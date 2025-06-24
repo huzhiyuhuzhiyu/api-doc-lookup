@@ -107,7 +107,7 @@
           <el-table-column prop="productCode" label="物料编号" min-width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="pairingMode" label="配对方式" width="130" sortable="custom" />
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="130" sortable="custom" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="shelves" label="库位" width="180" sortable="custom" />
           <el-table-column prop="inventoryQuantity" label="库存" width="100" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
@@ -324,7 +324,7 @@ export default {
         } else {
           processedName = firstChar; // 非中文，直接取首字母（区分大小写）
         }
-      
+
         // 去重
         if (!newData.some(obj => obj.name === processedName)) {
           newData.push({ name: processedName });
@@ -340,7 +340,7 @@ export default {
       }
       this.search('basic', 'search')
       console.log(this.shelvesData,'this.shelvesData')
-    
+
     },
     // 点击高级查询
     advancedQueryFun() {
@@ -423,12 +423,12 @@ export default {
       })
       console.log(obj, 'lll')
       const res = await getWarehouseList(obj)
-    
+
       this.treeData = res.data
       this.$nextTick(() => {
         this.treeLoading = false
       })
-     
+
     },
     initData() {
       this.listLoading = true

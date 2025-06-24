@@ -100,74 +100,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag == 1">
-                        <el-form-item :label="$store.getters.sealingCoverTyping"  prop="sealingCoverTyping">
-                          <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" v-if="accuracyLevelFlag == 1">
-                        <el-form-item :label="$store.getters.accuracyLevel"  prop="accuracyLevel">
-                          <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" v-if="vibrationLevelFlag == 1">
-                        <el-form-item label="振动等级" prop="vibrationLevel">
-                          <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" v-if="oilFlag == 1">
-                        <el-form-item label="油脂" prop="oil">
-                          <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" v-if="oilQuantityFlag == 1">
-                        <el-form-item label="油脂量" prop="oilQuantity">
-                          <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" v-if="clearanceFlag == 1">
-                        <el-form-item label="游隙" prop="clearance">
-                          <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="包装方式" v-if="packagingMethodFlag == 1">
-                          <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item :label="$store.getters.specialRequire"  v-if="specialRequireFlag == 1">
-                          <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
+                      <AttributeDictionaryMain :sm="6" :formData.sync="dataForm" :btnType="btnType"  :moduleConfig="'produce'" />
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"

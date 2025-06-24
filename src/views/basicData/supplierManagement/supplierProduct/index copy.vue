@@ -84,16 +84,7 @@
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" width="130" />
                 <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" width="130" />
 
-                <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" width="140" :label="$store.getters.sealingCoverTyping" sortable="custom" />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
-                <el-table-column prop="specialRequire" width="140" :label="$store.getters.specialRequire"></el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour" width="60" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
               </JNPF-table>
               <pagination :total="total" :page.sync="lastListQuery.pageNum" :background="background"
@@ -181,16 +172,7 @@
                 </el-table-column>
                 <el-table-column prop="effectiveTimeStart" label="有效日期起" width="130" sortable="custom" />
                 <el-table-column prop="effectiveTimeEnd" label="有效日期止" width="130" sortable="custom" />
-                <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140" sortable="custom" />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
-                <el-table-column prop="specialRequire" width="140" :label="$store.getters.specialRequire"></el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour" width="60" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                 <el-table-column prop="remark" label="备注" width="150" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                 <el-table-column prop="createByName" label="创建人" sortable="custom" width="180" />

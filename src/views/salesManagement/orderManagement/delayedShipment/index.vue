@@ -102,21 +102,7 @@
             <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" sortable="custom"
-              v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="120" sortable="custom"
-              v-if="accuracyLevelFlag == 1" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-              v-if="vibrationLevelFlag == 1" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-              v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120" sortable="custom"
-              v-if="specialRequireFlag == 1" />
-            <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour" width="120" v-if="colourFlag == 1"></el-table-column>
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
             <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
@@ -343,7 +329,7 @@ export default {
     this.isProjectSwitchFlag = true
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
-    // 默认设置为近3天  
+    // 默认设置为近3天
     const end = new Date();
     const start = new Date();
     end.setDate(end.getDate() + 3);
@@ -405,7 +391,7 @@ if (classAttributeObj) {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'taxRate')
       if (this.colourFlag === '1') {
@@ -545,7 +531,7 @@ if (classAttributeObj) {
      // 产品属性
      const res = await getbimProductAttributesListMap()
      this.bimProductAttributesList = res.data
-  
+
 
     },
     async getProductNameSwitch(code, type) {
@@ -571,11 +557,11 @@ if (classAttributeObj) {
     },
     dateFun(dateStr) {
       const date = new Date(dateStr);
-      // 获取年份、月份和日期  
-      const year = date.getFullYear(); // 获取年份  
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)  
-      const day = String(date.getDate()).padStart(2, '0'); // 获取日期，并补齐两位数  
-      // 拼接成年月日格式  
+      // 获取年份、月份和日期
+      const year = date.getFullYear(); // 获取年份
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)
+      const day = String(date.getDate()).padStart(2, '0'); // 获取日期，并补齐两位数
+      // 拼接成年月日格式
       const formattedDate = `${year}-${month}-${day}`;
       console.log("forma", formattedDate);
       return formattedDate
@@ -589,7 +575,7 @@ if (classAttributeObj) {
       this.superForm = this.orderForm
       this.search('basic')
     },
-    // 为近3天  
+    // 为近3天
     btnsearch2() {
       const end = new Date();
       const start = new Date();;
@@ -599,7 +585,7 @@ if (classAttributeObj) {
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
-    // 为近7天  
+    // 为近7天
     btnsearch3() {
       let end = new Date()
       let start = new Date()
@@ -609,7 +595,7 @@ if (classAttributeObj) {
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
-    // 为近30天  
+    // 为近30天
     btnsearch4() {
       let end = new Date()
       let start = new Date()
@@ -627,7 +613,7 @@ if (classAttributeObj) {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-    // 
+    //
     filterateLabel(row, column, cellValue) {
       if (!cellValue) return ""
       if (cellValue.includes(":")) {
@@ -733,7 +719,7 @@ if (classAttributeObj) {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      // 默认设置为近3天  
+      // 默认设置为近3天
       const end = new Date();
       const start = new Date();
       end.setDate(end.getDate() + 3);

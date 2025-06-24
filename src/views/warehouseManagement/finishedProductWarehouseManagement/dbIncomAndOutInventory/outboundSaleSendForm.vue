@@ -181,35 +181,9 @@
                         <el-table-column prop="taxAmount" label="税额" width="120" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
 
-                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" />
-                        <el-table-column prop="standardValue" label="规值" width="120" > </el-table-column>
-                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="100" />
+                        <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
                         <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
-                        <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
-                        <el-table-column prop="oil" label="油脂" width="100" />
-                        <el-table-column prop="clearance" label="游隙" width="100" />
-                        <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
-                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="100"></el-table-column>
-                        <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
-                       </el-table-column>
-                       <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-
-                       </el-table-column>
-                       <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
-                      </el-table-column>
-                       <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-
-                       </el-table-column>
-                       <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
-                       </el-table-column>
-                       <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" v-if="$store.getters.configData.orderField.sealingCoverStructure">
-                       </el-table-column>
-                       <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
-                       </el-table-column>
-                       <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
-                       </el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour" width="120"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -407,44 +381,7 @@
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="120" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-                        <el-table-column prop="standardValue" label="规值" width="120" > </el-table-column>
-                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" />
-                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="100" />
-                        <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
-                        <el-table-column prop="oil" label="油脂" width="100" />
-                        <el-table-column prop="oilQuantity" label="油脂量" width="100" />
-                        <el-table-column prop="holder" label="保持架" width="100" />
-                        <el-table-column prop="clearance" label="游隙" width="100" />
-                        <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
-                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="100"></el-table-column>
-                        <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
-                       </el-table-column>
-                       <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-
-                       </el-table-column>
-                       <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
-                      </el-table-column>
-                       <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-
-                       </el-table-column>
-                       <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
-                       </el-table-column>
-                       <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" v-if="$store.getters.configData.orderField.sealingCoverStructure">
-                       </el-table-column>
-                       <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
-                       </el-table-column>
-                       <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
-                       </el-table-column>
-                       <el-table-column prop="material" label="材质" width="120" v-if="$store.getters.configData.orderField.material">
-                       </el-table-column>
-                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
-                          v-if="$store.getters.configData.orderField.protrusion">
-                       </el-table-column>
-                       <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
-                       </el-table-column>
-                       <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
-                       </el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour" width="120"></el-table-column>
+                        <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -548,35 +485,10 @@
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="undeliveredQuantity" label="待发货数量" width="130" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" sortable="custom" />
-                        <el-table-column prop="standardValue" label="规值" width="120" > </el-table-column>
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
                 <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom"></el-table-column>
-                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="110" sortable="custom"></el-table-column>
-                <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
-                 </el-table-column>
-                 <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-
-                 </el-table-column>
-                 <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
-                      </el-table-column>
-                 <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-
-                 </el-table-column>
-                 <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
-                 </el-table-column>
-                 <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" v-if="$store.getters.configData.orderField.sealingCoverStructure">
-                 </el-table-column>
-                 <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
-                 </el-table-column>
-                 <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
-                 </el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour" width="120"></el-table-column>
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                   v-if="dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'" />

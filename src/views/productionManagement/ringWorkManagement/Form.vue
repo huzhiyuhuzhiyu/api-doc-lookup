@@ -72,7 +72,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      
+
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" disabled></el-input>
@@ -83,54 +83,7 @@
                           <el-input v-model="dataForm.routingCode" placeholder="工艺路线名称" disabled></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item :label="$store.getters.sealingCoverTyping"  prop="sealingCoverTyping">
-                          <el-input v-model="dataForm.sealingCoverTyping" placeholder="打字内容" disabled></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item :label="$store.getters.accuracyLevel"  prop="accuracyLevel">
-                          <el-input v-model="dataForm.accuracyLevel" placeholder="精度等级" disabled></el-input>
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="振动等级" prop="vibrationLevel">
-                          <el-input v-model="dataForm.vibrationLevel" placeholder="振动等级" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="油脂" prop="oil">
-                          <el-input v-model="dataForm.oil" placeholder="油脂" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="油脂量" prop="oilQuantity">
-                          <el-input v-model="dataForm.oilQuantity" placeholder="油脂量" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="游隙" prop="clearance">
-                          <el-input v-model="dataForm.clearance" placeholder="游隙" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="包装方式" prop="packagingMethod">
-                          <el-input v-model="dataForm.packagingMethod" placeholder="包装方式" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item :label="$store.getters.specialRequire"  prop="specialRequire">
-                          <el-input v-model="dataForm.specialRequire" placeholder="特殊要求" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
+                      <AttributeDictionaryMain :sm="6" :formData.sync="dataForm" :btnType="btnType"  :moduleConfig="'produce'" />
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="生产计划单号" prop="productionPlanNo">
                           <el-input v-model="dataForm.productionPlanNo" disabled />
@@ -213,7 +166,7 @@
                     <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="personName" label="人员" min-width="120"> </el-table-column>
                     <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="workGroupName" label="班组" min-width="120"> </el-table-column>
                     <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="device" label="设备" min-width="120"> </el-table-column>
-                 
+
 
                     <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                       <template slot-scope="scope">
@@ -277,9 +230,9 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            
+
           </el-tabs>
-          
+
           <el-collapse v-model="activeNames2" v-if="btnType == 'work'"  class="orderInfo">
             <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
               <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading" customKey="JNPFTableKey_760165">
@@ -301,7 +254,7 @@
                 <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="workGroupName" label="班组" min-width="120"> </el-table-column>
                 <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="personName" label="人员" min-width="120"> </el-table-column>
                 <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="device" label="设备" min-width="120"> </el-table-column>
-             
+
 
                 <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                   <template slot-scope="scope">
@@ -370,7 +323,7 @@
                 <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="160" />
                 <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="160" />
                 <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
 
 
@@ -428,8 +381,8 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
- 
-  }, 
+
+  },
   mounted() {
 
   },
@@ -510,7 +463,7 @@ export default {
   margin-right: 4px;
 }
 
- 
+
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {
@@ -658,7 +611,7 @@ $footerPadding: '10px';
   margin-top: 5px;
 }
 
- 
+
 ::v-deep.routingProRes .el-dialog__body {
   height: 500px;
 }

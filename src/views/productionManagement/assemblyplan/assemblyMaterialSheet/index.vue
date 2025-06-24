@@ -126,24 +126,7 @@
                   </el-table-column>
                   <el-table-column prop="inventoryQuantity" label="批次库存数量" min-width="160" />
                   <el-table-column prop="mainUnit" label="单位"></el-table-column>
-                  <el-table-column prop="material" label="保持架材质" width="120">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.material" placeholder="请选择"
-                        :disabled="scope.row.classType !== 'holder'" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.colour" placeholder="请选择"
-                        :disabled="scope.row.classType !== 'sealing_cap'" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
+                  <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                   <el-table-column prop="materialsUsedQuantity" label="投料数量" width="160">
                     <template slot="header">
                       <span class="required">*</span>

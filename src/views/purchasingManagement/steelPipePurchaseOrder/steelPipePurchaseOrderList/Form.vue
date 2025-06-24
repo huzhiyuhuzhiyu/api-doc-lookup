@@ -59,11 +59,11 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-            
+
                       <el-col  :span="6" v-if="$store.getters.configData.purchase.related_out_select">
                         <el-form-item label="外协供应商" prop="outPartnerName" v-if="dataForm.outType=='out'">
                           <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType=='look'" />
-                        
+
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" v-else>
@@ -86,7 +86,7 @@
                           <el-input v-model="dataForm.outProductName" placeholder="选择委外产品名称" disabled  />
                         </el-form-item>
                       </el-col>
- 
+
                       <el-col  :span="6" >
                         <el-form-item label="委外产品编码" prop="outProductCode" v-if="dataForm.outType=='out'">
                           <el-input v-model="dataForm.outProductCode" placeholder="选择委外产品编码" disabled  />
@@ -122,7 +122,7 @@
                 </el-collapse-item>
 
                 <el-collapse-item title="产品信息" name="productInfo">
-                  <div class="table"> 
+                  <div class="table">
                     <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                       <div v-if="btnType!='look'">
                         <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">
@@ -172,7 +172,7 @@
                         </el-table-column>
 
 
-                      
+
                         <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                           :min-width="isDeputyUnitSwitch ? 100 : 60" show-overflow-tooltip :key="15">
                           <template slot-scope="scope">
@@ -295,124 +295,12 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="standardValue" label="规值" width="120"
-                          v-if="dataForm.classAttribute !== 'finish_product' && standardValueFlag === '1'">
-                          <template slot-scope="scope">
-                            <el-form-item>
-                              <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable disabled
-                                style="width: 100%;">
-                                <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index"
-                                  :label="item.name" :value="item.name"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
-                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && accuracyLevelFlag === '1'"
-                          prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && vibrationLevelFlag === '1'"
-                          prop="vibrationLevel" label="振动等级" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa005" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product' && oilFlag === '1'"
-                          prop="oil" label="油脂" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa002" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && oilQuantityFlag === '1'"
-                          prop="oilQuantity" label="油脂量" min-width="160">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa003" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && clearanceFlag === '1'"
-                          prop="clearance" label="游隙" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa001" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && packagingMethodFlag === '1'"
-                          prop="packagingMethod" label="包装方式" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa015" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120"
-                          v-if="this.dataForm.classAttribute == 'finish_product' && specialRequireFlag === '1'">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa016" :key="index"
-                                :label="item.name" :value="item.id"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="material" label="材质" width="120" v-if="materialFlag == 1">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa021" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour"  min-width="120" v-if="colourFlag === '1'">
-                          <template slot-scope="scope">
-                            <el-form-item>
-                              <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
-                                <el-option v-for="(item, index) in bimProductAttributesList.pa010" :key="index"
-                                  :label="item.name" :value="item.name"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="processId" label="工序" min-width="120">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.processId" placeholder="请选择" clearable disabled>
-                                <el-option v-for="(item, index) in list8" :key="index" :label="item.name" 
+                                <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                                   :value="item.id"></el-option>
                               </el-select>
                             </el-form-item>
@@ -455,23 +343,23 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-      
+
       </div>
-      
-    </transition>  
+
+    </transition>
     <ComSelect-page  ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
       dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
       :multiple="false" :renderTree="false" />
- 
 
- 
+
+
       <outPartnerDia :visible.sync="outVisible"  ref="outForm" @close="closeFun" @selectOut="changeOutPartner"/>
       <selectOutProductForm ref="outProductForm" v-if="productOutVisible" @selectFun="selectFun"></selectOutProductForm>
   </div>
 </template>
 <script>
-import {  purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index' 
+import {  purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
 import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
@@ -501,8 +389,8 @@ import { getcategoryTree as productTree } from '@/api/basicData/materialSettings
 
 import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
-  components: { 
-    Process, 
+  components: {
+    Process,
     outPartnerDia,
     selectOutProductForm
   },
@@ -588,7 +476,7 @@ export default {
 
       ],
       getcooperativeProduct,
-      productVisible: false, 
+      productVisible: false,
       activeName: 'jcInfo',
       classAttributeFlag: '',
       dialogTitle: '',
@@ -627,7 +515,7 @@ export default {
         partnerCategoryId: '',
         type: 'supplier'
       },
-   
+
        // 供应商请求参数
        outPartnerListRequestObj: {
         code: '',
@@ -677,7 +565,7 @@ export default {
       dataFormArr: [],
       noticeFlagList: [{ label: '是', value: true }, { label: '否', value: false }],
       outTypeList:[{label:"采购销售",value:"purchase_sale"},{label:"外协",value:"out"},],
-      rules: {  
+      rules: {
         // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
         cooperativePartnerName: [{ required: true, message: '请选择采购供应商', trigger: ['change'] }],
         outPartnerName: [{ required: true, message: '请选择外协供应商', trigger: ['change'] }],
@@ -690,8 +578,8 @@ export default {
         buyBackPrice: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["回购单价不能为空", (errMsg, index) => { this.$message.error(`回购单价：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate({ type: 'decimal', params: [20, 12, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' } 
-        ], 
+          { validator: this.formValidate({ type: 'decimal', params: [20, 12, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' }
+        ],
       },
       productRules: {
         drawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
@@ -855,7 +743,7 @@ export default {
   },
   async created() {
     await this.getProjectList()
-   
+
 
     this.tableDataFlag = true
     this.formLoading = false
@@ -923,7 +811,7 @@ export default {
       deep: true
     }
   },
- 
+
   methods: {
      selectFun(row) {
       console.log("row",row);
@@ -949,7 +837,7 @@ export default {
         this.dataForm.warehouseType = ""
         this.dataForm.warehouseCode = ""
         return
-      } 
+      }
 
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
@@ -966,7 +854,7 @@ export default {
        this.dataForm.outProductCode=data.outProductCode
        this.dataForm.outProductName=data.outProductName
        this.dataForm.outProductDrawingNo=data.outProductDrawingNo
-       this.dataForm.buyBackPrice=data.buyBackPrice 
+       this.dataForm.buyBackPrice=data.buyBackPrice
        this.dataForm.warehouseName=data.warehouseName
        this.dataForm.warehouseId=data.warehouseId
        this.dataForm.outProductId=data.outProductId
@@ -1331,7 +1219,7 @@ export default {
       }
     },
 selectSupplier(id,data){
- 
+
       if (data.length === 0) {
         this.dataForm.outPartnerName = ''
         this.dataForm.outPartnerCode = ''
@@ -1345,7 +1233,7 @@ selectSupplier(id,data){
          this.dataForm.outPartnerName = data[0].all.name
         this.dataForm.outPartnerCode = data[0].all.code
         this.dataForm.outPartnerId = data[0].all.id
-    
+
       }
 },
     // 去除系数后两位的小数位
@@ -1395,11 +1283,11 @@ selectSupplier(id,data){
       this.formLoading = true
       this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
       // this.purchasingType = type
-      this.btnType=type 
+      this.btnType=type
       if(type=='look') this.purchOrderTitle="查看钢管采购订单"
       if(type=='add') this.purchOrderTitle="新建钢管采购订单"
       if(type=='edit') this.purchOrderTitle="编辑钢管采购订单"
- 
+
       this.dataForm.classAttribute = classAttributeFlag
       this.ProductListRequestObj = {
         classAttribute: this.dataForm.classAttribute,
@@ -1496,7 +1384,7 @@ selectSupplier(id,data){
             // 流程信息和流转记录
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })
-      } 
+      }
       this.getBusInfo()
     },
     getWarehouseFun(){
@@ -1511,7 +1399,7 @@ selectSupplier(id,data){
         }
       })
     },
-  
+
 
     // 表单提交
     async dataFormSubmit(type, printType) {
@@ -1570,7 +1458,7 @@ selectSupplier(id,data){
           flowData: this.flowData
         }
         console.log(_data, 'data')
-        
+
         insertPurchaseOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'
@@ -1603,7 +1491,7 @@ selectSupplier(id,data){
         this.btnLoading = false
       }
     },
- 
+
     // 删除项
     delequipment_process_relList(index) {
       this.dataFormTwo.data.splice(index, 1)
@@ -1671,7 +1559,7 @@ selectSupplier(id,data){
   beforeDestroy() {
     window.removeEventListener('resize', this.clientResize)
   },
-  
+
 }
 </script>
 <style scoped>
@@ -1796,7 +1684,7 @@ selectSupplier(id,data){
 /* ::v-deep .el-table--small .el-table__cell {
   padding: 0 10px !important;
 } */
-.table ::v-deep 
+.table ::v-deep
 .el-form-item--small.el-form-item {
   margin-bottom: 0;
 }

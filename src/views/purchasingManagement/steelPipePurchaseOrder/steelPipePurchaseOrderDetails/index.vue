@@ -130,11 +130,7 @@
                 <el-tag type="danger" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom"
-              v-if="standardValueFlag === '1'" />
-            <el-table-column prop="material" label="材质" width="130" sortable="custom"
-              v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour"  width="100" sortable="custom" v-if="colourFlag === '1'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
             <el-table-column prop="processName" label="工序" width="100" sortable="custom" v-if="processFlag === '1'" />
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
@@ -568,7 +564,7 @@ export default {
       // 产品属性
     const res = await getbimProductAttributesListMap()
     this.bimProductAttributesList = res.data
-    
+
       // 工序
       let obj1 = {
         pageNum: 1,

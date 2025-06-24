@@ -103,7 +103,7 @@
 
         <JNPF-table v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO
           @sort-change="sortChange" ref="tabForm" customKey="JNPFTableKey_451973">
- 
+
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
@@ -118,25 +118,7 @@
           <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
           <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
           <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-          <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120"
-            v-if="standardValueFlag == 1" />
-          <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" v-if="colourFlag == 1" />
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="sealingCoverTypingFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="aperture" label="孔径" min-width="120" v-if="apertureFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" v-if="specialRequireFlag == 1"
-            sortable="custom"></el-table-column>
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
                 <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
                   <template slot-scope="scope">
@@ -168,7 +150,7 @@
 </template>
 
 <script>
-import { getWarehouseList, getInventoryLineReport } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList, getInventoryLineReport } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -195,7 +177,7 @@ export default {
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-      
+
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
@@ -331,7 +313,7 @@ export default {
     this.isProjectSwitchFlag = true
     this.superForm = this.tableQuery
     this.getWarehouseTree(true)
-  
+
   },
   methods: {
     getProductClassFun() {
@@ -353,7 +335,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'batchNumber')
       if (this.colourFlag === '1') {

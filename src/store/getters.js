@@ -25,6 +25,7 @@ const getters = {
     sysConfig: state => state.settings.sysConfig,
     systemVO: state => state.settings.systemVO,
     configData: state => state.base.configData,
+    bimProductAttributesList: state => state.base.bimProductAttributesList,
     configGlobal: state => state.base.configGlobal,
     newDate: state => state.jx.newDate,
     newTimestamp: state => state.jx.newTimestamp,

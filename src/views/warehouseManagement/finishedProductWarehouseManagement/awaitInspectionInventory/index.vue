@@ -78,25 +78,7 @@
           </el-table-column>
           <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
           <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
-          <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120"
-            v-if="standardValueFlag == 1" />
-          <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" v-if="colourFlag == 1" />
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="sealingCoverTypingFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="aperture" label="孔径" min-width="120" v-if="apertureFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
-            sortable="custom"></el-table-column>
-          <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" v-if="specialRequireFlag == 1"
-            sortable="custom"></el-table-column>
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom" />
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
@@ -133,7 +115,7 @@
 
 <script>
 import { getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap  } from "@/api/masterDataManagement/index";
-import { getWarehouseList, getInventoryLineReport,getOrderFiledMap } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList, getInventoryLineReport,getOrderFiledMap } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList, batchInspect } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -254,7 +236,7 @@ export default {
           type: 'input'
 
         },
-        
+
         {
           prop: 'latestStorageTime',
           label: '最新入库时间',
@@ -269,7 +251,7 @@ export default {
       ],
       classAttributeList: [],
       selectList: [],
-     
+
       mainUnitFlag: null,
       tableDataFlag: null,
       isProjectSwitch: '',
@@ -342,7 +324,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'shelfSpaceName')
       if (this.colourFlag === '1') {
@@ -508,7 +490,7 @@ export default {
         }
       })
     },
- 
+
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);

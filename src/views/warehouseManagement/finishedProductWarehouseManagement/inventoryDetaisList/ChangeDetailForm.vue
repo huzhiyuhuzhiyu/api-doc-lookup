@@ -241,29 +241,7 @@
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="batchNumber" label="批次号" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="standardValue" label="规值" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="colour" :label="$store.getters.colour"  width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="oil" label="油脂" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-
-              <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="clearance" label="游隙" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="aperture" label="孔径" width="120" :key="102"
-                v-if="dataForm.documentType == 'outbound'"></el-table-column>
-              <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <el-table-column prop="remark" label="备注" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
@@ -313,7 +291,7 @@ import {
 } from "@/api/masterDataManagement/index";
 import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
 // import { addInboundOutbound} from '@/api/warehouseManagement/inboundAndOutbounds.js'
-import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表 
+import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表
 import WareHouseForm from '../directInandOutWarehouse/wareHouseForm.vue'
 import CustomerForm from '../directInandOutWarehouse/customerForm.vue'
 import BatchNumberForm from '../directInandOutWarehouse/batchNumberForm.vue'
@@ -389,7 +367,7 @@ export default {
           { required: true, message: '仓库不能为空', trigger: 'change' }
         ],
       },
-      orderForm: { //获取产品数据 
+      orderForm: { //获取产品数据
         drawingNo: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliveryStartTime: "",
@@ -543,7 +521,7 @@ export default {
 
     },
 
-    // 点击选择产品 
+    // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.documentType) return this.$message.error("请先选择单据类型")
       this.productVisible = true

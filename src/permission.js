@@ -61,6 +61,7 @@ router.beforeEach(async (to, from, next) => {
           store.commit('base/SET_FIELD_NAME', resField)
           // dynamically add accessible routes
           await store.dispatch('base/refreshConfigData')
+          await store.dispatch('base/getAttribute')
           if (store.getters.configData.system.web_cache_way) await store.dispatch('base/refreshTableColumnConfigData') // 刷新用户表格自定义配置
           router.addRoutes(accessRoutes)
           // hack method to ensure that addRoutes is complete

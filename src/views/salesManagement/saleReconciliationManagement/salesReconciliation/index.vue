@@ -116,23 +116,7 @@
               }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-            v-if="sealingCoverTypingFlag == 1" />
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-            v-if="accuracyLevelFlag == 1" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-            v-if="vibrationLevelFlag == 1" />
-          <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-          <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" /> -->
-          <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-            v-if="packagingMethodFlag == 1" />
-          <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-            v-if="specialRequireFlag == 1" />
-          <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-            v-if="materialFlag == 1"></el-table-column>
-          <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-            v-if="colourFlag == 1"></el-table-column>
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
 
@@ -256,7 +240,7 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        
+
         {
           prop: 'partnerName',
           label: "客户名称",
@@ -346,7 +330,7 @@ export default {
      await getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
- 
+
     },
     getOrderFiledMap() {
 
@@ -370,9 +354,9 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
-      //     material //保持架材质          
+      //     material //保持架材质
       //     colour //颜色
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'contractNo')
       if (this.colourFlag === '1') {
@@ -573,13 +557,13 @@ export default {
       this.selectData = val
       function calculateTotalValue(arr) {
         return arr.reduce((sum, item) => {
-          const value = Number(item.totalAmount); // 将 value 转换为数字  
+          const value = Number(item.totalAmount); // 将 value 转换为数字
           if (item.businessType === 'outbound_sale_send') {
-            return sum + value;  // 对于 '正', 加上 value  
+            return sum + value;  // 对于 '正', 加上 value
           } else if (item.businessType === 'inbound_sale_return') {
-            return sum - value;   // 对于 '负', 减去 value  
+            return sum - value;   // 对于 '负', 减去 value
           }
-          return sum;  // 默认情况，无需改变 sum  
+          return sum;  // 默认情况，无需改变 sum
         }, 0);
       }
       function calculateSum(data, type) {
@@ -638,8 +622,8 @@ export default {
     initData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.deliverStartDate = this.createRequirementDate[0] 
-        this.listQuery.deliverEndDate = this.createRequirementDate[1] 
+        this.listQuery.deliverStartDate = this.createRequirementDate[0]
+        this.listQuery.deliverEndDate = this.createRequirementDate[1]
 
       } else {
         this.listQuery.deliverStartDate = ''

@@ -28,7 +28,7 @@
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-        
+
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -80,30 +80,14 @@
             <!-- <el-table-column prop="weight" label="重量(kg)" width="90" />
             <el-table-column prop="proportion" label="比重" width="80" />
             <el-table-column prop="discount" label="折扣" width="80" /> -->
-     
+
             <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
             <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
             <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="warehouseName" label="仓库" width="120" sortable="custom" />
             <el-table-column prop="shelfSpaceName" label="库位" width="120" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-              v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-              v-if="accuracyLevelFlag == 1" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-              v-if="vibrationLevelFlag == 1" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-              v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-              v-if="specialRequireFlag == 1" />
-            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-              v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-              v-if="colourFlag == 1"></el-table-column>
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
             <el-table-column prop="latestStorageTime" label="最新入库时间" width="220" sortable="custom" />
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
@@ -134,7 +118,7 @@ import Form from './Form.vue'
 import { excelExport,getOrderFiledMap } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getInventoryLineReport } from '@/api/basicData/index' // 仓库 
+import { getInventoryLineReport } from '@/api/basicData/index' // 仓库
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { getbimProductAttributesListMap } from "@/api/masterDataManagement/index";
@@ -196,7 +180,7 @@ export default {
           prop: 'shelfSpaceName',
           label: '库位',
           type: 'input'
-        }, 
+        },
         {
           prop: 'latestStorageTime',
           label: '入库日期',
@@ -267,9 +251,9 @@ export default {
       computedValue2: 0,
       createRequirementDate: [],
       deliveryDate: [],
-    
+
       selectData: [],
-      pages: 0, // 总页数  
+      pages: 0, // 总页数
       columnList: ['weight',
         'proportion',
         'discount'],
@@ -361,9 +345,9 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
-       //     material //保持架材质          
+       //     material //保持架材质
       //     colour //颜色
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'shelfSpaceName')
       if (this.colourFlag === '1') {
@@ -652,7 +636,7 @@ export default {
 
     addSupplier(id, type) {
       if(!this.selectData.length)return this.$message.error("请选择你要新建的任务数据")
-   
+
           this.formVisible = true
           this.$nextTick(() => {
             this.$refs.form.init(this.selectData, 'add','finish', this.isProjectSwitch)

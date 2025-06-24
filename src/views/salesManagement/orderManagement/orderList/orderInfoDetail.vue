@@ -111,20 +111,7 @@
                 </el-table-column>
                 <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                 <el-table-column prop="contractNo" label="合同号" width="180" :key="132"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="211">
-                </el-table-column>
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123">
-                </el-table-column>
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                </el-table-column>
-                <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                </el-table-column>
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-                </el-table-column>
-                <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                </el-table-column>
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"> </el-table-column>
-                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" :key="1012"></el-table-column>
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column label="操作" width="100" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text" @click="viewFun(scope.row.id, 'edit')">详情</el-button>
@@ -147,18 +134,11 @@
                 <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160"  />
                 <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160"  />
                 <el-table-column prop="arrangeOrderNum" label="已编排单数/数量" min-width="180"  />
-               
+
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="160"
                   ></el-table-column>
                 <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" ></el-table-column>
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140"  />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120"  />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"  />
-                <el-table-column prop="oil" label="油脂" min-width="100"  />
-                <el-table-column prop="oilQuantity" label="油脂量" min-width="120"  />
-                <el-table-column prop="clearance" label="游隙" min-width="100"  />
-                <el-table-column prop="packagingMethod" label="包装方式" min-width="120"  />
-                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="160"  />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="arithmeticNo" label="运算单号" min-width="200" show-overflow-tooltip />
                 <el-table-column prop="remark" label="备注" min-width="180" ></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" min-width="180" ></el-table-column>
@@ -207,9 +187,9 @@ export default {
         { code: "guidebook", fullName: "已退货", },
         { code: "refund", fullName: "已退款", },
         { code: "reconciliation", fullName: "已对账", },
-        
+
       ],
-      productData: [], 
+      productData: [],
       orderTypeList: [
         { label: "正常任务", value: "normal", },
         { label: "返工任务", value: "rework", },

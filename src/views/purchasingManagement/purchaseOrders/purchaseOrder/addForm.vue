@@ -288,21 +288,10 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="standardValue" label="规值" width="120"
-                          v-if="dataForm.classAttribute !== 'finish_product' && standardValueFlag === '1'">
-                          <template slot-scope="scope">
-                            <el-form-item>
-                              <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
-                                style="width: 100%;">
-                                <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index"
-                                  :label="item.name" :value="item.name"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
+                        <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column
                           v-if=" sealingCoverTypingFlag === '1'"
-                          prop="pairingModeName" label="陪对方式" min-width="120">
+                          prop="pairingModeName" label="配对方式" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.pairingModeId" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -311,27 +300,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column
-                          v-if=" sealingCoverTypingFlag === '1'"
-                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if=" accuracyLevelFlag === '1'"
-                          prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
+                        <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="120"
                           v-if="isXY || isJR">
                           <template slot-scope="scope">
@@ -356,85 +325,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column
-                          v-if=" vibrationLevelFlag === '1'"
-                          prop="vibrationLevel" label="振动等级" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa005" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column v-if=" oilFlag === '1'"
-                          prop="oil" label="油脂" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa002" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if=" oilQuantityFlag === '1'"
-                          prop="oilQuantity" label="油脂量" min-width="160">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa003" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if=" clearanceFlag === '1'"
-                          prop="clearance" label="游隙" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa001" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if=" packagingMethodFlag === '1'"
-                          prop="packagingMethod" label="包装方式" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa015" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120"
-                          v-if=" specialRequireFlag === '1'">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa016" :key="index"
-                                :label="item.name" :value="item.id"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa021" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour"  min-width="120" v-if="colourFlag === '1'">
-                          <template slot-scope="scope">
-                            <el-form-item>
-                              <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
-                                <el-option v-for="(item, index) in bimProductAttributesList.pa010" :key="index"
-                                  :label="item.name" :value="item.name"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
+                        <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="processId" label="工序" min-width="120">
                           <template slot-scope="scope">
                             <el-form-item>

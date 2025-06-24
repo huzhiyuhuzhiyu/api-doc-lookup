@@ -32,8 +32,8 @@
                             :searchList="PartnerTableSearchList" />
                         </el-form-item>
                       </el-col>
-                 
-                  
+
+
                       <el-col :span="12">
                         <el-form-item label="备注">
                           <el-input v-model="dataForm.remark" type="textarea" placeholder="备注"
@@ -127,95 +127,8 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="standardValue" label="规值" width="120" :key="211">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择"
-                            :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column
-                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          prop="accuracyLevel" :label="$store.getters.accuracyLevel" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable >
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
+                      <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
 
-                        <el-table-column
-                          prop="vibrationLevel" label="振动等级" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable>
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa005" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="oil" label="油脂" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa002" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="oilQuantity" label="油脂量" min-width="160">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa003" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="clearance" label="游隙" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa001" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="packagingMethod" label="包装方式" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable>
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa015" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" min-width="120" >
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable>
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa016" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour" min-width="120">
-                          <template slot-scope="scope">
-                            <el-form-item>
-                              <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
-                                <el-option v-for="(item, index) in bimProductAttributesList.pa010" :key="index"
-                                  :label="item.name" :value="item.name"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
-      
                       <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
@@ -225,7 +138,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column label="操作" :width="$store.getters.configData.purchase.uniqueProduct ? 100 : 60" 
+                      <el-table-column label="操作" :width="$store.getters.configData.purchase.uniqueProduct ? 100 : 60"
                         fixed="right" v-if="type != 'look'" key="look">
                         <template slot-scope="scope">
                           <el-button type="text" class="JNPF-table-delBtn" :disabled="type === 'look'"
@@ -298,7 +211,7 @@ export default {
   },
   mixins: [busFlow, getProjectList],
   data() {
- 
+
     return {
       isProjectSwitch: '',
       tableDataFlag: false,
@@ -403,7 +316,7 @@ export default {
         approvalStatus: '', // 审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
         cooperativePartnerId: 0, //  供应商id
         cooperativePartnerName: '', //  供应商名称
-        cooperativePartnerCode: '', 
+        cooperativePartnerCode: '',
         createBy: '', //
         documentStatus: '', //  单据状态:草稿 draft、提交 submit,可用值:draft,normal,submit
         id: 0, //
@@ -428,7 +341,7 @@ export default {
       type: '',
       dataFormArr: [],
       rules: {
-        cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }], 
+        cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
         // inquiryDate: [{ required: true, message: '请选择询价日期', trigger: ['change'] }],
         // effectiveDate: [{ required: true, message: '请选择报价有效期', trigger: ['change'] }],
       },
@@ -681,10 +594,10 @@ export default {
     columnSetFun() {
       this.$refs.product.showDrawer()
     },
- 
-  
- 
- 
+
+
+
+
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
       listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
@@ -719,7 +632,7 @@ export default {
             })
           }
         }
-        
+
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 获取审批模版
         this.$nextTick(() => {
@@ -1132,7 +1045,7 @@ export default {
         let flag = hasDuplicateFieldValues(this.dataFormTwo.data,'onlyProductsId')
         if (flag) return this.$message.error('有相同的产品')
       }
-     
+
       this.request(type)
     },
 
@@ -1367,7 +1280,7 @@ export default {
       //     })
       //   }
       // }
-   
+
       _data = {
         ...this.dataForm,
         list: this.dataFormTwo.data
@@ -1417,8 +1330,8 @@ export default {
                     })
                     break
                   }
-               
-                 
+
+
                 }
                 return
               } else {

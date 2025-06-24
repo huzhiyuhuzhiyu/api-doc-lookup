@@ -83,54 +83,7 @@
                           <el-input v-model="dataForm.routingCode" placeholder="工艺路线名称" disabled></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item :label="$store.getters.sealingCoverTyping"  prop="sealingCoverTyping">
-                          <el-input v-model="dataForm.sealingCoverTyping" placeholder="打字内容" disabled></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item :label="$store.getters.accuracyLevel"  prop="accuracyLevel">
-                          <el-input v-model="dataForm.accuracyLevel" placeholder="精度等级" disabled></el-input>
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="振动等级" prop="vibrationLevel">
-                          <el-input v-model="dataForm.vibrationLevel" placeholder="振动等级" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="油脂" prop="oil">
-                          <el-input v-model="dataForm.oil" placeholder="油脂" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="油脂量" prop="oilQuantity">
-                          <el-input v-model="dataForm.oilQuantity" placeholder="油脂量" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="游隙" prop="clearance">
-                          <el-input v-model="dataForm.clearance" placeholder="游隙" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="包装方式" prop="packagingMethod">
-                          <el-input v-model="dataForm.packagingMethod" placeholder="包装方式" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item :label="$store.getters.specialRequire"  prop="specialRequire">
-                          <el-input v-model="dataForm.specialRequire" placeholder="特殊要求" disabled></el-input>
-
-                        </el-form-item>
-                      </el-col>
+                      <AttributeDictionaryMain :sm="6" :formData.sync="dataForm" :btnType="btnType"  :moduleConfig="'produce'" />
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="生产计划单号" prop="productionPlanNo">
                           <el-input v-model="dataForm.productionPlanNo" disabled />
@@ -281,7 +234,7 @@
                       }}</el-link>
                     </template>
                   </el-table-column>
-               
+
                   <el-table-column prop="inventoryQuantity" label="库存数量"  v-if="dataForm.orderType=='flipping'" >
                     <template slot-scope="scope">
                       <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
@@ -361,10 +314,7 @@
                 <el-table-column prop="productCode" label="用料编码" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="processName" label="工序名称" width="120"  />
-                <el-table-column prop="material" label="保持架材质" width="120" 
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour"  width="120" 
-                        v-if="colourFlag == 1"></el-table-column>
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                 <el-table-column prop="materialsUsedQuantity" label="计划用量" />
@@ -403,7 +353,7 @@
                 <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="160" />
                 <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="160" />
                 <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
 
 

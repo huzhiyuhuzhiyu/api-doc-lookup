@@ -153,7 +153,7 @@ export default {
           } else if (['deputyUnit', 'ratio', 'calculationDirection', 'brand'].includes(tc.prop)) {
             tc.render = false
           }
-         
+
         }
         if (['spare_parts', 'accessories'].includes(this.classAttribute)) {
 
@@ -167,7 +167,7 @@ export default {
           // 产品分类
           if (tc.prop === 'productCategoryName') {
             tc.method = getcategoryTree
-            tc.dataFormatting = (res) => res.data[0].childrenList
+            tc.dataFormatting = (res) => res.data[0].childrenList || res.data
             tc.change = (val, data) => {
               // dom更新后重新校验此元素
               this.$nextTick(() => {
@@ -392,7 +392,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
-   
+
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -401,7 +401,7 @@ export default {
         this.$set(target,'itemDisabled',!this.codeConfig.modifyFlag)
         if (flag) {
           this.dataForm.code = data.number
-          
+
         }
       } catch (error) { }
     },
@@ -534,7 +534,7 @@ export default {
           // 获取详情
         detailProduct(row.id).then((res) => {
           // 记录编码和图号，用于校验唯一性
-        
+
           if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push({

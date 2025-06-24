@@ -49,6 +49,8 @@
                   <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
                   <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
                   <el-descriptions-item :label="$store.getters.specialRequire" >{{ dataForm.specialRequire }}</el-descriptions-item> -->
+                  <el-descriptions-item v-if="isJR || isXY" label="钢丝炉号" >{{ dataForm.wireHeatNumber }}</el-descriptions-item>
+                  <el-descriptions-item v-if="isJR || isXY" label="原材料厂家" >{{ dataForm.rawStockMill }}</el-descriptions-item>
                   <el-descriptions-item label="计划单号">{{ dataForm.productionPlanNo }}</el-descriptions-item>
                   <!-- <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'normal'">进行中</el-descriptions-item>
                   <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'closed'">关闭</el-descriptions-item>
@@ -146,7 +148,7 @@
                       }}</el-link>
                     </template>
                   </el-table-column>
-               
+
                   <el-table-column prop="inventoryQuantity" label="库存数量"  v-if="dataForm.orderType=='flipping'" >
                     <template slot-scope="scope">
                       <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
@@ -379,9 +381,10 @@ import {
     ModelType,
     PageType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import MaterForm from '../../assemblyplan/assemblyTaskManagement/materForm.vue';
+import TenantMinix from '@/mixins/generator/TenantMinix'
 export default {
   components: { RelatedTasksForm,Guidebook,Inspec, MaterForm},
-  mixins: [getProjectList],
+  mixins: [getProjectList,TenantMinix],
   props:{
       noNeedOutFlag:{
           type: Boolean,

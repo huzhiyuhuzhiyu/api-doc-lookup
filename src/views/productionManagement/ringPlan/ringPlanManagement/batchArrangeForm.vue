@@ -100,6 +100,12 @@ export default {
                             this.linesList.forEach(item=>{
                                 item.rawStockMill = val
                             })
+                        }else{
+                          this.linesList.forEach((item, index) => {
+                            if (index >= scope.$index){
+                              item.rawStockMill = val
+                            }
+                          })
                         }
                     }
                 },
@@ -150,6 +156,9 @@ export default {
                         },
                     ],
                 },
+                {
+                  prop: 'coldHeadingPersonId',label:'冷墩生产人',value:'',type:'custom',customComponent:'user-select',minWidth:160,
+                },
                 { prop: 'taskMethod', label: '编排任务方式', value: 'not_appoint',render:false, type: 'select',disabled:true,options:[{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" }], minWidth: 160 ,},
                 { prop: 'planDate', label: '计划生产日期', value: '', type: 'date_interval', minWidth: 260 ,clearable:false,},
                 { prop: 'standardValue', label: '规值', value: '', type: 'select',options:this.bimProductAttributesList['pa008'].map(item=>{
@@ -178,7 +187,7 @@ export default {
         async init(data){
             this.formLoading = true
             const res = await getbimProductAttributesListMap()
-            this.bimProductAttributesList = res.data
+            this.bimProductAttributesList = res.data || []
             if (this.$store.getters.configData.produce.steelBallTask) {
                 let obj = {
                     productsId: data[0].productsId
@@ -193,10 +202,10 @@ export default {
                     productionBarrels:1,
                     pickingWay:'none',
                     planDate:[item.planStartDate,item.planEndDate],
-                    productionWeight: this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].weight : 0,
-                    productionQuantity: this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].quantity : item.availableArrangeQuantity,
-                    weight:this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].weight : 0,
-                    quantity:this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].quantity : 0,
+                    productionWeight: this.productWeightQuantity.data.records?.length ? this.productWeightQuantity.data.records[0].weight : 0,
+                    productionQuantity: this.productWeightQuantity.data.records?.length ? this.productWeightQuantity.data.records[0].quantity : item.availableArrangeQuantity,
+                    weight:this.productWeightQuantity.data.records?.length ? this.productWeightQuantity.data.records[0].weight : 0,
+                    quantity:this.productWeightQuantity.data.records?.length ? this.productWeightQuantity.data.records[0].quantity : 0,
                 }
             })
             this.tempList.push({...this.linesList[0],orderNo:''})
@@ -265,16 +274,24 @@ export default {
             if (!val || !val.trim()) return;
             const currentIndex = scope.$index;
             // 只有在第一行输入时才触发自动递增
-            if (currentIndex === 0) {
-                this.autoIncrementWireHeat(val);
-            }
+            // if (currentIndex === 0) {
+                this.autoIncrementWireHeat(val,currentIndex);
+            // }
         },
-        autoIncrementWireHeat(val){
+        autoIncrementWireHeat(val,currentIndex){
             // 为后续行生成递增的任务单号
+          if (currentIndex === 0){
             this.linesList.forEach((item, index) => {
                     // 后续行自动递增
                     item.wireHeatNumber = val
             });
+          }else{
+            this.linesList.forEach((item, index) => {
+              if (index >= currentIndex){
+                item.wireHeatNumber = val
+              }
+            });
+          }
             // 强制更新表格显示
             this.$nextTick(() => {
                 this.$refs.tableForm.setDefaultValue();

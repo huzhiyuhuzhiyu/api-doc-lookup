@@ -205,7 +205,7 @@ export function insertOutOrder(data) {
     })
   }
   // 批量撤回收货单
-  
+
   export const batchWithdrawalOrder = (data) => {
     return request({
       url: `/api/erp/purPurchaseReceiptReturnGoods/revoke`,
@@ -245,13 +245,13 @@ export function insertOutOrder(data) {
         return request({
           url: `/api/zgt/purPurchaseRelatedOutProduct/del/${id}`,
           method: 'delete',
-          
+
         })
       }
-      
+
 
       // 获取外协工序价格配置的价格
-      
+
   export const searchPurOutProcessPrice = (data) => {
     return request({
       url: `/api/zgt/purOutProcessPrice/search`,
@@ -262,10 +262,18 @@ export function insertOutOrder(data) {
 
 
   // 修改明细列表单价
-  
+
  export const editPrice = (data) => {
     return request({
       url: `/api/erp/purPurchaseOrderLine/update/price`,
+      method: 'put',
+      data
+    })
+  }
+  // 采购部分关单
+  export const purPurchaseOrderBatchPurchaseOrder = (data) => {
+    return request({
+      url: `/api/erp/purPurchaseOrderLine/close`,
       method: 'put',
       data
     })

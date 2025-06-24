@@ -49,6 +49,14 @@ const global = {
       ? {label: enCode || '--', type: 'default'}
       : enCode || '--';
   },
+  // 公共状态 示例：未完成 已完成 已取消
+  publicState: [
+    {label: "未完成", value: "not_finished", type: "processing"},
+    {label: "已完成", value: "finished", type: "success"},
+    {label: "已取消", value: "canceled", type: "danger"},
+    {label: "已停止", value: "stopped", type: "danger"},
+    {label: "已撤回", value: "back", type: "warning"},
+  ],
   timePicker: { // 日期/时间选择器通用选项（禁用未发生的时间）
     disabledDate(time) {
       return time.getTime() > Date.now();
@@ -75,7 +83,7 @@ const global = {
     // }]
   },
   timePickerOptionsArr: { // 日期/时间区间选择器通用选项）
-    
+
     shortcuts: [{ // 调用时使用 global.timePickerOptions.shortcuts 不设置日期/时间选择限制
       text: '近3天',
       onClick(picker) {

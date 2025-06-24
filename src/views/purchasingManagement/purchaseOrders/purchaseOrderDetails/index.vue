@@ -201,7 +201,10 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="税率" prop="taxRates">
-              <el-input v-model="form.taxRates" placeholder="税率" disabled />
+              <el-select v-model="form.taxRates" placeholder="请选择" style="width: 100%;"  @change="changeRate">
+                              <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"  
+                                :value="item.taxRate"></el-option>
+                            </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -264,6 +267,7 @@ export default {
           { required: true, trigger: 'blur' },
         ]
       },
+      taxRateList:[],
        form:{
         orderNo:"",
         price:"",
@@ -599,12 +603,19 @@ export default {
     this.detailData()
   },
   methods: {
-    editPriceFun(row){
+ 
+    editPriceFun(row){ 
       this.editPriceVisible=true
       this.form=row
     },
+    changeRate(){
+      this.form.taxrate=this.form.taxRates
+      let taxrate = 1 * 1 + (this.form.taxRates) / 100 * 1
+      console.log("this.",this.form);
+      this.form.excludingTaxPrice=this.jnpf.numberFormat(this.jnpf.math('divide', [this.form.price, taxrate]), 6)
+    },
     handleCountFun(){
-      let taxrate = 1 * 1 + (this.form.taxRate) / 100 * 1
+      let taxrate = 1 * 1 + (this.form.taxRates) / 100 * 1
       this.form.excludingTaxPrice=this.jnpf.numberFormat(this.jnpf.math('divide', [this.form.price, taxrate]), 6)
     },
      submitFun() {
@@ -614,7 +625,7 @@ export default {
           let  arr=[]
           arr.push(this.form)
           editPrice(arr).then(res => {
-            this.addOrderVisible = false
+            this.editPriceVisible = false
             this.btnLoading = false
             this.$message.success("修改单价成功")
             this.search('basic')
@@ -663,25 +674,6 @@ export default {
       // 产品属性
     const res = await getbimProductAttributesListMap()
     this.bimProductAttributesList = res.data
-    
-      // 工序
-      let obj1 = {
-        pageNum: 1,
-        pageSize: -1,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getBimProcessList(obj1).then((res) => {
-        this.processList = res.data.records
-      })
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {
         res.data.list.forEach((item) => {
@@ -849,7 +841,7 @@ export default {
 
           console.log(this.detailTableData)
           this.detailTableData.forEach((item) => {
-            this.$set(item,'taxRates',item.taxRate)
+            this.$set(item,'taxRates',item.taxRate* 1)
             item.disabled = item.receivingStatus == 'not_finished' && item.approvalStatus == 'ok' ? false : true
           })
           this.total = res.data.total

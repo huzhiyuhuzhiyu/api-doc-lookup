@@ -8,6 +8,14 @@ export function finServiceTicketList (data) {
     data
   })
 }
+// 详情
+export function finServiceTicketDetail (id) {
+  return request({
+    url: `/api/zgt/finServiceTicket/detail/${id}`,
+    method: 'get', 
+  })
+}
+
 // 新增
 export function addFinServiceTicket (data) {
   return request({
@@ -66,7 +74,7 @@ export function finServiceTicketCategoryAdd (data) {
     data
   })
 }
-
+// 服务类型——编辑
 export function finServiceTicketCategorEdit (data) {
   return request({
     url: `/api/zgt/finServiceTicketCategory/update`,
@@ -74,3 +82,4 @@ export function finServiceTicketCategorEdit (data) {
     data
   })
 }
+

@@ -57,7 +57,7 @@
           :setColumnDisplayList="columnList"  customKey="JNPFTableKey_123476">
           <el-table-column prop="orderNo" label="服务单号" min-width="200" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="200" sortable="custom" />
-          <el-table-column prop="superType" label="服务商类型" min-width="200" sortable="custom" />
+          <el-table-column prop="partnerCategoryName" label="服务商类型" min-width="200" sortable="custom" />
           <el-table-column prop="cooperativePartnerName" label="服务商" min-width="200" sortable="custom" />
           <el-table-column prop="ticketCategoryName" label="服务类型" min-width="200" sortable="custom" />
           <el-table-column prop="content" label="服务名称" min-width="200" sortable="custom" />
@@ -156,7 +156,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "createTime"
+          column: ""
         }],
         orderNo: "",
         cooperativePartnerName: "",
@@ -272,7 +272,7 @@ export default {
     detailFun(row){
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init('look',row)
+        this.$refs.procureForm.init('look',row.id)
       })
 
     },
@@ -431,7 +431,7 @@ export default {
     addOrUpdateHandle() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init('add')
+        this.$refs.procureForm.init('add','')
       })
 
     },

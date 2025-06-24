@@ -337,7 +337,7 @@
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa027" key="index" :label="item.name"
+                            <el-option v-for="(item, index) in $store.getters.bimProductAttributesList['pa027']" key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
                         </template>
@@ -533,7 +533,6 @@
                 <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
                 <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
 
-              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <el-table-column prop="remark" label="备注" width="100"
                 v-if="dataForm.documentType == 'outbound'" key="remark" />
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
@@ -949,7 +948,6 @@ export default {
       this.colourFlag = this.$store.getters.configData.orderField.colour ? '1' : '0'
       this.standardValueFlag = this.$store.getters.configData.orderField.standardValue ? '1' : '0'
       this.processFlag = this.$store.getters.configData.orderField.process ? '1' : '0'
-    this.advancedQueryFuns()
     await this.getProjectSwitch('system', 'project')
     this.isPairingModeSwitch = this.$store.getters.configData.product.enable_show_pairing_mode ? '1' : '0'
     this.productNameFlag = this.$store.getters.configData.product.enable_productName ? '1' : '0'
@@ -1054,114 +1052,6 @@ export default {
       getBimProcessList(obj8).then((res) => {
         this.processList = res.data.records
       })
-    },
-    advancedQueryFuns() {
-      // sealingCoverTyping //打字内容
-      //     accuracyLevel //精度等级
-      //     vibrationLevel //振动等级
-      //     oil //油脂
-      //     oilQuantity //油脂量
-      //     clearance //游隙
-      //     packagingMethod //包装方式
-      //     specialRequire //特殊要求
-      console.log(this.dataForm.businessType, this.bimProductAttributesList);
-      // if (this.dataForm.businessType == 'inbound_purchase') {
-        if (this.standardValueFlag === '1') {
-          this.list8 = this.bimProductAttributesList.pa008.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-          console.log(this.list8,'规值')
-        }
-
-      // }
-      if (this.materialFlag === '1') {
-        this.list12 = this.bimProductAttributesList.pa021.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-
-      }
-      if (this.colourFlag === '1') {
-        this.list11 = this.bimProductAttributesList.pa010.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-
-      }
-      if (this.specialRequireFlag === '1') {
-        this.list9 = this.bimProductAttributesList.pa016.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-      }
-      if (this.packagingMethodFlag === '1') {
-        this.list7 = this.bimProductAttributesList.pa015.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-      }
-      if (this.clearanceFlag === '1') {
-        this.list6 = this.bimProductAttributesList.pa001.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-
-      }
-
-      if (this.oilFlag === '1') {
-        this.list4 = this.bimProductAttributesList.pa002.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-      }
-      if (this.oilQuantityFlag === '1') {
-        this.list13 = this.bimProductAttributesList.pa003.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-      }
-      if (this.vibrationLevelFlag === '1') {
-        this.list3 = this.bimProductAttributesList.pa005.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-      }
-      if (this.accuracyLevelFlag === '1') {
-        this.list2 = this.bimProductAttributesList.pa006.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-      }
-      if (this.sealingCoverTypingFlag === '1') {
-        this.list1 = this.bimProductAttributesList.pa007.map((item) => {
-          return {
-            label: item.name,
-            name: item.name
-          }
-        })
-      }
-
     },
     async getMainUnitFun(code, type, flag) {
       this.listLoading = true
@@ -1441,7 +1331,6 @@ export default {
       this.listQuery.productName = ""
       this.listQuery.pageNum = 1
       this.listQuery.pageNum = 1
-      this.advancedQueryFuns()
       this.resetProductFun()
       this.$nextTick(() => { this.$refs.productVisibles.doLayout() })
     },

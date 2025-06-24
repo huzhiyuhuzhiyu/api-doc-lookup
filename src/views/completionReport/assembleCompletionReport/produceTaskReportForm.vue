@@ -326,7 +326,16 @@
 
                     </el-form-item>
                   </el-col>
-
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcess.processType === 'typing' && currentProcess.reportFlag" >
+                    <el-form-item label="打标记:" prop="markingMethod" :style="{ marginBottom: producerMargin }">
+                      <el-select v-model="currentProcess.markingMethod" placeholder="请选择" clearable style="width: 100%;" class="ipt"
+                            >
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa014" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                    </el-form-item>
+                  </el-col>
                   <!-- <el-col :sm="24" :xs="24" v-if="currentProcessType == 1" -->
                   <el-col :sm="24" :xs="24"
                     :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
@@ -536,10 +545,10 @@
 </template>
 
 <script>
-
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
+
 import { detailProcess, getvibrationList, getPairingModelList, getaccuracyList } from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport,addRegrinding,detailWorkData } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
@@ -564,6 +573,7 @@ export default {
   },
   data() {
     return {
+      bimProductAttributesList: [],
         overChargeNum:0,
       overCharge:{},
       isregrindingFlagList:[
@@ -603,6 +613,7 @@ export default {
       codeConfig: {},//单据规则配置
       workList: [],
       sealingcoverTypingList: [],
+      markingMethodList: [],
       oilList: [],
       processInfo: {},
       currentProcess: {},
@@ -631,6 +642,9 @@ export default {
         ],
         vibrationLevel: [
           { required: true, message: '测振等级不能为空', trigger: 'change' }
+        ],
+        markingMethod: [
+          { required: true, message: '打标记不能为空', trigger: 'change' }
         ],
       },
       iptLabelMargin: '28px',
@@ -668,6 +682,10 @@ export default {
     }
   },
   async created() {
+        // 产品属性
+    const ProductAttributesList = await getbimProductAttributesListMap()
+      console.log(ProductAttributesList,'ProductAttributesList')
+    this.bimProductAttributesList = ProductAttributesList.data
     await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
   },
   async mounted() {
@@ -714,6 +732,7 @@ export default {
               "vibrationType": this.currentProcess.vibrationType,
               "oil": this.currentProcess.oil,
               "sealingCoverTyping": this.currentProcess.sealingCoverTyping,
+              markingMethod:this.currentProcess.markingMethod,
               "workOrderId": this.currentProcess.id,
               causesList: [...this.materialWasteDataList, ...this.responsWasteDataList],
               packagingMethod: this.currentProcess.packagingMethod
@@ -1596,6 +1615,7 @@ export default {
               obj.pairingModeId = this.currentProcess.pairingModeId
               obj.oil = this.currentProcess.oil
               obj.sealingCoverTyping = this.currentProcess.sealingCoverTyping
+              obj.markingMethod = this.currentProcess.markingMethod
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
             }
             arr.push(obj)
@@ -1626,12 +1646,13 @@ export default {
                 this.$set(obj, 'unqualifiedQuantity', this.currentProcess.unqualifiedQuantity)
                 this.$set(obj, 'vibrationLevel', this.currentProcess.vibrationLevel)
                 this.$set(obj, 'vibrationType', this.currentProcess.vibrationType)
-              this.$set(obj, 'workOrderId', this.currentProcess.id)
+                this.$set(obj, 'workOrderId', this.currentProcess.id)
                 this.$set(obj, 'matchedQuantity', this.currentProcess.matchedQuantity)
                 this.$set(obj, 'pairingModeId', this.currentProcess.pairingModeId)
                 this.$set(obj, 'accuracyLevel', item.accuracyLevel)
                 this.$set(obj, 'causesList', [...this.materialWasteDataList, ...this.responsWasteDataList])
 
+                this.$set(obj, 'markingMethod', this.currentProcess.markingMethod)
                 this.$set(obj, 'packagingMethod', this.currentProcess.packagingMethod)
 
 
@@ -1664,6 +1685,7 @@ export default {
               obj.vibrationType = this.currentProcess.vibrationType
               obj.workOrderId = this.currentProcess.id
               obj.packagingMethod = this.currentProcess.packagingMethod
+              obj.markingMethod = this.currentProcess.markingMethod
               obj.stockFlag = this.stockFlag
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.oil = this.currentProcess.oil
@@ -1700,6 +1722,7 @@ export default {
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               obj.packagingMethod = this.currentProcess.packagingMethod
+              obj.markingMethod = this.currentProcess.markingMethod
               arr.push(obj)
               console.log("配对工序");
             } else {
@@ -1734,6 +1757,7 @@ export default {
               obj.sealingCoverTyping = this.currentProcess.sealingCoverTyping
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               obj.packagingMethod = this.currentProcess.packagingMethod
+              obj.markingMethod = this.currentProcess.markingMethod
               arr.push(obj)
             }
           } else {

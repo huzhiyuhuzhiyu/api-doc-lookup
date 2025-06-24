@@ -1,6 +1,6 @@
 <template>
-  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建产品属性' : '编辑产品属性'" :wrapperClosable="false"
-    :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-common-drawer" width="500px">
+  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建服务类型' : '编辑服务类型'" :wrapperClosable="false"
+    :close-on-press-escape="false" :visible.sync="visible" lock-scroll width="500px" class="JNPF-common-drawer">
     <template slot="title">
       <div class="custom_title">
         {{ title }}
@@ -8,22 +8,20 @@
     </template>
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
-        label-width="120px" hide-required-asterisk="fasle">
-        <!-- <el-form-item label="编码" prop="code">
-        <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20" />
-      </el-form-item> -->
-        <el-form-item label="名称" prop="name">
+        label-width="120px" :hide-required-asterisk="true">
+        <el-form-item label="类别名称" prop="name">
           <template slot="label">
             名称<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="200" />
+          <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="20" />
         </el-form-item>
-        <el-form-item label="排序" prop="sortCode">
-          <el-input v-model="dataForm.sortCode" type="text"  placeholder="请输入排序" maxlength="9"/>
+        <el-form-item label="编码" prop="code">
+          <template slot="label">
+            编码<span class="required">*</span>
+          </template>
+          <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20" :disabled="dataForm.id" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
-        </el-form-item>
+   
       </el-form>
       <span class="button-bottom">
         <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
@@ -35,65 +33,53 @@
   </el-drawer>
 </template>
 
-<script>
-import {
-  getBimProductAttributesInfo,
-  updataBimProductAttributes,
-  delBimProductAttributes,
-  addBimProductAttributes,
-  getbimProductAttributesList,
-  checkAbnoramlTypeCode
-} from '@/api/masterDataManagement/index'
-
+<script> 
+import {finServiceTicketCategoryExist,finServiceTicketCategoryAdd,finServiceTicketCategorEdit}from '@/api/service/index'
 export default {
   data() {
     return {
       visible: false,
       formLoading: false,
       btnLoading: false,
+      iconBoxVisible: false,
       dataForm: {
         name: '',
-        remark: '',
-        // code: '',
-        typeCode: '',
-        sortCode:"",
+        code: '',
       },
       title: '',
       isdisabled: false,
       organizeIdTree: [],
       btntype: '',
-      autoName: '',
+      autoCode: '',
       dataRule: {
-        code: [{ required: true, message: '请输入编码', trigger: 'blur' }],
-        // sortCode: [{ required: true, message: '请输入排序', trigger: 'blur' }],
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' },
+        code: [
+          { required: true, message: '请输入类别编码', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               if (!value) {
                 callback()
-              } else if (this.dataForm.name === this.autoName) {
+              } else if (this.dataForm.code === this.autoCode) {
                 callback()
               } else {
                 if (this.dataForm.id) {
-                  checkAbnoramlTypeCode(this.dataForm.typeCode, value, this.dataForm.id)
+                  finServiceTicketCategoryExist({id:this.dataForm.id,code:value})
                     .then((res) => {
                       if (!res.data) {
                         callback()
                       } else {
-                        callback(new Error('此类型名称已存在'))
+                        callback(new Error('此编码已存在'))
                       }
                     })
                     .catch((err) => {
                       callback(new Error(' '))
                     })
                 } else {
-                  checkAbnoramlTypeCode(this.dataForm.typeCode, value, '')
+                  finServiceTicketCategoryExist({id:"",code:value})
                     .then((res) => {
                       if (!res.data) {
                         callback()
                       } else {
-                        callback(new Error('此类型名称已存在'))
+                        callback(new Error('此编码已存在'))
                       }
                     })
                     .catch((err) => {
@@ -103,56 +89,34 @@ export default {
               }
             },
             trigger: 'blur'
-          },
-
+          }
+        ],
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' },
           // { validator: this.formValidate('fullName', '名称不能含有特殊符号'), trigger: 'blur' },
           { max: 50, message: '名称最多为50个字符！', trigger: 'blur' }
-        ]
+        ],
       }
     }
   },
   methods: {
-    init(code, btntype) {
-      this.visible = true
 
+    init(row, btntype) {
+      this.visible = true
       if (btntype == 'add') {
         this.dataForm = {
           name: '',
-          remark: '',
-          sortCode:"",
-          // code: '',
-          typeCode: code,
-          id: ''
+          code: '',
         }
-        this.title = '新建产品属性'
+        this.title = '新建服务类型'
       } else if (btntype == 'edit') {
-        getBimProductAttributesInfo(code).then((res) => {
-          // this.dataForm.code = res.data.code
-          this.autoName = res.data.name
-          this.dataForm.typeCode = res.data.typeCode
-          this.dataForm.name = res.data.name
-          this.dataForm.remark = res.data.remark
-          this.dataForm.id = res.data.id
-          this.dataForm.sortCode = res.data.sortCode
-          this.title = '编辑产品属性'
-        })
-      } else if (btntype == 'copy') {
-        getBimProductAttributesInfo(code).then((res) => {
-          // this.dataForm.code = res.data.code
-          this.autoName = res.data.name
-          this.dataForm.typeCode = res.data.typeCode
-          this.dataForm.name = res.data.name
-          this.dataForm.sortCode = res.data.sortCode
-          this.dataForm.remark = res.data.remark
-          this.title = '新建产品属性'
-
-        })
+       this.dataForm=JSON.parse(JSON.stringify(row))
       }
       this.btntype = btntype
     },
     cancelFun() {
       this.visible = false
-      console.log("this.$refs['dataForm']")
+
       this.$refs['dataForm'].resetFields()
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
@@ -160,13 +124,13 @@ export default {
     },
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {
+       
         if (valid) {
           this.btnLoading = true
-          console.log(this.btntype, 'btntype')
-          console.log(this.dataForm, 'fprm')
-          let formMethod = this.btntype == 'add' ? addBimProductAttributes : updataBimProductAttributes
-          console.log('formMethod', formMethod)
-          if (formMethod == updataBimProductAttributes) {
+
+          let formMethod = this.btntype == 'edit' ? finServiceTicketCategorEdit : finServiceTicketCategoryAdd
+
+          if (formMethod == finServiceTicketCategorEdit) {
             formMethod(this.dataForm)
               .then((response) => {
                 this.$message({

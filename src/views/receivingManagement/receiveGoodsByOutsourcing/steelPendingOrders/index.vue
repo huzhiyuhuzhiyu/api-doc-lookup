@@ -52,9 +52,7 @@
           <div class="JNPF-common-head"> 
             <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
 
-              <el-button type="primary" size="mini" icon="el-icon-plus" @click="mergeOrdrFun('dataTable')">
-                合并待收货订单
-              </el-button>
+              <el-button type="primary" size="mini" icon="el-icon-plus" @click="mergeOrdrFun('dataTable')">{{ btnTitle }}</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button> 
@@ -167,6 +165,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      btnTitle:"合并待收货订单",
       isProductNameSwitch: '',
       isProjectSwitch: '',
       isProportionSwitch: '',
@@ -186,6 +185,7 @@ export default {
       detailFlag: false,
 
       orderForm: {
+        mergeFlag:0,
         relatedOutFlag:1,
         approvalStatus: 'ok',
         documentStatus: 'submit',
@@ -566,7 +566,14 @@ export default {
       this.dataFormSubmit()
     },
     mergeOrdrFun(){
-      this.orderForm.mergeFlag=1
+     
+      if( this.orderForm.mergeFlag){
+         this.orderForm.mergeFlag=0
+         this.btnTitle="合并待收货订单"
+      }else{
+          this.orderForm.mergeFlag=1
+         this.btnTitle="取消合并收货"
+      }
     this.$nextTick(() => { this.$refs.dataTable.doLayout() })
     this.dataFormSubmit()
     },

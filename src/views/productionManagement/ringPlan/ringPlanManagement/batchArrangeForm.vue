@@ -158,6 +158,23 @@ export default {
                 },
                 {
                   prop: 'coldHeadingPersonId',label:'冷墩生产人',value:'',type:'custom',customComponent:'user-select',minWidth:160,
+                  change: (id,data,paramsObj) => {
+                    console.log(id,data,'lll');
+                    console.log(paramsObj,'lll222');
+                    if (paramsObj.scope.$index === 0){
+                      this.linesList.forEach((item,index)=>{
+                          item.coldHeadingPersonId = data.id
+                          item.coldHeadingPersonName = data.fullName
+                      })
+                    }else{
+                      this.linesList.forEach((item, index) => {
+                        if (index >= paramsObj.scope.$index){
+                          item.coldHeadingPersonId = data.id
+                          item.coldHeadingPersonName = data.fullName
+                        }
+                      })
+                    }
+                  }
                 },
                 { prop: 'taskMethod', label: '编排任务方式', value: 'not_appoint',render:false, type: 'select',disabled:true,options:[{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" }], minWidth: 160 ,},
                 { prop: 'planDate', label: '计划生产日期', value: '', type: 'date_interval', minWidth: 260 ,clearable:false,},
@@ -206,6 +223,8 @@ export default {
                     productionQuantity: this.productWeightQuantity.data.records?.length ? this.productWeightQuantity.data.records[0].quantity : item.availableArrangeQuantity,
                     weight:this.productWeightQuantity.data.records?.length ? this.productWeightQuantity.data.records[0].weight : 0,
                     quantity:this.productWeightQuantity.data.records?.length ? this.productWeightQuantity.data.records[0].quantity : 0,
+                    coldHeadingPersonId:'',
+                    coldHeadingPersonName:'',
                 }
             })
             this.tempList.push({...this.linesList[0],orderNo:''})

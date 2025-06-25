@@ -51,8 +51,8 @@
 
         <!-- 自定义表单元素 -->
         <component v-else-if="item.type === 'custom'" :is="item.customComponent" v-bind="{ ...item, ...$attrs }"
-          v-on="$listeners" :placeholder="Placeholder" style="width:100%" auth
-          @change="(val, data, paramsObj) => { item.change && item.change(val, data, paramsObj); $emit('change', val, data, paramsObj); }"
+          v-on="$listeners" :placeholder="Placeholder" style="width:100%" auth :scope="scope" :paramsObj="paramsObj"
+          @change="(val, data, paramsObj) => { item.change && item.change(val, data, paramsObj); $emit('change', val, data, paramsObj,scope); }"
           :disabled="item.disabled" :readonly="item.readonly" :isdisabled="readOnly" />
 
         <!-- 单个日期选择器 -->
@@ -143,7 +143,11 @@ export default {
     },
     lineData: {
       type: Array,
-    }
+    },
+    paramsObj:{
+      type: Object,
+      default: () => { }
+    },
   },
   created() {
      let obj = this.lineData ? this.lineData.find(item=>item.prop === 'taxRate') :{}

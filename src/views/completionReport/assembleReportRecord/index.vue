@@ -98,6 +98,7 @@
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="oil" label="注脂方式" min-width="120" sortable="custom" />
+            <el-table-column prop="markingMethod" label="打标记" min-width="120" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120" sortable="custom" />
             <el-table-column prop="orderStatus" label="任务状态" min-width="120">
               <template slot-scope="scope">
@@ -432,6 +433,10 @@ export default {
         {
           prop: "packagingMethod",
           typeCode: "pa015"
+        },
+         {
+          prop: "markingMethod",
+          typeCode: "pa014"
         },
         
       ],

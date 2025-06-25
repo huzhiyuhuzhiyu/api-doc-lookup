@@ -1236,12 +1236,11 @@ export default {
             // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
             const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
-
-            this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
-            this.copyLinesData.forEach(element => {
-              element.warehouseType = this.dataForm.warehouseType
-              element.warehouseId = this.dataForm.warehouseId
+            this.productData.forEach(item => {
+                item.warehouseType = this.dataForm.warehouseType
+              item.warehouseId = this.dataForm.warehouseId
             });
+            this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             if (this.datafilelist.length) {
               this.datafilelist.map((item, index) => {
                 item.bimAttachments = {

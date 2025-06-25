@@ -173,6 +173,9 @@
                     <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
                       复制通知单
                     </el-dropdown-item>
+                    <el-dropdown-item @click.native="addSupplier(scope.row.id, 'file')">
+                      上传附件
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>

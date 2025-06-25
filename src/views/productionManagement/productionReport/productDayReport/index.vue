@@ -89,6 +89,7 @@
                 <el-table-column prop="pairingModeName" label="配对方式" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="greaseMethod" label="注脂方式" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="markingMethod" label="打标记" min-width="120" sortable="custom"/>
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="100" sortable="custom"></el-table-column>
               </JNPF-table>

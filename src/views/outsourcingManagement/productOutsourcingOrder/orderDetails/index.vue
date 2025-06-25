@@ -43,7 +43,7 @@
             <div>
               <!-- <el-button :loading="btnLoading" size="mini" type="danger" @click="handleBatchStop()">批量停止</el-button> -->
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('detailTableData')">
-                导出123
+                导出
               </el-button>
             </div>
             <div class="JNPF-common-head-right">
@@ -116,8 +116,9 @@
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
-            <el-table-column label="操作" width="90" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
+                <el-button size="mini" type="text" @click.native="editPriceFun(scope.row)">修改单价</el-button>
                 <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
                   查看详情
                 </el-button>
@@ -131,7 +132,42 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-
+      <el-dialog title="修改单价" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="editPriceVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+      <el-row :gutter="20">
+        <el-form ref="diaForm" :model="form" :rules="dataRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+            <el-form-item label="采购单号" prop="orderNo">
+              <el-input v-model="form.orderNo" placeholder="采购单号" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="含税单价" prop="price">
+              <el-input v-model="form.price" placeholder="含税单价"  @blur="handleCountFun()"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="税率" prop="taxRates">
+              <el-select v-model="form.taxRates" placeholder="请选择" style="width: 100%;"  @change="changeRate">
+                              <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"  
+                                :value="item.taxRate"></el-option>
+                            </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="不含税单价" prop="excludingTaxPrice">
+              <el-input v-model="form.excludingTaxPrice" placeholder="不含税单价" disabled />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+     
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editPriceVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -148,7 +184,8 @@ import {
   purPurchaseOrderExport,
   purPurchaseOrderdetail,
   purPurchaseBatch,
-  purPurchaseBatchLine
+  purPurchaseBatchLine,
+  editPrice
 } from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from '../orderList/Form.vue'
 import moment from 'moment'
@@ -169,6 +206,20 @@ export default {
 
   data() {
     return {
+      editPriceVisible:false,
+      form:{
+        orderNo:"",
+        price:"",
+        taxRates:"",
+        excludingTaxPrice:"",
+      },
+      dataRule:{
+         price: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["含税单价：不能为空", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({type: 'decimal', params: [20,4,'', (errMsg,index) => { this.$message.error(`单价：` + errMsg) }]}),  trigger: 'blur'},
+          { required: true, trigger: 'blur' },
+        ]
+      },
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -435,6 +486,37 @@ export default {
     this.detailData()
   },
   methods: {
+     editPriceFun(row){ 
+      this.editPriceVisible=true
+      this.form=row
+    },
+        changeRate(){
+      this.form.taxrate=this.form.taxRates
+      let taxrate = 1 * 1 + (this.form.taxRates) / 100 * 1
+      console.log("this.",this.form);
+      this.form.excludingTaxPrice=this.jnpf.numberFormat(this.jnpf.math('divide', [this.form.price, taxrate]), 6)
+    },
+    handleCountFun(){
+      let taxrate = 1 * 1 + (this.form.taxRates) / 100 * 1
+      this.form.excludingTaxPrice=this.jnpf.numberFormat(this.jnpf.math('divide', [this.form.price, taxrate]), 6)
+    },
+     submitFun() {
+      this.$refs['diaForm'].validate((valid) => {
+        if (valid) {
+          this.btnLoading = true
+          let  arr=[]
+          arr.push(this.form)
+          editPrice(arr).then(res => {
+            this.editPriceVisible = false
+            this.btnLoading = false
+            this.$message.success("修改单价成功")
+            this.search('basic')
+          }).catch(error => {
+            this.btnLoading = false
+          })
+        }
+      })
+    },
        getSummaries(param) {
       const sums = []
       sums[0] = '合计'
@@ -638,6 +720,7 @@ export default {
           this.detailTableData = res.data.page.records||[]
           console.log(this.detailTableData)
           this.detailTableData.forEach((item) => {
+            this.$set(item,'taxRates',item.taxRate* 1)
             item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
           })
           this.total = res.data.page.total||0

@@ -3,12 +3,18 @@ import moment from 'moment'
 
 const global = {
   // 单据状态
-  documentStatusList: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }],
+  documentStatusList: [
+    {label: '草稿', value: 'draft', type: 'warning'},
+    {label: '提交', value: 'submit', type: 'success'},
+    {label: '撤回', value: 'back'},
+    {label: '关单', value: 'close'},
+  ],
   // 审批状态
   approvalStateList: [
-    { label: "审批中", value: "ing" },
-    { label: "审批通过", value: "ok" },
-    { label: "审批拒绝", value: "rebut" },
+    {label: "审批中", value: "ing", type: "processing"},
+    {label: "审批通过", value: "ok", type: "success"},
+    {label: "审批拒绝", value: "rebut", type: "danger"},
+    {label: "审批撤回", value: "withdrawn", type: "warning"}
   ],
   // 布尔值选项
   booleanOptions: [

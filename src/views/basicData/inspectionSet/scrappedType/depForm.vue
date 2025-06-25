@@ -8,7 +8,7 @@
     </template>
     <div style="padding: 10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
-        label-width="120px" :hide-required-asterisk="true">
+        label-width="120px" >
         <el-form-item label="所属项目" prop="projectId" v-if="$store.getters.configData.system.project" >
           <template slot="label">
             所属项目<span class="required">*</span>
@@ -24,7 +24,7 @@
           <el-input v-model="dataForm.name" placeholder="请输入不良名称" maxlength="20" :disabled="btntype ? true : false" />
         </el-form-item>
         <el-form-item label="单价" prop="price">
-          <template slot="label">
+          <template slot="label" v-if="!isBOOS">
             单价<span class="required">*</span>
           </template>
           <el-input v-model="dataForm.price" placeholder="请输入单价" maxlength="20" />
@@ -130,7 +130,7 @@ export default {
             trigger: 'blur'
           }
         ],
-        price: [
+        price: this.isBOOS?[]:[
           {
             required: true,
             message: '请输入单价',
@@ -158,6 +158,9 @@ export default {
  async created() {
     await this.awaitAbProject()
     await this.getProjectList()
+  },
+  mounted () {
+    console.log("this",this.isBOOS);
   },
   methods: {
     handleClose() { },

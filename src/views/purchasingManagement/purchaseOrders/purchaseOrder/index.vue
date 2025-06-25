@@ -74,7 +74,7 @@
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_606009">
             <el-table-column prop="orderNo" label="采购单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look',scope.row)">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -132,7 +132,7 @@
                   @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                   审批撤回
                 </el-button>
-                <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look',scope.row)">
                   查看详情
                 </el-button>
                 <!-- <el-button size="mini" type="text" @click.native="orderFormDownload(scope.row.id)">
@@ -672,10 +672,11 @@ export default {
     },
 
     // 生成采购订单 将选中的数据传递过去
-    addOrUpdateHandle(id, type) {
+    addOrUpdateHandle(id, type,row) {
+      const isClosureOrders = row.documentStatus === 'submit' && row.receivingStatus === 'not_finished' && this.isMS
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init(id, type)
+        this.$refs.procureForm.init(id, type,false,isClosureOrders)
       })
     },
     // 导出订货单

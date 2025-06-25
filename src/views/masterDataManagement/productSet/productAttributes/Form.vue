@@ -16,7 +16,7 @@
           <template slot="label">
             名称<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="20" />
+          <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="200" />
         </el-form-item>
         <el-form-item label="排序" prop="sortCode">
           <el-input v-model="dataForm.sortCode" type="text"  placeholder="请输入排序" maxlength="9"/>

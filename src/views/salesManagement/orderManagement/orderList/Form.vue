@@ -1061,12 +1061,11 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import productAttributesListForm from './productAttributesListForm.vue'
 import ProductSymbolForm from '@/views/salesManagement/orderManagement/orderList/productSymbol.vue'
 import ProductSymbolMixin from '@/mixins/generator/ProductSymbolMixin'
-import tenantMinix from '@/mixins/generator/TenantMinix'
 import { closeOrders ,batchRevokeSaleOrder} from '@/api/salesManagement/assemblyOrders'
 import store from '@/store'
 import { getDictDataSync } from '@/utils'
 export default {
-  mixins: [busFlow, getProjectList,tenantMinix,ProductSymbolMixin],
+  mixins: [busFlow, getProjectList,ProductSymbolMixin],
   components: {
       ProductSymbolForm,
     ExportForm, Process, recordList, Form, productAttributesListForm
@@ -1218,7 +1217,7 @@ export default {
           label: "产品分类", classAttribute: "", method: productTree, requeseObj: {
             classAttribute: "",
             type: "material",
-            classAttributeList: ["finish_product", "semi_finished"]
+            classAttributeList: this.isXBN?["finish_product", "semi_finished",'raw_material']:["finish_product", "semi_finished"],
           }
         },
       ],
@@ -1226,7 +1225,7 @@ export default {
       allProductTotal: 0,
       ProductTreeData: [],
       ProductListRequestObj: {
-            classAttributeList: ["finish_product", "semi_finished"],
+            classAttributeList: this.isXBN?["finish_product", "semi_finished",'raw_material']:["finish_product", "semi_finished"], 
         classAttribute: "",
         productDrawingNo: "",
         productCategoryId: "",
@@ -2294,7 +2293,7 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttributeList: ["finish_product", "semi_finished"],
+            classAttributeList: this.isXBN?["finish_product", "semi_finished",'raw_material']:["finish_product", "semi_finished"],
         classAttribute: "",
         productDrawingNo: "",
         queryType: 2,
@@ -2385,7 +2384,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
         this.$refs.treeBox.setCurrentKey(null)
       this.ProductListRequestObj = {
-        classAttributeList: ["finish_product", "semi_finished"],
+            classAttributeList: this.isXBN?["finish_product", "semi_finished",'raw_material']:["finish_product", "semi_finished"], 
         classAttribute: "",
         productDrawingNo: "",
         productCategoryId: "",

@@ -56,18 +56,27 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList"  customKey="JNPFTableKey_123476">
           <el-table-column prop="orderNo" label="服务单号" min-width="200" sortable="custom" />
-          <el-table-column prop="cooperativePartnerName" label="供应商/客户名称" min-width="200" sortable="custom" />
-          <el-table-column prop="cooperativePartnerTaxId" label="税号" min-width="200" sortable="custom" />
-          <el-table-column prop="cooperativePartnerPhone" label="联系方式" min-width="200" sortable="custom" />
-          <el-table-column prop="content" label="服务内容" min-width="180" sortable="custom" />
-            <el-table-column prop="paymentType" label="收付款类型" min-width="150" sortable="custom">
+          <el-table-column prop="projectName" label="所属项目" min-width="200" sortable="custom" />
+          <el-table-column prop="partnerCategoryName" label="服务商类型" min-width="200" sortable="custom" />
+          <el-table-column prop="cooperativePartnerName" label="服务商" min-width="200" sortable="custom" />
+          <el-table-column prop="ticketCategoryName" label="服务类型" min-width="200" sortable="custom" />
+          <el-table-column prop="content" label="服务名称" min-width="200" sortable="custom" />
+          <el-table-column prop="model" label="型号" min-width="200" sortable="custom" />
+          <el-table-column prop="unit" label="单位" min-width="200" sortable="custom" />
+          <el-table-column prop="num" label="数量" min-width="200" sortable="custom" />
+          <el-table-column prop="paymentType" label="收付款类型" min-width="150" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.paymentType == 'pay'">付款</div>
               <div v-else-if="scope.row.paymentType == 'receive'">收款</div>
             </template>
           </el-table-column>
+          <el-table-column prop="price" label="单价" min-width="200" sortable="custom" />
           <el-table-column prop="totalAmount" label="含税金额" min-width="180" sortable="custom" />
-          <el-table-column prop="taxRate" label="税率" sortable="custom" width="160" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="taxRate" label="税率" sortable="custom" width="160" ></el-table-column>
+          <el-table-column prop="contractNo" label="合同编号" sortable="custom" width="160" ></el-table-column>
+          <el-table-column prop="orderDate" label="单据日期" sortable="custom" width="160" ></el-table-column>
+          <el-table-column prop="contactUserName" label="内部对接人" min-width="120" sortable="custom" ></el-table-column>
+          <el-table-column prop="departmentName" label="使用部门" min-width="120" sortable="custom" ></el-table-column>
           <el-table-column prop="billStatus" label="对账状态" min-width="120" sortable="custom" >
             <template slot-scope="scope">
               <div v-if="scope.row.billStatus == 'no_billing'"><el-tag>未对账</el-tag> </div>
@@ -75,6 +84,7 @@
               <div v-if="scope.row.billStatus == 'in_bill' && scope.row.documentStatus == 'submit'"><el-tag type="warning">对账中</el-tag></div>
             </template>
           </el-table-column> 
+          <el-table-column prop="remark" label="备注" min-width="120" sortable="custom" ></el-table-column>
              <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
           
@@ -146,7 +156,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "createTime"
+          column: ""
         }],
         orderNo: "",
         cooperativePartnerName: "",
@@ -262,7 +272,7 @@ export default {
     detailFun(row){
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init('look',row)
+        this.$refs.procureForm.init('look',row.id)
       })
 
     },
@@ -421,7 +431,7 @@ export default {
     addOrUpdateHandle() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init('add')
+        this.$refs.procureForm.init('add','')
       })
 
     },

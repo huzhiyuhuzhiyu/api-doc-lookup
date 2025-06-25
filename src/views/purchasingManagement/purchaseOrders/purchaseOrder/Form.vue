@@ -4,6 +4,12 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
           <el-page-header @back="goBack" :content="type === 'look' ? '查看采购订单' : '新建采购订单'" />
+          <div class="options">
+            <el-button :loading="loadingClosureOrders" type="primary" v-if="isClosureOrders" @click="handlePartialClosureOrders">
+              部分关单
+            </el-button>
+            <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+          </div>
         </div>
 
         <div class="main" ref="main" v-loading="formLoading">
@@ -41,8 +47,8 @@
                 <el-collapse-item title="产品信息" name="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table" :height="customStyleData" ref="tableForm">
-                      <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
+                      :data="dataFormTwo.data" id="table" :height="customStyleData" ref="tableForm" @selection-change="(val)=>selectData = val">
+                      <el-table-column v-if="isClosureOrders" type="selection" width="60" fixed="left" align="center" />
                       <el-table-column type="index" width="60" label="序号" align="center" />
                       <el-table-column prop="costProjectName" label="成本核算归属" width="160" v-if="abProjectSwitchVisible"
                     show-overflow-tooltip></el-table-column>
@@ -134,7 +140,14 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="receivingStatus" label="订单状态" width="140" align="center">
+                        <template slot-scope="scope">
+                          <el-tag :type="global.getDictLabelGlobal('publicState', scope.row['receivingStatus'], { withType: true }).type">{{
+                              global.getDictLabelGlobal('publicState', scope.row['receivingStatus'])
+                            }}
+                          </el-tag>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'">
@@ -434,7 +447,7 @@
   </div>
 </template>
 <script>
-import { insertPurchaseOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
+import { insertPurchaseOrder, purPurchaseOrderdetail, orderSchedule, purPurchaseOrderBatchPurchaseOrder } from '@/api/purchasingAndOutsourcingOrders/index'
 import { excelExport, getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -545,7 +558,10 @@ export default {
       bimProductAttributesObj: {},
       processList: [],
       customStyleData: 0,
-      formLoading: false
+      formLoading: false,
+      isClosureOrders:'',
+      loadingClosureOrders: false,
+      selectData:[],
     }
   },
   async created() {
@@ -734,8 +750,9 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type, approvalFlag) {
+    init(id, type, approvalFlag,isClosureOrders) {
       this.formLoading = true
+      this.isClosureOrders = isClosureOrders
       console.log(id, type)
       this.getProductClassFun()
       // 此处判断用户选择新增还是编辑
@@ -864,7 +881,60 @@ export default {
           }
         })
         .catch(() => { })
-    }
+    },
+    // 部分关单
+    async handlePartialClosureOrders(){
+      if (!this.selectData.length) return this.$message.error('请先选择您要关单的数据')
+      this.$confirm('此操作将选中的数据进行关单，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(async () => {
+          const isClosureOrders = this.dataForm.documentStatus === 'submit' && this.dataForm.receivingStatus === 'not_finished'
+          if (!isClosureOrders) return this.$message.error('请选择采购订单单据状态为提交并且订单状态未完成的数据！')
+          try {
+            const item = this.selectData.find(item => item.receivingStatus === 'finished')
+            if (item) return this.$message.error('请选择订单状态未完成的数据！')
+            this.loadingClosureOrders = true
+            const params = this.selectData.map(item => item.id)
+            const res = await purPurchaseOrderBatchPurchaseOrder(params)
+            this.$message({
+              message: '部分关单成功',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.loadingClosureOrders = false
+                this.getDetail()
+              }
+            })
+          } catch (e) {
+            this.loadingClosureOrders = false
+          }
+        })
+        .catch(() => {
+        })
+    },
+    getDetail(){
+      this.loading = true
+      try {
+        purPurchaseOrderdetail(this.dataForm.id).then((res) => {
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push({
+                name: item.document.fullName,
+                fileSize: item.document.fileSize,
+                filename: item.document.filePath,
+                id: item.document.id,
+                url: item.url
+              })
+            })
+          }
+          this.dataForm = res.data
+          this.dataFormTwo.data = res.data.purchaseOrderLineVOList
+        })
+      } finally {
+        this.loading = false
+      }
+    },
   }
 }
 </script>
@@ -1028,5 +1098,10 @@ export default {
 
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
+}
+.options{
+  display: flex;
+  gap: 15px;
+  align-items: center;
 }
 </style>

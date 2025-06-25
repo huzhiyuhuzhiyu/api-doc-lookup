@@ -31,7 +31,16 @@
                               maxlength="300" />
                           </el-form-item>
                         </el-col>
-                      
+                        <el-col :sm="6" :xs="24" v-if="isXBN">
+                          <el-form-item label="所属项目" prop="projectId">
+                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                              @change="changeProject" :disabled="btnType == 'look' ? true : false">
+                              <el-option v-for="(item, index) in abProjectList" :key="index" :label="item.label"
+                                :value="item.value"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
+  
                         <el-col :sm="6" :xs="24" v-if="btnType!='look'">
                         <el-form-item label="服务商类型" prop="superType">
                             <el-select v-model="dataForm.superType" placeholder="请选择服务商类型" style="width: 100%;" @change="selectFun" :disabled="btnType=='look'">
@@ -51,8 +60,29 @@
                               :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
                           </el-form-item>
                         </el-col>
-
-                            
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="服务类型" prop="ticketCategoryId">
+                            <el-select v-model="dataForm.ticketCategoryId" placeholder="请选择服务商类型" style="width: 100%;" @change="selectFun" :disabled="btnType=='look'">
+                              <el-option v-for="item in ticketCategoryList" size="small" :key="item.id" :label="item.name"
+                                :value="item.id">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="型号" prop="model">
+                            <el-input v-model="dataForm.model" placeholder="请输入型号" type="text"   :disabled="btnType=='look'"/>
+                          </el-form-item>
+                        </el-col> 
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="单位" prop="unit">
+                            <el-select v-model="dataForm.unit" :placeholder="btnType=='look'?'':'请选择单位'" style="width: 100%;"  :disabled="btnType=='look'">
+                              <el-option v-for="item in unitList" size="small" :key="item.id" :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>  
 
                         <el-col :sm="6" :xs="24" >
                           <el-form-item label="收付款类型" prop="paymentType">
@@ -62,10 +92,21 @@
                               </el-option>
                             </el-select>
                           </el-form-item>
+                          
                         </el-col>
-                           <el-col :sm="6" :xs="24"   >
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="数量" prop="num">
+                            <el-input v-model="dataForm.num" placeholder="请输入数量" type="text" @blur="handle"  :disabled="btnType=='look'"/>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="单价" prop="price">
+                            <el-input v-model="dataForm.price" placeholder="请输入单价" type="text" @blur="handle"  :disabled="btnType=='look'"/>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24"   >
                           <el-form-item label="金额(含税)" prop="totalAmount">
-                            <el-input v-model="dataForm.totalAmount" placeholder="请输入金额(含税)" type="text"   :disabled="!dataForm.paymentType||btnType=='look'"/>
+                            <el-input v-model="dataForm.totalAmount" placeholder="请输入金额(含税)" type="text"   disabled/>
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" >
@@ -76,10 +117,46 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="合同编号" prop="contractNo">
+                            <el-input v-model="dataForm.contractNo" placeholder="请输入合同编号" type="text"  :disabled="btnType=='look'" />
+                          </el-form-item>
+                        </el-col>
+                         <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="单据日期" prop="orderDate">
+                            <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false"
+                              :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                              style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
+                          </el-form-item>
+                        </el-col>
+                        
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="内部对接人" prop="contactUserId">
+                            <user-select v-model="dataForm.contactUserId" placeholder="内部对接人" clearable style="width: 100%;"
+                              class="ipt" @change="hangleSelectSales" :disabled="btnType=='look'">
+                            </user-select>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="使用部门" prop="organizeIdTree" v-if="btnType=='add'">
+                              <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织"
+                                :disabled="btnType=='look'"  @change="onOrganizeChange"
+                                clearable auth />
+                          </el-form-item>
+                            <el-form-item label="使用部门" prop="departmentName" v-if="btnType=='look'">
+                            <el-input v-model="dataForm.departmentName" placeholder="请输入合同编号" type="text"   :disabled="btnType=='look'"/>
                              
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="服务内容" prop="content">
-                            <el-input v-model="dataForm.content" placeholder="请输入服务内容" :disabled="btnType=='look'"
+                          <el-form-item label="服务名称" prop="content">
+                            <el-input v-model="dataForm.content" placeholder="请输入服务名称" :disabled="btnType=='look'"
+                               type="textarea" :rows="2" maxlength="200" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="备注" prop="remark">
+                            <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType=='look'"
                                type="textarea" :rows="2" maxlength="200" />
                           </el-form-item>
                         </el-col>
@@ -117,19 +194,20 @@
 <script>
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
-// import selectAsset from '../../callManagement/assetForm.vue'
 import {getbimProductAttributes} from "@/api/masterDataManagement/index";
- 
-import {addFinServiceTicket}from '@/api/service/index'
+import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { mapGetters, mapState } from 'vuex' 
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
-import {  getOrderFiledMap } from '@/api/basicData/index'
+import {addFinServiceTicket,finServiceTicketCategoryList,finServiceTicketDetail}from '@/api/service/index'
 export default {
   mixins: [AbProjectMixin],
 
   
   data() {
     return {
+      unitList:[],
+      ticketCategoryList:[],
+      abProjectList:[],
       codeConfig: {},//单据规则配置
       superTypeList:[
         {label:"客户",value:"customer"},
@@ -142,6 +220,7 @@ export default {
       ],
       dataForm:{
         orderNo:"",
+        projectId:"",
         superType:"",
         cooperativePartnerName:"",
         cooperativePartnerId:"",
@@ -149,6 +228,12 @@ export default {
         totalAmount:"",
         taxRate:"",
         content:"",
+        num:"",
+        price:"",
+        orderDate: this.jnpf.getToday(),
+        contactUserId:"",
+        remark:"",
+        departmentId:"",
       },
 
 
@@ -230,6 +315,16 @@ export default {
          content: [
           { required: true, message: '请输入服务内容', trigger: 'blur' }
         ], 
+        num: [
+          { required: true, message: '请输入数量', trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal2', params: [20, 4, "请输入正确的数量(最多保留4位小数,整数16位)", (errMsg, index) => { this.$message.error(errMsg) }] }), trigger: 'blur' },
+
+        ], 
+        price: [
+          { required: true, message: '请输入单价', trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal2', params: [20, 4, "请输入正确的单价(最多保留4位小数,整数16位)", (errMsg, index) => { this.$message.error(errMsg) }] }), trigger: 'blur' },
+
+        ], 
          totalAmount: [
           { required: true, message: '请输入含税金额', trigger: 'blur' },
           { validator: this.formValidate({ type: 'decimal2', params: [20, 4, "请输入正确的含税金额(最多保留4位小数,整数16位)", (errMsg, index) => { this.$message.error(errMsg) }] }), trigger: 'blur' },
@@ -253,16 +348,59 @@ export default {
 },
   async created() { 
     this.getProductClassFun()
+    this.getFinServiceTicketCategoryList()
+    this.getUnitFun()
   },
   mounted() { 
   },
 
   methods: {
+    onOrganizeChange(val) {
+      console.log("val",val);
+      this.dataForm.departmentId = val[val.length-1]
+    },
+    hangleSelectSales(e, r) {
+      
+      this.dataForm.contactUserId = e
+    },
+    getFinServiceTicketCategoryList(){
+      let obj={
+        code:"",
+        name:"",
+        pageNum:-1,
+        pageSize:-1,
+      }
+      finServiceTicketCategoryList(obj).then(res=>{
+        this.ticketCategoryList=res.data.records
+      })
+    },
     selectFun(){
       this.PartnerMethodArr.requestObj.type=this.dataForm.superType              
       this.PartnerListRequestObj.type=this.dataForm.superType
     },
-  
+    getUnitFun(){
+      // 单位
+      let obj1 = {
+        pageNum: -1,
+        pageSize: -1
+      }
+      getUnitData(obj1).then((res) => {
+        let arr = []
+        res.data.records.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        this.unitList = arr
+
+         
+      })
+    },
+    handle(){
+      this.dataForm.totalAmount= this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.num, this.dataForm.price]), 6)
+    },
     getProductClassFun() {
     
     // 获取税率(数据字典)
@@ -377,22 +515,22 @@ export default {
               }
             })
           } 
-          if(this.dataForm.paymentType){
-            if(this.dataForm.paymentType=='pay'){
-              if(Number(this.dataForm.totalAmount)>0){
-                submitFlag=false
-                this.$message.error("付款类型为付款，含税金额不能大于0")
-                return
-              }
-            }
-            if(this.dataForm.paymentType=='收款'){
-              if(Number(this.dataForm.totalAmount)<0){
-                submitFlag=false
-                this.$message.error("付款类型为收款，含税金额不能小于0")
-                return
-              }
-            }
-          }
+          // if(this.dataForm.paymentType){
+          //   if(this.dataForm.paymentType=='pay'){
+          //     if(Number(this.dataForm.totalAmount)>0){
+          //       submitFlag=false
+          //       this.$message.error("付款类型为付款，含税金额不能大于0")
+          //       return
+          //     }
+          //   }
+          //   if(this.dataForm.paymentType=='收款'){
+          //     if(Number(this.dataForm.totalAmount)<0){
+          //       submitFlag=false
+          //       this.$message.error("付款类型为收款，含税金额不能小于0")
+          //       return
+          //     }
+          //   }
+          // }
           this.$set(this.dataForm,'attachmentList',this.datafilelist)
           setTimeout(() => {
             if (submitFlag === false) return
@@ -428,24 +566,26 @@ export default {
    
    
    
-    init(btnType,data) {
+    init(btnType,id) {
       this.getBimBusinessDetail()
       this.btnType=btnType 
-      if(data){
-        this.dataForm=data
-          if (data.attachmentList) {
-              data.attachmentList.forEach((item) => {
-                this.datafilelist.push(
-                  {
-                    name: item.document.fullName,
-                    fileSize: item.document.fileSize,
-                    filename: item.document.filePath,
-                    id: item.document.id,
-                    url: item.url
-                  }
-                )
-              })
-            }
+      if(id){
+        finServiceTicketDetail(id).then(res=>{
+          this.dataForm=res.data
+            if (res.data.attachmentList) {
+                res.data.attachmentList.forEach((item) => {
+                  this.datafilelist.push(
+                    {
+                      name: item.document.fullName,
+                      fileSize: item.document.fileSize,
+                      filename: item.document.filePath,
+                      id: item.document.id,
+                      url: item.url
+                    }
+                  )
+                })
+              }
+        })
       }
          if (this.btnType == 'add') {
         setTimeout(() => {

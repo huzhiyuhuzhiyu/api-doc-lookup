@@ -511,6 +511,7 @@ export default {
               formMethod = addPropertyPurchaseOrder
               this.btnText = "继续新增"
             }
+            this.dataForm.costPrice=this.dataForm.totalAmount
             formMethod(this.dataForm).then(res => {
               let msg = "";
               if (value == "draft") {

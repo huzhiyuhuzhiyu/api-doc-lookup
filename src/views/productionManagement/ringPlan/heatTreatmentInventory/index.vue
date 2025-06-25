@@ -609,7 +609,7 @@ export default {
 
     addSupplier(id, type) {
       if(!this.selectData.length)return this.$message.error("请选择你要新建的任务数据")
-   
+      if(this.selectData.length>1)return this.$message.error("只能选择单条数据创建任务")
           this.formVisible = true
           this.$nextTick(() => {
             this.$refs.form.init(this.selectData, 'add','finish', this.isProjectSwitch)

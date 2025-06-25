@@ -63,7 +63,7 @@ export function batchArrangeSteelPlan(data){
 export function closeProducePlan(data){
     return request({
         url:'/api/zgt/prod/plan/close',
-        method:'post',
+        method:'put',
         data
     })
 }

@@ -48,7 +48,7 @@
               <!-- <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button> -->
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p035')">打印装配单</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer"
-                @click="printFlowCard('p020')">打印流转卡</el-button>
+                @click="printFlowCard('p023')">打印流转卡</el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
               </el-button>
             </div>

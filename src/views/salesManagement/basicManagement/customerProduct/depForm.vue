@@ -93,6 +93,13 @@
                       </template>
 
                     </el-table-column>
+                      <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" v-if="specialRequireFlag === '1'" key="specialRequire">
+                      <template slot-scope="scope">
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.specialRequire" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name" :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
 
                     <el-table-column prop="price" label="单价(含税)" width="120"  v-if="btnType === 'look' ? ['2','1'].includes(includedTaxFlagConfig) : true">
@@ -291,7 +298,13 @@
                   </template>
 
                 </el-table-column>
-
+                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" v-if="specialRequireFlag === '1'" :key="101">
+                  <template slot-scope="scope">
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list8" :key="index" :label="item.name" :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
                 <!-- <el-table-column prop="num" label="数量" width="120">
                     <template slot="header">

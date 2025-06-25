@@ -59,13 +59,27 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
                       <el-col  :span="6" v-if="$store.getters.configData.purchase.related_out_select">
                         <el-form-item label="外协供应商" prop="outPartnerName" v-if="dataForm.outType=='out'">
                           <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType=='look'" />
-
                         </el-form-item>
                       </el-col>
+                      <el-col  :span="6" v-if="dataForm.outType=='out'&&btnType=='look'">
+                        <el-form-item label="外协单号" prop="outPurchaseOrderNo" >
+                          <el-input v-model="dataForm.outPurchaseOrderNo" placeholder="外协单号"  :disabled="btnType=='look'" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" v-if="dataForm.outType=='purchase_sale'&&btnType=='look'">
+                        <el-form-item label="销售单号" prop="outSaleOrdersNo">
+                          <el-input v-model="dataForm.outSaleOrdersNo" placeholder="销售单号"  :disabled="btnType=='look'" />
+                        </el-form-item>
+                      </el-col>
+                        <el-col  :span="6" v-if="dataForm.outType=='purchase_sale'&&btnType=='look'">
+                        <el-form-item label="回购单号" prop="outPurchaseOrderNo" >
+                          <el-input v-model="dataForm.outPurchaseOrderNo" placeholder="回购单号"  :disabled="btnType=='look'" />
+                        </el-form-item>
+                      </el-col>
+                 
                       <el-col  :span="6" v-else>
                         <el-form-item label="外协供应商" prop="outPartnerName" v-if="dataForm.outType=='out'">
                             <ComSelect-page clearable :isdisabled="btnType=='look'||$store.getters.configData.purchase.related_out_select" :treeNodeClick="treeNodeClick"
@@ -449,6 +463,7 @@ export default {
         { prop: 'code', label: '产品编码', sortable: 'custom'},
         { prop: 'name', label: '产品名称', sortable: 'custom',render:false },
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'material', label: '材质', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         // { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
@@ -1380,6 +1395,9 @@ selectSupplier(id,data){
             this.dataForm.yieldRate=res.data.relatedOut.yieldRate
             this.dataForm.warehouseName=res.data.relatedOut.warehouseName
             this.dataForm.warehouseId=res.data.relatedOut.warehouseId
+            this.dataForm.outPurchaseOrderNo=res.data.relatedOut.outPurchaseOrderNo
+            this.dataForm.outSaleOrdersNo=res.data.relatedOut.outSaleOrdersNo
+            
             // 流程信息和流转记录
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })

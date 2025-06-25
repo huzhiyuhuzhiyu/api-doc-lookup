@@ -8,6 +8,14 @@ export function finServiceTicketList (data) {
     data
   })
 }
+// 详情
+export function finServiceTicketDetail (id) {
+  return request({
+    url: `/api/zgt/finServiceTicket/detail/${id}`,
+    method: 'get', 
+  })
+}
+
 // 新增
 export function addFinServiceTicket (data) {
   return request({
@@ -32,3 +40,46 @@ export function delFinServiceTicket (id) {
     method: 'delete',
   })
 } 
+
+
+// 服务类型——列表
+export function finServiceTicketCategoryList (data) {
+  return request({
+    url: `/api/zgt/finServiceTicketCategory/page`,
+    method: 'post',
+    data
+  })
+}
+// 服务类型——删除
+export function finServiceTicketCategoryDel (id) {
+  return request({
+    url: `/api/zgt/finServiceTicketCategory/del/${id}`,
+    method: 'delete',
+  })
+}
+
+// 服务类型——校验编码是否重复
+export function finServiceTicketCategoryExist (data) {
+  return request({
+    url: `/api/zgt/finServiceTicketCategory/check/code/exist`,
+    method: 'get',
+    data
+  })
+}
+// 服务类型——新增
+export function finServiceTicketCategoryAdd (data) {
+  return request({
+    url: `/api/zgt/finServiceTicketCategory/add`,
+    method: 'post',
+    data
+  })
+}
+// 服务类型——编辑
+export function finServiceTicketCategorEdit (data) {
+  return request({
+    url: `/api/zgt/finServiceTicketCategory/update`,
+    method: 'put',
+    data
+  })
+}
+

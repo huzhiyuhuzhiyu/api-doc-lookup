@@ -32,11 +32,11 @@
         <div class="JNPF-common-head" style="padding:10px">
           <div>
             <el-button size="mini" type="primary" @click="handleBatch" :disabled="!tableData.length">批量处理</el-button>
-            <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
+            <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button> -->
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-              icon="el-icon-download" @click="exportForm">
+              icon="el-icon-download" @click="exportForm('dataTable')">
               导出
-            </el-button> -->
+            </el-button>
           </div>
 
           <div class="JNPF-common-head-right">
@@ -94,8 +94,9 @@
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
-
 <script>
+import { excelExport } from '@/api/basicData/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import PrintBrowse from '@/components/PrintBrowse'
@@ -103,7 +104,7 @@ import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import { ApprovalStatus, DocumentStatus } from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
-  components: { SuperQuery, PrintBrowse, PrintDialog, },
+  components: { SuperQuery, PrintBrowse, PrintDialog,ExportForm },
   mixins: [AbProjectMixin],
   props: {
     priceType: {
@@ -410,6 +411,34 @@ export default {
         })
       this.btnLoading = false
     },
+    // 导出
+    exportForm(exportTableRef) {
+      this.exportTableRef = exportTableRef
+      this.exportFormVisible = true
+      let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      this.exportFormVisible = false
+      let includeFieldMap = {}
+      for (let i = 0; i < data.selectKey.length; i++) {
+        includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+      }
+      const targetListQuery = this.listQuery
+      let _data = {
+        ...targetListQuery,
+        exportType: '1073',
+        exportName: '质检退货单',
+        includeFieldMap,
+        pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
+      }
+      excelExport(_data).then(res => {
+        this.exportFormVisible = false
+        if (!res.data.url) return
+        this.jnpf.downloadFile(res.data.url, res.data.name)
+      })
+    }
   }
 }
 </script>

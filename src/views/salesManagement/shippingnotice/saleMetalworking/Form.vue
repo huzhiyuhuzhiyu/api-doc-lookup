@@ -7,7 +7,7 @@
           <el-page-header @back="goBack"
             :content="btnType == 'add' ? '新建销售发货通知单' : btnType == 'edit' ? '编辑销售发货通知单' : btnType == 'qrsh' ? '确认收货' : btnType == 'copy' ? '新建销售发货通知单' : '查看销售发货通知单'" />
           <div class="options">
-            <el-button type="success" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('draft')">
+            <el-button type="success" v-if="btnType != 'look'||btnType!='file'" :loading="btnLoading" @click="handleConfirm('draft')">
               保存草稿</el-button>
             <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
               保存并提交</el-button>
@@ -24,13 +24,13 @@
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                            :disabled="btnType == 'look'||btnType=='file' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="换货标识" prop="exchangeGoodsFlag">
                           <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                            :disabled="btnType == 'look' || Flagtype" @change="changeclick">
+                            :disabled="btnType == 'look'||btnType=='file' || Flagtype" @change="changeclick">
                             <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -38,7 +38,7 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="客户名称" prop="partnerName">
-                          <el-input v-model="dataForm.partnerName" placeholder="请选择客户" :disabled="btnType == 'look'"
+                          <el-input v-model="dataForm.partnerName" placeholder="请选择客户" :disabled="btnType == 'look'||btnType=='file'"
                             readonly @focus="openDialog">
                           </el-input>
                         </el-form-item>
@@ -46,7 +46,7 @@
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="发货日期" prop="deliverDate">
                           <el-date-picker v-model="dataForm.deliverDate" placeholder="请选择发货日期" type="date"
-                            :disabled="btnType == 'look' || btnType == 'qrsh'" value-format="yyyy-MM-dd"
+                            :disabled="btnType == 'look' || btnType == 'qrsh'||btnType=='file'" value-format="yyyy-MM-dd"
                             style="width: 100%;">
                           </el-date-picker>
                         </el-form-item>
@@ -54,19 +54,19 @@
                       <el-col :sm="8" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
                         <el-form-item label="收件人" prop="recipient">
                           <el-input v-model="dataForm.recipient" placeholder="请输入收件人"
-                            :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="20" />
+                            :disabled="btnType == 'look' || btnType == 'qrsh'||btnType=='file'" maxlength="20" />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
                         <el-form-item label="收件人电话" prop="phone">
                           <el-input v-model="dataForm.phone" placeholder="请输入电话" maxlength="20"
-                            :disabled="btnType == 'look' || btnType == 'qrsh'" />
+                            :disabled="btnType == 'look' || btnType == 'qrsh'||btnType=='file'" />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="发货方式" prop="delivery">
                           <el-select v-model="dataForm.delivery" placeholder="请选择发货方式" clearable style="width: 100%;"
-                            :disabled="btnType == 'look' || btnType == 'qrsh'">
+                            :disabled="btnType == 'look' || btnType == 'qrsh'||btnType=='file'">
                             <el-option v-for="(item, index) in departMentList" :key="index" :label="item.label"
                               @click.native="changeDelivery(item.value)" :value="item.value"></el-option>
                           </el-select>
@@ -75,7 +75,7 @@
                       <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="发货状态" prop="deliveryStatus">
                           <el-select v-model="dataForm.deliveryStatus" placeholder="请选择发货状态" clearable
-                            style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                            style="width: 100%;" :disabled="btnType == 'look'||btnType=='file' ? true : false">
                             <el-option v-for="(item, index) in deliveryStatusList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -84,20 +84,20 @@
                       <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="发货完成时间" prop="deliveryCompletionDate">
                           <el-date-picker v-model="dataForm.deliveryCompletionDate" type="datetime"
-                            placeholder="请选择发货完成时间" :disabled="btnType == 'look'" style="width: 100%;" clearable>
+                            placeholder="请选择发货完成时间" :disabled="btnType == 'look'||btnType=='file'" style="width: 100%;" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="创建时间" prop="createTime">
                           <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
-                            :disabled="btnType == 'look'" style="width: 100%;" clearable>
+                            :disabled="btnType == 'look'||btnType=='file'" style="width: 100%;" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="创建人" prop="createByName">
-                          <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
+                          <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'||btnType=='file'"
                             maxlength="20" />
                         </el-form-item>
                       </el-col>
@@ -106,9 +106,9 @@
                           <template slot="label">
                             <span>地址</span>
                             <span>>></span>
-                            <el-button :disabled="btnType == 'look'" type="text" @click="changeAddress">更换地址</el-button>
+                            <el-button :disabled="btnType == 'look'||btnType=='file'" type="text" @click="changeAddress">更换地址</el-button>
                           </template>
-                          <el-input v-model="defaultAddress" readonly :disabled="btnType == 'look' || btnType == 'qrsh'"
+                          <el-input v-model="defaultAddress" readonly :disabled="btnType == 'look' || btnType == 'qrsh'||btnType=='file'"
                             type="textarea" maxlength="50" :rows="2" />
                         </el-form-item>
                       </el-col>
@@ -121,7 +121,7 @@
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                            :disabled="btnType == 'look' || btnType == 'qrsh'" type="textarea" maxlength="200"
+                            :disabled="btnType == 'look' || btnType == 'qrsh'||btnType=='file'" type="textarea" maxlength="200"
                             :rows="2" />
                         </el-form-item>
                       </el-col>
@@ -137,7 +137,7 @@
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
-                      fixedNo :hasC="btnType != 'look'" v-loading="tableloading" customKey="JNPFTableKey_392368">
+                      fixedNo :hasC="btnType != 'look'&&btnType!='file'" v-loading="tableloading" customKey="JNPFTableKey_392368">
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip
                         key="166">
                       </el-table-column>
@@ -164,7 +164,7 @@
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryQuantity'"
                             :rules='productRules.deliveryQuantity'>
                             <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
-                              :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
+                              :disabled="btnType == 'look'||btnType=='file' || btnType == 'qrsh'" maxlength="11"
                               @blur="checkNum(scope.row, scope.$index)" @input="watchnums(scope.row, scope.$index)"
                               style="width: 145px;">
                             </el-input>
@@ -195,10 +195,10 @@
                       <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" placeholder="请输入备注"
-                            :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                            :disabled="btnType == 'look' ||btnType=='file'? true : false" maxlength="200" />
                         </template>
                       </el-table-column>
-                      <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
+                      <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'&&btnType!='file'" key="24">
                         <template slot-scope="scope">
                           <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                         </template>
@@ -220,7 +220,7 @@
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
             </el-tab-pane>
-            <el-tab-pane v-if="btnType == 'look'" label="流转记录" name="transferList">
+            <el-tab-pane v-if="btnType == 'look'||btnType=='file'" label="流转记录" name="transferList">
               <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
             </el-tab-pane>
           </el-tabs>
@@ -231,13 +231,13 @@
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="单号" prop="orderNo">
                       <el-input v-model="dataForm.orderNo"
-                        :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                        :disabled="btnType == 'look' ||btnType=='file'? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="换货标识" prop="exchangeGoodsFlag">
                       <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                        :disabled="btnType == 'look' || Flagtype" @change="changeclick">
+                        :disabled="btnType == 'look'||btnType=='file' || Flagtype" @change="changeclick">
                         <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
                           :value="item.value"></el-option>
                       </el-select>
@@ -245,7 +245,7 @@
                   </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="客户名称" prop="partnerName">
-                      <el-input v-model="dataForm.partnerName" placeholder="请选择客户" :disabled="btnType == 'look'"
+                      <el-input v-model="dataForm.partnerName" placeholder="请选择客户" :disabled="btnType == 'look'||btnType=='file'"
                         readonly @focus="openDialog">
                       </el-input>
                     </el-form-item>
@@ -253,7 +253,7 @@
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="发货日期" prop="deliverDate">
                       <el-date-picker v-model="dataForm.deliverDate" placeholder="请选择发货日期" type="date"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'" value-format="yyyy-MM-dd"
+                        :disabled="btnType == 'look'||btnType=='file' || btnType == 'qrsh'" value-format="yyyy-MM-dd"
                         style="width: 100%;">
                       </el-date-picker>
                     </el-form-item>
@@ -261,13 +261,13 @@
                   <el-col :sm="8" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
                     <el-form-item label="收件人" prop="recipient">
                       <el-input v-model="dataForm.recipient" placeholder="请输入收件人"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="20" />
+                        :disabled="btnType == 'look' ||btnType=='file'|| btnType == 'qrsh'" maxlength="20" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="8" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
                     <el-form-item label="收件人电话" prop="phone">
                       <el-input v-model="dataForm.phone" placeholder="请输入电话" maxlength="20"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'" />
+                        :disabled="btnType == 'look' ||btnType=='file'|| btnType == 'qrsh'" />
                     </el-form-item>
                   </el-col>
                   <!-- <el-col :sm="6" :xs="24">
@@ -280,38 +280,38 @@
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="发货方式" prop="delivery">
                       <el-select v-model="dataForm.delivery" placeholder="请选择发货方式" clearable style="width: 100%;"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'">
+                        :disabled="btnType == 'look' ||btnType=='file'|| btnType == 'qrsh'">
                         <el-option v-for="(item, index) in departMentList" :key="index" :label="item.label"
                           @click.native="changeDelivery(item.value)" :value="item.value"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
+                  <el-col :sm="8" :xs="24" v-if="btnType == 'look'||btnType=='file'">
                     <el-form-item label="发货状态" prop="deliveryStatus">
                       <el-select v-model="dataForm.deliveryStatus" placeholder="请选择发货状态" clearable style="width: 100%;"
-                        :disabled="btnType == 'look' ? true : false">
+                        :disabled="btnType == 'look'||btnType=='file' ? true : false">
                         <el-option v-for="(item, index) in deliveryStatusList" :key="index" :label="item.label"
                           :value="item.value"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
+                  <el-col :sm="8" :xs="24" v-if="btnType == 'look'||btnType=='file'">
                     <el-form-item label="发货完成时间" prop="deliveryCompletionDate">
                       <el-date-picker v-model="dataForm.deliveryCompletionDate" type="datetime" placeholder="请选择发货完成时间"
-                        :disabled="btnType == 'look'" style="width: 100%;" clearable>
+                        :disabled="btnType == 'look'||btnType=='file'" style="width: 100%;" clearable>
                       </el-date-picker>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
+                  <el-col :sm="8" :xs="24" v-if="btnType == 'look'||btnType=='file'">
                     <el-form-item label="创建时间" prop="createTime">
                       <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
-                        :disabled="btnType == 'look'" style="width: 100%;" clearable>
+                        :disabled="btnType == 'look'||btnType=='file'" style="width: 100%;" clearable>
                       </el-date-picker>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
+                  <el-col :sm="8" :xs="24" v-if="btnType == 'look'||btnType=='file'">
                     <el-form-item label="创建人" prop="createByName">
-                      <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
+                      <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'||btnType=='file'"
                         maxlength="20" />
                     </el-form-item>
                   </el-col>
@@ -320,9 +320,9 @@
                       <template slot="label">
                         <span>地址</span>
                         <span>>></span>
-                        <el-button :disabled="btnType == 'look'" type="text" @click="changeAddress">更换地址</el-button>
+                        <el-button :disabled="btnType == 'look'||btnType=='file'" type="text" @click="changeAddress">更换地址</el-button>
                       </template>
-                      <el-input v-model="defaultAddress" readonly :disabled="btnType == 'look' || btnType == 'qrsh'"
+                      <el-input v-model="defaultAddress" readonly :disabled="btnType == 'look' ||btnType=='file'|| btnType == 'qrsh'"
                         type="textarea" maxlength="50" :rows="2" />
                     </el-form-item>
                   </el-col>
@@ -335,7 +335,7 @@
                   <el-col :sm="12" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'" type="textarea" maxlength="200" :rows="2" />
+                        :disabled="btnType == 'look' ||btnType=='file'|| btnType == 'qrsh'" type="textarea" maxlength="200" :rows="2" />
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -350,7 +350,7 @@
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                 <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData" fixedNo
-                  :hasC="btnType != 'look'" v-loading="tableloading">
+                  :hasC="btnType != 'look'&&btnType!='file'" v-loading="tableloading">
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip key="166">
                   </el-table-column>
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
@@ -374,7 +374,7 @@
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryQuantity'"
                         :rules='productRules.deliveryQuantity'>
                         <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
-                          :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
+                          :disabled="btnType == 'look' ||btnType=='file'|| btnType == 'qrsh'" maxlength="11"
                           @blur="checkNum(scope.row, scope.$index)" @input="watchnums(scope.row, scope.$index)"
                           style="width: 145px;">
                         </el-input>
@@ -391,10 +391,10 @@
                   <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.remark" placeholder="请输入备注"
-                        :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                        :disabled="btnType == 'look' ||btnType=='file'? true : false" maxlength="200" />
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
+                  <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'&&btnType!='file'" key="24">
                     <template slot-scope="scope">
                       <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                     </template>
@@ -561,7 +561,7 @@
           <span slot="footer" class="dialog-footer">
             <el-button @click="goBack">返回列表</el-button>
             <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
-            <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
+            <el-button v-else-if="btnType == 'add'" type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
           </span>
         </el-dialog>
       </div>
@@ -573,7 +573,7 @@
 import { editQuotationMsendlist, addQuotationsendlist, getQuotationsendlist, editReceiptnoticelist } from "@/api/salesManagement/index";
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getcategoryTrees, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
+import { getcategoryTrees, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList,attachmentsUpdate } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData, getAddressInfo } from '@/api/basicData/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import changeAddress from "./changeAddress.vue"
@@ -860,6 +860,8 @@ export default {
       colourFlag: '',
       bimProductAttributesList: [],
       isPairingModeSwitch: '', // 配对方式显示隐藏
+      attachmentData: {},
+
     }
   },
   computed: {
@@ -903,6 +905,7 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+   
      // 配对方式显示隐藏
      async getPairingModeSwitch(code, type) {
       try {
@@ -955,6 +958,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.attachmentData = res.data
       })
     },
     getbimProductAttributesFun() {
@@ -1527,18 +1531,22 @@ export default {
       this.oldType = JSON.parse(JSON.stringify(btnType))
       if (this.dataForm.id) {
         getQuotationsendlist(this.dataForm.id).then(res => {
-          if (res.data.attachmentList) {
+          if (res.data.attachmentList.length) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push(
                 {
                   name: item.document.fullName,
                   fileSize: item.document.fileSize,
                   filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
+                  id: item.bimAttachments.id,
+                  url: item.url,
+                  businessId:item.bimAttachments.businessId,
+                  documentId:item.bimAttachments.documentId
+                  
                 }
               )
             })
+            console.log("this.datafilelist2",this.datafilelist);
           }
           this.dataForm = res.data.notice
           this.dataForm.country = res.data.notice.country === '中国' ? 'CN' : res.data.notice.country
@@ -1559,10 +1567,10 @@ export default {
             });
             this.dataFormTwo.data = res.data.noticeLineList
             console.log("this.dataFormTwo.data", this.dataFormTwo.data);
-          } else if (this.btnType == 'edit' || this.btnType == 'look') {
+          } else if (this.btnType == 'edit' || this.btnType == 'look'||this.btnType=='file') {
             // this.dataFormTwo.data = res.data.noticeLineList
             this.processingdata(res.data.noticeLineList)
-            if (this.btnType === 'edit') {
+            if (this.btnType === 'edit'||this.btnType=='file') {
               this.getBusInfo()
             } else {
               // 流程信息和流转记录
@@ -1675,22 +1683,20 @@ export default {
           if (localStorage.getItem('loginTenant')) {
             this.dataForm.tenant = localStorage.getItem('loginTenant')
           }
-          if (this.datafilelist.length) {
+           if (this.datafilelist.length) {
+          console.log("this.datafilelist",this.datafilelist);
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: "system_attachment",
+                categoryId: this.attachmentData.configValue2,
+                configKey: this.attachmentData.configKey,
                 documentId: item.id,
                 fileFlag: '',
-                sort: index
+                sort: index,
               }
             })
           }
-          let obj1 = {
-            attachmentList: this.datafilelist,
-            id: this.dataForm.id,
-            remark: this.dataForm.remark,
-            receiptLineList: [],
-          }
+         
           let obj = {
             attachmentList: this.datafilelist,
             notice: this.dataForm,
@@ -1698,147 +1704,10 @@ export default {
             sourceNoticeList: this.btnType == 'add' ? this.dataFormTwo.data.map(item => { return { ordersId: item.ordersId, cooperativePartnerId: item.cooperativePartnerId, returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '' } }) : this.dataFormTwo.data,
             flowData: this.flowData
           }
-          this.dataFormTwo.data.forEach((item, index) => {
-            let dep1 = {
-              billStatus: item.billStatus ? item.billStatus : '',
-              calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-              deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
-              deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-              mainUnit: item.mainUnit ? item.mainUnit : '',
-              ordersId: item.ordersId,
-              notifyType: 'sale',
-              id: item.id ? item.id : '',
-              classAttribute: item.classAttribute,
-              productsId: item.productsId,
-              // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-              pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              ratio: item.ratio ? item.ratio : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              pairingModeId: item.pairingModeId ? item.pairingModeId : '',
-              remark: item.remark ? item.remark : '',
-              excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-              excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-              price: item.price ? item.price : '',
-              taxAmount: item.taxAmount ? item.taxAmount : '',
-              taxRate: item.taxRate ? item.taxRate : '',
-              totalAmount: item.totalAmount ? item.totalAmount : '',
-              returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-              sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
-              accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
-              vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
-              oil: item.oil ? item.oil : '',
-              oilQuantity: item.oilQuantity ? item.oilQuantity : '',
-              clearance: item.clearance ? item.clearance : '',
-              packagingMethod: item.packagingMethod ? item.packagingMethod : '',
-              specialRequire: item.specialRequire ? item.specialRequire : '',
-              material: item.material ? item.material : '',
-              colour: item.colour ? item.colour : '',
-              outboundQuantity:"",
-
-            }
-            obj1.receiptLineList.push(dep1)
-            if (this.btnType == 'add' || this.btnType == 'copy') {
-              let dep = {
-                calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-                deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
-                deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-                mainUnit: item.mainUnit ? item.mainUnit : '',
-                ordersId: item.ordersId,
-                notifyType: 'sale',
-                inspectionResults: 'qualified',
-                qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
-                id: '',
-              outboundQuantity:"",
-                classAttribute: item.classAttribute,
-                productsId: item.productsId,
-                ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-                pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-                ratio: item.ratio ? item.ratio : '',
-                excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-                excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-                price: item.price ? item.price : '',
-                pairingModeId: item.pairingModeId ? item.pairingModeId : '',
-                taxAmount: item.taxAmount ? item.taxAmount : '',
-                taxRate: item.taxRate ? item.taxRate : '',
-                totalAmount: item.totalAmount ? item.totalAmount : '',
-                // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-                remark: item.remark ? item.remark : '',
-                returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-                sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
-                accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
-                vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
-                oil: item.oil ? item.oil : '',
-                oilQuantity: item.oilQuantity ? item.oilQuantity : '',
-                clearance: item.clearance ? item.clearance : '',
-                packagingMethod: item.packagingMethod ? item.packagingMethod : '',
-                specialRequire: item.specialRequire ? item.specialRequire : '',
-                material: item.material ? item.material : '',
-                colour: item.colour ? item.colour : '',
-                sourceNoticeLineList: [
-                  {
-                    id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
-                    deliveryQuantity: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].deliveryQuantity : item.deliveryQuantity,
-                    ordersId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].ordersId : item.ordersId,
-                    ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-                    returnDeliveryNoticeId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].returnDeliveryNoticeId : '',
-                    returnDeliveryNoticeLineId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].returnDeliveryNoticeLineId : '',
-                  }
-                ]
-              }
-              obj.noticeLineList.push(dep)
-            } else {
-              let dep2 = {
-                billStatus: item.billStatus ? item.billStatus : '',
-                calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-                deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
-                deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-                mainUnit: item.mainUnit ? item.mainUnit : '',
-                ordersId: item.ordersId,
-                notifyType: 'sale',
-                inspectionResults: 'qualified',
-                qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
-                id: '',
-                outboundQuantity:"",
-                classAttribute: item.classAttribute,
-                productsId: item.productsId,
-                ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-                pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-                ratio: item.ratio ? item.ratio : '',
-                receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-                remark: item.remark ? item.remark : '',
-                excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-                excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-                price: item.price ? item.price : '',
-                taxAmount: item.taxAmount ? item.taxAmount : '',
-                taxRate: item.taxRate ? item.taxRate : '',
-                totalAmount: item.totalAmount ? item.totalAmount : '',
-                returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-                pairingModeId: item.pairingModeId ? item.pairingModeId : '',
-                sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
-                accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
-                vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
-                oil: item.oil ? item.oil : '',
-                oilQuantity: item.oilQuantity ? item.oilQuantity : '',
-                clearance: item.clearance ? item.clearance : '',
-                packagingMethod: item.packagingMethod ? item.packagingMethod : '',
-                specialRequire: item.specialRequire ? item.specialRequire : '',
-                material: item.material ? item.material : '',
-                colour: item.colour ? item.colour : '',
-                sourceNoticeLineList: [
-                  {
-                    id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
-                    deliveryQuantity: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].deliveryQuantity : item.deliveryQuantity,
-                    ordersId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].ordersId : item.ordersId,
-                    ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-                    returnDeliveryNoticeId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].returnDeliveryNoticeId : '',
-                    returnDeliveryNoticeLineId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].returnDeliveryNoticeLineId : '',
-                  }
-                ]
-              }
-              obj.noticeLineList.push(dep2)
-            }
-          })
+          let obj2={
+            attachmentsList: [],
+            businessId: this.dataForm.id
+          }
           this.btnLoading = true
             let formMethod = null;
             if (this.btnType == 'edit') {
@@ -1846,8 +1715,27 @@ export default {
             } else if (this.btnType == 'add' || this.btnType == 'copy') {
               obj.notice.deliveryStatus = 'undelivered'
               formMethod = addQuotationsendlist
+            }else{
+              formMethod=attachmentsUpdate
+              if(this.datafilelist.length){
+                this.datafilelist.forEach(items => {
+                  let objs={
+                      businessType: items.bimAttachments.businessType,
+                      categoryId: items.bimAttachments.categoryId,
+                      configKey: items.bimAttachments.configKey,
+                      customColumn: {},
+                      documentId: items.bimAttachments.documentId,
+                      fileFlag: items.bimAttachments.fileFlag,
+                      sort: items.bimAttachments.sort,
+                  }
+                  obj2.attachmentsList.push(objs)
+                })
+              console.log(333,this.datafilelist,obj2);
+
+              }
             }
-            formMethod(obj).then(res => {
+            if(this.btnType=='file'){
+              formMethod(obj2).then(res => {
               let msg = "";
               if (value == 'draft') {
                 this.submitmethodsTitle = "保存成功"
@@ -1858,51 +1746,21 @@ export default {
             }).catch(() => {
               this.btnLoading = false
             })
-          // let isQuantity = this.dataFormTwo.data.some((item, index) => {
-          //   return item.ordersNum && item.deliveryQuantity * 1 + item.outboundQuantity * 1 + item.undeliveredQuantity * 1 > item.ordersNum * 1
-          // })
-          // if (!this.dataForm.exchangeGoodsFlag && isQuantity) {
-          //   this.$confirm(`总发货数量大于订单数量,是否继续？`, '提示', {
-          //     confirmButtonText: '确定',
-          //     cancelButtonText: '取消',
-          //     type: 'warning'
-          //   }).then(() => {
-          //     this.btnLoading = true
-          //     let formMethod = null;
-          //     if (this.btnType == 'edit') {
-          //       formMethod = editQuotationMsendlist
-          //     } else if (this.btnType == 'add' || this.btnType == 'copy') {
-          //       obj.notice.deliveryStatus = 'undelivered'
-          //       formMethod = addQuotationsendlist
-          //     }
-          //     formMethod(obj).then(res => {
-          //       let msg = "";
-          //       if (value == 'draft') {
-          //         this.submitmethodsTitle = "保存成功"
-          //       } else if (value == 'submit') {
-          //         this.submitmethodsTitle = "提交成功"
-          //       }
-          //       this.tipsvisible = true
-          //       // this.$message({
-          //       //   message: msg,
-          //       //   type: 'success',
-          //       //   duration: 1500,
-          //       // })
-          //       // this.visible = false
-          //       // this.btnLoading = false
-          //       // this.$emit('close', true)
-          //     }).catch(() => {
-          //       this.btnLoading = false
-          //     })
-          //   }).catch(() => {
-          //     this.$message({
-          //       type: 'info',
-          //       message: '已取消'
-          //     })
-          //   })
-          // } else {
+            }else{
 
-          // }
+              formMethod(obj).then(res => {
+                let msg = "";
+                if (value == 'draft') {
+                  this.submitmethodsTitle = "保存成功"
+                } else if (value == 'submit') {
+                  this.submitmethodsTitle = "提交成功"
+                }
+                this.tipsvisible = true
+              }).catch(() => {
+                this.btnLoading = false
+              })
+            }
+           
         }
       })
     },

@@ -139,8 +139,7 @@
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text"
-                      @click.native="editPriceFun(scope.row)">修改单价</el-button>
+                <el-button size="mini" type="text" @click.native="editPriceFun(scope.row)">修改单价</el-button>
 
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">

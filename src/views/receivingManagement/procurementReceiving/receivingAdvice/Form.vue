@@ -12,13 +12,13 @@
               : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
-          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
+          <el-button v-if="mergeFlag !==1"  type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿
           </el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交
           </el-button>
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">
+          <el-button type="primary" v-if="mergeFlag !==1"  :loading="btnLoading" @click="handleConfirm('submit', 'print')">
             提交并打印
           </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -750,7 +750,8 @@ import { getbimProductAttributesListMap } from '@/api/masterDataManagement/index
 import {
   addpurPurchaseReceiptReturnGoods,
   editpurPurchaseReceiptReturnGoods,
-  getpurPurchaseReceiptReturnGoodsdetail
+  getpurPurchaseReceiptReturnGoodsdetail,
+  mergeOutOrderAdd
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getWarehouseList, getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
@@ -1062,7 +1063,8 @@ export default {
       printBrowseVisible: false,
       printVisible: false,
       standardValueFlag:"",
-      bimProductAttributesList:[]
+      bimProductAttributesList:[],
+      mergeFlag:"",
     }
   },
   computed: {
@@ -1833,15 +1835,14 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data) {
+    init(id, btnType, approvalFlag,data,mergeFlag) {
       console.log(id, '[]')
       this.dataForm.id = id || ''
-
+      this.mergeFlag=mergeFlag
       this.btnType = btnType
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
       console.log(data, 'ddd')
-      if (data != 'outInboundWarehouse') {
 
         if (data && data.length) {
           this.dataFormTwo.productData = data
@@ -1855,7 +1856,6 @@ export default {
             if(this.isXBN)this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
           })
         }
-      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -2073,6 +2073,7 @@ export default {
             inspectionResults: item.inspectionResults,
             mainUnit: item.mainUnit,
             // notificationType: item.notificationType,
+            purchaseOrderLineIds:this.mergeFlag===1?item.ids:'',
             oil: item.oil,
             oilQuantity: item.oilQuantity,
             weight: item.weight,
@@ -2125,6 +2126,7 @@ export default {
             mainUnit: item.mainUnit ? item.mainUnit : '',
             ordersId: item.ordersId,
             classAttribute: item.classAttribute,
+            purchaseOrderLineIds:this.mergeFlag===1?item.ids:'',
             id: item.id ? item.id : '',
             purchaseQuantity: item.purchaseQuantity,
             purchaseQuantity2: item.purchaseQuantity2,
@@ -2166,11 +2168,18 @@ export default {
         })
         let formMethod = null
 
-        if (this.btnType == 'edit') {
+      
+         if(this.mergeFlag==1){
+          formMethod = mergeOutOrderAdd
+
+        }else{
+
+            if (this.btnType == 'edit') {
           formMethod = editpurPurchaseReceiptReturnGoods
         } else if (this.btnType == 'add' || this.btnType == 'copy') {
           // obj.notice.deliveryStatus = 'not_returned'
           formMethod = addpurPurchaseReceiptReturnGoods
+        }
         }
         console.log(obj, 'obj')
         if(submitFlag===false) return

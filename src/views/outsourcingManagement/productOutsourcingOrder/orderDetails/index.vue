@@ -61,8 +61,8 @@
             </div>
           </div>
           <JNPF-table v-if="tableFlag" @selection-change="handeleFinshData" highlight-current-row :fixedNO="true"
-            ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column
-            :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
+            ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" show-summary
+          :summary-method="getSummaries" :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
@@ -85,8 +85,8 @@
             <el-table-column prop="proportion" label="比重" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-            <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-              :width="isDeputyUnitSwitch === '1' ? 100 : 80" />
+            <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'" min-width="140"
+              />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="receiptQuantity" label="已入库数量" min-width="130" sortable="custom" />
@@ -104,10 +104,10 @@
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
-                <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
+                <div v-if="scope.row.receivingStatus == 'not_finished'">
                   <el-tag>未完成</el-tag>
                 </div>
-                <div v-if="scope.row.receivingStatus == 'received' || scope.row.receivingStatus == 'returned'">
+                <div v-if="scope.row.receivingStatus == 'finished'">
                   <el-tag type="success">已完成</el-tag>
                 </div>
                 <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
@@ -116,8 +116,9 @@
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
-            <el-table-column label="操作" width="90" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
+                <el-button size="mini" type="text" @click.native="editPriceFun(scope.row)">修改单价</el-button>
                 <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
                   查看详情
                 </el-button>
@@ -126,14 +127,47 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="listsQuery.pageNum" :background="background"
             :limit.sync="listsQuery.pageSize" @pagination="detailData" >
-            <div class="text"><span>合计数量:{{ totalNum }}</span></div>
-          
           </pagination>
         </div>
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-
+      <el-dialog title="修改单价" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="editPriceVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+      <el-row :gutter="20">
+        <el-form ref="diaForm" :model="form" :rules="dataRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+            <el-form-item label="采购单号" prop="orderNo">
+              <el-input v-model="form.orderNo" placeholder="采购单号" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="含税单价" prop="price">
+              <el-input v-model="form.price" placeholder="含税单价"  @blur="handleCountFun()"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="税率" prop="taxRates">
+              <el-select v-model="form.taxRates" placeholder="请选择" style="width: 100%;"  @change="changeRate">
+                              <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"  
+                                :value="item.taxRate"></el-option>
+                            </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="不含税单价" prop="excludingTaxPrice">
+              <el-input v-model="form.excludingTaxPrice" placeholder="不含税单价" disabled />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+     
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editPriceVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -150,7 +184,8 @@ import {
   purPurchaseOrderExport,
   purPurchaseOrderdetail,
   purPurchaseBatch,
-  purPurchaseBatchLine
+  purPurchaseBatchLine,
+  editPrice
 } from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from '../orderList/Form.vue'
 import moment from 'moment'
@@ -171,6 +206,20 @@ export default {
 
   data() {
     return {
+      editPriceVisible:false,
+      form:{
+        orderNo:"",
+        price:"",
+        taxRates:"",
+        excludingTaxPrice:"",
+      },
+      dataRule:{
+         price: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["含税单价：不能为空", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({type: 'decimal', params: [20,4,'', (errMsg,index) => { this.$message.error(`单价：` + errMsg) }]}),  trigger: 'blur'},
+          { required: true, trigger: 'blur' },
+        ]
+      },
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -403,6 +452,7 @@ export default {
         // 'createByName'
       ],
       totalNum:0,
+      totalList:{},
     }
   },
   mounted() {
@@ -436,6 +486,66 @@ export default {
     this.detailData()
   },
   methods: {
+     editPriceFun(row){ 
+      this.editPriceVisible=true
+      this.form=row
+    },
+        changeRate(){
+      this.form.taxrate=this.form.taxRates
+      let taxrate = 1 * 1 + (this.form.taxRates) / 100 * 1
+      console.log("this.",this.form);
+      this.form.excludingTaxPrice=this.jnpf.numberFormat(this.jnpf.math('divide', [this.form.price, taxrate]), 6)
+    },
+    handleCountFun(){
+      let taxrate = 1 * 1 + (this.form.taxRates) / 100 * 1
+      this.form.excludingTaxPrice=this.jnpf.numberFormat(this.jnpf.math('divide', [this.form.price, taxrate]), 6)
+    },
+     submitFun() {
+      this.$refs['diaForm'].validate((valid) => {
+        if (valid) {
+          this.btnLoading = true
+          let  arr=[]
+          arr.push(this.form)
+          editPrice(arr).then(res => {
+            this.editPriceVisible = false
+            this.btnLoading = false
+            this.$message.success("修改单价成功")
+            this.search('basic')
+          }).catch(error => {
+            this.btnLoading = false
+          })
+        }
+      })
+    },
+       getSummaries(param) {
+      const sums = []
+      sums[0] = '合计'
+      sums[1] = ''
+      sums[2] = ''
+      sums[3] = ''
+      sums[4] = ''
+      sums[5] = ''
+      sums[6] = ''
+      sums[7] = ''
+      sums[8] = ''
+      sums[9] = ''
+      sums[10] = ''
+      sums[11] = ''
+      sums[12] = ''
+      sums[13] = this.totalList.purchaseQuantity||0
+      sums[14] = ''
+      sums[15] = ''
+      sums[16] = this.totalList.receiptQuantity||0
+      sums[17] = ''
+      sums[18] = ''
+      sums[19] = ''
+      sums[20] = ''
+      sums[21] = ''
+
+
+
+      return sums
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -610,10 +720,12 @@ export default {
           this.detailTableData = res.data.page.records||[]
           console.log(this.detailTableData)
           this.detailTableData.forEach((item) => {
+            this.$set(item,'taxRates',item.taxRate* 1)
             item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
           })
           this.total = res.data.page.total||0
-          this.totalNum=res.data.total.purchaseQuantity||0
+          this.totalList=res.data.total
+          // this.totalNum=res.data.total.purchaseQuantity||0
           this.listLoading = false
         })
         .catch(() => {

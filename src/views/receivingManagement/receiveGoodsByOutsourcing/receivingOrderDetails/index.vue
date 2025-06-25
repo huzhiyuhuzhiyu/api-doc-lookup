@@ -62,8 +62,8 @@
           </div>
 
           <JNPF-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="false" @sort-change="sortChange"
-            custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList"
-            @selection-change="handleSelectionChange" customKey="JNPFTableKey_780483">
+            custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList"show-summary
+          :summary-method="getSummaries"  @selection-change="handleSelectionChange" customKey="JNPFTableKey_780483">
             <el-table-column prop="orderNo" label="通知单单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary"
@@ -179,7 +179,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from '../receivingAdvice/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import { purPurchaseReceiptReturnGoodsDetailList,purPurchaseReceiptReturnGoodsDetailListReport } from '@/api/purchasingManagement/purchaseInquirySheet'
 import FormS from   '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import {
   getpurPurchaseReceiptReturnGoodsdetail,
@@ -378,7 +378,8 @@ export default {
           label: '备注',
           type: 'input'
         }
-      ]
+      ],
+      totalList:{}
     }
   },
   async created() {
@@ -523,18 +524,48 @@ export default {
         this.orderForm.projectId = this.userInfo.projectId
       }
       this.superForm = this.orderForm
-      purPurchaseReceiptReturnGoodsDetailList(this.superForm)
+      purPurchaseReceiptReturnGoodsDetailListReport(this.superForm)
         .then((res) => {
-          this.tableData = res.data.records
+          this.tableData = res.data.page.records||[]
           this.tableFlag = true
 
-          this.total = res.data.total
+          this.total =   res.data.page.total||0
+          this.totalList=res.data.total
           this.listLoading = false
           this.visible = false
         })
         .catch(() => {
           this.listLoading = false
         })
+    },
+        getSummaries(param) {
+      const sums = []
+      sums[0] = '合计'
+      sums[1] = ''
+      sums[2] = ''
+      sums[3] = ''
+      sums[4] = ''
+      sums[5] = ''
+      sums[6] = ''
+      sums[7] = ''
+      sums[8] = ''
+      sums[9] = ''
+      sums[10] = ''
+      sums[11] = ''
+      sums[12] = ''
+      sums[13] = ''
+      sums[14] = this.totalList.receivedQuantity ||0
+      sums[15] =this.totalList.receiptQuantity||0
+      sums[16] = ''
+      sums[17] = ''
+      sums[18] = ''
+      sums[19] = ''
+      sums[20] = ''
+      sums[21] = ''
+
+
+
+      return sums
     },
     search() {
       if (this.orderDateArr && this.orderDateArr.length > 0) {

@@ -51,6 +51,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
+              <el-button type="primary" size="mini" icon="el-icon-plus" @click="mergeOrdrFun('dataTable')">{{ btnTitle }}</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -188,6 +189,7 @@ export default {
         classAttribute: 'other',
         // extensionFlag: 1,
         // deliverQueryFlag: 1,
+        mergeFlag:0,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -293,7 +295,8 @@ export default {
           type: 'input'
         }
       ],
-      list: []
+      list: [],
+      btnTitle:"合并待收货订单",
     }
   },
   watch: {
@@ -341,6 +344,18 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    mergeOrdrFun(){
+     
+      if( this.orderForm.mergeFlag){
+         this.orderForm.mergeFlag=0
+         this.btnTitle="合并待收货订单"
+      }else{
+          this.orderForm.mergeFlag=1
+         this.btnTitle="取消合并收货"
+      }
+    this.$nextTick(() => { this.$refs.dataTable.doLayout() })
+    this.dataFormSubmit()
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
         this.materialFlag = res.data.material
@@ -570,7 +585,7 @@ export default {
       console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse')
+        this.$refs.Form.init(id, btntype, false, this.list, this.orderForm.mergeFlag)
       })
     },
     hasDifferentCooperativePartnerId(arr) {

@@ -253,3 +253,11 @@ export const delSaleHistoryRemark = (id) => {
     method: 'delete',
   })
 }
+// 附件上传
+export const attachmentsUpdate = (data) => {
+  return request({
+    url: `/api/erp/attachments/insetOrUpdate`,
+    method: 'put',
+    data
+  })
+}

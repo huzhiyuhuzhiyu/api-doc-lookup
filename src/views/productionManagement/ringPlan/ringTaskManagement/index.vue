@@ -103,6 +103,10 @@
               <el-table-column prop="productionWeight" label="生产重量" min-width="140" sortable="custom" />
               <el-table-column prop="productionBarrels" label="生产桶数" min-width="140" sortable="custom" />
             </template>
+            <template v-if="isJR || isXY">
+              <el-table-column prop="wireHeatNumber" label="钢丝炉号" min-width="140"  />
+              <el-table-column prop="rawStockMill" label="原材料厂家" min-width="140"  />
+            </template>
             <el-table-column prop="prodSchedule" label="完成进度" min-width="140">
               <template slot-scope="scope">
                 <el-progress

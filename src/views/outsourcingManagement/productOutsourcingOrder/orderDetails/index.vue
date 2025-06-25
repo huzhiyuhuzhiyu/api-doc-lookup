@@ -43,7 +43,7 @@
             <div>
               <!-- <el-button :loading="btnLoading" size="mini" type="danger" @click="handleBatchStop()">批量停止</el-button> -->
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('detailTableData')">
-                导出
+                导出123
               </el-button>
             </div>
             <div class="JNPF-common-head-right">
@@ -61,8 +61,8 @@
             </div>
           </div>
           <JNPF-table v-if="tableFlag" @selection-change="handeleFinshData" highlight-current-row :fixedNO="true"
-            ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column
-            :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
+            ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" show-summary
+          :summary-method="getSummaries" :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
@@ -85,8 +85,8 @@
             <el-table-column prop="proportion" label="比重" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-            <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-              :width="isDeputyUnitSwitch === '1' ? 100 : 80" />
+            <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'" min-width="140"
+              />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="receiptQuantity" label="已入库数量" min-width="130" sortable="custom" />
@@ -104,10 +104,10 @@
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
-                <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
+                <div v-if="scope.row.receivingStatus == 'not_finished'">
                   <el-tag>未完成</el-tag>
                 </div>
-                <div v-if="scope.row.receivingStatus == 'received' || scope.row.receivingStatus == 'returned'">
+                <div v-if="scope.row.receivingStatus == 'finished'">
                   <el-tag type="success">已完成</el-tag>
                 </div>
                 <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
@@ -126,8 +126,6 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="listsQuery.pageNum" :background="background"
             :limit.sync="listsQuery.pageSize" @pagination="detailData" >
-            <div class="text"><span>合计数量:{{ totalNum }}</span></div>
-          
           </pagination>
         </div>
       </div>
@@ -403,6 +401,7 @@ export default {
         // 'createByName'
       ],
       totalNum:0,
+      totalList:{},
     }
   },
   mounted() {
@@ -436,6 +435,35 @@ export default {
     this.detailData()
   },
   methods: {
+       getSummaries(param) {
+      const sums = []
+      sums[0] = '合计'
+      sums[1] = ''
+      sums[2] = ''
+      sums[3] = ''
+      sums[4] = ''
+      sums[5] = ''
+      sums[6] = ''
+      sums[7] = ''
+      sums[8] = ''
+      sums[9] = ''
+      sums[10] = ''
+      sums[11] = ''
+      sums[12] = ''
+      sums[13] = this.totalList.purchaseQuantity||0
+      sums[14] = ''
+      sums[15] = ''
+      sums[16] = this.totalList.receiptQuantity||0
+      sums[17] = ''
+      sums[18] = ''
+      sums[19] = ''
+      sums[20] = ''
+      sums[21] = ''
+
+
+
+      return sums
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -613,7 +641,8 @@ export default {
             item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
           })
           this.total = res.data.page.total||0
-          this.totalNum=res.data.total.purchaseQuantity||0
+          this.totalList=res.data.total
+          // this.totalNum=res.data.total.purchaseQuantity||0
           this.listLoading = false
         })
         .catch(() => {

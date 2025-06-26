@@ -140,7 +140,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <AttributeDictionaryMain :sm="6" :formData.sync="dataForm" :btnType="btnType"  :moduleConfig="'produce'" />
+                      <!-- <AttributeDictionaryMain :sm="6" :formData.sync="dataForm" :btnType="btnType"  :moduleConfig="'produce'" /> -->
                       <el-col :sm="6" :xs="24" v-if="isXY || isJR">
                         <el-form-item  label="钢丝炉号" >
                             <el-input v-model="dataForm.wireHeatNumber" placeholder="请输入钢丝炉号" maxlength="50" ></el-input>

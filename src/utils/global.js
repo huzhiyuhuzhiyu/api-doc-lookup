@@ -6,8 +6,8 @@ const global = {
   documentStatusList: [
     {label: '草稿', value: 'draft', type: 'warning'},
     {label: '提交', value: 'submit', type: 'success'},
-    {label: '撤回', value: 'back'},
-    {label: '关单', value: 'close'},
+    {label: '撤回', value: 'back',type:"danger"},
+    {label: '关单', value: 'close',type:"danger"},
   ],
   // 审批状态
   approvalStateList: [

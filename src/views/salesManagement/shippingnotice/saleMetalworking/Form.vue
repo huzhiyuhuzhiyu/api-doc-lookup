@@ -1567,7 +1567,7 @@ export default {
             });
             this.dataFormTwo.data = res.data.noticeLineList
             console.log("this.dataFormTwo.data", this.dataFormTwo.data);
-          } else if (this.btnType == 'edit' || this.btnType == 'look'||this.btnType=='file') {
+          } else {
             // this.dataFormTwo.data = res.data.noticeLineList
             this.processingdata(res.data.noticeLineList)
             if (this.btnType === 'edit'||this.btnType=='file') {
@@ -1704,6 +1704,147 @@ export default {
             sourceNoticeList: this.btnType == 'add' ? this.dataFormTwo.data.map(item => { return { ordersId: item.ordersId, cooperativePartnerId: item.cooperativePartnerId, returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '' } }) : this.dataFormTwo.data,
             flowData: this.flowData
           }
+          this.dataFormTwo.data.forEach((item, index) => {
+            let dep1 = {
+              billStatus: item.billStatus ? item.billStatus : '',
+              calculationDirection: item.calculationDirection ? item.calculationDirection : '',
+              deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
+              deputyUnit: item.deputyUnit ? item.deputyUnit : '',
+              mainUnit: item.mainUnit ? item.mainUnit : '',
+              ordersId: item.ordersId,
+              notifyType: 'sale',
+              id: item.id ? item.id : '',
+              classAttribute: item.classAttribute,
+              productsId: item.productsId,
+              // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
+              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+              pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
+              ratio: item.ratio ? item.ratio : '',
+              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+              pairingModeId: item.pairingModeId ? item.pairingModeId : '',
+              remark: item.remark ? item.remark : '',
+              excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+              excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+              price: item.price ? item.price : '',
+              taxAmount: item.taxAmount ? item.taxAmount : '',
+              taxRate: item.taxRate ? item.taxRate : '',
+              totalAmount: item.totalAmount ? item.totalAmount : '',
+              returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
+              sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
+              accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
+              vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
+              oil: item.oil ? item.oil : '',
+              oilQuantity: item.oilQuantity ? item.oilQuantity : '',
+              clearance: item.clearance ? item.clearance : '',
+              packagingMethod: item.packagingMethod ? item.packagingMethod : '',
+              specialRequire: item.specialRequire ? item.specialRequire : '',
+              material: item.material ? item.material : '',
+              colour: item.colour ? item.colour : '',
+              outboundQuantity:"",
+
+            }
+            // obj1.receiptLineList.push(dep1)
+            if (this.btnType == 'add' || this.btnType == 'copy') {
+              let dep = {
+                calculationDirection: item.calculationDirection ? item.calculationDirection : '',
+                deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
+                deputyUnit: item.deputyUnit ? item.deputyUnit : '',
+                mainUnit: item.mainUnit ? item.mainUnit : '',
+                ordersId: item.ordersId,
+                notifyType: 'sale',
+                inspectionResults: 'qualified',
+                qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
+                id: '',
+              outboundQuantity:"",
+                classAttribute: item.classAttribute,
+                productsId: item.productsId,
+                ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+                pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
+                ratio: item.ratio ? item.ratio : '',
+                excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+                excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+                price: item.price ? item.price : '',
+                pairingModeId: item.pairingModeId ? item.pairingModeId : '',
+                taxAmount: item.taxAmount ? item.taxAmount : '',
+                taxRate: item.taxRate ? item.taxRate : '',
+                totalAmount: item.totalAmount ? item.totalAmount : '',
+                // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+                remark: item.remark ? item.remark : '',
+                returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
+                sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
+                accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
+                vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
+                oil: item.oil ? item.oil : '',
+                oilQuantity: item.oilQuantity ? item.oilQuantity : '',
+                clearance: item.clearance ? item.clearance : '',
+                packagingMethod: item.packagingMethod ? item.packagingMethod : '',
+                specialRequire: item.specialRequire ? item.specialRequire : '',
+                material: item.material ? item.material : '',
+                colour: item.colour ? item.colour : '',
+                sourceNoticeLineList: [
+                  {
+                    id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
+                    deliveryQuantity: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].deliveryQuantity : item.deliveryQuantity,
+                    ordersId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].ordersId : item.ordersId,
+                    ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+                    returnDeliveryNoticeId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].returnDeliveryNoticeId : '',
+                    returnDeliveryNoticeLineId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].returnDeliveryNoticeLineId : '',
+                  }
+                ]
+              }
+              obj.noticeLineList.push(dep)
+            } else {
+              let dep2 = {
+                billStatus: item.billStatus ? item.billStatus : '',
+                calculationDirection: item.calculationDirection ? item.calculationDirection : '',
+                deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
+                deputyUnit: item.deputyUnit ? item.deputyUnit : '',
+                mainUnit: item.mainUnit ? item.mainUnit : '',
+                ordersId: item.ordersId,
+                notifyType: 'sale',
+                inspectionResults: 'qualified',
+                qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
+                id: '',
+                outboundQuantity:"",
+                classAttribute: item.classAttribute,
+                productsId: item.productsId,
+                ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+                pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
+                ratio: item.ratio ? item.ratio : '',
+                receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+                remark: item.remark ? item.remark : '',
+                excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+                excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+                price: item.price ? item.price : '',
+                taxAmount: item.taxAmount ? item.taxAmount : '',
+                taxRate: item.taxRate ? item.taxRate : '',
+                totalAmount: item.totalAmount ? item.totalAmount : '',
+                returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
+                pairingModeId: item.pairingModeId ? item.pairingModeId : '',
+                sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
+                accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
+                vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
+                oil: item.oil ? item.oil : '',
+                oilQuantity: item.oilQuantity ? item.oilQuantity : '',
+                clearance: item.clearance ? item.clearance : '',
+                packagingMethod: item.packagingMethod ? item.packagingMethod : '',
+                specialRequire: item.specialRequire ? item.specialRequire : '',
+                material: item.material ? item.material : '',
+                colour: item.colour ? item.colour : '',
+                sourceNoticeLineList: [
+                  {
+                    id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
+                    deliveryQuantity: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].deliveryQuantity : item.deliveryQuantity,
+                    ordersId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].ordersId : item.ordersId,
+                    ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+                    returnDeliveryNoticeId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].returnDeliveryNoticeId : '',
+                    returnDeliveryNoticeLineId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].returnDeliveryNoticeLineId : '',
+                  }
+                ]
+              }
+              obj.noticeLineList.push(dep2)
+            }
+          })
           let obj2={
             attachmentsList: [],
             businessId: this.dataForm.id

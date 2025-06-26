@@ -7,7 +7,7 @@
           <el-page-header @back="goBack"
             :content="btnType == 'add' ? '新建销售发货通知单' : btnType == 'edit' ? '编辑销售发货通知单' : btnType == 'qrsh' ? '确认收货' : btnType == 'copy' ? '新建销售发货通知单' : '查看销售发货通知单'" />
           <div class="options">
-            <el-button type="success" v-if="btnType != 'look'||btnType!='file'" :loading="btnLoading" @click="handleConfirm('draft')">
+            <el-button type="success" v-if="btnType != 'look'&&btnType!='file'" :loading="btnLoading" @click="handleConfirm('draft')">
               保存草稿</el-button>
             <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
               保存并提交</el-button>
@@ -1607,7 +1607,7 @@ export default {
                 }
               )
             })
-            console.log("this.datafilelist2",this.datafilelist);
+            console.log("初始附件值",this.datafilelist);
           }
           this.dataForm = res.data.notice
           this.dataForm.country = res.data.notice.country === '中国' ? 'CN' : res.data.notice.country
@@ -1751,7 +1751,7 @@ export default {
                 businessType: "system_attachment",
                 categoryId: this.attachmentData.configValue2,
                 configKey: this.attachmentData.configKey,
-                documentId: item.id,
+                documentId:item.documentId?item.documentId:item.id,
                 fileFlag: '',
                 sort: index,
               }
@@ -1791,7 +1791,7 @@ export default {
                   }
                   obj2.attachmentsList.push(objs)
                 })
-              console.log(333,this.datafilelist,obj2);
+              console.log(333,obj2);
 
               }
             }

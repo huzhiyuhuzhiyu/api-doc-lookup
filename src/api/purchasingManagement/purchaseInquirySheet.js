@@ -240,7 +240,14 @@ export function addpurPurchaseReceiptReturnGoods(data) {
     data
   })
 }
-
+// 新增(新)
+export function addpurPurchaseReceiptReturnGoodsNew(data) {
+  return request({
+    url: `/api/erp/purPurchaseReceiptReturnGoods/out/add`,
+    method: 'post',
+    data
+  })
+}
 // 修改
 export function editpurPurchaseReceiptReturnGoods(data) {
   return request({
@@ -482,6 +489,16 @@ export function revokePurPurchaseReceiptReturnGoods(data) {
   return request({
     url: `/api/erp/purPurchaseReceiptReturnGoods/revoke`,
     method: 'post',
+    data,
+  })
+}
+
+
+// 采购、外协待对账更新核对状态
+export function updateCheckStatusApi(data) {
+  return request({
+    url: `/api/wms/stock/move/bill/update/checkStatus`,
+    method: 'put',
     data,
   })
 }

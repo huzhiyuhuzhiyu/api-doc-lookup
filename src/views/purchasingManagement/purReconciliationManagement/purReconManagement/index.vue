@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
 
           <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4">
+            <el-col :span="item.searchType === 3 ? 5 : 3">
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                   @keyup.enter.native="search('basic')" />
@@ -46,6 +46,7 @@
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购对账</el-button>
+            <el-button size="mini" type="primary" @click="updateCheckStatusFun()">更新核对状态</el-button>
             <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
@@ -125,6 +126,13 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="checkStatus" label="核对状态" min-width="140" sortable="custom"
+              :showOverflowTooltip="false" align="center">
+              <template slot-scope="scope">
+                <div v-if="scope.row.checkStatus == 'unchecked'"><el-tag type="warning">未核对</el-tag> </div>
+                <div v-if="scope.row.checkStatus == 'checked'"><el-tag type="success">已核对</el-tag></div>
+              </template>
+            </el-table-column>
           <el-table-column prop="stockMoveOrderDate" label="单据日期" min-width="180" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
@@ -155,12 +163,14 @@
     <orderDetailForm v-if="orderVisible" ref="orderRef" @close="closeFun"></orderDetailForm>
     <deliveryNoteDetailForm v-if="deliveryNoteVisible" ref="deliveryNoteRef" @close="closeFun"></deliveryNoteDetailForm>
     <purchaseTH v-if="purchaseTHVisible" ref="purchaseTHRef" @close="closeFun"></purchaseTH>
+    
   </div>
 </template>
 
 <script>
 import { getsalefinAccountList } from '@/api/ReconciliaRePayments/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import {updateCheckStatusApi} from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
@@ -193,6 +203,11 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: 'like', searchType: 4, width: 120,options: [
+            { label: "未核对", value: "unchecked" },
+            { label: "已核对", value: "checked" }, 
+          ] },
+         
       ],
       superForm: {},
       columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
@@ -205,6 +220,7 @@ export default {
       formVisible: false,
       listLoading: false,
       listQuery: {
+        checkStatus:"",
         orderItems: [
           {
             asc: false,
@@ -304,6 +320,18 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
+         {
+          prop: 'checkStatus',
+          label: "核对状态",
+          type: 'select',
+
+          options: [
+            { label: "未核对", value: "unchecked" },
+            { label: "已核对", value: "checked" }, 
+          ]
+
+        },
+          
         {
           prop: 'createTime',
           label: '创建时间',
@@ -349,7 +377,7 @@ export default {
         searchType: 1,
         width: 120
       })
-      this.superQueryJson.splice(4, 0, {
+      this.superQueryJson.splice(2, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
@@ -359,6 +387,27 @@ export default {
     this.initData()
   },
   methods: {
+    updateCheckStatusFun(){
+      if(!this.selectData.length) return this.$message.error("请选择您要更新的数据！")
+      this.$confirm("您确定要更新所选数据的核对状态为已核对吗？", this.$t('提示'), {
+        type: 'warning'
+      }).then(() => {
+        let idArray = this.selectData.map(item => item.id);
+        let obj={
+          ids:idArray,
+          checkStatus:"checked",
+        }
+        updateCheckStatusApi(obj).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "更新成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+
+    },
     closeFun(){
       this.orderVisible = false
       this.deliveryNoteVisible=false
@@ -440,7 +489,8 @@ export default {
           exportType: '1204',
           exportName: '出入库对账',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+          negativeFlag:true,
         }
         excelExport(_data)
           .then((res) => {
@@ -578,6 +628,7 @@ export default {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
 
       this.listQuery = {
+        checkStatus:"",
         orderItems: [
           {
             asc: false,

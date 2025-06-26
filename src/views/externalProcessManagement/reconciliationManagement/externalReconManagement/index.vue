@@ -42,6 +42,7 @@
         <div class="JNPF-common-head">
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成外协对账</el-button>
+            <el-button size="mini" type="primary" @click="updateCheckStatusFun()">更新核对状态</el-button>
             <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
@@ -139,6 +140,13 @@
               </div>
             </template>
           </el-table-column>
+            <el-table-column prop="checkStatus" label="核对状态" min-width="140" sortable="custom"
+              :showOverflowTooltip="false" align="center">
+              <template slot-scope="scope">
+                <div v-if="scope.row.checkStatus == 'unchecked'"><el-tag type="warning">未核对</el-tag> </div>
+                <div v-if="scope.row.checkStatus == 'checked'"><el-tag type="success">已核对</el-tag></div>
+              </template>
+            </el-table-column>
           <el-table-column prop="stockMoveOrderDate" label="单据日期" min-width="180" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
@@ -166,6 +174,7 @@
 </template>
 
 <script>
+import {updateCheckStatusApi} from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getsalefinAccountList } from '@/api/ReconciliaRePayments/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import orderDetailForm from '@/views/outsourcingManagement/productOutsourcingOrder/orderList/Form.vue'
@@ -202,7 +211,11 @@ export default {
           symbol: 'like',
           searchType: 1,
           width: 120
-        }
+        },
+          { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: 'like', searchType: 4, width: 120,options: [
+            { label: "未核对", value: "unchecked" },
+            { label: "已核对", value: "checked" }, 
+          ] },
       ],
       superForm: {},
       columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
@@ -286,8 +299,27 @@ export default {
           label: '单位',
           type: 'input'
         },
+         {
+          prop: 'stockMoveOrderDate',
+          label: '单据日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
 
+     {
+          prop: 'checkStatus',
+          label: "核对状态",
+          type: 'select',
 
+          options: [
+            { label: "未核对", value: "unchecked" },
+            { label: "已核对", value: "checked" }, 
+          ]
+
+        },
         {
           prop: 'taxRate',
           label: '税率(%)',
@@ -349,7 +381,28 @@ export default {
     this.initData()
   },
   methods: {
-        closeFun(){
+    updateCheckStatusFun(){
+      if(!this.selectData.length) return this.$message.error("请选择您要更新的数据！")
+      this.$confirm("您确定要更新所选数据的核对状态为已核对吗？", this.$t('提示'), {
+        type: 'warning'
+      }).then(() => {
+        let idArray = this.selectData.map(item => item.id);
+        let obj={
+          ids:idArray,
+          checkStatus:"checked",
+        }
+        updateCheckStatusApi(obj).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "更新成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+
+    },
+    closeFun(){
       this.orderVisible = false
       this.deliveryNoteVisible=false
 
@@ -420,9 +473,10 @@ export default {
         let _data = {
           ...query,
           exportType: '1204',
-          exportName: '出入库对账',
+          exportName: '采购出入库对账',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+          negativeFlag:true,
         }
         excelExport(_data)
           .then((res) => {

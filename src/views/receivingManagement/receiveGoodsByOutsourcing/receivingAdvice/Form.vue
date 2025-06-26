@@ -521,7 +521,8 @@ import {
   addpurPurchaseReceiptReturnGoods,
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail,
-  mergeOutOrderAdd
+  mergeOutOrderAdd,
+  addpurPurchaseReceiptReturnGoodsNew
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
@@ -1760,7 +1761,7 @@ export default {
           if (this.btnType == 'edit') {
             formMethod = editpurPurchaseReceiptReturnGoods
           } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            formMethod = addpurPurchaseReceiptReturnGoods
+            formMethod = addpurPurchaseReceiptReturnGoodsNew
           }
         }
         console.log(obj, 'ohh')

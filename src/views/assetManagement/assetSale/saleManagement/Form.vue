@@ -30,12 +30,12 @@
                               disabled />
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24" >
+                        <!-- <el-col :sm="6" :xs="24" >
                           <el-form-item label="资产编码" prop="propertyCode">
                             <el-input v-model="dataForm.propertyCode" placeholder="请输入资产编码"
                               disabled />
                           </el-form-item>
-                        </el-col>
+                        </el-col> -->
                
                         <el-col :sm="6" :xs="24" >
                           <el-form-item label="资产名称" prop="propertyName">
@@ -128,19 +128,24 @@
                         </el-col> 
                         <el-col :sm="6" :xs="24"  v-if="operateType=='approve'">
                           <el-form-item label="金额(含税)" prop="totalAmount">
-                            <el-input v-model="dataForm.totalAmount" placeholder="请输入备注"
+                            <el-input v-model="dataForm.totalAmount" placeholder="请输入金额(含税)" @blur="handle"
                                type="text"  />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24"  v-if="operateType=='approve'">
                           <el-form-item label="税率(%)" prop="tax">
-                            <el-select v-model="dataForm.tax" placeholder="请选择" style="width: 100%;" >
+                            <el-select v-model="dataForm.tax" placeholder="请选择" style="width: 100%;" @change="changeTax">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" 
                                 :value="item.taxRate"></el-option>
                             </el-select>
                           </el-form-item>
                         </el-col>
-                    
+                        <el-col :sm="6" :xs="24"  v-if="operateType=='approve'">
+                          <el-form-item label="金额(不含税)" prop="excludingTaxAmount">
+                            <el-input v-model="dataForm.excludingTaxAmount" placeholder="请输入金额(不含税)" disabled
+                               type="text"  />
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24" v-if="operateType=='approve'">
                           <el-form-item label="状态" prop="state">
                             <el-select v-model="dataForm.state" placeholder="请选择" style="width: 100%;" >
@@ -282,7 +287,7 @@ export default {
         cooperativePartnerId:"",
         remark:"",
         orderStatus:"toBeAgreed",
-        
+        excludingTaxAmount:"",
       },
       width1: 400,
       width: 700, 
@@ -335,6 +340,16 @@ export default {
   },
 
   methods: {
+    handle(){
+      if(!this.dataForm.tax) return
+      this.dataForm.excludingTaxAmount= this.jnpf.numberFormat(this.jnpf.math('divide', [this.dataForm.totalAmount, 1+(this.dataForm.tax*1)/100]), 6)
+
+    },
+    changeTax(){
+      if(!this.dataForm.totalAmount) return
+      this.dataForm.excludingTaxAmount= this.jnpf.numberFormat(this.jnpf.math('divide', [this.dataForm.totalAmount, 1+(this.dataForm.tax*1)/100]), 6)
+
+    },
     getProductClassFun() {
     
     // 获取税率(数据字典)

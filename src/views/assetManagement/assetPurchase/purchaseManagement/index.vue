@@ -69,6 +69,11 @@
           <el-table-column prop="projectName" label="所属项目" min-width="180" sortable="custom" />
           <el-table-column prop="code" label="资产编码" min-width="180" sortable="custom" />
           <el-table-column prop="name" label="资产名称" min-width="180" sortable="custom" />
+          <el-table-column prop="num" label="数量" min-width="180" sortable="custom" />
+          <el-table-column prop="price" label="单价" min-width="180" sortable="custom" />
+          <el-table-column prop="tax" label="税率" min-width="180" sortable="custom" />
+          <el-table-column prop="totalAmount" label="金额(含税)" min-width="180" sortable="custom" />
+          <el-table-column prop="excludingTaxAmount" label="金额(不含税)" min-width="180" sortable="custom" />
           <el-table-column prop="propertyCategoryName" label="分类" min-width="180" sortable="custom" />
           <el-table-column prop="userTime" label="投入使用日期" min-width="180" sortable="custom" />
           <el-table-column prop="ownerName" label="资产管理员" min-width="180" sortable="custom" />
@@ -87,7 +92,8 @@
               <div v-if="scope.row.billStatus == 'in_bill'"><el-tag type="warning">对账中</el-tag></div>
             </template>
           </el-table-column>
-          <el-table-column prop="createByName" label="申请人" min-width="150" sortable="custom" />
+          <el-table-column prop="position" label="资产常用位置" min-width="150" sortable="custom" />
+          <el-table-column prop="userDepartmentName" label="使用部门" min-width="150" sortable="custom" />
           <el-table-column prop="approvalUserName" label="审批人" min-width="180" sortable="custom" />
           <el-table-column prop="approvalInstructions" label="审批说明" min-width="180" sortable="custom" />
           <el-table-column prop="confirmReceiptInstructions" label="确认接受说明" min-width="180" sortable="custom" />

@@ -24,7 +24,6 @@
           </template>
           <el-col :span="5">
             <el-form-item>
-          
 
                 <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd"
                 style="width: 100%;" start-placeholder="单据开始日期" end-placeholder="单据结束日期"></el-date-picker>
@@ -203,7 +202,7 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: 'like', searchType: 4, width: 120,options: [
+        { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: '==', searchType: 4, width: 120,options: [
             { label: "未核对", value: "unchecked" },
             { label: "已核对", value: "checked" }, 
           ] },
@@ -369,7 +368,7 @@ export default {
     }
 
     if (this.isProductNameSwitch === '1') {
-      this.searchList.push({
+      this.searchList.splice(2,0,{
         field: 'productName',
         fieldValue: '',
         label: '产品名称',
@@ -377,7 +376,7 @@ export default {
         searchType: 1,
         width: 120
       })
-      this.superQueryJson.splice(2, 0, {
+      this.superQueryJson.splice(3, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
@@ -653,7 +652,26 @@ export default {
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+           { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: '==', searchType: 4, width: 120,options: [
+            { label: "未核对", value: "unchecked" },
+            { label: "已核对", value: "checked" }, 
+          ] },
       ]
+         if (this.isProductNameSwitch === '1') {
+      this.searchList.splice(2,0,{
+        field: 'productName',
+        fieldValue: '',
+        label: '产品名称',
+        symbol: 'like',
+        searchType: 1,
+        width: 120
+      })
+      this.superQueryJson.splice(3, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
       this.superForm = JSON.parse(JSON.stringify(this.listQuery))
       this.$refs.SuperQuery.conditionList = []
       this.search('basic')

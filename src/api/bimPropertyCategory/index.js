@@ -505,3 +505,13 @@ export function equEquipmentBatchReturn(data) {
     data 
   })
 }
+
+// 资产同步到设备工具
+
+export function bimPropertySynchronous(data) {
+  return request({
+    url: `/api/zgt/bimProperty/batch/synchronous`,
+    method: 'post',
+    data 
+  })
+}

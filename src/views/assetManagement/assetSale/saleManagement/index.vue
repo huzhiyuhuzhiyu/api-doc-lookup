@@ -60,8 +60,9 @@
           <el-table-column prop="propertyCode" label="资产编码" width="160" sortable="custom" />
           <el-table-column prop="propertySpec" label="资产规格" width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerName" label="客户名称" width="250" sortable="custom" />
-          <el-table-column prop="totalAmount" label="金额" width="140" sortable="custom" />
           <el-table-column prop="tax" label="税率" width="100" sortable="custom" />
+          <el-table-column prop="totalAmount" label="金额(含税)" width="140" sortable="custom" />
+          <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" sortable="custom" />
           <el-table-column prop="propertyCategoryName" label="分类" width="120" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" />
           <el-table-column prop="createByName" label="申请人" width="120" sortable="custom" />

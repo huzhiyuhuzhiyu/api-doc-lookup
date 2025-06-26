@@ -24,18 +24,26 @@
                   <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                     <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                       <el-row :gutter="30" class="custom-row">
+                        <el-col :span="6" v-if="abProjectSwitchVisible" >
+                          <el-form-item label="所属项目" prop="projectId">
+                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable :disabled="btnType=='look'">
+                              <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
+                                :value="item.id"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="资产分类" prop="propertyCategoryName">
                             <el-input v-model="dataForm.propertyCategoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24" >
+                        <!-- <el-col :sm="6" :xs="24" >
                           <el-form-item label="资产编码" prop="code">
                             <el-input v-model="dataForm.code" placeholder="请输入资产编码"
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
-                        </el-col>
+                        </el-col> -->
                
                         <el-col :sm="6" :xs="24" >
                           <el-form-item label="资产名称" prop="name">
@@ -49,15 +57,15 @@
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
                         </el-col>
-  
-                        <el-col :span="6" v-if="abProjectSwitchVisible" >
-                          <el-form-item label="所属项目" prop="projectId">
-                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable :disabled="btnType=='look'">
-                              <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
-                                :value="item.id"></el-option>
+                        <el-col :span="6"  >
+                          <el-form-item label="单位" prop="unit">
+                            <el-select v-model="dataForm.unit" placeholder="请选择单位" style="width: 100%;"  :disabled="btnType=='look'">
+                              <el-option v-for="item in unitList" :key="item.id" :label="item.label"
+                                :value="item.value"></el-option>
                             </el-select>
                           </el-form-item>
                         </el-col>
+                        
                 
                  
                         <el-col :sm="6" :xs="24">
@@ -78,7 +86,24 @@
                                 </user-select>
                           </el-form-item>
                         </el-col>
-                    
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="资产常用位置" prop="position">
+                            <el-input v-model="dataForm.position" placeholder="请输入资产常用位置"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="使用部门" prop="organizeIdTree" v-if="btnType=='add'">
+                              <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织"
+                                :disabled="btnType=='look'"  @change="onOrganizeChange"
+                                clearable auth />
+                          </el-form-item>
+                       
+                            <el-form-item label="使用部门" prop="userDepartmentName" v-if="btnType=='look'">
+                            <el-input v-model="dataForm.userDepartmentName" placeholder="请输入使用部门" type="text"   :disabled="btnType=='look'"/>
+                             
+                          </el-form-item>
+                        </el-col>
                       
                         <el-col :sm="6" :xs="24" >
                        
@@ -94,17 +119,35 @@
                           </el-form-item>
                         </el-col> 
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="金额(含税)" prop="totalAmount">
-                            <el-input v-model="dataForm.totalAmount" placeholder="请输入备注"
-                              :disabled="btnType == 'look' ? true : false" type="text"  />
+                          <el-form-item label="数量" prop="num">
+                            <el-input v-model="dataForm.num" placeholder="请输入数量"
+                              :disabled="btnType == 'look' ? true : false" type="text"  @blur="handle"/>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="单价" prop="price">
+                            <el-input v-model="dataForm.price" placeholder="请输入单价"
+                              :disabled="btnType == 'look' ? true : false" type="text"  @blur="handle"/>
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="税率(%)" prop="tax">
-                            <el-select v-model="dataForm.tax" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                            <el-select v-model="dataForm.tax" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false"  @change="changeTax">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" 
                                 :value="item.taxRate"></el-option>
                             </el-select>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="金额(含税)" prop="totalAmount">
+                            <el-input v-model="dataForm.totalAmount" placeholder="请输入金额(含税)"
+                              disabled type="text"  />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="金额(不含税)" prop="excludingTaxAmount">
+                            <el-input v-model="dataForm.excludingTaxAmount" placeholder="请输入金额(不含税)"
+                              disabled type="text"  />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" v-if="operateType=='approve'">
@@ -175,6 +218,7 @@ import {getbimProductAttributes} from "@/api/masterDataManagement/index";
  
 import { mapGetters, mapState } from 'vuex' 
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import { getUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 export default {
   mixins: [AbProjectMixin],
 
@@ -248,6 +292,15 @@ export default {
         orderStatus:"toBeAgreed",
         tax:"",
         state:"",
+
+        position:"",
+        num:"",
+        price:"",
+        totalAmount:"",
+        excludingTaxAmount:"",
+        organizeIdTree:"",
+        userDepartmentId:"",
+        userDepartmentName:"",
       },
       width1: 400,
       width: 700, 
@@ -262,45 +315,45 @@ export default {
         propertyCategoryName: [
           { required: true, message: '资产分类不能为空', trigger: 'change' }
         ],
-        code: [
-          { required: true, message: '资产编码不能为空', trigger: 'change' },
-          {
-            validator: (rule, value, callback) => {
-              if (!value) {
-                callback()
-              } else if (this.dataForm.code === this.autoCode) {
-                callback()
-              } else {
-                if (this.dataForm.id) {
-                  checkPropertyPurchaseOrderCode({id:this.dataForm.id,code:value})
-                    .then((res) => {
-                      if (!res.data) {
-                        callback()
-                      } else {
-                        callback(new Error('此类型编码已存在'))
-                      }
-                    })
-                    .catch((err) => {
-                      callback(new Error(' '))
-                    })
-                } else {
-                  checkPropertyPurchaseOrderCode({id:'',code:value})
-                    .then((res) => {
-                      if (!res.data) {
-                        callback()
-                      } else {
-                        callback(new Error('此类型编码已存在'))
-                      }
-                    })
-                    .catch((err) => {
-                      callback(new Error(' '))
-                    })
-                }
-              }
-            },
-            trigger: 'blur'
-          }
-        ],
+        // code: [
+        //   { required: true, message: '资产编码不能为空', trigger: 'change' },
+        //   {
+        //     validator: (rule, value, callback) => {
+        //       if (!value) {
+        //         callback()
+        //       } else if (this.dataForm.code === this.autoCode) {
+        //         callback()
+        //       } else {
+        //         if (this.dataForm.id) {
+        //           checkPropertyPurchaseOrderCode({id:this.dataForm.id,code:value})
+        //             .then((res) => {
+        //               if (!res.data) {
+        //                 callback()
+        //               } else {
+        //                 callback(new Error('此类型编码已存在'))
+        //               }
+        //             })
+        //             .catch((err) => {
+        //               callback(new Error(' '))
+        //             })
+        //         } else {
+        //           checkPropertyPurchaseOrderCode({id:'',code:value})
+        //             .then((res) => {
+        //               if (!res.data) {
+        //                 callback()
+        //               } else {
+        //                 callback(new Error('此类型编码已存在'))
+        //               }
+        //             })
+        //             .catch((err) => {
+        //               callback(new Error(' '))
+        //             })
+        //         }
+        //       }
+        //     },
+        //     trigger: 'blur'
+        //   }
+        // ],
         name: [
           { required: true, message: '资产名称为空', trigger: 'no' }
         ],
@@ -314,6 +367,17 @@ export default {
         state: [
           { required: true, message: '请选择状态', trigger: 'change' }
         ],
+          num: [
+          { required: true, message: '请输入数量', trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal2', params: [20, 4, "请输入正确的数量(最多保留4位小数,整数16位)", (errMsg, index) => { this.$message.error(errMsg) }] }), trigger: 'blur' },
+
+        ], 
+        price: [
+          { required: true, message: '请输入单价', trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal2', params: [20, 4, "请输入正确的单价(最多保留4位小数,整数16位)", (errMsg, index) => { this.$message.error(errMsg) }] }), trigger: 'blur' },
+
+        ], 
+        
         // paymentMethod: [{ required: true, message: '付款方式不能为空', trigger: 'change' }],
         // paymentCycle: [{ required: true, message: '付款周期不能为空', trigger: 'change' }],
       },
@@ -333,14 +397,51 @@ export default {
 },
   async created() { 
     this.getProductClassFun()
+    this.getUnitFun()
   },
   mounted() { 
   },
 
   methods: {
+      onOrganizeChange(val) {
+      console.log("val",val);
+      this.dataForm.userDepartmentId = val[val.length-1]
+    },
+     getUnitFun(){
+      // 单位
+      let obj1 = {
+        pageNum: -1,
+        pageSize: -1
+      }
+      getUnitData(obj1).then((res) => {
+        let arr = []
+        res.data.records.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        this.unitList = arr
+
+         
+      })
+    },
+     
+    handle(){
+      this.dataForm.totalAmount= this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.num, this.dataForm.price]), 6)
+      this.dataForm.excludingTaxAmount= this.jnpf.numberFormat(this.jnpf.math('divide', [this.dataForm.totalAmount, 1+(this.dataForm.tax*1)/100]), 6)
+
+    },
+    changeTax(){
+      if(!this.dataForm.totalAmount) return
+      this.dataForm.excludingTaxAmount= this.jnpf.numberFormat(this.jnpf.math('divide', [this.dataForm.totalAmount, 1+(this.dataForm.tax*1)/100]), 6)
+
+    },
+
     getProductClassFun() {
     
-      // 获取税率(数据字典)
+      // 获取税率(数据字典) 
       getbimProductAttributes("585438081021126405").then(res => {
         res.data.list.forEach(item => {
           item.taxRate = item.enCode.replace('%', '') * 1

@@ -38,8 +38,9 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
           <topOpts @add="addSupplier()" >
-            <el-button size="mini" type="primary" icon="el-icon-printer"
-            @click="printView('p038')">打印资产二维码</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="synchronizerFun">同步至设备</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="synchronizaToolFun">同步至工具</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p038')">打印资产二维码</el-button>
           </topOpts>
 
           <div class="JNPF-common-head-right">
@@ -55,6 +56,7 @@
             </el-tooltip>
           </div>
         </div>
+      
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData" :fixedNO="true"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" hasC
           @selection-change="handleSelectionChange" >
@@ -62,6 +64,11 @@
           <el-table-column prop="code" label="资产编码" min-width="120" sortable="custom" />
           <el-table-column prop="name" label="资产名称" min-width="120" sortable="custom" />
           <el-table-column prop="spec" label="资产规格" min-width="150" sortable="custom" />
+          <el-table-column prop="unit" label="单位" min-width="150" sortable="custom" />
+          <!-- <el-table-column prop="unit" label="单位" min-width="150" sortable="custom" />
+          <el-table-column prop="num" label="数量" min-width="150" sortable="custom" />
+          <el-table-column prop="price" label="单价" min-width="150" sortable="custom" /> -->
+          <el-table-column prop="totalAmount" label="金额" min-width="150" sortable="custom" />
           <el-table-column prop="purchaserName" label="采购人" min-width="150" sortable="custom" />
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="150" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" />
@@ -72,6 +79,11 @@
           <el-table-column prop="depreciationRate" label="年折旧率" min-width="150" sortable="custom" />
           <el-table-column prop="netPrice" label="资产净值" min-width="150" sortable="custom" />
           <el-table-column prop="ownerName" label="资产管理员" min-width="150" sortable="custom" />
+          <el-table-column prop="userDepartmentName" label="使用部门" min-width="150" sortable="custom" />
+          <el-table-column prop="userName" label="使用人" min-width="150" sortable="custom" />
+          <el-table-column prop="manufacturer" label="生产厂商" min-width="150" sortable="custom" />
+          <el-table-column prop="userCondition" label="资产使用状况" min-width="150" sortable="custom" />
+          <el-table-column prop="processName" label="加工工序" min-width="150" sortable="custom" />
           <el-table-column prop="state" label="资产状态" min-width="150" sortable="custom" >
              
             <template slot-scope="{row}">
@@ -119,11 +131,30 @@
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
       <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
       :fullName="fullName" ref="printForm" />
+      <el-dialog :title="synchronizerTitle" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="synchronizerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+      <el-row :gutter="20">
+        <el-form ref="diaForm" :model="dataForm" :rules="dataRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+              <el-form-item  :label="diaTitleType=='tool'?'工具分类':'设备分类'" prop="productCategoryName">
+                  <ComSelect-list  v-model="dataForm.productCategoryName" placeholder="请选择分类" auth @change="onOrganizeChangeTwo" :title="diaTitleType=='tool'?'工具分类':'设备分类'" :method="getCategoryTrees" :requestObj="requestObj " :paramsObj="{}" />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="synchronizerVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { delBimProperty,bimPropertyList} from '@/api/bimPropertyCategory/index'
+import { delBimProperty,bimPropertyList,bimPropertySynchronous} from '@/api/bimPropertyCategory/index'
+import { getBimBusinessDetail, getCategoryTrees, getCooperativeData, checkEquEquipmentCode } from '@/api/basicData/index'
 import Form from './Form'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue' 
@@ -135,6 +166,15 @@ export default {
   components: { Form, SuperQuery,PrintBrowse,PrintDialog  },
   data() {
     return {
+      requestObj: {
+        orderItems: [{
+          asc: false,
+          column: 'create_time'
+        }],
+        pageSize: -1,
+        classAttribute:"",
+      },
+      getCategoryTrees,
       printBrowseVisible: false,
       formId:"",
       enCode:"",
@@ -242,7 +282,19 @@ export default {
           label: '创建人',
           type: 'input'
         }
-      ]
+      ],
+      diaTitleType:"",
+      synchronizerVisible:false,
+      dataForm:{
+        productCategoryId:"",
+        productCategoryName:"",
+
+      },
+      dataRule:{
+        productCategoryName:[
+          { required: true, message: '请选择分类', trigger: 'change' }
+        ]
+      },
     }
   },
   watch: {
@@ -257,6 +309,51 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    submitFun(){
+      this.$refs['diaForm'].validate((valid) => {
+        if (valid) {
+          let idArray = this.selectList.map(item => item.id);
+          let obj={
+            productCategoryId:this.dataForm.productCategoryId,
+            idList:idArray
+          }
+          this.btnLoading=true
+          bimPropertySynchronous(obj).then(res=>{
+            this.btnLoading=false
+            this.initData()
+            this.dataForm.productCategoryName=""
+            this.dataForm.productCategoryId=""
+            this.synchronizerVisible=false
+          })
+        }
+      })
+    },
+    onOrganizeChangeTwo(val, data, params) {
+    
+      if (data && data.length) {
+        this.dataForm.productCategoryName = data[0].all.name
+        this.dataForm.productCategoryId = data[0].all.id
+      } else {
+        this.dataForm.productCategoryName = ''
+        this.dataForm.productCategoryId = ''
+      }
+    },
+      // 同步至设备
+    synchronizerFun(){
+      if(!this.selectList.length) return this.$message.error("请选择您要同步至设备的数据！")
+      this.diaTitleType="equipment"
+      this.synchronizerTitle='同步至设备'
+      this.requestObj.classAttribute=this.diaTitleType=='equipment'?'equipment':'tool'
+      this.synchronizerVisible=true
+    },
+    // 同步至工具
+    synchronizaToolFun(){
+      if(!this.selectList.length) return this.$message.error("请选择您要同步至工具的数据！")
+      this.diaTitleType="tool"
+      this.synchronizerTitle='同步至工具'
+       this.requestObj.classAttribute=this.diaTitleType=='equipment'?'equipment':'tool'
+      this.synchronizerVisible=true
+    },
     handleSelectionChange(val) {
       this.selectList = val
     },

@@ -4,7 +4,7 @@
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
           <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4">
+            <el-col :span="item.searchType === 3 ? 6 : 3">
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                   @keyup.enter.native="search('basic')" />
@@ -212,11 +212,12 @@ export default {
           searchType: 1,
           width: 120
         },
-          { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: 'like', searchType: 4, width: 120,options: [
+          { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: '==', searchType: 4, width: 120,options: [
             { label: "未核对", value: "unchecked" },
             { label: "已核对", value: "checked" }, 
           ] },
       ],
+      
       superForm: {},
       columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
       superQueryVisible: false,
@@ -362,7 +363,7 @@ export default {
 
     }
     if (this.isProductNameSwitch === '1') {
-      this.searchList.push({
+      this.searchList.splice(2, 0,{
         field: 'productName',
         fieldValue: '',
         label: '产品名称',
@@ -370,7 +371,7 @@ export default {
         searchType: 1,
         width: 120
       })
-      this.superQueryJson.splice(4, 0, {
+      this.superQueryJson.splice(3, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
@@ -646,10 +647,14 @@ export default {
           symbol: 'like',
           searchType: 1,
           width: 120
-        }
+        },
+           { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: '==', searchType: 4, width: 120,options: [
+            { label: "未核对", value: "unchecked" },
+            { label: "已核对", value: "checked" }, 
+          ] },
       ]
       if (this.isProductNameSwitch === '1') {
-        this.searchList.push({
+        this.searchList.splice(2, 0, {
           field: 'productName',
           fieldValue: '',
           label: '产品名称',
@@ -657,7 +662,7 @@ export default {
           searchType: 1,
           width: 120
         })
-        this.superQueryJson.splice(2, 0, {
+        this.superQueryJson.splice(3, 0, {
           prop: 'productName',
           label: '产品名称',
           type: 'input'

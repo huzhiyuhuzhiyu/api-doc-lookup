@@ -144,7 +144,7 @@
                                 clearable auth />
                           </el-form-item>
                             <el-form-item label="使用部门" prop="departmentName" v-if="btnType=='look'">
-                            <el-input v-model="dataForm.departmentName" placeholder="请输入合同编号" type="text"   :disabled="btnType=='look'"/>
+                            <el-input v-model="dataForm.departmentName" placeholder="请输入使用部门" type="text"   :disabled="btnType=='look'"/>
                              
                           </el-form-item>
                         </el-col>

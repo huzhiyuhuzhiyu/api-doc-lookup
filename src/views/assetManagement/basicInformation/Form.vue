@@ -24,18 +24,26 @@
                   <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                     <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                       <el-row :gutter="30" class="custom-row">
+                        <el-col :span="6" v-if="abProjectSwitchVisible" >
+                          <el-form-item label="所属项目" prop="projectId">
+                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable :disabled="btnType=='look'">
+                              <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
+                                :value="item.id"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="资产分类" prop="propertyCategoryName">
                             <el-input v-model="dataForm.propertyCategoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24" >
+                        <!-- <el-col :sm="6" :xs="24" >
                           <el-form-item label="资产编码" prop="code">
                             <el-input v-model="dataForm.code" placeholder="请输入资产编码"
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
-                        </el-col>
+                        </el-col> -->
                
                         <el-col :sm="6" :xs="24" >
                           <el-form-item label="资产名称" prop="name">
@@ -49,16 +57,31 @@
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
                         </el-col>
-  
-                        <el-col :span="6" v-if="abProjectSwitchVisible" >
-                          <el-form-item label="所属项目" prop="projectId">
-                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable :disabled="btnType=='look'">
-                              <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
-                                :value="item.id"></el-option>
-                            </el-select>
+                       
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="数量" prop="num">
+                            <el-input v-model="dataForm.num" placeholder="请输入数量" type="text" @blur="handle"  :disabled="btnType=='look'"/>
                           </el-form-item>
                         </el-col>
-                
+                        <!-- <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="单价" prop="price">
+                            <el-input v-model="dataForm.price" placeholder="请输入单价" type="text" @blur="handle"  :disabled="btnType=='look'"/>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="金额(含税)" prop="totalAmount">
+                            <el-input v-model="dataForm.totalAmount" placeholder="请输入金额(含税)" type="text"   disabled/>
+                          </el-form-item>
+                        </el-col> -->
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="单位" prop="unit">
+                            <el-select v-model="dataForm.unit" :placeholder="btnType=='look'?'':'请选择单位'" style="width: 100%;"  :disabled="btnType=='look'">
+                              <el-option v-for="item in unitList" size="small" :key="item.id" :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>  
                         <el-col :span="6"  v-if="btnType=='look'||btnType=='edit'">
                           <el-form-item prop="equipmentCode" label="设备工具编码">
                             <el-input v-model="dataForm.equipmentCode" placeholder="请输入设备工具编码" disabled />
@@ -78,6 +101,25 @@
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24"   >
+                          <el-form-item label="使用部门" prop="organizeIdTree" v-if="btnType=='add'">
+                              <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织"
+                                :disabled="btnType=='look'"  @change="onOrganizeChange"
+                                clearable auth />
+                          </el-form-item>
+                       
+                            <el-form-item label="使用部门" prop="userDepartmentName" v-if="btnType=='look'">
+                            <el-input v-model="dataForm.userDepartmentName" placeholder="请输入使用部门" type="text"   :disabled="btnType=='look'"/>
+                             
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="使用人" prop="userId">
+                            <user-select v-model="dataForm.userId" placeholder="请选择使用人" clearable
+                                  style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                                </user-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24" >
                           <el-form-item label="资产原值" prop="costPrice">
                             <el-input v-model="dataForm.costPrice" placeholder="请输入资产原值"
@@ -85,7 +127,7 @@
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="年折旧率" prop="depreciationRate">
+                          <el-form-item label="年折旧率" prop="depreciationRate" style="margin-bottom: 20px!important;">
                             <el-input v-model="dataForm.depreciationRate" placeholder="请输入年折旧率"
                               :disabled="btnType == 'look' ? true : false" ><template #append>%</template></el-input>
                           </el-form-item>
@@ -126,7 +168,24 @@
                        
                           </el-form-item>
                         </el-col> 
-   
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="生产厂商" prop="manufacturer">
+                            <el-input v-model="dataForm.manufacturer" placeholder="请输入生产厂商"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="资产使用状况" prop="userCondition">
+                            <el-input v-model="dataForm.userCondition" placeholder="请输入资产使用状况"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="加工工序" prop="processName">
+                            <el-input v-model="dataForm.processName" placeholder="请选择加工工序"
+                              :disabled="btnType == 'look' ? true : false"  readonly @focus="openSelectProcess"/>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="12" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -236,42 +295,64 @@
       </div>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
       <Form v-if="formVisible" ref="Form"></Form>
-      <assetCategoryForm v-if="assetCategoryFormVisible" ref="assetCategoryForm" @selectAssetFun="selectAssetFun"></assetCategoryForm>
-      
+      <assetCategoryForm v-if="assetCategoryFormVisible" ref="assetCategoryForm" @selectAssetFun="selectAssetFun"></assetCategoryForm> 
+      <ComSelect-page ref="ComSelect-page" :beforeSubmit="beforeSubmit" @change="submit" :tableItems="ProductTableItems"
+      title="选择工序" treeTitle="工序分类" :methodArr="ProductMethodArr" :listMethod="getBimProcessList" :renderTree="false"
+      :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" 
+      :listDataFormatting="listDataFormatting" />
     </div>
   </transition>
 </template>
 <script>
 import { addBimProperty,editBimProperty,bimPropertyDetail,checkBimPropertyCode} from '@/api/bimPropertyCategory/index'
-
-
-
-
-
-
-
 import assetCategoryForm from './assetCategoryForm.vue'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
-
-
-
-
-
- 
 import { mapGetters, mapState } from 'vuex' 
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import {  getOrderFiledMap } from '@/api/basicData/index'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
+import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
+import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 export default {
   mixins: [AbProjectMixin],
 
-  components: {  recordList, Form,assetCategoryForm
-  },
+  components: {  recordList, Form,assetCategoryForm},
   
   data() {
     return {
+      getBimProcessList,
+        ProductListRequestObj: {
+        name: '',
+        code: '',
+        processingType: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+        productCategoryId: ''
+      },
+       ProductTableItems: [
+        { prop: 'code', label: '工序编码', fixed: 'left',sortable:'custom', },
+        { prop: 'name', label: '工序名称', fixed: 'left' },
+        { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
+
+        { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
+      ], // 产品选择弹出框表单展示字段
+      ProductTableSearchList: [
+        { prop: 'code', label: '工序编码', type: 'input' },
+        { prop: 'name', label: '工序名称', type: 'input' }
+      ],
+      processVisible:false,
       datafilelist:[],
       tipsvisible:false,
       categoryType:"purchase",
@@ -335,7 +416,24 @@ export default {
         cooperativePartnerId:"",
         remark:"",
         state:"normal",
+
+        unit:"",
+        userId:"",
+        manufacturer:"",
+        userCondition:"",
+        processId:"",
+         organizeIdTree:"",
+        userDepartmentId:"",
+        userDepartmentName:"",
+        processName:"",
+        num:"",
+        // price:"",
+        // totalAmount:"",
+       
+
+       
       },
+      unitList:[],
       width1: 400,
       width: 700, 
       customStyleData: 0,
@@ -349,45 +447,45 @@ export default {
         propertyCategoryName: [
           { required: true, message: '资产分类不能为空', trigger: 'change' }
         ],
-        code: [
-          { required: true, message: '资产编码不能为空', trigger: 'change' },
-          {
-            validator: (rule, value, callback) => {
-              if (!value) {
-                callback()
-              } else if (this.dataForm.code === this.autoCode) {
-                callback()
-              } else {
-                if (this.dataForm.id) {
-                  checkBimPropertyCode({id:this.dataForm.id,code:value})
-                    .then((res) => {
-                      if (!res.data) {
-                        callback()
-                      } else {
-                        callback(new Error('此类型编码已存在'))
-                      }
-                    })
-                    .catch((err) => {
-                      callback(new Error(' '))
-                    })
-                } else {
-                  checkBimPropertyCode({id:'',code:value})
-                    .then((res) => {
-                      if (!res.data) {
-                        callback()
-                      } else {
-                        callback(new Error('此类型编码已存在'))
-                      }
-                    })
-                    .catch((err) => {
-                      callback(new Error(' '))
-                    })
-                }
-              }
-            },
-            trigger: 'blur'
-          }
-        ],
+        // code: [
+        //   { required: true, message: '资产编码不能为空', trigger: 'change' },
+        //   {
+        //     validator: (rule, value, callback) => {
+        //       if (!value) {
+        //         callback()
+        //       } else if (this.dataForm.code === this.autoCode) {
+        //         callback()
+        //       } else {
+        //         if (this.dataForm.id) {
+        //           checkBimPropertyCode({id:this.dataForm.id,code:value})
+        //             .then((res) => {
+        //               if (!res.data) {
+        //                 callback()
+        //               } else {
+        //                 callback(new Error('此类型编码已存在'))
+        //               }
+        //             })
+        //             .catch((err) => {
+        //               callback(new Error(' '))
+        //             })
+        //         } else {
+        //           checkBimPropertyCode({id:'',code:value})
+        //             .then((res) => {
+        //               if (!res.data) {
+        //                 callback()
+        //               } else {
+        //                 callback(new Error('此类型编码已存在'))
+        //               }
+        //             })
+        //             .catch((err) => {
+        //               callback(new Error(' '))
+        //             })
+        //         }
+        //       }
+        //     },
+        //     trigger: 'blur'
+        //   }
+        // ],
         name: [
           { required: true, message: '资产名称为空', trigger: 'no' }
         ],
@@ -397,11 +495,33 @@ export default {
         ownerId: [
           { required: true, message: '资产管理员不能为空', trigger: 'change' }
         ],
+          num: [
+          { required: true, message: '请输入数量', trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal2', params: [20, 4, "请输入正确的数量(最多保留4位小数,整数16位)", (errMsg, index) => { this.$message.error(errMsg) }] }), trigger: 'blur' },
+
+        ], 
+        price: [
+          { required: true, message: '请输入单价', trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal2', params: [20, 4, "请输入正确的单价(最多保留4位小数,整数16位)", (errMsg, index) => { this.$message.error(errMsg) }] }), trigger: 'blur' },
+
+        ], 
+         totalAmount: [
+          { required: true, message: '请输入含税金额', trigger: 'blur' },
+        ], 
         // paymentMethod: [{ required: true, message: '付款方式不能为空', trigger: 'change' }],
         // paymentCycle: [{ required: true, message: '付款周期不能为空', trigger: 'change' }],
       },
       copyForm:{},
-    
+        isTechnicalSwitch: '',
+      isCheckingSwitch: '',
+      // ProductMethodArr: [
+      //   {
+      //     label: '工序分类',
+      //     type: 'process',
+      //     method: getcategoryTree,
+      //     requestObj: { type: 'process' }
+      //   }
+      // ]
     }
   },
   computed: {
@@ -416,16 +536,123 @@ export default {
   this.getTabdataList()
 },
 },
+ beforeSubmit(data, paramsObj) {
+      if (data && data.length) return true // 如果判断条件真，直接提交，不弹出提示
+      return this.$message.error('请选择数据')
+    },
   async created() { 
- 
+    this.getUnitFun()
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
+    if (this.abProjectSwitchVisible) {
+      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目', fixed: 'left' })
+      if (this.userInfo.projectId === '1') {
+        console.log(this.abProjectList, 'lllljj')
+        this.abProjectList = this.abProjectList.filter(item => item.id !== '1')
+
+      } else {
+        this.dataForm.projectId = this.userInfo.projectId
+      }
+    }
+    if (this.isCheckingSwitch === '1') {
+      this.ProductTableItems.push({ prop: 'inspectionInformation', label: '检验信息', fixed: 'left' })
+    }
+    if (this.isTechnicalSwitch === '1') {
+      this.ProductTableItems.push({ prop: 'technicalRequirement', label: '技术要求', fixed: 'left' })
+    }
   },
   mounted() { 
   },
 
   methods: {
+     listDataFormatting(res) {
+      let treeData = res.data.records.map((item) => {
+        if (item.processingType == 'self_produced') {
+          item.processingTypeName = '自制'
+        } else if (item.processingType == 'external_production') {
+          item.processingTypeName = '外协'
+        }
+        if (item.processType == 'normal') {
+          item.processTypeName = '正常工序'
+        } else if (item.processType == 'vibrate') {
+          item.processTypeName = '测振工序'
+        } else if (item.processType == 'heat_treatment') {
+          item.processTypeName = '热工工序'
+        } else if (item.processType == 'packing') {
+          item.processTypeName = '包装工序'
+        } else if (item.processType == 'pairs') {
+          item.processTypeName = '配对工序'
+        } else if (item.processType == 'grinding') {
+          item.processTypeName = '磨孔工序'
+        } else if (item.processType == 'accuracy') {
+          item.processTypeName = '精度工序'
+        } else if (item.processType == 'typing') {
+          item.processTypeName = '打字工序'
+        } else if (item.processType == 'fatInjection') {
+          item.processTypeName = '注脂工序'
+        } else if (item.processType == 'boxing') {
+          item.processTypeName = '装盒工序'
+        }else if (item.processType == 'regrinding') {
+          item.processTypeName = '修磨工序'
+        }else if (item.processType == 'clean') {
+          item.processTypeName = '清洗工序'
+        }
+
+        return item
+      })
+      return treeData
+    },
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async submit(id, data) {
+     console.log('111',id,data);
+     this.dataForm.processId=id
+     this.dataForm.processName=data[0].name
+    },
+    openSelectProcess(){
+      this.processVisible=true
+      this.$nextTick(()=>{
+      this.$refs['ComSelect-page'].openDialog() 
+      })
+    },
+    onOrganizeChange(val) {
+      console.log("val",val);
+      this.dataForm.userDepartmentId = val[val.length-1]
+    },
+    getUnitFun(){
+      // 单位
+      let obj1 = {
+        pageNum: -1,
+        pageSize: -1
+      }
+      getUnitData(obj1).then((res) => {
+        let arr = []
+        res.data.records.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        this.unitList = arr
+
+         
+      })
+    },
+    handle(){
+      this.dataForm.totalAmount= this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.num, this.dataForm.price]), 6)
+    },
     continueEdit(){
- this.tipsvisible=false
- this.btnLoading=false
+      this.tipsvisible=false
+      this.btnLoading=false
       this.btnType='edit'
       this.init(this.copyForm.id,'edit')
     },

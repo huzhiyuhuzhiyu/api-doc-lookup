@@ -54,7 +54,7 @@ import request from '@/utils/request'
  // 采购订单变更-新增
 export function addPurchaseChange(data) {
   return request({
-    url: `/api/erp/purchaseChange/add`,
+    url: `/api/erp/purPurchaseOrdersChange/add`,
     method: 'post',
     data
   })
@@ -62,14 +62,14 @@ export function addPurchaseChange(data) {
 // 删除
 export function deletePurchaseChange(id) {
   return request({
-    url: `/api/erp/purchaseChange/del/${id}`,
+    url: `/api/erp/purPurchaseOrdersChange/del/${id}`,
     method: 'delete',
   })
 }
 // 修改
 export function editPurchaseChange(data) {
   return request({
-    url: `/api/erp/purchaseChange/update`,
+    url: `/api/erp/purPurchaseOrdersChange/update`,
     method: 'put',
     data
   })
@@ -77,14 +77,14 @@ export function editPurchaseChange(data) {
 // 详情
 export function getPurchaseChangeDetail(id) {
   return request({
-    url: `/api/erp/purchaseChange/detail/${id}`,
+    url: `/api/erp/purPurchaseOrdersChange/detail/${id}`,
     method: 'get',
   })
 }
 //明细
 export function getPurchaseChangeLineList(data) {
   return request({
-    url: `/api/erp/purchaseChange/line/list`,
+    url: `/api/erp/purPurchaseOrdersChange/line/list`,
     method: 'post',
     data
   })
@@ -92,7 +92,7 @@ export function getPurchaseChangeLineList(data) {
 //列表
 export function getPurchaseChangeList(data) {
   return request({
-    url: `/api/erp/purchaseChange/page`,
+    url: `/api/erp/purPurchaseOrdersChange/page`,
     method: 'post',
     data
   })

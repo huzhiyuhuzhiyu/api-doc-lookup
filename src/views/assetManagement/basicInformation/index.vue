@@ -144,7 +144,7 @@
       </el-row>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="synchronizerVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
           提交</el-button>
       </span>
@@ -315,7 +315,8 @@ export default {
           let idArray = this.selectList.map(item => item.id);
           let obj={
             productCategoryId:this.dataForm.productCategoryId,
-            idList:idArray
+            idList:idArray,
+            classAttribute:this.diaTitleType
           }
           this.btnLoading=true
           bimPropertySynchronous(obj).then(res=>{
@@ -324,9 +325,16 @@ export default {
             this.dataForm.productCategoryName=""
             this.dataForm.productCategoryId=""
             this.synchronizerVisible=false
+          }).catch(error=>{
+            this.btnLoading=false
           })
         }
       })
+    },
+    cancelFun(){
+      this.synchronizerVisible=false
+          this.dataForm.productCategoryName=""
+            this.dataForm.productCategoryId=""
     },
     onOrganizeChangeTwo(val, data, params) {
     

@@ -3,7 +3,7 @@ import store from './store'
 import { message as $message } from '@/utils/message'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken, removeToken } from '@/utils/auth'
+import {getToken, removeToken, setToken} from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
 import {injectTenantMinix, removeTenantMinix} from "@/mixins/generator/TenantMinix";
 
@@ -11,13 +11,40 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect', '/jump'] // no redirect whitelist
 
+// 获取地址栏参数
+function getQueryParams() {
+  const search = window.location.search.substring(1)
+  const params = {}
+  if (search) {
+    search.split('&').forEach(item => {
+      const [key, value] = item.split('=')
+      params[decodeURIComponent(key)] = decodeURIComponent(value || '')
+    })
+  }
+  return params
+}
+
+// 单点登录
+function singleSignOn(){
+  const urlParams = getQueryParams()
+  if (urlParams && urlParams.token) {
+    store.commit('user/SET_TOKEN', urlParams.token)
+    setToken(urlParams.token)
+    // 清除地址栏中的 token 参数
+    const url = new URL(window.location.href)
+    url.searchParams.delete('token')
+    window.history.replaceState(null, '', url.pathname + url.search)
+  }
+}
+
 router.beforeEach(async (to, from, next) => {
+  // 路由跳转前先查看地址栏是否携带token参数
+  singleSignOn()
   // start progress bar
   NProgress.start()
 
   // set page title
   document.title = getPageTitle(to.meta.title, to.meta.zhTitle)
-
   if (to.query.clearToken && to.path === '/login') {
     removeToken()
     let query = { ...to.query }
@@ -68,6 +95,7 @@ router.beforeEach(async (to, from, next) => {
           // set the replace: true, so the navigation will not leave a history record
           next({
             ...to,
+            query:'',
             replace: true
           })
         } catch (error) {

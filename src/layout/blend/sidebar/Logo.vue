@@ -68,8 +68,8 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 60px;
-  line-height: 60px;
+  height: 50px;
+  line-height: 50px;
   background: #29384a;
   text-align: center;
   overflow: hidden;
@@ -85,8 +85,8 @@ export default {
   }
 }
 .imagesClass {
-  height: 60px;
-  width: 60px;
+  height: 50px;
+  width: 50px;
 }
 .logo-text {
   font-size: 24px !important;

@@ -44,7 +44,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .navbar {
-  height: 60px;
+  height: 50px;
   overflow: hidden;
   position: relative;
   border-bottom: 1px solid #dcdfe6;

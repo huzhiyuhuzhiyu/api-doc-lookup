@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 10px 15px;text-align:center;cursor:pointer" @click="toggleClick">
+  <div style="padding: 5px 15px;text-align:center;cursor:pointer" @click="toggleClick">
     <i class="icon-ym ys icon-ym-header-collapse1" v-if='isActive'></i>
     <i class="icon-ym ys icon-ym-header-expand" v-else></i>
   </div>

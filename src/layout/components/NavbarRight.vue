@@ -227,7 +227,7 @@ export default {
         this.initNotify()
         window.onresize = () => {
             if (!this.checkFull()) {
-                // 退出全屏后要执行的动作 
+                // 退出全屏后要执行的动作
                 this.full = false;
             }
         };
@@ -523,7 +523,7 @@ export default {
             font-size: 18px;
             color: #fff;
             vertical-align: text-bottom;
-            line-height: 60px;
+            line-height: 50px;
 
             &.hover-effect {
                 cursor: pointer;
@@ -542,7 +542,7 @@ export default {
                 }
             }
 
-            >>>.icon-ym {
+            .icon-ym {
                 font-size: 18px;
             }
         }
@@ -556,7 +556,7 @@ export default {
                 .user-avatar {
                     cursor: pointer;
                     vertical-align: top;
-                    margin-top: 18px;
+                    margin-top: 12px;
                     margin-right: 2px;
                 }
 
@@ -570,7 +570,7 @@ export default {
 
                 span {
                     font-size: 14px;
-                    line-height: 60px;
+                    line-height: 50px;
                 }
             }
         }

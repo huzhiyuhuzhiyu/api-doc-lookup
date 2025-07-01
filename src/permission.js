@@ -18,28 +18,64 @@ function getQueryParams() {
   if (search) {
     search.split('&').forEach(item => {
       const [key, value] = item.split('=')
-      params[decodeURIComponent(key)] = decodeURIComponent(value || '')
+      params[decodeURIComponent(key)] = decodeURIComponent(value || '').trim()
     })
   }
   return params
 }
 
 // 单点登录
-function singleSignOn(){
+async function singleSignOn(){
   const urlParams = getQueryParams()
   if (urlParams && urlParams.token) {
+    console.log("urlParams ✈️ ", urlParams)
+    const themePresets = {
+      theme: urlParams.systemThemeColor || '',
+      head: urlParams.backColor || '',
+    }
+    await synchronousSystemTheme(themePresets)
     store.commit('user/SET_TOKEN', urlParams.token)
     setToken(urlParams.token)
     // 清除地址栏中的 token 参数
     const url = new URL(window.location.href)
     url.searchParams.delete('token')
+    url.searchParams.delete('systemThemeColor')
+    url.searchParams.delete('backColor')
+    url.searchParams.delete('menuThemeColor')
     window.history.replaceState(null, '', url.pathname + url.search)
   }
 }
 
+// 同步系统主题
+function synchronousSystemTheme(themes){
+  const dispatchPromises = []
+
+  // 设置 head
+  // if (themes.head !== undefined) {
+  //   dispatchPromises.push(
+  //     store.dispatch("settings/changeSetting", {
+  //       key: "head",
+  //       value: themes.head
+  //     })
+  //   )
+  // }
+
+  // 设置 theme
+  // if (themes.theme !== undefined) {
+  //   dispatchPromises.push(
+  //     store.dispatch("settings/changeSetting", {
+  //       key: "themeClass",
+  //       value: themes.theme
+  //     })
+  //   )
+  // }
+
+  return Promise.all(dispatchPromises)
+}
+
 router.beforeEach(async (to, from, next) => {
   // 路由跳转前先查看地址栏是否携带token参数
-  singleSignOn()
+  await singleSignOn()
   // start progress bar
   NProgress.start()
 

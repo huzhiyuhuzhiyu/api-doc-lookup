@@ -51,14 +51,14 @@ function synchronousSystemTheme(themes){
   const dispatchPromises = []
 
   // 设置 head
-  // if (themes.head !== undefined) {
-  //   dispatchPromises.push(
-  //     store.dispatch("settings/changeSetting", {
-  //       key: "head",
-  //       value: themes.head
-  //     })
-  //   )
-  // }
+  if (themes.head !== undefined) {
+    dispatchPromises.push(
+      store.dispatch("settings/changeSetting", {
+        key: "head",
+        value: themes.head
+      })
+    )
+  }
 
   // 设置 theme
   // if (themes.theme !== undefined) {

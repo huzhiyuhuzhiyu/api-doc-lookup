@@ -85,7 +85,7 @@
     </div>
     <!-- <a href="/static/manual.pdf" target="_blank">用户手册下载</a> -->
   </el-drawer>
-  
+
 </template>
 
 <script>
@@ -393,10 +393,10 @@ export default {
     },
     defaultHeadClass: {
       handler: function (val, oldVal) {
-        if (!val) return
-        this.headClass = val
-        let activeItem = this.imgUrl4.filter(o => o.className === val)[0]
-        this.head = activeItem && activeItem.color ? activeItem.color : "#1890ff" 
+        // if (!val) return
+        // this.headClass = val
+        // let activeItem = this.imgUrl4.filter(o => o.className === val)[0]
+        // this.head = activeItem && activeItem.color ? activeItem.color : "#1890ff"
       },
       immediate: true
     },
@@ -474,7 +474,7 @@ export default {
 }
 </script>
 <style scoped>
-/deep/.el-drawer__body { 
+/deep/.el-drawer__body {
     padding: 30px 20px;
     overflow: auto;
     overflow-x: hidden;

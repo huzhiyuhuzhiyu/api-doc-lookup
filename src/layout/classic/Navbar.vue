@@ -76,7 +76,7 @@ export default {
   outline: 0;
 
   .system-header {
-    height: 60px !important;
+    height: 50px !important;
     border-bottom: 1px solid #dcdfe6;
     padding: 0 20px;
     margin-bottom: 0;

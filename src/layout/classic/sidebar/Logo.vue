@@ -18,10 +18,15 @@
         <img :src="$store.state.jx.logo1" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo 13" v-else />
       </router-link> -->
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <div style="display:flex;align-items: center" :style="{ backgroundColor: head }">
-          <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
-          <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
-          <div  class="logo-text">{{systemVO.shortName || '轴管通' }}</div>
+        <div class="expand" :style="{ backgroundColor: head }">
+          <el-tooltip content="返回工作台" placement="bottom">
+            <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
+          </el-tooltip>
+          <div class="logo-title">
+            <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
+            <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
+            <div  class="logo-text">{{systemVO.shortName || '轴管通' }}</div>
+          </div>
         </div>
       </router-link>
     </transition>
@@ -30,6 +35,8 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import {workspacePath} from "@/utils/define";
+import {windowOpen} from "echarts/lib/util/format";
 export default {
   name: 'SidebarLogo',
   props: {
@@ -50,6 +57,11 @@ export default {
       head: state => state.settings.head,
     }),
   },
+  methods: {
+    goBackWorkspace(){
+      windowOpen(workspacePath,'_self')
+    }
+  }
 }
 </script>
 
@@ -94,5 +106,22 @@ export default {
   text-overflow: ellipsis;
   // margin-left: -11px;
   // margin-top:-20px;
+}
+
+.expand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+
+  .workspace {
+    color: white;
+    font-size: 36px;
+  }
+
+  .logo-title {
+    display: flex;
+    align-items: center;
+  }
 }
 </style>

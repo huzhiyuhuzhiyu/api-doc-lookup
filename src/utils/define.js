@@ -22,5 +22,8 @@ module.exports = {
   // report: process.env.NODE_ENV === 'http://36.140.134.65:40008/Report',
   // 视频播放=前端路径
   m3u8Url: 'http://36.140.26.171:40008',
-  WebSocketqrcode: APIURl.replace('http', 'ws')
+  WebSocketqrcode: APIURl.replace('http', 'ws'),
+
+  // 返回工业工业互联网工作台
+  workspacePath: process.env.NODE_ENV === 'development' ? 'http://test.iiot.nbjuxuan.com/#/front/workspace' : process.env.VUE_APP_WORKSPACE_PATH,
 }

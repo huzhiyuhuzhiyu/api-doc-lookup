@@ -25,5 +25,5 @@ module.exports = {
   WebSocketqrcode: APIURl.replace('http', 'ws'),
 
   // 返回工业工业互联网工作台
-  workspacePath: process.env.NODE_ENV === 'development' ? 'http://test.iiot.nbjuxuan.com/front/workspace' : process.env.VUE_APP_WORKSPACE_PATH,
+  workspacePath: process.env.NODE_ENV === 'development' ? 'http://test.iiot.nbjuxuan.com/#/front/workspace' : process.env.VUE_APP_WORKSPACE_PATH,
 }

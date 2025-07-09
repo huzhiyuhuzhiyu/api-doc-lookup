@@ -22,7 +22,7 @@ const {
 
 const state = {
   theme: variables.theme,
-  head: '#1890ff',
+  head: jnpf.storageGet('head') === null ? '#1890ff' : jnpf.storageGet('head'),
   loginNeedCode: jnpf.storageGet('loginNeedCode') === null ? false : jnpf.storageGet('loginNeedCode'),
   showSettings: showSettings,
   tagsView: jnpf.storageGet('tagsView') === null ? tagsView : jnpf.storageGet('tagsView'),

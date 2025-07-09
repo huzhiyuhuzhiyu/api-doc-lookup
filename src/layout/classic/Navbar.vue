@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar" :class="headClass" :style="{ backgroundColor: head }">
+  <div class="navbar" :style="{ backgroundColor: head }">
     <div>
       <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container"
         @toggleClick="toggleSideBar" />

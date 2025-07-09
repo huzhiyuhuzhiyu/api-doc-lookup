@@ -384,10 +384,10 @@ export default {
   watch: {
     defaultThemeClass: {
       handler: function (val, oldVal) {
-        if (!val) return
-        this.themeClass = val
-        let activeItem = this.imgUrl3.filter(o => o.className === val)[0]
-        this.theme = activeItem && activeItem.color ? activeItem.color : "#1890ff"
+        // if (!val) return
+        // this.themeClass = val
+        // let activeItem = this.imgUrl3.filter(o => o.className === val)[0]
+        // this.theme = activeItem && activeItem.color ? activeItem.color : "#1890ff"
       },
       immediate: true
     },

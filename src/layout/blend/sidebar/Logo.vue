@@ -19,10 +19,15 @@
           </template>
         </el-image> -->
         <!-- <img :src="$store.state.jx.logo" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo" v-else /> -->
-        <div style="display:flex;align-items: center" :style="{ backgroundColor: head }">
-          <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" />
-          <img src="@/assets/images/jnpf.png" class="imagesClass" v-else />
-          <span class="logo-text">{{ systemVO.shortName || '轴管通' }}</span>
+        <div class="expand" :style="{ backgroundColor: head }">
+          <el-tooltip content="返回工作台" placement="bottom">
+            <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
+          </el-tooltip>
+          <div class="logo-title">
+            <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
+            <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
+            <div  class="logo-text">{{systemVO.shortName || '轴管通' }}</div>
+          </div>
         </div>
       </router-link>
     </transition>
@@ -31,6 +36,8 @@
 
 <script>
 import { mapState } from 'vuex'
+import {windowOpen} from "echarts/lib/util/format";
+import {workspacePath} from "@/utils/define";
 export default {
   name: 'SidebarLogo',
   computed: {
@@ -50,6 +57,11 @@ export default {
     collapse: {
       type: Boolean,
       required: true
+    }
+  },
+  methods: {
+    goBackWorkspace(){
+      windowOpen(workspacePath,'_self')
     }
   }
 }
@@ -95,5 +107,21 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.expand {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  padding: 0 6px;
+
+  .workspace {
+    color: white;
+    font-size: 36px;
+  }
+
+  .logo-title {
+    display: flex;
+    align-items: center;
+  }
 }
 </style>

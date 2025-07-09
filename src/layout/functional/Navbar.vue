@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar" :class="headClass" :style="{ backgroundColor: head }">
+  <div class="navbar" :style="{ backgroundColor: head }">
     <logo />
     <!-- <template v-if="device !== 'mobile'">
       <template v-if="showSearch" class="hamburger-container">

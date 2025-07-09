@@ -1,17 +1,24 @@
 <template>
   <div class="functional-logo-container">
     <router-link  class="sidebar-logo-link" to="/">
-        <div style="display:flex;align-items: center" :style="{ backgroundColor: head }">
+      <div class="expand" :style="{ backgroundColor: head }">
+        <el-tooltip content="返回工作台" placement="bottom">
+          <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
+        </el-tooltip>
+        <div class="logo-title">
           <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
           <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
           <div  class="logo-text">{{systemVO.shortName || '轴管通' }}</div>
         </div>
+      </div>
     </router-link>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import {windowOpen} from "echarts/lib/util/format";
+import {workspacePath} from "@/utils/define";
 export default {
   name: 'SidebarLogo',
   computed: {
@@ -27,6 +34,11 @@ export default {
       return this.$store.state.settings.systemVO
     },
   },
+  methods: {
+    goBackWorkspace(){
+      windowOpen(workspacePath,'_self')
+    }
+  }
 }
 </script>
 
@@ -60,5 +72,21 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.expand {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+
+  .workspace {
+    color: white;
+    font-size: 36px;
+    margin-right: 12px;
+  }
+
+  .logo-title {
+    display: flex;
+    align-items: center;
+  }
 }
 </style>

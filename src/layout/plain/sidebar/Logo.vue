@@ -1,19 +1,26 @@
 <template>
   <div class="sidebar-logo-container" >
     <router-link class="sidebar-logo-link" to="/" :class="headClass" :style="{backgroundColor:head}">
-      <el-image class="sidebar-logo" :src="define.comUrl+systemVO.iconUrl"
-        v-if="systemVO && systemVO.iconUrl">
-        <template slot="error">
-          <img class="sidebar-logo" src="@/assets/images/jnpf.png" alt="">
-        </template>
-      </el-image>
-      <img src="@/assets/images/jnpf.png" class="sidebar-logo" v-else />
+      <div class="expand">
+        <el-tooltip content="返回工作台" placement="bottom">
+          <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
+        </el-tooltip>
+        <el-image class="sidebar-logo" :src="define.comUrl+systemVO.iconUrl"
+          v-if="systemVO && systemVO.iconUrl">
+          <template slot="error">
+            <img class="sidebar-logo" src="@/assets/images/jnpf.png" alt="">
+          </template>
+        </el-image>
+        <img src="@/assets/images/jnpf.png" class="sidebar-logo" v-else/>
+      </div>
     </router-link>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import {windowOpen} from "echarts/lib/util/format";
+import {workspacePath} from "@/utils/define";
 export default {
   name: 'SidebarLogo',
   computed: {
@@ -27,6 +34,11 @@ export default {
       headClass: state => state.settings.headClass,
       head: state => state.settings.head,
     }),
+  },
+  methods: {
+    goBackWorkspace(){
+      windowOpen(workspacePath,'_self')
+    }
   }
 }
 </script>
@@ -49,6 +61,21 @@ export default {
       height: 50px;
       width: auto;
     }
+  }
+}
+.expand {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+
+  .workspace {
+    color: white;
+    font-size: 28px;
+  }
+
+  .logo-title {
+    display: flex;
+    align-items: center;
   }
 }
 </style>

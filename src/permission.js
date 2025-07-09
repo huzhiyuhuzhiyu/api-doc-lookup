@@ -28,10 +28,10 @@ function getQueryParams() {
 async function singleSignOn(){
   const urlParams = getQueryParams()
   if (urlParams && urlParams.token) {
-    console.log("urlParams ✈️ ", urlParams)
     const themePresets = {
-      theme: urlParams.systemThemeColor || '',
+      themeClass: urlParams.systemThemeClass || '',
       head: urlParams.backColor || '',
+      menuThemeClass: urlParams.menuThemeClass || '',
     }
     await synchronousSystemTheme(themePresets)
     store.commit('user/SET_TOKEN', urlParams.token)
@@ -49,7 +49,6 @@ async function singleSignOn(){
 // 同步系统主题
 function synchronousSystemTheme(themes){
   const dispatchPromises = []
-
   // 设置 head
   if (themes.head !== undefined) {
     dispatchPromises.push(
@@ -61,14 +60,24 @@ function synchronousSystemTheme(themes){
   }
 
   // 设置 theme
-  // if (themes.theme !== undefined) {
-  //   dispatchPromises.push(
-  //     store.dispatch("settings/changeSetting", {
-  //       key: "themeClass",
-  //       value: themes.theme
-  //     })
-  //   )
-  // }
+  if (themes.themeClass !== undefined) {
+    dispatchPromises.push(
+      store.dispatch("settings/changeSetting", {
+        key: "themeClass",
+        value: themes.themeClass
+      })
+    )
+  }
+
+  // 设置 菜单
+  if (themes.menuThemeClass !== undefined) {
+    dispatchPromises.push(
+      store.dispatch("settings/changeSetting", {
+        key: "slideClass",
+        value: themes.menuThemeClass
+      })
+    )
+  }
 
   return Promise.all(dispatchPromises)
 }

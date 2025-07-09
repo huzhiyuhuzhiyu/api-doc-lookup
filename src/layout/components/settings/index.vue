@@ -19,33 +19,33 @@
       </li>
     </ul>
 
-    <el-divider>{{$t('settings.theme')}}</el-divider>
-    <div class="colorList">
-      <el-tooltip class="item" effect="dark" :content="$t(`settings.${item3.className}`)"
-        placement="top" v-for="(item3,index3) in imgUrl3" :key="index3">
-        <el-tag @click="checkList3(item3)" :color="item3.color">
-          <i class="el-icon-check" v-if="item3.className===themeClass"></i>
-        </el-tag>
-      </el-tooltip>
-    </div>
-    <el-divider>{{$t('settings.head')}}</el-divider>
-    <div class="colorList">
-      <el-tooltip class="item" effect="dark" :content="$t(`settings.${item4.className}`)"
-        placement="top" v-for="(item4,index4) in imgUrl4" :key="index4">
-        <el-tag @click="checkList4(item4)" :color="item4.color">
-          <i class="el-icon-check" v-if="item4.className===headClass"></i>
-        </el-tag>
-      </el-tooltip>
-    </div>
-    <el-divider>{{$t('settings.menu')}}</el-divider>
-    <div class="colorList">
-      <el-tooltip class="item" effect="dark" :content="$t(`settings.${item2.className}`)"
-        placement="top" v-for="(item2,index2) in imgUrl2" :key="index2">
-        <el-tag @click="checkList2(item2)" :color="item2.color">
-          <i :class="['el-icon-check',slideClass === 'lightWhite' ? 'el-icon-check2' : '']" v-if="item2.className===slideClass"></i>
-        </el-tag>
-      </el-tooltip>
-    </div>
+<!--    <el-divider>{{$t('settings.theme')}}</el-divider>-->
+<!--    <div class="colorList">-->
+<!--      <el-tooltip class="item" effect="dark" :content="$t(`settings.${item3.className}`)"-->
+<!--        placement="top" v-for="(item3,index3) in imgUrl3" :key="index3">-->
+<!--        <el-tag @click="checkList3(item3)" :color="item3.color">-->
+<!--          <i class="el-icon-check" v-if="item3.className===themeClass"></i>-->
+<!--        </el-tag>-->
+<!--      </el-tooltip>-->
+<!--    </div>-->
+<!--    <el-divider>{{$t('settings.head')}}</el-divider>-->
+<!--    <div class="colorList">-->
+<!--      <el-tooltip class="item" effect="dark" :content="$t(`settings.${item4.className}`)"-->
+<!--        placement="top" v-for="(item4,index4) in imgUrl4" :key="index4">-->
+<!--        <el-tag @click="checkList4(item4)" :color="item4.color">-->
+<!--          <i class="el-icon-check" v-if="item4.className===headClass"></i>-->
+<!--        </el-tag>-->
+<!--      </el-tooltip>-->
+<!--    </div>-->
+<!--    <el-divider>{{$t('settings.menu')}}</el-divider>-->
+<!--    <div class="colorList">-->
+<!--      <el-tooltip class="item" effect="dark" :content="$t(`settings.${item2.className}`)"-->
+<!--        placement="top" v-for="(item2,index2) in imgUrl2" :key="index2">-->
+<!--        <el-tag @click="checkList2(item2)" :color="item2.color">-->
+<!--          <i :class="['el-icon-check',slideClass === 'lightWhite' ? 'el-icon-check2' : '']" v-if="item2.className===slideClass"></i>-->
+<!--        </el-tag>-->
+<!--      </el-tooltip>-->
+<!--    </div>-->
 
 
     <el-divider>{{$t('settings.fontSize')}}</el-divider>

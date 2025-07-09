@@ -42,11 +42,11 @@
                 <i class="el-icon-arrow-down"></i>
             </div>
             <el-dropdown-menu slot="dropdown">
-                <router-link to="/profile">
-                    <el-dropdown-item>
-                        <i class="icon-ym icon-ym-header-userInfo"></i>{{ $t('navbar.profile') }}
-                    </el-dropdown-item>
-                </router-link>
+<!--                <router-link to="/profile">-->
+<!--                    <el-dropdown-item>-->
+<!--                        <i class="icon-ym icon-ym-header-userInfo"></i>{{ $t('navbar.profile') }}-->
+<!--                    </el-dropdown-item>-->
+<!--                </router-link>-->
                 <!-- <el-dropdown placement="right-start" v-if="userInfo.systemIds&&userInfo.systemIds.length>1">
                     <el-dropdown-item>
                         <i class="icon-ym icon-ym-systemToggle"></i>{{ $t('navbar.systemChange') }}
@@ -76,9 +76,9 @@
                 <!-- <el-dropdown-item @click.native="downFileS">
                     <i class="icon-ym icon-ym icon-ym-dataInterface"></i>{{ $t('navbar.downFile') }}
                 </el-dropdown-item> -->
-                <el-dropdown-item divided @click.native="handleLogout">
-                    <i class="icon-ym icon-ym-header-loginOut"></i>{{ $t('navbar.logout') }}
-                </el-dropdown-item>
+<!--                <el-dropdown-item divided @click.native="handleLogout">-->
+<!--                    <i class="icon-ym icon-ym-header-loginOut"></i>{{ $t('navbar.logout') }}-->
+<!--                </el-dropdown-item>-->
             </el-dropdown-menu>
         </el-dropdown>
         <el-tooltip :content="$t('navbar.setting')" placement="bottom">

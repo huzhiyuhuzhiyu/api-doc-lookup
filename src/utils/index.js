@@ -26,6 +26,12 @@ export const elFullScreen = ((() => {
         el[fullScreenFnName] && el[fullScreenFnName]()
     };
 })());
+
+
+/** * 获取字典数据
+ * @param dictType 字典类型
+ * @returns {Array} 返回字典数据数组
+ */
 export const getDictDataSync = (dictType) => {
     const dict = store.getters.dictionaryList.length ? store.getters.dictionaryList.filter(o => o.enCode === dictType) : []
     if (!dict || !dict.length) {

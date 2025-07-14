@@ -1,5 +1,6 @@
 // 全局常量配置
 import moment from 'moment'
+import store from '@/store'
 
 const global = {
   // 单据状态

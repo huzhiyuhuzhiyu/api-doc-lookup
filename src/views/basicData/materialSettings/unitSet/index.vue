@@ -46,6 +46,13 @@
             @current-change="handleCurrentChange" class="dataTable" border ref="listTable" custom-column customKey="JNPFTableKey_223694">
             <!-- <el-table-column prop="unitCode" label="单位编码" min-width="120" sortable="custom" /> -->
             <el-table-column prop="name" label="单位名称" min-width="120" sortable="custom" />
+            <el-table-column prop="unitType" label="分类" min-width="120" sortable="custom" >
+              <template slot-scope="{ row }">
+                <span>
+                   {{ global.getDictLabelGlobal('uom', row.unitType) }}
+                </span>
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column label="操作" width="150" fixed="right">
               <template slot-scope="scope">

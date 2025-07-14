@@ -11,6 +11,11 @@
   padding: 6px 10px;
   flex-shrink: 0;
 
+  .JNPF-common-head-left {
+    display: flex;
+    gap: 10px;
+  }
+
   .JNPF-common-head-right {
     flex-shrink: 0;
     font-size: 0;

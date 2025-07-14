@@ -20,6 +20,7 @@ import UploadDataButton  from "@/components/UploadDataButton";
 import AttributeDictionaryLine from '@/components/no_mount/AttributeDictionaryLine'
 import AttributeDictionaryMain from '@/components/no_mount/AttributeDictionaryMain'
 import AttributeColumns from '@/components/no_mount/AttributeColumns'
+import TableDataExportButton from '@/components/TableDataExportButton'
 // 代码生成器专供
 import JNPFText from '@/components/Generator/components/JNPFText'
 import JNPFTableText from '@/components/Generator/components/JNPFTableText'
@@ -115,5 +116,6 @@ export default {
     Vue.component('AttributeDictionaryLine', AttributeDictionaryLine)// 产品属性组件
     Vue.component('AttributeDictionaryMain', AttributeDictionaryMain)// 产品属性组件
     Vue.component('AttributeColumns', AttributeColumns)// 产品属性组件
+    Vue.component('TableDataExportButton', TableDataExportButton) // 表格数据导出按钮
   }
 }

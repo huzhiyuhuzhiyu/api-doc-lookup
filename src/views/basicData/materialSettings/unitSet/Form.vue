@@ -20,6 +20,16 @@
                 maxlength="20"></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="分类" prop="unitType" ref="unitType">
+              <template slot="label">
+                分类<span class="required">*</span>
+              </template>
+              <el-radio-group v-model="dataForm.unitType">
+                <el-radio v-for="item in getDictDataSync('uom')" :label="item.value">{{ item.label }}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
           <el-col :span="24">
             <el-form-item label="备注" prop="remark">
               <el-input v-model="dataForm.remark" type="textarea" placeholder="请输入备注" :style="{ width: '100%' }"
@@ -69,6 +79,7 @@ export default {
         id: 0,
         unitCode: '',
         name: '',
+        unitType: '',
         remark: ''
       },
       dataFormTwo: [],
@@ -181,7 +192,13 @@ export default {
             },
             trigger: 'blur'
           }
-        ]
+        ],
+        unitType: [
+          {
+            required: true,
+            message: '请选择分类',
+            trigger: 'change'
+          }]
       },
       unitList: []
     }

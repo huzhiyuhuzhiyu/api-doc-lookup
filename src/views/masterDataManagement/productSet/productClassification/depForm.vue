@@ -40,6 +40,9 @@
           </template>
           <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
         </el-form-item>
+        <el-form-item label="打字位置" prop="typingPosition">
+          <el-input v-model="dataForm.typingPosition" placeholder="请输入打字位置" maxlength="20" />
+        </el-form-item>
         <el-form-item label="类型" prop="classType">
           <el-select v-model="dataForm.classType" placeholder="请选择类型" clearable style="width: 100%;">
             <el-option v-for="(item, index) in classTypelist" :key="index" :label="item.label"
@@ -91,7 +94,8 @@ export default {
         name: '',
         remark: '',
         classAttribute: '',
-        type: 'material'
+        type: 'material',
+        typingPosition: ''
       },
       classAttribute: '',
       categoryPropertList: [

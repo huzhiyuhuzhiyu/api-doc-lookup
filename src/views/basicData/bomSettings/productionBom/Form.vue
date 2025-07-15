@@ -149,17 +149,17 @@ export default {
       documentStatus: '',
       dataFormItems: [
         // { prop: "code", label: "BOM编码", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate('enCode'), trigger: 'blur' }], sm: 12 },
-        {
-          prop: 'projectId',
-          label: '所属项目',
-          value: '',
-          type: 'select',
-          options: [],
-          itemRules: [],
-          sm: 12,
-          itemDisabled: false,
-          render: true
-        },
+        // {
+        //   prop: 'projectId',
+        //   label: '所属项目',
+        //   value: '',
+        //   type: 'select',
+        //   options: [],
+        //   itemRules: [],
+        //   sm: 12,
+        //   itemDisabled: false,
+        //   render: true
+        // },
         {
           prop: 'drawNo',
           label: '品名规格',
@@ -169,6 +169,22 @@ export default {
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 12,
           readOnly: true
+        },
+        {
+          prop: 'productName',
+          label: '产品名称',
+          value: '',
+          type: 'input',
+          sm: 12,
+          itemDisabled: true
+        },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          value: '',
+          type: 'input',
+          sm: 12,
+          itemDisabled: true
         },
         {
           prop: 'pickingWay',
@@ -211,7 +227,7 @@ export default {
         { prop: 'remark',  sm: 12, label: '备注', value: '', type: 'textarea' }
       ],
       linesList: [],
-     
+
       linesListItems: [
         { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
         { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
@@ -324,7 +340,6 @@ export default {
         productCode: '',
         startTime: '',
         endTime: '',
-        productWithout: 'price',
         productWithout: 'bom',
         orderItems: [
           {
@@ -507,7 +522,7 @@ export default {
               this.$set(tc,'itemDisabled',false)
             }
           })
-       
+
         }
       }
       this.approvalFlag = approvalFlag
@@ -577,7 +592,7 @@ export default {
       })
 
       this.visible = true
-    
+
       let loadTotal = 0
       if (id && this.btnType != 'add' && this.btnType != 'waitAdd' && !this.statusFlag) {
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
@@ -766,7 +781,7 @@ export default {
         //  this.$nextTick(() => { this.getApproverData() })
         this.getBusInfo()
       }
-     
+
 
     },
     async handleConfirm(submitModel) {
@@ -962,6 +977,8 @@ export default {
       this.dataForm.drawNo = data[0].all.drawingNo
       this.dataForm.productSource = data[0].all.productSource
       this.dataForm.productId = data[0].id
+      this.dataForm.productName = data[0].all.name
+      this.dataForm.productCode = data[0].all.code
     },
     goBack() {
       this.$emit('close')

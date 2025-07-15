@@ -166,27 +166,46 @@
           </el-row>
           <slot name="top"></slot>
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <JNPF-table v-loading="treeLoading || listLoading" :data="tableData" hasNO fixedNO :hasC="multiple"
+            <JNPF-table v-loading="treeLoading || listLoading" :data="tableData" hasNO fixedNO :hasC="multiple && activeType !== 'look'"
               :highlight-current-row="false" @row-dblclick="rowDblclickFun" @selection-change="currentChange"
               :row-class-name="getRowClassName" :checkSelectable="checkSelectable" ref="dataTable"
               @row-click="handleRowClick" :tree-props="{ children: 'childrenList', hasChildren: '' }" :row-key="'id'"
               :default-expand-all="expands" @sort-change="sortChange">
-
-              <!-- 普通结构 -->
               <template v-if="!listDataTreeFlag">
                 <template v-for="item in tableItems">
-                  <el-table-column v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop"
-                    :prop="item.prop" :label="item.label" :fixed="item.fixed || false" :sortable="item.sortable"
-                    v-bind="{ width: item.width ? item.width : 0, minWidth: item.hasOwnProperty('minWidth') ? item.minWidth : 120 }" />
+                  <el-table-column
+                    v-if="item.hasOwnProperty('render') ? item.render : true"
+                    :key="item.prop"
+                    :prop="item.prop"
+                    :label="item.label"
+                    :fixed="item.fixed || false"
+                    :sortable="item.sortable"
+                    v-bind="{ width: item.width ? item.width : 0, minWidth: item.hasOwnProperty('minWidth') ? item.minWidth : 120 }">
+                    <template slot-scope="scope">
+                      <slot :name="item.prop" :row="scope.row">
+                        {{ scope.row[item.prop] }}
+                      </slot>
+                    </template>
+                  </el-table-column>
                 </template>
-
               </template>
 
               <!-- 双级树状结构 -->
               <template v-else>
                 <template v-for="item in tableItems">
-                  <el-table-column v-if="item.prop !== 'name'" :key="item.prop" :prop="item.prop" :label="item.label"
-                    :fixed="item.fixed || false" :min-width="item.minWidth || 120" />
+                  <el-table-column
+                    v-if="item.prop !== 'name'"
+                    :key="item.prop"
+                    :prop="item.prop"
+                    :label="item.label"
+                    :fixed="item.fixed || false"
+                    :min-width="item.minWidth || 120">
+                    <template slot-scope="scope">
+                      <slot :name="item.prop" :row="scope.row">
+                        {{ scope.row[item.prop] }}
+                      </slot>
+                    </template>
+                  </el-table-column>
 
                   <el-table-column prop="name" :key="item.prop" :label="item.label" :fixed="item.fixed || false"
                     :min-width="item.minWidth || 120" v-else-if="item.prop === 'name'">
@@ -201,7 +220,7 @@
 
               <!-- 这里可以使用具名插槽替换掉默认内容（此时行双击事件将不再默认触发confirm，需要自定义） -->
               <slot name="table-action">
-                <el-table-column label="操作" width="90" fixed="right" v-if="!multiple" ref="defaultTableActionRef">
+                <el-table-column label="操作" width="90" fixed="right" v-if="!multiple && activeType !== 'look'" ref="defaultTableActionRef">
                   <template slot-scope="scope">
                     <el-button type="text" @click="currentChange(scope.row)" size="mini"
                       :disabled="!checkSelectable(scope.row)">选择</el-button>
@@ -215,7 +234,7 @@
           </div>
         </div>
       </div>
-      <template slot="footer" v-if="multiple">
+      <template slot="footer" v-if="multiple && activeType !== 'look'">
         <span class="dialog-footer">
           <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
           <el-button type="primary" @click="confirm" :loading="btnLoading">{{ $t('common.confirmButton') }}</el-button>
@@ -268,6 +287,11 @@ export default {
   props: {
     value: {
       type: String,
+    },
+    activeType: {
+      type: String,
+      default: '',
+      validator: (value) => ['', 'look'].includes(value)
     },
     ids: {
       type: Array | Function
@@ -551,7 +575,6 @@ export default {
     if (localStorage.getItem(`${this.treeName}Flag`)) {
       let locationInventoryFlag = JSON.parse(localStorage.getItem(`${this.treeName}Flag`))
       this.expands = locationInventoryFlag
-      console.log(`${this.treeName}Flag`, locationInventoryFlag);
       this.toggleExpand(locationInventoryFlag)
     }
   },
@@ -687,7 +710,6 @@ export default {
         })
       }
       this.listMethod(this.listQuery).then(async listRes => {
-        console.log("listRes", listRes);
         if (this.listDataFormatting) { this.tableData = this.listDataFormatting({ ...listRes, listQuery: this.listQuery }) }
         else if (Array.isArray(listRes.data)) { this.tableData = listRes.data || listRes.data.whPage.records || listRes.data.page.records }
         else {
@@ -774,6 +796,7 @@ export default {
     },
     // 双击行
     rowDblclickFun(data) {
+      if (this.activeType === 'look') return // 查看模式下不触发双击事件
       if (!this.checkSelectable(data)) return // 行被禁用时此方法不生效
       if (this.rowDblclick) {
         this.rowDblclick(data)
@@ -783,6 +806,7 @@ export default {
     },
     // 选择事件
     async currentChange(data) {
+      if (this.activeType === 'look') return // 查看模式下不触发选择事件
       if (!data || data.disabled) return
       if (this.checkSelectable && !(this.checkSelectable(data))) return
       if (this.multiple) {
@@ -882,7 +906,7 @@ export default {
           this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj, this.index)
         }
         this.visible = false
-        this.$nextTick(() => {          
+        this.$nextTick(() => {
           this.handleResize()
           setTimeout(() => {
             this.btnLoading = false

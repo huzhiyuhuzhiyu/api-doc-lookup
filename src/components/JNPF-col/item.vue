@@ -2,12 +2,17 @@
   <el-col :sm="item.sm ? item.sm : item.type === 'textarea' || item.jnpfKey === 'groupTitle' ? 24 : 8" :xs="24"
     v-if="item.hasOwnProperty('render') ? item.render : true" :style="{paddingLeft:item.jnpfKey === 'groupTitle' ? '0px' : '15px',marginBottom:item.mb ? item.mb : 0}">
     <el-form-item :rules="Rules" :label="item.jnpfKey === 'groupTitle' ? '' : item.label" :prop="item.prop">
-
+      <template slot="label" v-if="item.listdynamics">
+        <span>{{item.label}}</span>
+        <span>>></span>
+        <el-button size="mini" :disabled="item.disabled||readOnly" type="text" @click="()=>{item.click && item.click(); $emit('click')}">新建{{item.label}}</el-button>
+      </template>
       <!-- 输入框 -->
       <template v-if="item.type === 'input' || item.jnpfKey === 'comInput'">
         <el-input v-if="!item.remote" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" :readonly="item.readonly" :disabled="item.disabled||readOnly"
           :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event) : ''"
+          @click.native="item.hasOwnProperty('click') ? item.click($event) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event) : ''" :key="1">
           <template v-if="item.itemSlot" :slot="item.itemSlot.position">
             <div v-if="!item.itemSlot.click" v-bind="item.itemSlot"> {{ item.itemSlot.content }} </div>
@@ -16,11 +21,11 @@
           </template>
         </el-input>
 
-        <el-autocomplete v-else v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder"
+        <el-autocomplete style="width: 100%" v-else v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder"
           :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event) : ''" :disabled="readOnly"
-          :fetch-suggestions="item.remoteMethod || (() => { })" :trigger-on-focus="false"
+          :fetch-suggestions="item.remoteMethod || (() => { })" :trigger-on-focus="item.onFocus || false"
           @select="item.hasOwnProperty('select') ? item.select($event) : ''" />
       </template>
 
@@ -55,19 +60,42 @@
       <component v-else-if="item.type === 'custom'" :is="item.customComponent" v-bind="{ ...item, ...$attrs }"
         v-on="$listeners" :placeholder="Placeholder" style="width:100%" auth
         @change="(val, data, paramsObj) => { item.change && item.change(val, data, paramsObj); $emit('change', val, data, paramsObj); }"
-        :disabled="readOnly" :isdisabled="readOnly" />
+        :disabled="readOnly" :isdisabled="readOnly">
+        <!-- 选择器模式便捷option -->
+        <template v-if="item.customComponent === 'AsyncComponent' && item.highCustomComponent === 'el-select' && item.options">
+          <template v-if="item.options && item.options.length && item.options[0].value !== undefined">
+            <el-option v-for="(o, i) in item.options" :key="i" v-bind="o">
+              <template v-for="(slot, name) in o.slots" :slot="name">
+                <div v-if="typeof slot === 'string'" :key="name"> {{ slot }} </div>
+                <div v-else-if="typeof slot.content === 'string'" v-bind="slot.props" v-on="{ ...slot.events }" :key="name">
+                  {{ slot.content }}
+                </div>
+                <component v-else-if="!slot.content" :is="slot" :key="name" />
+                <component v-else :is="slot.content" v-bind="slot.props" v-on="{ ...slot.events }" :key="name" />
+              </template>
+            </el-option>
+          </template>
+        </template>
+      </component>
 
       <!-- 单个日期选择器 -->
       <el-date-picker v-else-if="item.type === 'date'" type="date" value-format="yyyy-MM-dd" v-bind="$attrs"
-        :placeholder="Placeholder" v-on="$listeners" :disabled="readOnly"
+        :placeholder="Placeholder" v-on="$listeners" :disabled="readOnly" style="width:100%"
         :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
         @input="item.hasOwnProperty('input') ? item.input($event) : ''"
         @change="item.hasOwnProperty('change') ? item.change($event) : ''" />
 
       <!-- 日期区间选择器 -->
-      <el-date-picker style="width: 100%;"  v-else-if="item.type === 'date_interval'" type="daterange" value-format="yyyy-MM-dd" v-bind="$attrs"
+      <el-date-picker v-else-if="item.type === 'date_interval'" type="daterange" value-format="yyyy-MM-dd" v-bind="$attrs"
         :start-placeholder="item.startPlaceholder || '请选择开始日期'" :end-placeholder="item.endPlaceholder || '请选择结束日期'"
-        v-on="$listeners"  :disabled="readOnly"
+        v-on="$listeners"  :disabled="readOnly" style="width:100%"
+        :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+        @input="item.hasOwnProperty('input') ? item.input($event) : ''"
+        @change="item.hasOwnProperty('change') ? item.change($event) : ''" />
+
+      <!-- 年-月选择器 -->
+      <el-date-picker v-else-if="item.type === 'month' || item.type === 'year'" :type="item.type" :value-format="item.valueFormat" v-bind="$attrs"
+        :placeholder="Placeholder" v-on="$listeners" :disabled="readOnly"
         :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
         @input="item.hasOwnProperty('input') ? item.input($event) : ''"
         @change="item.hasOwnProperty('change') ? item.change($event) : ''" />

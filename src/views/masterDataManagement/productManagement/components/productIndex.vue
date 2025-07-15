@@ -81,16 +81,19 @@
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
-            <el-dropdown style="margin-right:10px;">
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                新建
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="quickAdd()">快速新建</el-dropdown-item>
-                <el-dropdown-item @click.native="addOrUpdateHandle()">普通新建</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="addOrUpdateHandle('','add')">
+              新建
+            </el-button>
+<!--            <el-dropdown style="margin-right:10px;">-->
+<!--              <el-button size="mini" type="primary" icon="el-icon-plus">-->
+<!--                新建-->
+<!--                <i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+<!--              </el-button>-->
+<!--              <el-dropdown-menu slot="dropdown">-->
+<!--                <el-dropdown-item @click.native="quickAdd()">快速新建</el-dropdown-item>-->
+<!--                <el-dropdown-item @click.native="addOrUpdateHandle()">普通新建</el-dropdown-item>-->
+<!--              </el-dropdown-menu>-->
+<!--            </el-dropdown>-->
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus" @click="importForm">
               导入
@@ -118,7 +121,7 @@
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
+              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                 {{ scope.row.code }}
               </el-link>
             </template>
@@ -152,11 +155,11 @@
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" @del="handleDel(scope.row.id)">
-                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
+                @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                   查看详情
                 </el-button>
-                <el-button type="text" size="mini" @click.native="copyHandle('', false,scope.row)">
+                <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, 'copy',scope.row)">
                   复制
                 </el-button>
                 <!-- <el-dropdown hide-on-click>

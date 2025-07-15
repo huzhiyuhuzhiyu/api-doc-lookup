@@ -22,6 +22,23 @@ const global = {
     { label: "是", value: true },
     { label: "否", value: false },
   ],
+  // 公共状态 示例：未完成 已完成 已取消
+  publicState: [
+    {label: "未完成", value: "not_finished", type: "processing"},
+    {label: "已完成", value: "finished", type: "success"},
+    {label: "已取消", value: "canceled", type: "danger"},
+    {label: "已停止", value: "stopped", type: "danger"},
+    {label: "已撤回", value: "back", type: "warning"},
+  ],
+
+  // 产品来源
+  productSource: [
+    {label: "组装", value: "assemble", type: "processing"},
+    {label: "生产", value: "produce", type: "success"},
+    {label: "采购", value: "purchase", type: "danger"},
+    {label: "外协", value: "out", type: "danger"},
+  ],
+
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {
    // 先从本地获取字典
@@ -56,14 +73,6 @@ const global = {
       ? {label: enCode || '--', type: 'default'}
       : enCode || '--';
   },
-  // 公共状态 示例：未完成 已完成 已取消
-  publicState: [
-    {label: "未完成", value: "not_finished", type: "processing"},
-    {label: "已完成", value: "finished", type: "success"},
-    {label: "已取消", value: "canceled", type: "danger"},
-    {label: "已停止", value: "stopped", type: "danger"},
-    {label: "已撤回", value: "back", type: "warning"},
-  ],
   timePicker: { // 日期/时间选择器通用选项（禁用未发生的时间）
     disabledDate(time) {
       return time.getTime() > Date.now();

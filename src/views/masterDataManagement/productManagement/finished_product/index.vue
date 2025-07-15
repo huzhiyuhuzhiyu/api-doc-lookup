@@ -5,7 +5,7 @@
         <h2 v-if="!leftFlag">产品分类</h2>
         <span class="options" v-if="!leftFlag">
           <el-dropdown>
-            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false"/>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
@@ -27,7 +27,7 @@
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
             <i :class="[
               data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
-            ]" />
+            ]"/>
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -45,19 +45,19 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()"/>
             </el-form-item>
           </el-col>
           <el-col :span="4" v-if="isProductNameSwitch === '1'">
             <el-form-item>
               <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
-                @keyup.enter.native="search()" />
+                @keyup.enter.native="search()"/>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
+                @keyup.enter.native="search()"/>
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -81,26 +81,29 @@
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
-            <el-dropdown style="margin-right:10px;" v-if="configFlag">
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                新建
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addOrUpdateHandle('',false, configFlag)">普通新建</el-dropdown-item>
-                <el-dropdown-item @click.native="aiAdd()">智能新建</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <el-dropdown style="margin-right:10px;" v-else>
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                新建
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="quickAdd()">快速新建</el-dropdown-item>
-                <el-dropdown-item @click.native="addOrUpdateHandle('', false, configFlag)">普通新建</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="addOrUpdateHandle('','add')">
+              新建
+            </el-button>
+            <!--            <el-dropdown style="margin-right:10px;" v-if="configFlag">-->
+            <!--              <el-button size="mini" type="primary" icon="el-icon-plus">-->
+            <!--                新建-->
+            <!--                <i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+            <!--              </el-button>-->
+            <!--              <el-dropdown-menu slot="dropdown">-->
+            <!--                <el-dropdown-item @click.native="addOrUpdateHandle('',false, configFlag)">普通新建</el-dropdown-item>-->
+            <!--                <el-dropdown-item @click.native="aiAdd()">智能新建</el-dropdown-item>-->
+            <!--              </el-dropdown-menu>-->
+            <!--            </el-dropdown>-->
+            <!--            <el-dropdown style="margin-right:10px;" v-else>-->
+            <!--              <el-button size="mini" type="primary" icon="el-icon-plus">-->
+            <!--                新建-->
+            <!--                <i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+            <!--              </el-button>-->
+            <!--              <el-dropdown-menu slot="dropdown">-->
+            <!--                <el-dropdown-item @click.native="quickAdd()">快速新建</el-dropdown-item>-->
+            <!--                <el-dropdown-item @click.native="addOrUpdateHandle('', false, configFlag)">普通新建</el-dropdown-item>-->
+            <!--              </el-dropdown-menu>-->
+            <!--            </el-dropdown>-->
             <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button class="imporBtn" size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
@@ -113,14 +116,14 @@
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
+                @click="superQueryVisible = true"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()"/>
             </el-tooltip>
 
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()"/>
             </el-tooltip>
           </div>
         </div>
@@ -129,15 +132,15 @@
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
+              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                 {{ scope.row.code }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="productCategoryName" label="产品分类" width="120" />
-          <el-table-column prop="mainUnit" label="主单位" width="120" />
+          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom"/>
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"/>
+          <el-table-column prop="productCategoryName" label="产品分类" width="120"/>
+          <el-table-column prop="mainUnit" label="主单位" width="120"/>
           <el-table-column prop="productSource" label="产品来源" width="120">
             <template slot-scope="{ row }">
               <template v-if="row.productSource == 'produce'">
@@ -161,32 +164,32 @@
               <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="brand" label="品牌" width="120" />
-          <el-table-column prop="model" label="型号" width="120" />
-          <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120" />
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
-          <el-table-column prop="structureType" label="结构类型" width="120" />
-          <el-table-column prop="clearance" label="游隙" width="120" />
-          <el-table-column prop="steelBallManufacturer" label="钢球厂家" width="120" />
-          <el-table-column prop="oil" label="油脂" width="120" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" />
-          <el-table-column prop="noise" label="噪音" width="120" />
-          <el-table-column prop="holder" label="保持架" width="120" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" />
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" />
-          <el-table-column prop="colour" :label="$store.getters.colour"  width="120" />
-          <el-table-column prop="aperture" label="孔径" width="120" />
-          <el-table-column prop="remark" label="备注" width="120" />
-          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" />
+          <el-table-column prop="brand" label="品牌" width="120"/>
+          <el-table-column prop="model" label="型号" width="120"/>
+          <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120"/>
+          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"/>
+          <el-table-column prop="structureType" label="结构类型" width="120"/>
+          <el-table-column prop="clearance" label="游隙" width="120"/>
+          <el-table-column prop="steelBallManufacturer" label="钢球厂家" width="120"/>
+          <el-table-column prop="oil" label="油脂" width="120"/>
+          <el-table-column prop="oilQuantity" label="油脂量" width="120"/>
+          <el-table-column prop="noise" label="噪音" width="120"/>
+          <el-table-column prop="holder" label="保持架" width="120"/>
+          <el-table-column prop="vibrationLevel" label="振动等级" width="120"/>
+          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="120"/>
+          <el-table-column prop="colour" :label="$store.getters.colour" width="120"/>
+          <el-table-column prop="aperture" label="孔径" width="120"/>
+          <el-table-column prop="remark" label="备注" width="120"/>
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"/>
+          <el-table-column prop="createByName" label="创建人"/>
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, configFlag)"
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit', configFlag)"
                 @del="handleDel(scope.row.id)">
-                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true, configFlag)">
+                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, 'look', configFlag)">
                   查看详情
                 </el-button>
-                <el-button type="text" size="mini" @click.native="copyHandle('', false, configFlag,scope.row)">
+                <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, 'copy', configFlag,scope.row)">
                   复制
                 </el-button>
                 <!-- <el-dropdown hide-on-click>
@@ -207,19 +210,19 @@
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+          :limit.sync="listQuery.pageSize" @pagination="initData"/>
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <aiForm v-if="aiformVisible" ref="aiForm" @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"/>
+    <aiForm v-if="aiformVisible" ref="aiForm" @close="closeForm"/>
 
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download"/>
     <!-- 导入产品 -->
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
-      :http-request="UploadProduct" />
+      :http-request="UploadProduct"/>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
       <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
@@ -299,7 +302,7 @@
               </template>
               <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
                 @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop"
-                :requestObj="quickRequestObj" :dataFormatting="dataFormatting" />
+                :requestObj="quickRequestObj" :dataFormatting="dataFormatting"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -338,39 +341,22 @@
 
 <script>
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { excelExport } from '@/api/basicData/index'
-import {
-  getProductList,
-  deleteProduct,
-  uploadCpProductData,
-  uploadUnCpProductData,
-  cpAddProduct,
-  checkCodeExist,
-  checkDrawExist
-} from '@/api/masterDataManagement/productManage'
-import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSettings'
+import {excelExport, getBimBusinessSwitchConfigList, getCooperativeData} from '@/api/basicData/index'
+import {checkCodeExist, checkDrawExist, cpAddProduct, deleteProduct, getProductList, uploadCpProductData, uploadUnCpProductData} from '@/api/masterDataManagement/productManage'
+import {getcategoryTree, getcategoryTree as getcategoryCoop, getUnitData} from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import Form from './Form'
 import aiForm from './aiForm'
-import { mapState } from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList,
-  getbimProductAttributes,
-  getbimProductsModelList,
-  getbimProductAttributesListMap
-} from '@/api/masterDataManagement/index'
-import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getCooperativeData } from '@/api/basicData/index'
-import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
-import { getProjectList } from '@/api/system/projectManagement'
-import { mapGetters } from 'vuex'
+import {getbimProductAttributes, getbimProductAttributesListMap, getbimProductsModelList} from '@/api/masterDataManagement/index'
+import {getProjectList} from '@/api/system/projectManagement'
+
 export default {
-  components: { Form, ExportForm, aiForm, SuperQuery },
+  components: {Form, ExportForm, aiForm, SuperQuery},
   name: 'finished_product',
   data() {
     return {
-      highlightCurrentFlag:false,
+      highlightCurrentFlag: false,
       importProjectId: '',
       isProductNameSwitch: '',
       bimProductAttributesObj: {},
@@ -385,9 +371,9 @@ export default {
       },
       codeConfig: {},
       quickRules: {
-        projectId: [{ required: true, message: '请选择所属项目', trigger: 'change' }],
+        projectId: [{required: true, message: '请选择所属项目', trigger: 'change'}],
         code: [
-          { required: true, message: '请输入产品编码', trigger: 'blur' },
+          {required: true, message: '请输入产品编码', trigger: 'blur'},
           {
             validator: (rule, value, callback) => {
               if (!value) {
@@ -416,7 +402,7 @@ export default {
           }
         ],
         drawingNo: [
-          { required: true, message: '请输入品名规格', trigger: 'blur' },
+          {required: true, message: '请输入品名规格', trigger: 'blur'},
           {
             validator: (rule, value, callback) => {
               if (!value) {
@@ -444,16 +430,16 @@ export default {
             trigger: 'blur'
           }
         ],
-        unit: [{ required: true, message: '请输入单位', trigger: 'blur' }],
-        productCategoryName: [{ required: true, message: '请选择产品分类', trigger: 'change' }],
-        productSource: [{ required: true, message: '请选择产品来源', trigger: 'change' }]
+        unit: [{required: true, message: '请输入单位', trigger: 'blur'}],
+        productCategoryName: [{required: true, message: '请选择产品分类', trigger: 'change'}],
+        productSource: [{required: true, message: '请选择产品来源', trigger: 'change'}]
       },
       getcategoryCoop,
       productSourceOptions: [
-        { label: '组装', value: 'assemble' },
-        { label: '生产', value: 'produce' },
-        { label: '采购', value: 'purchase' },
-        { label: '外协', value: 'out' }
+        {label: '组装', value: 'assemble'},
+        {label: '生产', value: 'produce'},
+        {label: '采购', value: 'purchase'},
+        {label: '外协', value: 'out'}
       ],
       quickRequestObj: {
         classAttribute: 'finish_product'
@@ -494,12 +480,12 @@ export default {
         classAttribute: 'finish_product'
       },
       listQuery: {},
-      productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
+      productStatusList: [{label: '启用', value: 'enable'}, {label: '禁用', value: 'disabled'}], // 产品状态
       productSourceList: [
-        { label: '组装', value: 'assemble' },
-        { label: '生产', value: 'produce' },
-        { label: '采购', value: 'purchase' },
-        { label: '外协', value: 'out' }
+        {label: '组装', value: 'assemble'},
+        {label: '生产', value: 'produce'},
+        {label: '采购', value: 'purchase'},
+        {label: '外协', value: 'out'}
       ], // 产品来源
       total: 0,
       formVisible: false,
@@ -510,7 +496,6 @@ export default {
         label: 'name'
       },
       columnList: [
-        'mainUnit',
         'brand',
         'model',
         'sealingCoverStructure',
@@ -557,16 +542,16 @@ export default {
           label: '产品来源',
           type: 'select',
           options: [
-            { label: '生产', value: 'produce' },
-            { label: '采购', value: 'purchase' },
-            { label: '外协', value: 'out' }
+            {label: '生产', value: 'produce'},
+            {label: '采购', value: 'purchase'},
+            {label: '外协', value: 'out'}
           ]
         },
         {
           prop: 'productStatus',
           label: '产品状态',
           type: 'select',
-          options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
+          options: [{label: '启用', value: 'enable'}, {label: '禁用', value: 'disabled'}]
         },
         {
           prop: 'brand',
@@ -724,13 +709,14 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
-    productSourceChange(){
+    productSourceChange() {
       this.initData()
     },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
+      } catch (error) {
+      }
     },
     async getProjectSwitch() {
       let obj = {
@@ -793,7 +779,8 @@ export default {
         if (flag) {
           this.quickForm.code = data.number
         }
-      } catch (error) { }
+      } catch (error) {
+      }
     },
     getBimBusinessSwitchConfigList() {
       let obj = {
@@ -1091,7 +1078,7 @@ export default {
       this.exportFormVisible = true
       let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
       columnList = columnList.map((item) => {
-        return { label: item.label, prop: item.prop }
+        return {label: item.label, prop: item.prop}
       })
       this.$nextTick(() => {
         this.$refs.exportForm.init(columnList)
@@ -1117,7 +1104,8 @@ export default {
             if (!res.data.url) return
             this.jnpf.downloadFile(res.data.url)
           })
-          .catch(() => { })
+          .catch(() => {
+          })
       }
     },
     // 展开或折叠全部
@@ -1149,7 +1137,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: 'finish_product' })
+      getcategoryTree({classAttribute: 'finish_product'})
         .then((res) => {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {
@@ -1169,7 +1157,7 @@ export default {
       this.search()
     },
 
-    sortChange({ prop, order }) {
+    sortChange({prop, order}) {
       let newProp
       if (prop === 'projectName') {
         newProp = prop
@@ -1181,7 +1169,7 @@ export default {
       this.initData()
     },
     // 关闭新建、编辑页面
-    closeForm(isRefresh) {
+    closeForm(isRefresh = true) {
       this.formVisible = false
       this.aiformVisible = false
       if (isRefresh) {
@@ -1218,24 +1206,24 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$refs.SuperQuery.conditionList = []
-            this.highlightCurrentFlag=false
+      this.highlightCurrentFlag = false
 
       this.filterText = ''
       this.initData()
     },
 
-    addOrUpdateHandle(id, btnType, flag) {
+    addOrUpdateHandle(id, btnType, flag = false) {
       this.formVisible = true
-      
+
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, flag,'',this.isProjectSwitch)
+        this.$refs.Form.init(id, btnType, flag, '', this.isProjectSwitch)
       })
     },
     // 复制
-    copyHandle(id, btnType, flag,row) {
+    copyHandle(id, btnType, flag, row) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, flag,row,this.isProjectSwitch)
+        this.$refs.Form.init(id, btnType, flag, row, this.isProjectSwitch)
       })
     },
     handleDel(id) {
@@ -1252,7 +1240,8 @@ export default {
             })
           })
         })
-        .catch(() => { })
+        .catch(() => {
+        })
     },
     // 导入
     importForm() {
@@ -1264,8 +1253,10 @@ export default {
       }
       this.uploadVisib = true
     },
-    handleRemove(file, fileList) { },
-    handlePreview(file) { },
+    handleRemove(file, fileList) {
+    },
+    handlePreview(file) {
+    },
     handleFileChange(file) {
       this.file = file.raw
     },
@@ -1374,7 +1365,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在成品产品档案错误！'),
+            h('p', {style: 'font-size:14px;'}, '导入成功，存在成品产品档案错误！'),
             h(
               'el-button',
               {
@@ -1425,7 +1416,7 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped/>
 <style lang="scss" scoped>
 .custom_title {
   line-height: 24px;
@@ -1445,11 +1436,13 @@ export default {
   font-size: 14px;
   word-break: break-all;
 }
-.el-button [class*=icon-ym-]+span {
+
+.el-button [class*=icon-ym-] + span {
   margin-left: 5px;
 }
-.imporBtn ::v-deep span{
-  margin-left: 8px!important;
+
+.imporBtn ::v-deep span {
+  margin-left: 8px !important;
 }
 
 

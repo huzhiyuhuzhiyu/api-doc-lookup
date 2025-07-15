@@ -10,6 +10,7 @@
 } -->
 <!-- hasToolbar 是否展示工具栏（布尔值 默认true） -->
 <!-- hasActionbar 是否展示操作栏（布尔值 默认true） -->
+<!-- checkSelectable 判断列表行是否可选的方法 -->
 <!-- tableItems 渲染的列表字段
   完整参数：
   prop 绑定变量 - 必传
@@ -33,6 +34,7 @@
   使用示例：[{ prop: "qty", label: "数量", value: "1", type: "input", itemRules: [{ required: true, trigger: "blur" }], input: () => {} }
  -->
 <!-- openMode 表单打开方式（新建、编辑、只读） -->
+<!-- tableProps 绑定到table组件上的属性 -->
 
 <!--  方法  -->
 <!-- addth 新增行 -->
@@ -44,44 +46,70 @@
 
 <template>
   <div class="TableForm_main">
-    <div v-if="realOpenMode !== '只读' && hasToolbar" class="TableForm_title">
-      <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">选择产品</el-button>|
-      <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-    </div>
+    <slot name="top">
+      <div v-if="realOpenMode !== '只读' && hasToolbar" class="TableForm_title">
+        <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">选择产品</el-button>|
+        <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+      </div>
+    </slot>
 
-    <el-form :model="JNPFColTableData" ref="main" class="tableContainer">
-      <el-table class="TableForm table" :data="JNPFColTableData.data" v-bind="customStyleData" hasNO fixedNO hasC
-        @selection-change="handleSelectionChange" border v-if="tableVisible">
+    <el-form :model="JNPFColTableData" ref="main" class="tableContainer" :show-summary="tableProps ? tableProps['show-summary'] : false"
+      :key="tableKey">
+      <!--eslint-disable vue/require-component-is -->
+      <component is="el-table" class="TableForm table" :data="JNPFColTableData.data"
+        v-bind="{ ...tableProps, ...customStyleData }" @selection-change="handleSelectionChange" border
+        v-if="tableVisible" ref="tableRef">
         <el-table-column type="selection" width="60" :fixed="fixedC ? 'left' : false" align="center"
-          v-if="realOpenMode !== '只读' && hasToolbar" key="no" />
+          v-if="realOpenMode !== '只读' && hasToolbar && hasC" key="no" :selectable="checkSelectable" />
         <el-table-column type="index" width="60" label="序号" align="center" :fixed="fixedNO ? 'left' : false"
-          key="checkBox" />
+          key="checkBox" v-if="!tableProps.is" />
 
         <template v-for="item in tableItems">
-          <el-table-column v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop"
-            :label="item.label" :width="item.width" :min-width="item.minWidth || 100" :fixed="item.fixed"
-            :show-overflow-tooltip="item.type === 'view'">
-            <template slot="header" v-if="isRequire(item)">
-              <span class="required">*</span>{{ item.label }}
-            </template>
-            <template slot-scope="scope">
-              <FormItem :item="item" :lineItem="JNPFColTableData.data[scope.$index]"
-
-                :value="JNPFColTableData.data[scope.$index][scope.column.property]"
-                @input="handleInput($event, scope.column.property, scope.$index)" :ref="scope.column.property"
-                :openMode="realOpenMode" :scope="scope" :paramsObj="{ scope }" />
-            </template>
-          </el-table-column>
+          <template v-if="item.hasOwnProperty('render') ? item.render : true">
+            <el-table-column v-if="item.type !== 'view' && item.jnpfKey !== 'JNPFTableText'" :key="item.prop" :prop="item.prop" :label="item.label"
+              :width="item.width" :min-width="item.minWidth || 100" :fixed="item.fixed" :show-overflow-tooltip="false" className="LineRequired">
+              <template slot="header" v-if="isRequire(item)">
+                <span class="required">*</span>{{ item.label }}
+              </template>
+              <template slot-scope="scope">
+                <FormItem :item="item" :lineItem="scope.row" :value="scope.row[scope.column.property]"
+                  @input="handleInput($event, scope.column.property, scope.$index)" :ref="scope.column.property"
+                  :openMode="realOpenMode" :scope="scope" :paramsObj="{ scope }" />
+              </template>
+            </el-table-column>
+            <el-table-column
+              v-else
+              :key="item.prop"
+              :prop="item.prop"
+              :label="item.label"
+              :width="item.width"
+              :min-width="item.minWidth || 100"
+              :fixed="item.fixed"
+            >
+              <template v-if="item.slot" v-slot="{row}">
+                <template v-if="item.dictType">
+                   <span>
+                      <el-tag :type="global.getDictLabelGlobal(item.dictType, row[item.prop], { withType: true }).type">
+                        {{ global.getDictLabelGlobal(item.dictType, row[item.prop]) }}
+                      </el-tag>
+                   </span>
+                </template>
+              </template>
+            </el-table-column>
+          </template>
         </template>
 
-        <el-table-column label="操作" width="90" :fixed="fixedA ? 'right' : false"
-          v-if="realOpenMode !== '只读' && hasActionbar" key="actionBar">
-          <template slot-scope="scope">
-            <el-button type="text" class="JNPF-table-delBtn" :disabled="realOpenMode === '只读'" @click="deleteth(scope)">
-              {{ $t(`common.delBtn`) }}
-            </el-button>
-          </template>
-        </el-table-column>
+        <slot name="actions">
+          <el-table-column label="操作" width="90" :fixed="fixedA ? 'right' : false"
+            v-if="realOpenMode !== '只读' && hasActionbar" key="actionBar">
+            <template slot-scope="scope">
+              <el-button type="text" class="JNPF-table-delBtn" :disabled="realOpenMode === '只读'"
+                @click="deleteth(scope)">
+                {{ $t(`common.delBtn`) }}
+              </el-button>
+            </template>
+          </el-table-column>
+        </slot>
 
         <el-table-column align="center" fixed="right" width="40" v-if="customStyle">
           <template slot="header">
@@ -92,29 +120,25 @@
         </el-table-column>
 
         <div class="noDataTip" v-if="JNPFColTableData.data.length === 0">暂无数据</div>
-      </el-table>
+      </component>
     </el-form>
 
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" dialogTitle="选择产品"
-      treeTitle="物料分类" :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
-      :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      treeTitle="物料分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
+      :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
   </div>
 </template>
 
 <script>
 import FormItem from "@/components/JNPF-col-table/item"
+import { getProductList } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
-import {
-    getProductList,
-} from '@/api/masterDataManagement/productManage'
 export default {
   components: { FormItem },
   name: 'TableForm-product',
-  props: {
-    classAttribute: { type: String, default: '' }
-  },
   data() {
     return {
+      tableKey: 0,
       selectedList: [],
       JNPFColTableData: {
         data: this.value
@@ -122,7 +146,7 @@ export default {
       tableVisible: true,
       customStyleData: {},
       getProductList, // 产品选择弹出框树状列表请求api
-      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: this.classAttribute, } }, // 产品选择弹出框树状列表
+      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "" } }, // 产品选择弹出框树状列表
       ProductListRequestObj: {
         classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
         productCategoryId: "",
@@ -144,7 +168,7 @@ export default {
         { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格' },
         // { prop: 'spec', label: '规格型号' },
-        { prop: 'productCategoryName', label: '产品分类' }
+        { prop: 'classAttributeText', label: '产品分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: "productCode", label: "产品编码", type: 'input' },
@@ -173,6 +197,10 @@ export default {
       type: Boolean,
       default: true
     },
+    hasC: {
+      type: Boolean,
+      default: true
+    },
     hasActionbar: {
       type: Boolean,
       default: true
@@ -192,12 +220,35 @@ export default {
     customStyle: { // 允许切换表格样式
       type: Boolean,
       default: false
+    },
+    checkSelectable: {
+      type: Function,
+      default: (row) => {
+        return true
+      }
+    },
+    selectionChange: {
+      type: Function,
+      default: null
+    },
+    tableProps: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
+
   },
   watch: {
     value: {
       handler: function (newValue) {
         this.JNPFColTableData.data = newValue;
+      },
+      // deep: true
+    },
+    tableItems: {
+      handler: function (newValue) {
+        this.tableKey++
       },
       // deep: true
     }
@@ -217,7 +268,6 @@ export default {
       }
     }
   },
-
   mounted() {
     this.setDefaultValue();
   },
@@ -275,7 +325,11 @@ export default {
       this.$emit('input', [...tempData]);
     },
     handleSelectionChange(data) {
-      this.selectedList = data
+      if (this.selectionChange) {
+        this.selectionChange(data)
+      } else {
+        this.selectedList = data
+      }
     },
     async switchStyle(type) {
       await this.$nextTick();
@@ -337,7 +391,7 @@ export default {
   }
 }
 </script>
-<style  scoped>
+<style scoped>
 ::v-deep .el-form-item--small.el-form-item {
   margin-bottom: 0px;
 }

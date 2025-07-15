@@ -95,7 +95,7 @@ export function updateProductPrice(data) {
   })
 }
 
-// 成品 导入 
+// 成品 导入
 export function uploadCpProductData(data) {
   return request({
     url: `/api/zgt/product/cp/upload`,
@@ -104,7 +104,7 @@ export function uploadCpProductData(data) {
   })
 }
 
-// 成品(没有型号) 导入 
+// 成品(没有型号) 导入
 export function uploadUnCpProductData(data) {
   return request({
     url: `/api/zgt/product/un/cp/upload`,
@@ -113,7 +113,7 @@ export function uploadUnCpProductData(data) {
   })
 }
 
-// 产品管理 导入 
+// 产品管理 导入
 export function uploadProductData(data) {
   return request({
     url: `/api/zgt/product/upload`,
@@ -127,6 +127,15 @@ export function batchProductPerson(data) {
   return request({
     url: `/api/zgt/product/batch/setting`,
     method: 'PUT',
+    data
+  })
+}
+
+// 批量设置海关产品
+export function setHSProducts(data) {
+  return request({
+    url: `/api/erp/products/batch/set/hs`,
+    method: 'post',
     data
   })
 }

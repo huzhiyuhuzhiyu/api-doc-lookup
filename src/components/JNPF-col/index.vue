@@ -25,8 +25,8 @@
 <!-- value 绑定的对象(使用v-model绑定) 示例：{} -->
 <!-- openMode 表单打开方式（新建、编辑、只读） -->
 <template>
-  <el-form :label-position="labelPosition" :model="value" v-bind="tabContent" ref="main">
-    <el-row :gutter="30" class="custom-row">
+  <el-form :label-position="labelPosition" :model="value" ref="main">
+    <el-row :gutter="30" class="custom-row" :key="tabContentKey">
 
       <FormItem v-for="item in tabContent" :key="item.prop+item.label+item.content" :item="item" v-bind="item" :value="value[item.prop]"
         @input="handleInput($event, item.prop)" :ref="item.prop" :openMode="realOpenMode" />
@@ -45,7 +45,9 @@ export default {
   components: { FormItem },
   name: 'JNPF-col',
   data() {
-    return {}
+    return {
+      tabContentKey: +new Date()
+    }
   },
   props: {
     labelPosition:{
@@ -92,8 +94,9 @@ export default {
           formData[prop] = value;
         }
       });
-      
+
       this.$emit('input', { ...formData });
+      this.tabContentKey = +new Date()
     }
   }
 }

@@ -1,25 +1,23 @@
 <script>
 import {deepClone} from "@/utils";
 import {getBasicFormSchema} from "./data";
-import {addHsProducts, getHsProducts, updateHsProducts} from "@/api/shipmentNote/hsCodes";
+import {addCompany, getCompany, updateCompany} from "@/api/factory/factoryInformation";
 
 export default {
   name: "Form",
   data() {
     return {
-      title: '海关产品分类',
+      title: '工厂信息',
       btnType: '',
       loading: false,
       btnLoading: false,
       dataForm: {
-        code: '',
         name: '',
-        drawingNo: '',
-        tradeName: '',
-        purpose: '',
-        type: '',
-        brand: '',
-        remark: '',
+        contacts: '',
+        contactNumber: '',
+        taxNumber: '',
+        address: '',
+        defaultFlag: '',
       },
       basicFormSchema: getBasicFormSchema(this.$refs.dataForm, this),
       activeName: 'jcInfo',
@@ -74,7 +72,7 @@ export default {
     async getDetail(id) {
       this.loading = true
       try {
-        const res = await getHsProducts(id)
+        const res = await getCompany(id)
         const {msg, data} = res
         if (msg === 'Success') {
           this.dataForm = data
@@ -91,11 +89,10 @@ export default {
       const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
       if (!valid_1) return this.btnLoading = false
       const params = deepClone(this.dataForm)
-      if (this.btnType === 'copy') params.id = ''
       let MSG = '提交成功'
       try {
-        const apiMethod = this.dataForm.id ? updateHsProducts : addHsProducts
-        const res = await apiMethod({hsProducts: params})
+        const apiMethod = this.dataForm.id ? updateCompany : addCompany
+        const res = await apiMethod(params)
         const {msg} = res
         if (msg === 'Success') {
           this.$message.success(MSG)

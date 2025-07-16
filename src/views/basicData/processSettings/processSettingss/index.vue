@@ -73,18 +73,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
-          <el-table-column prop="processNames" label="工序名称" align="left" min-width="220">
-            <template slot-scope="scope">
-              <div v-if="scope.row.processNames && scope.row.processNames.length > 0">
-                <template v-for="(item, index) in scope.row.processNames">
-                  <el-tag :key="index" type="info" class="processTag">
-                    {{ item }}
-                  </el-tag>
-                  <span v-if="index < scope.row.processNames.length - 1" :key="'sep-' + index">-></span>
-                </template>
-              </div>
-            </template>
-          </el-table-column>
+          <el-table-column prop="processNames" label="工序名称" align="left" min-width="220" />
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" sortable="custom" width="160">
             <template slot-scope="scope">

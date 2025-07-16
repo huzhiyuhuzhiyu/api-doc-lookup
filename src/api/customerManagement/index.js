@@ -47,6 +47,15 @@ export function detailPartner(id) {
     method: 'get',
   })
 }
+
+// 获取复制的编码
+export function cooperativeReplication(code) {
+  return request({
+    url: `/api/erp/cooperative/partner/replication/${code}`,
+    method: 'get',
+  })
+}
+
 // 我的客户 验证编码
 export function checkPartner(data) {
   return request({

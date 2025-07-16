@@ -126,6 +126,9 @@
                       <el-dropdown-item @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">
                         查看详情
                       </el-dropdown-item>
+                      <el-dropdown-item @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'copy')">
+                        复制
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </tableOpts>

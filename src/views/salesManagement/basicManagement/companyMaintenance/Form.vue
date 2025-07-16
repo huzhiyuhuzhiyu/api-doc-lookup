@@ -12,7 +12,7 @@ export default {
       loading: false,
       btnLoading: false,
       dataForm: {
-        type: 'factory', // 默认类型为工厂
+        type: 'customer', // 默认类型为客户
         name: '',
         contacts: '',
         contactNumber: '',

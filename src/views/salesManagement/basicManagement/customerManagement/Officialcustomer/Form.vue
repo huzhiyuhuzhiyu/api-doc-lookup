@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType=='look' ? '查看成交客户' :btnType=='add'? '新建成交客户' :'编辑成交客户'" />
+        <el-page-header @back="goBack" :content="btnType=='look' ? '查看成交客户' :(btnType=='add' || btnType === 'copy')? '新建成交客户' :'编辑成交客户'" />
         <div class="options">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()" v-if="btnType!='look'">
             提交</el-button>
@@ -482,7 +482,7 @@
 
 <script>
 import { getBimBusinessDetail } from '@/api/basicData/index'
-import { checkPartner, addPartner, updatePartner, detailPartner } from '@/api/customerManagement'
+import {checkPartner, addPartner, updatePartner, detailPartner, cooperativeReplication} from '@/api/customerManagement'
 import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
@@ -730,8 +730,8 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (this.btnType === 'add') {
-          this.dataForm.code = data.number
+        if (this.btnType === 'add' || this.btnType === 'copy') {
+          this.dataForm.code = this.jnpf.replacePre(data.number, '')
         }
       } catch (error) {
       }
@@ -1155,7 +1155,7 @@ export default {
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
       this.btnType = btnType
-      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('ZGTKHBM')
+      if (this.btnType === 'add' || this.btnType === 'edit' || this.btnType === 'copy') this.fetchData('ZGTKHBM')
       // getBimBusinessInfo('460918012862529542').then(res=>{
       //   console.log("编码配置");
       //   this.businessType = res.data.configValue1
@@ -1172,6 +1172,9 @@ export default {
           this.dataForm = res.data.cooperativePartner
           this.tableData = res.data.recordsList
           this.dataForm.provincecityarea = []
+          if (this.btnType === 'copy') {
+            this.cooperativeReplication()
+          }
           if (res.data.cooperativePartner.province) {
             this.dataForm.provincecityarea.push(res.data.cooperativePartner.province)
             this.dataForm.provincecityarea.push(res.data.cooperativePartner.city)
@@ -1273,6 +1276,10 @@ export default {
         })
       }
     },
+    async cooperativeReplication() {
+      const response = await cooperativeReplication(this.dataForm.code)
+      this.dataForm.code = `${ this.dataForm.code }-${ response.data }`
+    },
     goBack() {
       this.$emit('close')
     },
@@ -1280,6 +1287,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerCategoryId')
       })
+      this.dataForm.code = this.jnpf.replacePre(this.codeConfig.number, data[0].all.codeRule)
       this.dataForm.partnerCategoryId = data ? data[0].id : ''
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },
@@ -1429,6 +1437,9 @@ export default {
                 sort: index
               }
             })
+          }
+          if (this.btnType === 'copy') {
+            this.dataForm.id = ''
           }
           let obj = {
             attachmentList: this.datafilelist,

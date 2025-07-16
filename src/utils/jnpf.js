@@ -16,6 +16,11 @@ const mathjs = create(all, { number: "BigNumber", precision: 20 });
 
 const jnpf = {
 
+  replacePre(text, replacement) {
+    const safeReplacement = replacement ?? "";
+    return text.replace(/\{pre\}/g, safeReplacement);
+  },
+
   getpairingModeListFun() {
     let obj = {
       "pageNum": -1,

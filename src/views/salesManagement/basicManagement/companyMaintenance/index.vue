@@ -19,7 +19,7 @@ export default {
       superQueryVisible: false,
       superQueryJson: [],
       initListQuery: {
-        type: 'factory', // 默认类型为工厂
+        type: 'customer', // 默认类型为客户
         name: '',
         orderItems: [
           {
@@ -66,6 +66,8 @@ export default {
             this.$refs.Form.init('', 'add')
           })
           break;
+        case 'binding':
+          break
         default:
       }
     },

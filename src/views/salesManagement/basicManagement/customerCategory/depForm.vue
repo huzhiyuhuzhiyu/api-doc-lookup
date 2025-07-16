@@ -8,10 +8,13 @@
           @change="onOrganizeChange" :currOrgId="dataForm.id" :selectClassifyType="dataForm.type"/>
       </el-form-item>
       <el-form-item label="分类名称" prop="name">
-        <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
+        <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20"/>
+      </el-form-item>
+      <el-form-item label="编码规则" prop="codeRule">
+        <el-input v-model="dataForm.codeRule" placeholder="请输入编码规则" maxlength="50"/>
       </el-form-item>
       <el-form-item label="排序" prop="sortCode">
-        <el-input v-model="dataForm.sortCode" placeholder="请输入排序"  maxlength="4" />
+        <el-input v-model="dataForm.sortCode" placeholder="请输入排序" maxlength="4"/>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注"/>
@@ -26,8 +29,7 @@
 </template>
 
 <script>
-import { updateDepartment } from '@/api/permission/department'
-import { addCategory, getCategoryInfo, editCategory,checkCategorychildNode } from "@/api/basicData/index";
+import {addCategory, checkCategorychildNode, editCategory, getCategoryInfo} from "@/api/basicData/index";
 
 export default {
   data() {
@@ -36,8 +38,9 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
-        sortCode:'',
+        sortCode: '',
         name: '',
+        codeRule: '',
         remark: '',
         type: 'customer',
         parentId: '',
@@ -47,9 +50,14 @@ export default {
       organizeIdTree: [],
       dataRule: {
         name: [
-          { required: true, message: '请输入分类名称', trigger: 'blur' },
-          { validator: this.formValidate('fullName', '分类名称不能含有特殊符号'), trigger: 'blur' },
-          { max: 50, message: '分类名称最多为50个字符！', trigger: 'blur' }
+          {required: true, message: '请输入分类名称', trigger: 'blur'},
+          {validator: this.formValidate('fullName', '分类名称不能含有特殊符号'), trigger: 'blur'},
+          {max: 50, message: '分类名称最多为50个字符！', trigger: 'blur'}
+        ],
+        codeRule: [
+          {required: true, message: '请输入编码规则', trigger: 'blur'},
+          {validator: this.formValidate('fullName', '编码规则不能含有特殊符号'), trigger: 'blur'},
+          {max: 50, message: '分类名称最多为50个字符！', trigger: 'blur'}
         ],
       }
     }

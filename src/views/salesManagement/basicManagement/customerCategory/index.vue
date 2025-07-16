@@ -48,6 +48,7 @@
               <i :class="[scope.row.childrenList.length>=1?'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{scope.row.name}}
             </template>
           </el-table-column>
+          <el-table-column prop="codeRule" label="编码规则" />
           <el-table-column prop="parentName" label="上级分类" />
           <el-table-column prop="sortCode" label="排序" width="120">
             <template slot-scope="scope">

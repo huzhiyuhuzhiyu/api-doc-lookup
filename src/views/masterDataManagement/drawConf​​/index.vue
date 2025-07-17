@@ -109,7 +109,7 @@ export default {
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
         <el-form @submit.native.prevent>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item>
               <el-input v-model="listQuery.value1"
                   placeholder="请输入型号/采购单号/客户型号/工厂号"

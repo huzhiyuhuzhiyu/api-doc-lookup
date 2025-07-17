@@ -2,17 +2,21 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {getCompanyPage, removeCompany} from "@/api/customerAndFactory";
 import Form from './Form.vue'
+import BindingForm from "./bindingForm.vue";
 import {buttonList, getColumns} from "./data";
+
 
 export default {
   name: "index",
   components: {
+    BindingForm,
     SuperQuery,
     Form
   },
   data() {
     return {
       loading: false,
+      BindingVisible: false,
       visible: false,
       tableData: [],
       total: 0,
@@ -67,6 +71,10 @@ export default {
           })
           break;
         case 'binding':
+          this.BindingVisible = true
+          this.$nextTick(() => {
+            this.$refs.BindingForm.init()
+          })
           break
         default:
       }
@@ -104,6 +112,7 @@ export default {
 
     close(isInitData = true) {
       this.visible = false
+      this.BindingVisible = false
       if (!isInitData) return
       this.initData()
     },
@@ -147,7 +156,7 @@ export default {
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
         <el-form @submit.native.prevent>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item>
               <el-input v-model.trim="listQuery.name"
                 placeholder="请输入公司名称"
@@ -246,5 +255,6 @@ export default {
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <Form ref="Form" v-if="visible" @close="close"/>
+    <BindingForm ref="BindingForm" v-if="BindingVisible" @close="close"/>
   </div>
 </template>

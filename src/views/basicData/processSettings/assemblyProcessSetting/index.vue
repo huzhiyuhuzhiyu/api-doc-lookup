@@ -296,7 +296,7 @@ export default {
             column: 'create_time'
           }
         ],
-        classAttribute: 'finish_product',
+        classAttributeList: ['semi_finished', 'finish_product'],
         routeType: 'productProcess',
         routingFlag: 0,
         productCode: '',
@@ -435,7 +435,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: 'finish_product' })
+      getcategoryTree({classAttributeList: ['semi_finished', 'finish_product']})
         .then((res) => {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {
@@ -730,7 +730,7 @@ export default {
             column: 'create_time'
           }
         ],
-        classAttribute: 'finish_product',
+        classAttributeList: ['semi_finished', 'finish_product'],
         routingFlag: 0,
         routeType: 'productProcess',
         productCode: '',

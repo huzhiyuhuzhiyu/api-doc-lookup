@@ -84,12 +84,14 @@ export function getColumns() {
       prop: "name",
       label: "公司抬头",
       minWidth: 200,
+      sortable:'custom',
     },
     {
       prop: "address",
       label: "地址",
       minWidth: 200,
       align: "left",
+      sortable:'custom',
     },
     {
       prop: "contactNumber",

@@ -1,10 +1,9 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {getHsProductsList, removeHsProducts} from "@/api/shipmentNote/hsCodes";
-import {buttonList} from "@/views/salesManagement/shipmentNote/hsCodes/data";
+import {getBusinessComponentPage, removeBusinessComponent} from "@/api/assemblyMaintenance";
 import Form from './Form.vue'
-import {getcategoryTree} from "@/api/basicData/materialSettings";
-import {getProductList, setHSProducts} from "@/api/masterDataManagement/productManage";
+import {buttonList, getColumns} from "./data";
+
 
 export default {
   name: "index",
@@ -21,7 +20,9 @@ export default {
       superQueryVisible: false,
       superQueryJson: [],
       initListQuery: {
-        keyword: '',
+        name: '',
+        cooperativePartnerName: '',
+        cooperativePartnerCode: '',
         orderItems: [
           {
             asc: false,
@@ -39,99 +40,7 @@ export default {
       listQuery: {},
       btnList: buttonList,
       columnList: [],
-      columnsConfig: [
-        {prop: 'code', label: 'HS编码', minWidth: 120, sortable: 'custom', slot: true},
-        {prop: 'name', label: '商品名称', minWidth: 200, sortable: 'custom'},
-        {prop: 'tradeName', label: '贸易名称', minWidth: 120, sortable: 'custom'},
-        {prop: 'drawingNo', label: '规格型号', minWidth: 120, sortable: 'custom'},
-        {prop: 'purpose', label: '用途', minWidth: 120, sortable: 'custom'},
-        {prop: 'type', label: '类型', minWidth: 120, sortable: 'custom'},
-        {prop: 'remark', label: '备注', minWidth: 120, sortable: 'custom'},
-      ],
-      HSCodeData: [],
-      addProductProps: {
-        title: '海关产品绑定',
-        activeType: '',
-        renderTree: true,
-        multiple: true,
-        treeTitle: '产品分类',
-        methodArr: {
-          method: getcategoryTree,
-          requestObj: {
-            classAttribute: ''
-          },
-        },
-        listMethod: getProductList,
-        tableItems: [
-          {prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-          {prop: 'code', label: '产品编码', sortable: 'custom'},
-          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-          {prop: 'hsProductsCode', label: 'HS编码', minWidth: '220px', sortable: 'custom'},
-          {prop: 'createTime', label: '创建时间', sortable: 'custom'}
-        ],
-        listRequestObj: {
-          hsProductsId: "",
-          productCode: "",
-          productName: "",
-          drawingNo: "",
-          productStatus: 'enable',
-          partnerType: "customer",
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'create_time'
-            }
-          ]
-        },
-        beforeSubmit: (data, paramsObj) => {
-          if (!data || !data.length) {
-            this.$message.error(`请进行海关产品绑定！`)
-            return false
-          }
-          return true
-        },
-        searchList: [
-          {prop: 'productName', label: '产品名称', type: 'input'},
-          {prop: 'productCode', label: '产品编码', type: 'input'},
-          {prop: 'drawingNo', label: '型号', type: 'input'},
-        ]
-      },
-      addHSCodeProps: {
-        title: '选择海关编码',
-        renderTree: false,
-        multiple: false,
-        listMethod: getHsProductsList,
-        tableItems: [
-          {prop: 'code', label: 'HS编码', minWidth: '220px', sortable: 'custom'},
-          {prop: 'name', label: '商品名称', sortable: 'custom'},
-          {prop: 'type', label: '类型', sortable: 'custom'},
-        ],
-        listRequestObj: {
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'create_time'
-            }
-          ]
-        },
-        searchList: [
-          {prop: 'code', label: 'HS编码', type: 'input'},
-        ],
-      },
-      HSCodeComSelectRow: null,
+      columnsConfig: getColumns(),
     }
   },
   created() {
@@ -142,42 +51,13 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await getHsProductsList(this.listQuery);
+        const res = await getBusinessComponentPage(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
-        this.HSCodeData = records;
         this.total = total
       } finally {
         this.loading = false
       }
-    },
-
-    onBindingOrViewHS(id, type) {
-      this.addProductProps.activeType = type
-      this.addProductProps.listRequestObj.hsProductsId = id
-      this.$refs.ComSelectProductRef.openDialog()
-    },
-
-    openHSCodeComSelect(row) {
-      this.HSCodeComSelectRow = row
-      this.$refs.ComSelectHSCodeRef.openDialog()
-    },
-
-    async submitAllProduct(id, data) {
-      const newData = data.map(({all: {hsProductsId = '', id = ''}}) => ({
-        hsProductsId,
-        productsId: id
-      }))
-      const res = await setHSProducts(newData)
-      if (res.msg === 'Success') {
-        this.$message.success('绑定成功')
-      }
-    },
-
-    submitAllHSCode(id, data) {
-      this.$set(this.HSCodeComSelectRow, 'hsProductsCode', data[0].all.code);
-      this.$set(this.HSCodeComSelectRow, 'hsProductsId', data[0].all.id);
-      this.$refs.ComSelectProductRef.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(this.HSCodeComSelectRow, true)
     },
 
     handleButtonClick(type) {
@@ -212,7 +92,7 @@ export default {
       this.$confirm('您确定要删除这些数据吗, 是否继续？', '提示', {
         type: 'warning'
       }).then(async () => {
-        const res = await removeHsProducts(id);
+        const res = await removeBusinessComponent(id);
         const {msg} = res
         if (msg === 'Success') {
           this.$message.success('删除成功')
@@ -224,6 +104,7 @@ export default {
 
     close(isInitData = true) {
       this.visible = false
+      this.BindingVisible = false
       if (!isInitData) return
       this.initData()
     },
@@ -241,6 +122,9 @@ export default {
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
+    },
+    getAlign(align) {
+      return align || 'center'
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
@@ -263,12 +147,26 @@ export default {
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
-        <el-form @submit.native.prevent>
-          <el-col :span="8">
+        <el-form @submit.native.prevent @keyup.enter.native="search()">
+          <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.keyword"
-                placeholder="请输入商品名称"
-                clearable @keyup.enter.native="search()"/>
+              <el-input v-model.trim="listQuery.name"
+                placeholder="机型"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.cooperativePartnerCode"
+                placeholder="客户编码"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.cooperativePartnerName"
+                placeholder="客户名称"
+                clearable/>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -289,10 +187,6 @@ export default {
               :btnList="btnList"
               @click="handleButtonClick"
             />
-            <!--            <TableDataExportButton :disabled="tableData.length <= 0" tableRef="dataTable"-->
-            <!--              :listQuery="listQuery" exportType="1018"-->
-            <!--              exportName="生产巡检待检工单" :hasMarginLeft="false"/>-->
-            <el-button size="mini" type="primary" @click="onBindingOrViewHS('','')">产品对照</el-button>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -325,14 +219,9 @@ export default {
               :min-width="column.minWidth"
               :sortable="column.sortable"
               :fixed="column.fixed"
-              :align="column.align"
+              :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
-                <template v-if="column.prop === 'code'">
-                  <el-link type="primary" @click.native="onBindingOrViewHS(scope.row.id,'look')">
-                    {{ scope.row.code }}
-                  </el-link>
-                </template>
                 <template v-if="column.dictType">
                    <span>
                 <el-tag
@@ -372,17 +261,5 @@ export default {
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <Form ref="Form" v-if="visible" @close="close"/>
-    <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct">
-      <template #hsProductsCode="row">
-        <el-input
-          v-model="row.row.hsProductsCode"
-          placeholder="请选择HS编码"
-          clearable
-          @click.native.stop="openHSCodeComSelect(row.row)"
-          readonly
-        />
-      </template>
-    </ComSelect-page>
-    <ComSelect-page v-bind="addHSCodeProps" ref="ComSelectHSCodeRef" :element-show="false" @change="submitAllHSCode"/>
   </div>
 </template>

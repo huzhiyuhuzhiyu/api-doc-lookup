@@ -1,6 +1,7 @@
 <script>
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import {deepClone} from "@/utils";
+import {getCompanyPage, setCompany} from "@/api/customerAndFactory";
+import {getCooperativeData} from "@/api/basicData";
 
 export default {
   name: "bindingForm",
@@ -9,9 +10,13 @@ export default {
     return {
       loading: false,
       btnLoading: false,
+      companyName: '',
+      companyNameOptions: [],
+      total: 0,
       initListQuery: {
         type: 'customer', // 默认类型为客户
         name: '',
+        value2: '',
         orderItems: [
           {
             asc: false,
@@ -26,82 +31,126 @@ export default {
         pageNum: 1,
         pageSize: 20
       },
-      listQuery: {},
+      listQuery: {
+        type: "customer",
+        saleFlag: 1,
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
       linesList: [],
       linesListItems: [
         {
-          prop: 'productName',
-          label: '产品名称',
-          value: '',
+          prop: 'code',
+          label: '客户编码',
           type: 'view',
           minWidth: 120,
         },
         {
-          prop: 'productCode',
-          label: '产品编码',
+          prop: 'name',
+          label: '客户名称',
           type: 'view',
           minWidth: 180,
         },
         {
-          prop: 'mainUnit',
-          label: '单位',
-          value: '',
+          prop: 'contacts',
+          label: '联系人',
           type: 'view',
-          minWidth: 90,
-        },
-        {
-          prop: 'num',
-          label: '出入库数量',
-          value: '',
-          type: 'view',
-          minWidth: 90,
-        },
-        {
-          prop: 'receivedQuantity',
-          label: '退货数量',
-          type: 'input',
-          value: '',
           minWidth: 120,
-          itemRules: [
-            {
-              validator: this.formValidate('noZero', '退货数量不能为0', (errMsg) => {
-                this.$message.error(errMsg)
-              }), trigger: ['blur', 'change']
-            },
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['退货数量不能为空', (errMsg) => {
-                  this.$message.error(`退货数量不能为空`)
-                }]
-              }), trigger: 'blur',
-            },
-            {
-              validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
-                }]
-              }),
-              trigger: ['blur', 'change'],
-            },
-            {
-              validator: this.formValidate({
-                type: 'calc',
-                params: [(rowIndex, value) => +value <= +this.linesList[rowIndex]?.num, "不能大于出入库数量", (errMsg, rowIndex) => {
-                  this.$message.error(`退货清单第${ rowIndex + 1 }行：退货数量${ errMsg }`)
-                }]
-              }), trigger: 'blur'
-            },
-            {required: true, message: '退货数量不能为空', trigger: ['blur', 'change'],},
-          ]
         },
-        {prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160}
+        {
+          prop: 'mobilePhone',
+          label: '手机',
+          type: 'view',
+          minWidth: 120,
+        },
+        {
+          prop: 'phone',
+          label: '电话',
+          type: 'view',
+          minWidth: 120,
+        },
+        {
+          prop: 'salespersonIdText',
+          label: '所属销售',
+          type: 'view',
+          minWidth: 120,
+        },
+        {
+          prop: 'companyId',
+          label: '公司抬头',
+          type: 'select',
+          options: [],
+          minWidth: 160,
+          change: this.handleChangeCompanyId,
+        },
       ],
       linesTableHeight: 0,
     }
   },
   methods: {
     async init() {
+      await this.initSelect()
+      await this.initData()
+      this.setLinesListItems()
       this.$nextTick(() => this.refreshTableHeight())
+    },
+    async initData() {
+      this.loading = true
+      try {
+        const response = await getCooperativeData(this.listQuery)
+        this.linesList = response.data.records
+      } finally {
+        this.loading = false
+      }
+    },
+    async initSelect() {
+      const params = {
+        type: 'customer',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 9999
+      }
+      const response = await getCompanyPage(params)
+      this.companyNameOptions = response.data.records.map(item => ({
+        label: item.name,
+        value: item.id
+      }))
+    },
+    handleChangeCompanyId(val, {row}) {
+      this.$refs.tableForm.$refs.tableRef.$refs.JNPFTable.toggleRowSelection(row, true)
+    },
+    handleChangeCompanyName(val) {
+      this.linesList.forEach(item => {
+        item.companyId = val
+        this.$refs.tableForm.$refs.tableRef.$refs.JNPFTable.toggleRowSelection(item, true)
+      })
+    },
+    setLinesListItems() {
+      this.linesListItems = this.linesListItems.map(item => {
+        if (item.prop === 'companyId') {
+          return {
+            ...item,
+            options: this.companyNameOptions
+          }
+        }
+        return item
+      })
     },
     search() {
       this.init()
@@ -121,7 +170,7 @@ export default {
       if (args.length) await new Promise(resolve => setTimeout(resolve, 500))
       const mainRef = this.$refs.main
       let maxHeight = mainRef.clientHeight
-      maxHeight -= 100 // 安全距离
+      maxHeight -= 180 // 安全距离
       maxHeight = maxHeight > 300 ? maxHeight : 300
       this.linesTableHeight = maxHeight
     },
@@ -129,23 +178,38 @@ export default {
       this.$emit('close');
     },
     async handleSubmit() {
-      if (!this.linesList.length) return this.$message.error('无退货信息')
+      let selectionList = this.$refs.tableForm.$refs.tableRef.selection
+
+      if (selectionList.length === 0) {
+        this.$message.warning('未选择任何数据')
+        return
+      }
+
+      const unboundItems = selectionList.filter(item => !item.companyId)
+      if (unboundItems.length > 0) {
+        const maxDisplay = 3
+        const displayedNames = unboundItems.slice(0, maxDisplay).map(item => item.name || '客户')
+        const moreCount = unboundItems.length - maxDisplay
+
+        let message = `以下客户未选择公司抬头：${ displayedNames.join('、') }`
+        if (moreCount > 0) {
+          message += `等${ unboundItems.length }个客户`
+        }
+
+        this.$message.warning(message)
+        return
+      }
       // 校验表单
       this.btnLoading = true
       const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
       if (!valid_2) return this.btnLoading = false
-      const attachmentList = this.fileListMap(type, this.fileList)
-      const params = deepClone(this.dataForm)
-      const newLines = this.linesList.map(item => ({...item, notificationType: 'external_process'}))
-      let MSG = '提交成功'
+      let MSG = '绑定成功'
       try {
-        const apiMethod = params.id ? updateExpReceiptReturnGoods : addExpReceiptReturnGoods
-        const res = await apiMethod({
-          returnGoods: params,
-          attachmentList: attachmentList,
-          lines: newLines,
-          flowData: this.flowData
-        },)
+        const params = selectionList.map(item => ({
+          cooperativePartnerId: item.id,
+          companyId: item.companyId,
+        }))
+        const res = await setCompany(params)
         const {msg} = res
         if (msg === 'Success') {
           this.$message.success(MSG)
@@ -183,17 +247,22 @@ export default {
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.name"
-                      placeholder="公司抬头"
+                      placeholder="客户名称"
                       clearable @keyup.enter.native="search()"/>
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                <el-form-item>
-                  <el-select v-model.trim="listQuery.name"
-                    placeholder="公司抬头"
-                    clearable @keyup.enter.native="search()"/>
-                </el-form-item>
-              </el-col>
+                  <el-form-item label="有无业务员">
+                    <el-select v-model.trim="listQuery.value2" placeholder="请选择">
+                      <el-option
+                        v-for="item in global.booleanOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
                 <el-col :span="6">
                   <el-form-item>
                     <el-button size="mini" type="primary" icon="el-icon-search"
@@ -214,19 +283,26 @@ export default {
               :tableProps="{
                         is: 'JNPF-table',
                         fixedNO: true,
-                        hasC: false,
+                        hasC: true,
                         height: linesTableHeight,
                         rowKey: 'id',
                         defaultExpandAll: true,
                         customColumn: true,
                     }">
               <template slot="top">
-                <div class="tableTopContainer">
+                <div class="tableTopContainer mb-5">
                   <div class="left">
                     <template>
                       <div class="left-top">
                         <div style="margin-right: 6px">公司抬头</div>
-                        <el-select></el-select>
+                        <el-select v-model="companyName" placeholder="请选择" @change="handleChangeCompanyName">
+                          <el-option
+                            v-for="item in companyNameOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
                       </div>
                     </template>
                   </div>
@@ -239,6 +315,9 @@ export default {
                 </div>
               </template>
             </TableForm-product>
+            <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+              @pagination="initData"
+            />
           </div>
         </div>
       </div>

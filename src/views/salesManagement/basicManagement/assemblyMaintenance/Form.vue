@@ -98,9 +98,8 @@ export default {
           hsProductsId: "",
           productCode: "",
           productName: "",
-          drawingNo: "",
+          productDrawingNo: "",
           productStatus: 'enable',
-          partnerType: "customer",
           pageNum: 1,
           pageSize: 20,
           orderItems: [
@@ -124,7 +123,7 @@ export default {
         searchList: [
           {prop: 'productName', label: '产品名称', type: 'input'},
           {prop: 'productCode', label: '产品编码', type: 'input'},
-          {prop: 'drawingNo', label: '型号', type: 'input'},
+          {prop: 'productDrawingNo', label: '型号', type: 'input'},
         ]
       },
 
@@ -194,7 +193,7 @@ export default {
         ...item.all,
         productsName: item.name,
         productsCode: item.code,
-        productsDrawingNo: drawingNo,
+        productsDrawingNo: item.drawingNo,
         productsId: item.id,
         qty: 1
       }))

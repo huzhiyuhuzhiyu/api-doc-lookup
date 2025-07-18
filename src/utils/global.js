@@ -30,7 +30,6 @@ const global = {
     {label: "已停止", value: "stopped", type: "danger"},
     {label: "已撤回", value: "back", type: "warning"},
   ],
-
   // 产品来源
   productSource: [
     {label: "组装", value: "assemble", type: "processing"},
@@ -48,6 +47,23 @@ const global = {
       label: '包装',
       value: 'packaging',
     }
+  ],
+
+  // 销售订单状态
+  salesOrderState: [
+    {label: '草稿', value: 'draft', type: 'warning'},
+    {label: '进行中', value: 'normal', type: 'warning'},
+    {label: '暂停', value: 'suspend', type: 'danger'},
+    {label: '关闭', value: 'closed', type: 'danger'},
+    {label: '未完成', value: 'not_finish', type: 'info'},
+    {label: '部分完成', value: 'part_finish', type: 'info'},
+    {label: '已完成', value: 'finish', type: 'success'},
+    {label: '已停止', value: 'stopped', type: 'danger'},
+  ],
+  // 销售订单类型
+  salesOrderType: [
+    {label: '客户订单', value: 'normal', type: 'warning'},
+    {label: '预测订单', value: 'prediction', type: 'success'}
   ],
 
   // 字典数据映射方法

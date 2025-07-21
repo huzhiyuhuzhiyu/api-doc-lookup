@@ -13,7 +13,6 @@
           下载模板
         </el-button>
       </div>
-
     </el-upload>
 
     <span slot="footer" class="dialog-footer">
@@ -31,11 +30,16 @@ export default {
     uploadApi: {
       required: true
     },
-    templateDownLoadPath: {}
+    templateDownLoadPath: {},
+    extraFormData: {
+      type: Object,
+      default: () => ({})
+    }
   },
   data() {
     return {
-      formLoading: false
+      formLoading: false,
+      file: null
     }
   },
   methods: {
@@ -67,11 +71,16 @@ export default {
 
     // 上传产品
     UploadProduct(data) {
-        if (!this.file) return this.$message.error('请选择上传文件')
+      if (!this.file) return this.$message.error('请选择上传文件')
       console.log(data)
       this.formLoading = true
       var formData = new FormData()
       formData.append('file', data)
+
+      for (const key in this.extraFormData) {
+        formData.append(key, this.extraFormData[key])
+      }
+
       //调用上传文件接口
       this.uploadApi(formData).then(res => {
         if (!res.data || !res.data.url) {

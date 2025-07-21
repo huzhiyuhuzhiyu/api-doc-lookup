@@ -1,5 +1,6 @@
 import {getCooperativeData} from "@/api/basicData";
 import global from "@/utils/global";
+import {deepClone} from "@/utils";
 
 /**
  * @description 按钮权限列表
@@ -11,6 +12,13 @@ export const buttonList = [
     permission: 'btn_add',
     icon: 'el-icon-plus',
     text: '新增'
+  },
+  {
+    buttonType: 'primary',
+    type: 'confirm',
+    permission: 'btn_confirm',
+    icon: '',
+    text: '确认'
   }
 ]
 
@@ -18,6 +26,26 @@ export const buttonList = [
  * @description 表单数据
  */
 export function getBasicFormSchema(dataFormRef, context) {
+  function executeCustomerChange(context, data, isClear) {
+    // dom更新后重新校验此元素
+    context.$nextTick(() => {
+      context.$refs.dataForm.$refs.main.validateField(['cooperativePartnerName', 'cooperativePartnerCode']);
+    });
+
+    context.dataForm.cooperativePartnerId = data[0].all.id;
+    context.dataForm.cooperativePartnerCode = data[0].all.code;
+    context.dataForm.cooperativePartnerName = data[0].all.name;
+    context.originalFormData = deepClone(context.dataForm);
+
+    if (isClear) {
+      clearFormOnCustomerChange();
+    }
+  }
+
+  function clearFormOnCustomerChange() {
+    context.linesList = [];
+  }
+
   return [
     {
       prop: "orderNo",
@@ -75,13 +103,24 @@ export function getBasicFormSchema(dataFormRef, context) {
         {prop: 'name', label: '客户名称', type: 'input'},
       ],
       change: (id, data) => {
-        // dom更新后重新校验此元素
-        context.$nextTick(() => {
-          context.$refs.dataForm.$refs.main.validateField('cooperativePartnerName')
-        })
-        context.dataForm.cooperativePartnerId = data[0].all.id
-        context.dataForm.cooperativePartnerCode = data[0].all.code
         context.dataForm.cooperativePartnerName = data[0].all.name
+
+        if (context.dataForm.cooperativePartnerId && context.dataForm.cooperativePartnerId !== data[0].all.id) {
+          context.$confirm('切换客户将会清空当前数据，是否继续？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            executeCustomerChange(context, data, true);
+          }).catch(() => {
+            const originalData = context.originalFormData || {};
+            context.dataForm.cooperativePartnerId = originalData.cooperativePartnerId;
+            context.dataForm.cooperativePartnerCode = originalData.cooperativePartnerCode;
+            context.dataForm.cooperativePartnerName = originalData.cooperativePartnerName;
+          });
+        } else {
+          executeCustomerChange(context, data, false);
+        }
       },
     },
     {
@@ -104,14 +143,13 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "custom",
       customComponent: "ComSelect",
-      currOrgId: context.dataForm.departmentId || '0',
       itemRules: [{required: true, trigger: "blur"}],
       change: async (val) => {
         context.dataForm.salesId = ""
         if (!val || !val.length) return context.dataForm.departmentId = ''
         context.dataForm.departmentId = val[val.length - 1]
         context.$nextTick(() => {
-          context.$refs.dataForm.$refs.main.clearValidate('salesId')
+          context.$refs.dataForm.$refs.main.clearValidate('departments')
         })
         await context.fetchOrganization()
       }
@@ -121,7 +159,9 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "所属销售",
       value: "",
       type: "select",
-      get options() { return context.salesList },
+      get options() {
+        return context.salesList
+      },
       itemRules: [{required: true, trigger: "change"}],
     },
     {
@@ -205,13 +245,6 @@ export function getColumns() {
       prop: "num",
       label: "订单数量",
       minWidth: 120,
-    },
-    {
-      prop: "orderState",
-      label: "订单状态",
-      minWidth: 120,
-      slot: true,
-      dictType: 'salesOrderState',
     },
     {
       prop: "documentStatus",

@@ -97,3 +97,12 @@ export function getPurchaseChangeList(data) {
     data
   })
 }
+
+
+// 销售订单-查询确认信息
+export function getOrdersConfirmed(id) {
+  return request({
+    url: `/api/erp/sale/orders/confirmed/${id}`,
+    method: 'get',
+  })
+}

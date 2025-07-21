@@ -61,7 +61,15 @@
               customKey: 'typingEditTable'}"
       >
         <template slot="actions">
-          <el-button size="mini" type="text">不打字</el-button>
+          <el-table-column label="操作" width="100" fixed="right" key="actions"
+          >
+            <template slot-scope="{row}">
+              <el-button size="mini" type="text" @click="toggleTyping(row)">
+                {{ row.noTyping ? '恢复打字' : '不打字' }}
+              </el-button>
+            </template>
+          </el-table-column>
+
         </template>
       </TableForm-product>
     </div>
@@ -83,11 +91,15 @@ export default {
       type: Boolean,
       default: false
     },
+    linesFormList: {
+      type: Array,
+      default: () => []
+    }
   },
   data() {
     return {
       dialogVisible: false,
-      selectedTemplate: 'customer',
+      selectedTemplate: 'model',
       templates: [
         {
           prefix: 'DHK',
@@ -112,7 +124,7 @@ export default {
           align: 'center',
         },
         {
-          prop: 'drawingNo1',
+          prop: 'customerProductDrawingNo',
           label: '客户型号',
           type: 'view',
           minWidth: 160,
@@ -140,7 +152,7 @@ export default {
           align: 'center',
         },
         {
-          prop: 'content4',
+          prop: 'sealingCoverTyping',
           label: '内容4',
           type: 'input',
           minWidth: 160,
@@ -149,9 +161,12 @@ export default {
         {
           prop: 'content',
           label: '',
-          type: 'input',
-          minWidth: 260,
+          type: 'view',
+          minWidth: 360,
           align: 'center',
+          formatter: (row) => {
+            return row.noTyping ? '不打字' : row.sealingCoverTyping;
+          },
         },
       ],
       linesTableHeight: 0
@@ -162,34 +177,78 @@ export default {
       this.dialogVisible = newVal
       this.$nextTick(() => {
         this.refreshTableHeight()
+        this.updateLinesList('init')
       })
     }
   },
   methods: {
+    updateLinesList(type) {
+      const template = this.templates.find(t => t.value === this.selectedTemplate);
+      this.linesList = (type === 'init' ? this.linesFormList : this.linesList).map(item => {
+        const content = item.noTyping
+          ? '不打字'
+          : `"${ template.prefix } ${ template.model } ${ template.batch } ${ item.sealingCoverTyping }"${ item.sealingCoverTyping ? '四等分' : '三等分' }`;
+        return {
+          ...item,
+          content1: template.prefix,
+          content2: template.model,
+          content3: template.batch,
+          noTyping: item.sealingCoverTyping === '',
+          content: content
+        };
+      });
+    },
+
     contentChanges(dataOrIndex, prop, value) {
       if (Array.isArray(dataOrIndex)) {
         this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
       } else if (prop) {
         this.linesList[dataOrIndex][prop] = value
+        this.updateRowContent(this.linesList[dataOrIndex]);
+      }
+    },
+
+    updateRowContent(row) {
+      const template = this.templates.find(t => t.value === this.selectedTemplate);
+      row.content = `"${ template.prefix } ${ template.model } ${ template.batch } ${ row.sealingCoverTyping }"${ row.sealingCoverTyping ? '四等分' : '三等分' }`;
+    },
+
+    toggleTyping(row) {
+      row.noTyping = !row.noTyping;
+      if (row.noTyping) {
+        row.content = '不打字';
+      } else {
+        this.updateRowContent(row);
       }
     },
     async refreshTableHeight(...args) {
       if (args.length) await new Promise(resolve => setTimeout(resolve, 500))
       const mainRef = this.$refs.main
       const dataFormRegion = this.$refs.dataFormRegion
-      console.log("dataFormRegion ✈️ ", dataFormRegion)
       let maxHeight = mainRef.clientHeight - dataFormRegion.offsetHeight
       maxHeight -= 160 // 安全距离
       maxHeight = maxHeight > 300 ? maxHeight : 300
       this.linesTableHeight = maxHeight
     },
+
     selectTemplate(template) {
       this.selectedTemplate = template;
+      this.updateLinesList()
     },
+
     handleConfirm() {
-      this.$emit('confirm', {
-        tableData: this.tableData
-      })
+      const confirmedList = this.linesList.map(item => {
+        if (item.noTyping) {
+          return {
+            ...item,
+            sealingCoverTyping: ''
+          };
+        }
+        return item;
+      });
+
+      this.$emit('update:visible', false);
+      this.$emit('confirm', confirmedList);
     },
   }
 }

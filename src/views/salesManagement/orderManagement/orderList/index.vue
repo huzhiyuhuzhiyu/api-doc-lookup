@@ -3,6 +3,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form.vue'
 import {buttonList, getColumns} from "./data";
 import {deleteOrders, getsaleOrderList} from "@/api/salesManagement/assemblyOrders";
+import {getOrdersConfirmed} from "@/api/salesManagement/orderChanges";
 
 
 export default {
@@ -54,6 +55,36 @@ export default {
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
+      addProductProps: {
+        title: '订单分配',
+        renderTree: false,
+        multiple: false,
+        confirms: true,
+        listMethod: getOrdersConfirmed,
+        tableItems: [
+          {prop: 'procurementPending', label: '采购待审', sortable: 'custom'},
+          {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
+          {prop: 'productCode', label: '产品编码', sortable: 'custom'},
+          {prop: 'drawingNo', label: '产品型号', minWidth: '220px', sortable: 'custom'},
+          {prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom'},
+          {prop: 'num', label: '订单数量', sortable: 'custom'},
+          {prop: 'stockInventoryNum', label: '总库存', sortable: 'custom'},
+          {prop: 'unpickedNum', label: '仓库未拣货数', sortable: 'custom'},
+          {prop: 'unDeliveryNum', label: '未发数', sortable: 'custom'},
+          {prop: 'onlineNum', label: '在线数', sortable: 'custom'},
+          {prop: 'inTransitNum', label: '在途数', sortable: 'custom'},
+          {prop: 'actualInventoryNum', label: '实际库存', sortable: 'custom'},
+          {prop: 'availableInventoryNum', label: '可用库存', sortable: 'custom'},
+          {prop: 'confirmedStatus', label: '状态', sortable: 'custom', minWidth: '220px',},
+          {prop: 'inventoryArrangementNum', label: '库存安排', sortable: 'custom'},
+          {prop: 'orderPoolNum', label: '订单池', sortable: 'custom'}
+        ],
+        listRequestObj: '',
+        listDataFormatting: (res) => {
+          return res.data
+        },
+      },
+      selectedRow: [],
     }
   },
   created() {
@@ -73,6 +104,14 @@ export default {
       }
     },
 
+    handleChangeStatus(val, row) {
+      this.$refs.ComSelectProductRef.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(row, true)
+    },
+
+    async submitAllProduct(data) {
+      console.log("data ✈️ ", data)
+    },
+
     handleButtonClick(type) {
       switch (type) {
         case 'add':
@@ -81,11 +120,19 @@ export default {
             this.$refs.Form.init('', 'add')
           })
           break;
+        case 'confirm':
+          if (!this.selectedRow.length) return this.$message.warning('请至少选择一条数据')
+          if (this.selectedRow.length > 1) return this.$message.warning('只能选择一条数据')
+          const row = this.selectedRow[0]
+          this.addProductProps.listRequestObj = row.id
+          this.$refs.ComSelectProductRef.openDialog()
+          break;
         default:
       }
     },
 
     handleColumnClick(row, type) {
+      console.log("row ✈️ ", row)
       switch (type) {
         case 'look':
         case 'edit':
@@ -218,7 +265,11 @@ export default {
         </div>
         <JNPF-table customKey="hsCodes"
           v-loading="loading"
-          :data="tableData" :row-key="'id'" fixedNO
+          :data="tableData"
+          :has-c="true"
+          @selection-change="(val) => selectedRow = val"
+          :row-key="'id'"
+          fixedNO
           :setColumnDisplayList="columnList"
           @sort-change="sortChange"
           ref="dataTable"
@@ -268,6 +319,21 @@ export default {
         />
       </div>
     </div>
+    <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @confirm="submitAllProduct">
+      <template #confirmedStatus="row">
+        <el-select v-model="row.row.confirmedStatus" placeholder="" @change="(val)=>handleChangeStatus(val,row.row)">
+          <el-option
+            v-for="item in getDictDataSync('order_confirmed_status')"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </template>
+      <template slot="table-action">
+        <div></div>
+      </template>
+    </ComSelect-page>
     <!-- 高级查询 -->
     <SuperQuery partentOrChild="TransitionApplicationRecordQuery" :show="superQueryVisible" ref="SuperQuery"
       table-ref="dataTable"

@@ -1,7 +1,6 @@
 <script>
 import {deepClone} from "@/utils";
 import {getBasicFormSchema} from "./data";
-import {addBusinessComponent, getBusinessComponent, updateBusinessComponent} from "@/api/assemblyMaintenance";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import TypingEditorDialog from './typingEditDialog.vue'
 import {getcategoryTree} from "@/api/basicData/materialSettings";
@@ -11,12 +10,12 @@ import {mapGetters} from "vuex";
 import moment from "moment";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
-import {getcooperativeProduct, uploadProduct} from "@/api/salesManagement/assemblyOrders";
+import {addOrders, editOrders, getcooperativeProduct, getOrderDetail, uploadProduct} from "@/api/salesManagement/assemblyOrders";
 import {getProducts} from "@/api/masterDataManagement";
 
 export default {
   name: "Form",
-  components: {TableFormProduct,TypingEditorDialog},
+  components: {TableFormProduct, TypingEditorDialog},
   mixins: [flowMixin, busFlow],
   data() {
     return {
@@ -30,9 +29,11 @@ export default {
       salesList: [],
       globalPackagingMethod: '',
       globalBrand: '',
+      originalFormData: {},
       dataForm: {
         orderNo: '',
         orderType: '',
+        departments: [],
         cooperativePartnerId: '',
         cooperativePartnerName: '',
         cooperativePartnerCode: '',
@@ -42,8 +43,9 @@ export default {
         deliveryDate: '',
         remark: '',
         remark1: '',
-
       },
+      extraFormData: {},
+      fileList: [],
       basicFormSchema: [],
       linesList: [],
       linesListItems: [
@@ -56,6 +58,12 @@ export default {
         {
           prop: 'customerProductName',
           label: '客户产品名称',
+          type: 'view',
+          minWidth: 200,
+        },
+        {
+          prop: 'customerProductDrawingNo',
+          label: '客户型号',
           type: 'view',
           minWidth: 200,
         },
@@ -193,8 +201,31 @@ export default {
         {
           prop: 'targetPrice',
           label: '目标价',
-          type: 'view',
+          type: 'input',
           minWidth: 120,
+          itemRules: [
+            {
+              validator: this.formValidate('noZero', '目标价不能为0', (errMsg) => {
+                this.$message.error(errMsg)
+              }), trigger: ['blur', 'change']
+            },
+            {
+              validator: this.formValidate({
+                type: 'noEmtry', params: ['目标价不能为空', (errMsg) => {
+                  this.$message.error(`	目标价不能为空`)
+                }]
+              }), trigger: 'blur',
+            },
+            {
+              validator: this.formValidate({
+                type: 'decimal', params: [20, 4, null, (errMsg) => {
+                  this.$message.error(errMsg)
+                }]
+              }),
+              trigger: ['blur', 'change'],
+            },
+            {required: true, message: '目标价不能为空', trigger: ['blur', 'change'],},
+          ]
         },
         {
           prop: 'deliveryDate',
@@ -363,6 +394,21 @@ export default {
           taxAmount,
         };
       });
+    },
+    totalNum() {
+      return this.linesList.reduce((sum, item) => sum + (parseFloat(item.num) || 0), 0);
+    },
+    totalAmount() {
+      return this.jnpf.numberFormat(
+        this.computedLinesList.reduce((sum, item) => sum + (parseFloat(item.totalAmount) || 0), 0),
+        2
+      );
+    },
+    excludingTaxAmount() {
+      return this.jnpf.numberFormat(
+        this.computedLinesList.reduce((sum, item) => sum + (parseFloat(item.excludingTaxAmount) || 0), 0),
+        2
+      );
     }
   },
   created() {
@@ -372,6 +418,7 @@ export default {
   },
   methods: {
     async init(id = '', type) {
+      console.log("id ✈️ ", id)
       this.btnType = type
       this.title = this.getTitle(type)
       this.getBusInfo('b025')
@@ -404,7 +451,10 @@ export default {
     },
 
     handleTypingEditorConfirm(data) {
-      console.log("data ✈️ ", data)
+      this.linesList = this.linesList.map((item, index) => ({
+        ...item,
+        sealingCoverTyping: data[index]?.sealingCoverTyping
+      }));
     },
 
     globalChange(val, prop) {
@@ -417,17 +467,20 @@ export default {
       if (!this.dataForm.cooperativePartnerId) {
         return this.$message.error("请先选择客户");
       }
+      this.extraFormData = {
+        partnerId: this.dataForm.cooperativePartnerId,
+      }
       if (this.linesList.length) {
-        const hasExistingProducts = this.productData.some(item => item.id);
+        const hasExistingProducts = this.linesList.some(item => item.id);
         if (hasExistingProducts) {
           this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, {type: 'warning'})
             .then(() => {
-              this.uploadVisib = true
+              this.uploadVisible = true
             })
             .catch(() => {
             });
         } else {
-          this.uploadVisib = true;
+          this.uploadVisible = true;
         }
       }
     },
@@ -496,7 +549,7 @@ export default {
         customerProductNo,
         taxRate
       } = item;
-      Object.assign(this.productData[scope.$index], {
+      Object.assign(this.linesList[scope.$index], {
         productDrawingNo: drawingNo,
         mainUnit,
         ratio,
@@ -543,28 +596,34 @@ export default {
 
     async getOrderNoConfig() {
       const {number} = await this.$store.dispatch('base/getOrderNoConfig', 'SHDD')
-      this.dataForm.orderNo = `${number}D`
+      this.dataForm.orderNo = `${ number }D`
       this.dataForm.orderDate = moment(new Date()).format('YYYY-MM-DD')
     },
 
     async fetchDepartment() {
-      const res = await getOrganizeInfo();
-      this.departments = [...res.data.organizeIdTree, this.dataForm.departmentId]
+      const res = await getOrganizeInfo(this.dataForm.departmentId);
+      this.dataForm.departments = [...res.data.organizeIdTree, this.dataForm.departmentId]
+      await this.$nextTick()
+      this.$refs.tableForm.setDefaultValue()
     },
 
     async fetchOrganization() {
-      const params = {
-        keyword: "",
-        organizeId: this.dataForm.departmentId
-      };
-      const res = await getOrganization(params);
-      this.salesList = res.data?.length
-        ? res.data.map(item => ({
-          ...item,
-          label: item.fullName?.split('/')[0] || '',
-          value: item.id
-        }))
-        : [];
+      try {
+        const params = {
+          keyword: "",
+          organizeId: this.dataForm.departmentId
+        };
+        const res = await getOrganization(params);
+        this.salesList = res.data?.length
+          ? res.data.map(item => ({
+            ...item,
+            label: item.fullName?.split('/')[0] || '',
+            value: item.id
+          }))
+          : [];
+      } finally {
+        this.loading = false
+      }
     },
 
     async refreshTableHeight(...args) {
@@ -597,8 +656,9 @@ export default {
           tableItems: [
             {prop: 'customerProductNo', label: ' 客户料号', fixed: 'left'},
             {prop: 'customerProductName', label: ' 客户产品名称', fixed: 'left'},
-            {prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-            {prop: 'code', label: '产品编码', sortable: 'custom'},
+            {prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom'},
+            {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
+            {prop: 'productCode', label: '产品编码', sortable: 'custom'},
             {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
             {prop: 'mainUnit', label: '单位', sortable: 'custom'},
             {prop: 'createTime', label: '创建时间', sortable: 'custom'}
@@ -650,6 +710,8 @@ export default {
         productCode: item.code,
         productsDrawingNo: item.drawingNo,
         productsId: item.id,
+
+        cooperativePartnerProductId: item?.productsId || '',
       }))
       this.linesList = [...this.linesList, ...newData]
     },
@@ -669,12 +731,13 @@ export default {
     async getDetail(id) {
       this.loading = true
       try {
-        const res = await getBusinessComponent(id)
+        const res = await getOrderDetail(id)
         const {msg, data} = res
         if (msg === 'Success') {
-          this.dataForm = data.businessComponent
-          this.linesList = data.businessComponentLineList
-          this.loading = false
+          this.dataForm = Object.assign(this.dataForm, data.order)
+          this.originalFormData = deepClone(this.dataForm)
+          this.fileList = this.fileListMap('', data.attachmentList)
+          this.linesList = data.orderLines
           await this.fetchDepartment()
           await this.fetchOrganization()
         }
@@ -683,20 +746,50 @@ export default {
       }
     },
 
-    async handleSubmit() {
+    fileListMap(type, fileList) {
+      if (!fileList && !fileList?.length) return
+      if (['submit', 'draft'].includes(type)) {
+        return fileList.map((item, index) => ({
+          ...item,
+          bimAttachments: {
+            businessType: '',
+            configKey: '',
+            documentId: item.id,
+            fileFlag: '',
+            sort: index
+          }
+        }))
+      } else {
+        return fileList.map((item, index) => ({
+          ...item,
+          name: item.document.fullName,
+          fileSize: item.document.fileSize,
+          filename: item.document.filePath,
+          id: item.document.id,
+          url: item.url
+        }))
+      }
+    },
+
+    async handleSubmit(type) {
       if (!this.linesList.length) return this.$message.error('无产品信息，请添加产品！')
       // 校验表单
       this.btnLoading = true
       const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
-      if (!valid_1) return this.btnLoading = false
+      const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
+      if (!valid_1 || !valid_2) return this.btnLoading = false
+      this.dataForm.documentStatus = type
       const deepParams = deepClone(this.dataForm)
+      const attachmentList = this.fileListMap(type, this.fileList)
       const params = {
-        businessComponent: deepParams,
-        businessComponentLineList: this.linesList
+        order: deepParams,
+        orderLineList: this.linesList,
+        attachmentList: attachmentList,
+        flowData: this.flowData
       }
       let MSG = '提交成功'
       try {
-        const apiMethod = this.dataForm.id ? updateBusinessComponent : addBusinessComponent
+        const apiMethod = this.dataForm.id ? editOrders : addOrders
         const res = await apiMethod(params)
         const {msg} = res
         if (msg === 'Success') {
@@ -767,7 +860,7 @@ export default {
                         rowKey: 'id',
                         defaultExpandAll: true,
                         customColumn: true,
-                    }">
+                      }">
                         <template slot="top">
                           <div class="tableTopContainer">
                             <div v-if="activeType" class="left">
@@ -781,29 +874,28 @@ export default {
                                 <el-button type="text" icon="el-icon-plus" @click="importProduct">导入产品</el-button>
                                 <span>|</span>
                                 <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.tableForm.batchDelete()">批量删除</el-button>
-                                <span>|</span>
-                                <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
-                                <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
-                                  <el-form-item label="包装">
-                                    <el-select v-model="globalPackagingMethod" placeholder="包装"
-                                      @change="(val) => globalChange(val,'packagingMethod')"
-                                      style="width: 80px">
-                                      <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
-                                        :label="item.label" :value="item.value"/>
-                                    </el-select>
-                                  </el-form-item>
-                                  <el-form-item label="品牌">
-                                    <el-select v-model="globalBrand" placeholder="品牌"
-                                      @change="(val) => globalChange(val,'clearance')"
-                                      style="width: 100px">
-                                      <el-option v-for="item in getDictDataSync('brand')" :key="item.value"
-                                        :label="item.label" :value="item.value"/>
-                                    </el-select>
-                                  </el-form-item>
-                                </el-form>
                               </template>
                             </div>
                             <div class="right">
+                              <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
+                              <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
+                                <el-form-item label="包装">
+                                  <el-select v-model="globalPackagingMethod" placeholder="包装"
+                                    @change="(val) => globalChange(val,'packagingMethod')"
+                                    style="width: 80px">
+                                    <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
+                                      :label="item.label" :value="item.value"/>
+                                  </el-select>
+                                </el-form-item>
+                                <el-form-item label="品牌">
+                                  <el-select v-model="globalBrand" placeholder="品牌"
+                                    @change="(val) => globalChange(val,'clearance')"
+                                    style="width: 100px">
+                                    <el-option v-for="item in getDictDataSync('brand')" :key="item.value"
+                                      :label="item.label" :value="item.value"/>
+                                  </el-select>
+                                </el-form-item>
+                              </el-form>
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                                   @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
@@ -812,8 +904,16 @@ export default {
                           </div>
                         </template>
                       </TableForm-product>
+                      <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
+                        <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
+                        <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
+                        <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ excludingTaxAmount }}</span>
+                      </div>
                     </el-collapse-item>
                   </el-collapse>
+                </el-tab-pane>
+                <el-tab-pane label="附件" name="annex">
+                  <UploadWj v-model="fileList" :disabled="!activeType" :detailed="!activeType"></UploadWj>
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -823,10 +923,11 @@ export default {
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct"/>
       <TypingEditorDialog
         :visible.sync="showDialog"
+        :linesFormList="linesList"
         @confirm="handleTypingEditorConfirm"
       />
       <!--  导入-->
-      <UploadImportData ref="uploadRef" v-if="uploadVisible" :uploadApi="uploadProduct" @success="importDataSuccess"
+      <UploadImportData ref="uploadRef" v-if="uploadVisible" :extraFormData="extraFormData" :uploadApi="uploadProduct" @success="importDataSuccess"
         @close="uploadVisible = false" templateDownLoadPath="/static/销售订单导入模板.xlsx"/>
     </div>
   </transition>

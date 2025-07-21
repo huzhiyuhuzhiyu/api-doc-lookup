@@ -39,7 +39,9 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <!-- <el-dropdown> -->
-            <topOpts @add="addSupplier('', 'add')">
+            <topOpts @add="addSupplier('', 'add')" :addText="'报价'">
+              <el-button type="primary" size="mini" icon="el-icon-plus"
+                @click="addSupplier('', 'add', 'directly_quotation')">直接报价</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('tableForm')">导出</el-button>
             </topOpts>
@@ -62,7 +64,7 @@
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_388657">
             <el-table-column prop="quotationNo" label="报价单号" min-width="160" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">{{
                   scope.row.quotationNo
                 }}</el-link>
               </template>
@@ -103,7 +105,6 @@
             </el-table-column>
             <el-table-column prop="reasonRejection" label="驳回理由" min-width="230" />
 
-
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="110"  />
             <el-table-column prop="remark" label="备注" min-width="280" />
@@ -129,7 +130,7 @@
                       @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                       审批撤回
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
                       查看详情
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="copyFun(scope.row.id, 'copy')">
@@ -149,7 +150,7 @@
       </div>
 
     </div>
-    <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
+    <DepForm v-if="depFormVisible" :quoteType="quoteType" ref="depForm" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -277,11 +278,6 @@ export default {
           label: "传真",
           type: 'input'
         },
-        // {
-        //   prop: 'totalAmount',
-        //   label: "总金额",
-        //   type: 'input'
-        // },
         {
           prop: 'documentStatus',
           label: "单据状态",
@@ -315,11 +311,6 @@ export default {
           label: "备注",
           type: 'input'
         },
-
-
-
-
-
       ], 
       submitDate: [],
       listLoading: false,
@@ -328,7 +319,8 @@ export default {
       bidderS: "",
       cooperativePartnerIdTextS: "",
       quotationNoS: "",
-      showAppCodeFlag: true
+      showAppCodeFlag: true,
+      quoteType: ''
     }
   },
   async created() {
@@ -429,16 +421,16 @@ export default {
       ],
       this.search('basic')
     },
-    addSupplier(id, type) {
+    addSupplier(id, type, quoteType) {
       this.depFormVisible = true
+      // quoteType 区分是报价还是直接报价
+      this.quoteType = quoteType
       this.$nextTick(() => {
         this.$refs.depForm.init(id, type)
       })
     },
     copyFun(id, type) {
       this.depFormVisible = true
-
-
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
@@ -479,8 +471,10 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(id, type) {
+    handleUserRelation(row, type) {
       this.depFormVisible = true
+      const { id, quotationType='' } = row
+      this.quoteType = quotationType
       this.$nextTick(() => {
         this.$refs.depForm.init(id, type)
       })

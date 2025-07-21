@@ -97,7 +97,6 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "客户订单号",
       value: "",
       type: "input",
-      itemRules: [{required: true, trigger: "blur"}],
     },
     {
       prop: "departments",

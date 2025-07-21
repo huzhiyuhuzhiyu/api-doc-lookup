@@ -3,6 +3,7 @@ import {deepClone} from "@/utils";
 import {getBasicFormSchema} from "./data";
 import {addBusinessComponent, getBusinessComponent, updateBusinessComponent} from "@/api/assemblyMaintenance";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
+import TypingEditorDialog from './typingEditDialog.vue'
 import {getcategoryTree} from "@/api/basicData/materialSettings";
 import {getOrganization} from "@/api/permission/user";
 import {getOrganizeInfo} from "@/api/permission/organize";
@@ -15,7 +16,7 @@ import {getProducts} from "@/api/masterDataManagement";
 
 export default {
   name: "Form",
-  components: {TableFormProduct},
+  components: {TableFormProduct,TypingEditorDialog},
   mixins: [flowMixin, busFlow],
   data() {
     return {
@@ -24,6 +25,7 @@ export default {
       loading: false,
       btnLoading: false,
       uploadVisible: false,
+      showDialog: false,
       departments: [],
       salesList: [],
       globalPackagingMethod: '',
@@ -401,6 +403,10 @@ export default {
       return totalAmount - excludingTaxAmount;
     },
 
+    handleTypingEditorConfirm(data) {
+      console.log("data ✈️ ", data)
+    },
+
     globalChange(val, prop) {
       this.linesList.forEach(item => {
         item[prop] = val;
@@ -776,7 +782,7 @@ export default {
                                 <span>|</span>
                                 <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.tableForm.batchDelete()">批量删除</el-button>
                                 <span>|</span>
-                                <el-button type="text" icon="el-icon-edit">打字内容</el-button>
+                                <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
                                 <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
                                   <el-form-item label="包装">
                                     <el-select v-model="globalPackagingMethod" placeholder="包装"
@@ -815,6 +821,10 @@ export default {
         </div>
       </div>
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct"/>
+      <TypingEditorDialog
+        :visible.sync="showDialog"
+        @confirm="handleTypingEditorConfirm"
+      />
       <!--  导入-->
       <UploadImportData ref="uploadRef" v-if="uploadVisible" :uploadApi="uploadProduct" @success="importDataSuccess"
         @close="uploadVisible = false" templateDownLoadPath="/static/销售订单导入模板.xlsx"/>

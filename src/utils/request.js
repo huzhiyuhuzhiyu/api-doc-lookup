@@ -2,8 +2,9 @@ import axios from 'axios'
 import { message } from '@/utils/message'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
-import define from '@/utils/define'
+import define, {workspacePath} from '@/utils/define'
 import context from '@/main'
+import {windowOpen} from "echarts/lib/util/format";
 
 
 // create an axios instance
@@ -65,7 +66,8 @@ service.interceptors.response.use(
             store.dispatch('user/resetToken').then(() => {
               if (window.location.pathname.indexOf('login') > -1) return
               // setTimeout(() => { location.reload() }, 100);
-              context.$router.push(`/login`)
+              // context.$router.push(`/login`)
+              windowOpen(workspacePath,'_self')
             })
           }
         }

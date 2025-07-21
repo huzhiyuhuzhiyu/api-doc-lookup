@@ -291,7 +291,7 @@ export default {
             column: 'create_time'
           }
         ],
-        classAttribute: 'semi_finished',
+        classAttributeList: ['semi_finished', 'finish_product'],
         routeType: 'productProcess',
         productCode: '',
         productName: '',
@@ -357,7 +357,7 @@ export default {
     // 打印
     PrintFun(row) {
       console.log(this.arr, row);
-      this.enCode = 'p044' // 打印的编码  
+      this.enCode = 'p044' // 打印的编码
       this.formId = row.id
       this.fullName = '工艺' // 打印名称
       this.printVisible = true
@@ -457,7 +457,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: 'semi_finished' })
+      getcategoryTree({classAttributeList: ['semi_finished', 'finish_product']})
         .then((res) => {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {
@@ -723,7 +723,7 @@ export default {
             column: 'create_time'
           }
         ],
-        classAttribute: 'semi_finished',
+        classAttributeList: ['semi_finished', 'finish_product'],
         routeType: 'productProcess',
         routingFlag: 0,
         productCode: '',

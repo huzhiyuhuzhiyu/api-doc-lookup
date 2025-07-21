@@ -81,6 +81,7 @@
                 </el-table-column>
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" min-width="180" />
+                <el-table-column prop="customerProductDrawingNo" label="客户型号" width="120" />
                 <el-table-column prop="application" label="应用" width="120" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom">
                   <template slot-scope="scope">

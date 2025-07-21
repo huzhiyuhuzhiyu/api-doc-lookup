@@ -74,9 +74,8 @@ export default {
           hsProductsId: "",
           productCode: "",
           productName: "",
-          drawingNo: "",
+          productDrawingNo: "",
           productStatus: 'enable',
-          partnerType: "customer",
           pageNum: 1,
           pageSize: 20,
           orderItems: [
@@ -100,7 +99,7 @@ export default {
         searchList: [
           {prop: 'productName', label: '产品名称', type: 'input'},
           {prop: 'productCode', label: '产品编码', type: 'input'},
-          {prop: 'drawingNo', label: '型号', type: 'input'},
+          {prop: 'productDrawingNo', label: '型号', type: 'input'},
         ]
       },
       addHSCodeProps: {
@@ -177,7 +176,7 @@ export default {
     submitAllHSCode(id, data) {
       this.$set(this.HSCodeComSelectRow, 'hsProductsCode', data[0].all.code);
       this.$set(this.HSCodeComSelectRow, 'hsProductsId', data[0].all.id);
-      this.$refs.ComSelectProductRef.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(this.HSCodeComSelectRow)
+      this.$refs.ComSelectProductRef.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(this.HSCodeComSelectRow, true)
     },
 
     handleButtonClick(type) {

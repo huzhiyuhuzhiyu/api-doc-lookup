@@ -7,8 +7,8 @@ const global = {
   documentStatusList: [
     {label: '草稿', value: 'draft', type: 'warning'},
     {label: '提交', value: 'submit', type: 'success'},
-    {label: '撤回', value: 'back',type:"danger"},
-    {label: '关单', value: 'close',type:"danger"},
+    {label: '撤回', value: 'back', type: "danger"},
+    {label: '关单', value: 'close', type: "danger"},
   ],
   // 审批状态
   approvalStateList: [
@@ -19,8 +19,8 @@ const global = {
   ],
   // 布尔值选项
   booleanOptions: [
-    { label: "是", value: true },
-    { label: "否", value: false },
+    {label: "是", value: true},
+    {label: "否", value: false},
   ],
   // 公共状态 示例：未完成 已完成 已取消
   publicState: [
@@ -30,7 +30,6 @@ const global = {
     {label: "已停止", value: "stopped", type: "danger"},
     {label: "已撤回", value: "back", type: "warning"},
   ],
-
   // 产品来源
   productSource: [
     {label: "组装", value: "assemble", type: "processing"},
@@ -38,28 +37,56 @@ const global = {
     {label: "采购", value: "purchase", type: "danger"},
     {label: "外协", value: "out", type: "danger"},
   ],
+  // 工艺类型
+  craftType: [
+    {
+      label: '生产',
+      value: 'production',
+    },
+    {
+      label: '包装',
+      value: 'packaging',
+    }
+  ],
+
+  // 销售订单状态
+  salesOrderState: [
+    {label: '草稿', value: 'draft', type: 'warning'},
+    {label: '进行中', value: 'normal', type: 'warning'},
+    {label: '暂停', value: 'suspend', type: 'danger'},
+    {label: '关闭', value: 'closed', type: 'danger'},
+    {label: '未完成', value: 'not_finish', type: 'info'},
+    {label: '部分完成', value: 'part_finish', type: 'info'},
+    {label: '已完成', value: 'finish', type: 'success'},
+    {label: '已停止', value: 'stopped', type: 'danger'},
+  ],
+  // 销售订单类型
+  salesOrderType: [
+    {label: '客户订单', value: 'normal', type: 'warning'},
+    {label: '预测订单', value: 'prediction', type: 'success'}
+  ],
 
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {
-   // 先从本地获取字典
-   let targetList = this[dictType]
-   // 本地不存在字典时，从store获取
-   if (!Array.isArray(targetList)) {
-     const data = store.getters.dictionaryMap[dictType][enCode]
-     return data || this.handleFallback(enCode, options);
-   }
-   // 空值处理逻辑
-   if (enCode == null || enCode === '') {
-     return options.withType ? {label: '', type: ''} : '--';
-   }
-   // 精确匹配字典项
-   const matchedItem = targetList.find(item =>
-     String(item.value) === String(enCode)
-   );
-   // 返回匹配结果或兜底数据
-   return matchedItem
-     ? this.formatResult(matchedItem, options)
-     : this.handleFallback(enCode, options);
+    // 先从本地获取字典
+    let targetList = this[dictType]
+    // 本地不存在字典时，从store获取
+    if (!Array.isArray(targetList)) {
+      const data = store.getters.dictionaryMap[dictType][enCode]
+      return data || this.handleFallback(enCode, options);
+    }
+    // 空值处理逻辑
+    if (enCode == null || enCode === '') {
+      return options.withType ? {label: '', type: ''} : '--';
+    }
+    // 精确匹配字典项
+    const matchedItem = targetList.find(item =>
+      String(item.value) === String(enCode)
+    );
+    // 返回匹配结果或兜底数据
+    return matchedItem
+      ? this.formatResult(matchedItem, options)
+      : this.handleFallback(enCode, options);
   },
   // 统一格式化成功结果
   formatResult(item, options) {
@@ -116,7 +143,7 @@ const global = {
         end.setTime(start.getTime() + 3600 * 1000 * 24 * 7)
         picker.$emit('pick', [start, end])
       }
-    },  {
+    }, {
       text: '近30天',
       onClick(picker) {
         const end = new Date()
@@ -124,7 +151,7 @@ const global = {
         end.setTime(start.getTime() + 3600 * 1000 * 24 * 30)
         picker.$emit('pick', [start, end])
       }
-    }, ]
+    },]
   },
   timePickerOptions: { // 日期/时间区间选择器通用选项（禁用未发生的日期）
     disabledDate(time) {

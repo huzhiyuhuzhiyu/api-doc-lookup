@@ -44,6 +44,18 @@
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
+                            <el-form-item label="申请部门" prop="applicationDepartmentId">
+                              <ComSelect v-model="organizeIdTrees" placeholder="请选择申请部门" auth @change="onOrganizeChangeHandle" />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="申请人" prop="applicationUserId">
+                              <el-select v-model="dataForm.applicationUserId" placeholder="请选择申请人" clearable style="width: 100%;"  filterable>
+                                <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :value="item.id"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="24" :xs="24">
                             <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
                               <el-input type="textarea" :row="3" v-model="dataForm.applicationReason"
                                 placeholder="请输入申请理由" maxlength="200"
@@ -73,9 +85,6 @@
                         <JNPF-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC
                           hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table"
                           ref="multipleTable" :height="customStyleData" customKey="JNPFTableKey_962982">
-
-                          <el-table-column prop="projectName" label="所属项目" width="120"
-                            v-if="abProjectSwitchVisible"></el-table-column>
                           <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip
                             key="productCode">
                             <template slot-scope="scope">
@@ -87,8 +96,7 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="productName" label="产品名称" width="120"
-                            v-if="abProjectSwitchVisible"></el-table-column>
+                          <el-table-column prop="productName" label="产品名称" width="120"></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                             key="productDrawingNo">
@@ -113,7 +121,6 @@
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity'"
                                 :rules="productRules.planQuantity">
                                 <el-input v-model="scope.row.planQuantity" clearable
-                                  @input="changePlanQuantity(scope.$index, scope.row.planQuantity)"
                                   :disabled="type === 'look'" maxlength="20" placeholder="请输入数量">
                                   {{ scope.row.planQuantity }}
                                 </el-input>
@@ -232,8 +239,6 @@
                       fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type !== 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                      <el-table-column prop="projectName" label="所属项目" width="120"
-                        v-if="abProjectSwitchVisible"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip
                         key="productCode">
                         <template slot-scope="scope">
@@ -245,8 +250,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" width="120"
-                        v-if="abProjectSwitchVisible"></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="120"></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         key="productDrawingNo">
@@ -268,7 +272,6 @@
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity'"
                             :rules="productRules.planQuantity">
                             <el-input v-model="scope.row.planQuantity" clearable
-                              @input="changePlanQuantity(scope.$index, scope.row.planQuantity)"
                               :disabled="type === 'look'" maxlength="20" placeholder="请输入数量">
                               {{ scope.row.planQuantity }}
                             </el-input>
@@ -282,19 +285,6 @@
                             <div class="viewData">
                               <span>{{ scope.row.mainUnit }}</span>
                             </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="planQuantity2" label="数量(副)" min-width="200" key="planQuantity2">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity2'"
-                            :rules="productRules.planQuantity2">
-                            <el-input @input="changePlanQuantity2(scope.$index, scope.row.planQuantity2)"
-                              v-model="scope.row.planQuantity2" :disabled="type === 'look'" clearable maxlength="20"
-                              placeholder="请输入数量(副)">
-                              {{ scope.row.planQuantity2 }}
-                            </el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -374,12 +364,20 @@ import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
+import {getOrganization} from "@/api/permission/user";
+import {mapGetters} from "vuex";
+import {getOrganizeInfo} from "@/api/permission/organize";
 
 export default {
   components: { Process, recordList },
   mixins: [busFlow, AbProjectMixin],
+  computed:{
+    ...mapGetters(['userInfo']),
+  },
   data() {
     return {
+      salesList: [],
+      organizeIdTrees: [],
       customStyleData: 0,
       tableDataFlag: false,
       isattachmentswitch: '',
@@ -402,6 +400,8 @@ export default {
         documentStatus: '', // 单据状态
         id: '',
         orderNo: '', //申请单号
+        applicationUserId: '', //申请人
+        applicationDepartmentId: '', //申请部门
         reasonRejection: '', //驳回理由
         submitDate: '', //提交时间
         approvalFlag: false,
@@ -445,29 +445,6 @@ export default {
           {
             validator: this.formValidate('positiveNumber', false, (errMsg) => {
               this.$message.error(`数量(主)：${errMsg}`)
-            }),
-            trigger: 'blur'
-          }
-        ],
-        planQuantity2: [
-          { required: true, trigger: ['blur'] },
-          {
-            validator: this.formValidate({
-              type: 'decimal',
-              params: [
-                20,
-                4,
-                '',
-                (errMsg) => {
-                  this.$message.error('副数量：' + errMsg)
-                }
-              ]
-            }),
-            trigger: 'blur'
-          },
-          {
-            validator: this.formValidate('positiveNumber', false, (errMsg) => {
-              this.$message.error(`数量(副)：${errMsg}`)
             }),
             trigger: 'blur'
           }
@@ -543,11 +520,11 @@ export default {
     this.tableDataFlag = true
 
     this.fetchData('QGD')
+    this.initOrganizeAndUser()
     this.getBimBusinessDetail()
     if (this.type === 'add') this.getBusInfo()
   },
   mounted() {
-
     // 页面发生缩放，触发明细表格表单的resize
     this.clientResize = () => {
       if (!this.$refs.multipleTable) return
@@ -556,10 +533,39 @@ export default {
       })
     }
     window.addEventListener('resize', this.clientResize)
+    console.log("userInfo ✈️ ", this.userInfo)
   },
   methods: {
+   async initOrganizeAndUser(){
+     const response = await getOrganizeInfo(this.userInfo.departmentId)
+     this.organizeIdTrees = response.data.parentId === '-1'
+       ? [this.userInfo.departmentId]
+       : [...response.data.organizeIdTree, this.userInfo.departmentId];
+     this.dataForm.applicationDepartmentId = this.userInfo.departmentId
+     await this.getOrganization()
+     this.dataForm.applicationUserId = this.userInfo.userId
+    },
+    onOrganizeChangeHandle(val) {
+      this.$nextTick(() => { this.$refs['elForm'].validateField('applicationDepartmentId') })
+      this.dataForm.applicationUserId = ""
+      this.$forceUpdate()
+      if (!val || !val.length) return this.dataForm.applicationDepartmentId = ''
+      this.dataForm.applicationDepartmentId = val[val.length - 1]
+      this.salesFlag = false
+      this.getOrganization()
+    },
+   async getOrganization(){
+     await getOrganization({ keyword: "", organizeId: this.dataForm.applicationDepartmentId }).then(res => {
+        if (res.data.length > 0) {
+          res.data.forEach(item => {
+            item.name = item.fullName.split('/')[0]
+          });
+        }
+        this.salesList = res.data
+      })
+    },
         // 表单选择交货日期 表格批量覆盖
-    changDateFun() { 
+    changDateFun() {
       let arr = JSON.parse(JSON.stringify(this.dataFormTwo.data))
       if (this.dataFormTwo.data.length) {
         arr.forEach((item, index) => {
@@ -633,7 +639,6 @@ export default {
             mainUnit: item.mainUnit, // 主单位
             deputyUnit: item.deputyUnit, // 副单位
             planQuantity: '', //计划数量主
-            planQuantity2: '', //计划数量副
             remark: item.remark,
             material: item.material,
             productCategoryName:item.productCategoryName,
@@ -667,40 +672,11 @@ export default {
       var formatted = parseFloat(number)
         .toFixed(2)
         .replace(/\.?0+$/, '')
-      console.log(formatted, '8888')
       if (isNaN(formatted)) {
         return 0
       } else {
         return formatted
       }
-    },
-    //主数量输入事件
-    changePlanQuantity(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        console.log(this.dataFormTwo.data[index].ratio)
-        this.dataFormTwo.data[index].planQuantity2 = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity * this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].planQuantity2 = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity / this.dataFormTwo.data[index].ratio
-        )
-      }
-
-      console.log(this.dataFormTwo.data[index].planQuantity2, '数量')
-    },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-      console.log(this.dataFormTwo.data[index].planQuantity, '数量')
     },
     // 产品弹窗
     openSeleceProductDialog() {
@@ -716,15 +692,6 @@ export default {
       })
       let index = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
       this.ProductTableSearchList.splice(index+1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
-      }
-      if (this.abProjectSwitchVisible) {
-        this.ProductTableItems.forEach(tc=>{
-          if (tc.prop === 'projectName') {
-            tc.render = true
-          }
-        })
-        this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
-        this.ProductListRequestObj.projectId = this.abIsCommonUser ? '' : this.abProjectId
       }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true

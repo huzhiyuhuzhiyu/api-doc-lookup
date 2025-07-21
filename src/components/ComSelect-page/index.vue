@@ -166,7 +166,7 @@
           </el-row>
           <slot name="top"></slot>
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <JNPF-table v-loading="treeLoading || listLoading" :data="tableData" hasNO fixedNO :hasC="multiple && activeType !== 'look'"
+            <JNPF-table v-loading="treeLoading || listLoading" :data="tableData" hasNO fixedNO :hasC="multiple && activeType !== 'look' && !confirms"
               :highlight-current-row="false" @row-dblclick="rowDblclickFun" @selection-change="currentChange"
               :row-class-name="getRowClassName" :checkSelectable="checkSelectable" ref="dataTable"
               @row-click="handleRowClick" :tree-props="{ children: 'childrenList', hasChildren: '' }" :row-key="'id'"
@@ -234,7 +234,7 @@
           </div>
         </div>
       </div>
-      <template slot="footer" v-if="multiple && activeType !== 'look'">
+      <template slot="footer" v-if="(multiple && activeType !== 'look') || confirms">
         <span class="dialog-footer">
           <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
           <el-button type="primary" @click="confirm" :loading="btnLoading">{{ $t('common.confirmButton') }}</el-button>
@@ -398,6 +398,10 @@ export default {
       default: false
     },
     multiple: {
+      type: Boolean,
+      default: false
+    },
+    confirms: { // 用于无需多选也无需进行选择数据时
       type: Boolean,
       default: false
     },
@@ -704,9 +708,15 @@ export default {
       this.moreQueriesVisible = false
       this.listLoading = true
       // 增加搜索日期使用
-      if (this.isNeedDate && this.searchDateList.length) {
-        this.searchDateList.forEach((item) => {
-          this.jnpf.searchTimeFormat(this.listQuery, item.prop, item.startTime, item.endTime)
+      if (this.listQuery !== null && typeof this.listQuery === 'object') {
+        if (this.searchDateList.length) {
+          this.searchDateList.forEach((item) => {
+            this.jnpf.searchTimeFormat(this.listQuery, item.prop, item.startTime, item.endTime)
+          })
+        }
+        Object.keys(this.listQuery).forEach(key => {
+          let item = this.listQuery[key]
+          this.listQuery[key] = typeof item === 'string' ? item.trim() : item
         })
       }
       this.listMethod(this.listQuery).then(async listRes => {
@@ -725,7 +735,7 @@ export default {
         }
         this.tableData.forEach((row, index) => { row._index = index });
 
-        this.total = listRes.data.records ? listRes.data.total : 0 || listRes.data.whPage ? listRes.data.whPage.total : listRes.data.page ? listRes.data.page.total : 0
+        this.total = listRes.data.records ? listRes.data.total : 0 || listRes.data.whPage ? listRes.data.whPage.total : listRes.data.page ? listRes.data.page.total : undefined
         await this.$nextTick()
         if (!this.multiple && !this.$refs.defaultTableActionRef && !this.rowDblclick) { // 使用了自定义插槽且没有设置行双击事件的
           const allLines = [...document.querySelectorAll('.even-row'), ...document.querySelectorAll('.odd-row')]
@@ -863,7 +873,7 @@ export default {
     confirm() {
       setTimeout(async () => {
         let selectedData = []
-        if(!this.selectedIds.length)return this.$message.error("请选择数据")
+        if(!this.selectedIds.length && !this.confirms)return this.$message.error("请选择数据")
       this.btnLoading = true
         for (let i = 0; i < this.selectedIds.length; i++) {
           let item = []
@@ -905,6 +915,7 @@ export default {
           this.$emit('input', this.selectedIds[0])
           this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj, this.index)
         }
+        if (this.confirms) this.$emit('confirm',this.tableData)
         this.visible = false
         this.$nextTick(() => {
           this.handleResize()

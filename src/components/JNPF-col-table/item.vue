@@ -8,17 +8,26 @@
     <template v-else>
       <el-form-item :prop="'data.' + scope.$index + '.' + item.prop" :rules='Rules'>
         <!-- 输入框 -->
-        <el-input v-if="item.type === 'input' || item.jnpfKey === 'comInput' || item.jnpfKey === 'JNPFTableInput'"
-          v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" style="width:100%" :disabled="item.disabled ||readOnly" :readonly="item.readonly"
-          :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
-          @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
-          @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''"
-          @keyup.enter.native="item.hasOwnProperty('keyup') ? item.keyup($event, scope, options) : ''" :key="1">
-          <template v-if="item.itemSlot" :slot="item.itemSlot.position">
-            <div v-if="!item.itemSlot.click"> {{ item.itemSlot.content }} </div>
-            <el-button v-else @click="item.itemSlot.click"> {{ item.itemSlot.content }} </el-button>
-          </template>
-        </el-input>
+        <template v-if="item.type === 'input' || item.jnpfKey === 'comInput' || item.jnpfKey === 'JNPFTableInput'">
+          <el-input v-if="!item.remote" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" :readonly="item.readonly" :disabled="item.disabled||readOnly"
+            :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+            @input="item.hasOwnProperty('input') ? item.input($event) : ''"
+            @click.native="item.hasOwnProperty('click') ? item.click($event) : ''"
+            @change="item.hasOwnProperty('change') ? item.change($event) : ''" :key="1">
+            <template v-if="item.itemSlot" :slot="item.itemSlot.position">
+              <div v-if="!item.itemSlot.click" v-bind="item.itemSlot"> {{ item.itemSlot.content }} </div>
+              <el-button v-else @click="item.itemSlot.click($event, item)" v-bind="item.itemSlot" :disabled="item.disabled||readOnly">
+                {{ item.itemSlot.content }} </el-button>
+            </template>
+          </el-input>
+
+          <el-autocomplete style="width: 100%" v-else v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder"
+            :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+            @input="item.hasOwnProperty('input') ? item.input($event) : ''"
+            @change="item.hasOwnProperty('change') ? item.change($event) : ''" :disabled="readOnly"
+            :fetch-suggestions="item.remoteMethod || (() => { })" :trigger-on-focus="item.onFocus || false"
+            @select="item.hasOwnProperty('select') ? item.select($event,scope) : ''" />
+        </template>
 
         <!-- 下拉框 -->
         <!-- 远程搜索改为高阶函数 可增加自定义传参 -->

@@ -9,11 +9,11 @@
     <div style="padding: 10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="不良名称" prop="name">
+        <el-form-item label="原因" prop="name">
           <template slot="label">
-            不良名称<span class="required">*</span>
+            原因<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.name" placeholder="请输入不良名称" maxlength="20" :disabled="btntype ? true : false" />
+          <el-input v-model="dataForm.name" placeholder="请输入原因" maxlength="20" :disabled="btntype ? true : false" />
         </el-form-item>
         <el-form-item label="不良编码" prop="code">
           <template slot="label">
@@ -59,7 +59,7 @@ export default {
       codeConfig: {},
       btntype: false,
       dataRule: {
-        name: [{ required: true, message: '请输入不良名称', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入原因', trigger: 'blur' }],
         code: [
           { required: true, message: '请输入不良编码', trigger: 'blur' },
           { validator: formValidate('enCode'), trigger: 'blur' },

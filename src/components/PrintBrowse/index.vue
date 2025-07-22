@@ -29,10 +29,10 @@
 
 <script>
 import { mapGetters } from "vuex"
-import { getData } from '@/api/system/printDev'
+import {getData} from '@/api/system/printDev'
 import QRCode from 'qrcodejs2'
 export default {
-  props: ['id', 'formId', 'fullName', 'params'],
+  props: ['id', 'formId', 'fullName', 'params','printHtml','noQr','recordList'],
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -45,7 +45,22 @@ export default {
     }
   },
   methods: {
-    onOpen() {
+     onOpen() {
+       if(this.printHtml){
+        this.printTemplate = this.printHtml
+         this.loading = true
+        this.$nextTick(()=>{
+          const list = Array.from(this.$refs.tsPrint.querySelectorAll('[data-qrCode]'))
+          list.forEach(item=>{
+            const params = item.getAttribute('data-qrCode')
+            let qrcode = new QRCode(item, JSON.parse(params))
+            item.removeAttribute('data-qrCode')
+            qrcode._el.title = ''
+          })
+          this.loading = false
+        })
+        return
+      }
       if (!this.id) return
       this.printTemplate = ''
       this.data = {}
@@ -58,7 +73,7 @@ export default {
         params: this.params ? Object.values(this.params).join(',') : ''
       }
       console.log(query);
-      getData(query).then(res => {
+      return getData(query).then(async res => {
         if (!res.data) return
         this.printTemplate = res.data.printTemplate
         this.data = res.data.printData
@@ -68,26 +83,31 @@ export default {
         console.log(this.data.T1, 'this.data.T1');
 
         this.recordList = res.data.operatorRecordList || []
-        this.$nextTick(() => {
+        this.replaceValue(this.data)
+        this.replaceSysValue()
+        await this.$nextTick()
           console.log(this.$refs.tsPrint, 'this.$refs.tsPrint');
 
           let barCodeEl = this.$refs.tsPrint.querySelector('[data-tag="headTable.bar_code"]')
           if (barCodeEl) {
             let str = barCodeEl.innerHTML
-            console.log(barCodeEl)
-            console.log(barCodeEl.style)
-            console.log(barCodeEl.parentElement)
             // barCodeEl.parentElement.style.display = 'flex'
             // barCodeEl.parentElement.style.alignItems = 'center'
             barCodeEl.innerHTML = ''
-            let qrcode = new QRCode(barCodeEl, {
+            const params = {
               width: 65,
               height: 65,
               text: str, // 二维码内容
               // render: 'canvas' // 设置渲染方式（有两种方式 table和canvas，默认是canvas）
               correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
-            })
-            qrcode._el.title = ''
+            }
+            if(!this.noQr){
+              let qrcode = new QRCode(barCodeEl, params)
+              qrcode._el.title = ''
+            }else{
+              barCodeEl.setAttribute('data-qrCode', JSON.stringify(params))
+            }
+
           }
           if (this.data.pageType === 'custom' && this.data.T1) {
             for (let t = 0; t < this.data.T1.length; t++) {
@@ -100,7 +120,7 @@ export default {
                   let newTable = []
                   for (let i = 0; i < tableObj.rows.length; i++) {
                     tds = tableObj.rows[i]
-                    tds.style.height = '22px'
+                    // tds.style.height = '22px'
                     // tds.style.border = '1px solid gray'
                     const dataTag = this.isChildTable(tds.cells)
                     if (dataTag) {
@@ -121,13 +141,12 @@ export default {
             if (tableList.length) {
               for (let j = 0; j < tableList.length; j++) {
                 const tableObj = tableList[j];
-                // tableObj.style.border = '1px solid gray'
+                // tableObj.style.border = '1px solid gray' // 改代码为处理原来样式边框冲突问题，现已解决
                 let tds = []
                 let newTable = []
                 for (let i = 0; i < tableObj.rows.length; i++) {
                   tds = tableObj.rows[i]
-                  tds.style.height = '22px'
-                  // tds.style.border = '1px solid gray'
+                  // tds.style.height = '22px'
                   const dataTag = this.isChildTable(tds.cells)
                   if (dataTag) {
                     this.retrieveDataTwo(dataTag, tableObj, tds, newTable)
@@ -157,7 +176,6 @@ export default {
             let pageNumList = this.$refs.tsPrint.querySelectorAll('[data-tag="pageNum.pageNum"]')
             let pageSizeList = this.$refs.tsPrint.querySelectorAll('[data-tag="pageSize.pageSize"]')
             let TbarCodeEl = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.bar_code"]')
-
             // if (upperMoneyList.length) {
             if (this.data.T1 && this.data.T1.length) {
               this.data.T1.forEach((e, i) => {
@@ -168,51 +186,60 @@ export default {
                 numList && numList[i] && (numList[i].textContent = e['子表数量合计'])
                 pageNumList && pageNumList[i] && (pageNumList[i].textContent = i + 1)
                 if (TbarCodeEl && TbarCodeEl[i]) {
-                  let str = TbarCodeEl[i].innerHTML
-                  TbarCodeEl[i].innerHTML = ''
-                  let qrcode = new QRCode(TbarCodeEl[i], {
-                    width: 65,
-                    height: 65,
-                    text: str, // 二维码内容
-                    correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
+                  e.pagedata?.forEach((j,b)=>{
+                    let str = j.bar_code
+                    TbarCodeEl[b].innerHTML = ''
+                    const params ={
+                      width: 65,
+                      height: 65,
+                      text: str, // 二维码内容
+                      correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
+                    }
+                    if (!this.noQr) {
+                      let qrcode = new QRCode(TbarCodeEl[b], params)
+                      qrcode._el.title = ''
+                    } else {
+                      TbarCodeEl[b].setAttribute('data-qrCode', JSON.stringify(params))
+                    }
                   })
-                  qrcode._el.title = ''
                 }
               })
             }
             // }
-          } else {
+          }else{
             let TbarCodeEl = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.bar_code"]')
-            console.log(TbarCodeEl);
 
             if (this.data.T1 && this.data.T1.length) {
               this.data.T1.forEach((e, i) => {
                 if (TbarCodeEl && TbarCodeEl[i]) {
-                  let str = TbarCodeEl[i].innerHTML
+                  let str = e.bar_code
                   TbarCodeEl[i].innerHTML = ''
-                  let qrcode = new QRCode(TbarCodeEl[i], {
+                  const params = {
                     width: 65,
                     height: 65,
                     text: str, // 二维码内容
                     correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
-                  })
-                  qrcode._el.title = ''
+                  }
+                  if (!this.noQr) {
+                    let qrcode = new QRCode(TbarCodeEl[i], params)
+                    qrcode._el.title = ''
+                  } else {
+                    TbarCodeEl[i].setAttribute('data-qrCode', JSON.stringify(params))
+                  }
                 }
               })
             }
           }
-        })
-        this.replaceValue(this.data)
-        this.replaceSysValue()
         this.loading = false
+        return this.$refs.tsPrint.innerHTML
       })
     },
     isChildTable(cells) {
       let tableName = ''
       outer: for (let j = 0; j < cells.length; j++) {
         const cell = cells[j];
-        cell.style.height = '22px'
-        // cell.style.border = '1px solid gray'
+        // cell.style.height = '22px'
+        // cell.style.border = '1px solid gray' // 改代码为处理原来样式边框冲突问题，现已解决
         let spanList = cells[j].getElementsByTagName('span')
         if (!spanList.length) break outer;
         let hasChildTable = false
@@ -231,14 +258,14 @@ export default {
     },
     closeDialog() {
       this.$emit('update:visible', false)
-      this.$emit('closePrintPage')
     },
     shengchengtable(data, tds) {
       for (let key in data) {
         for (let j = 0; j < tds.cells.length; j++) {
-          tds.cells[j].style.height = '22px'
+          // tds.cells[j].style.height = '22px'
           // tds.cells[j].style.border = '1px solid gray'
           let spanList = tds.cells[j].getElementsByTagName('span')
+
           for (let i = 0; i < spanList.length; i++) {
             if (`{${key}}` === spanList[i].innerHTML) {
               spanList[i].innerHTML = data[key]
@@ -248,19 +275,19 @@ export default {
       }
       return tds
     },
-    getAttribute(element, dataName) {
+    getAttribute(element,dataName){
       if (!element) return
-      const val = element.getAttribute(dataName)
-      if (val) { return val }
-      if (element.children.length) {
-        for (let item of element.children) {
-          const v = this.getAttribute(item, dataName)
-          if (v) {
-            return v
-          }
+      const val= element.getAttribute(dataName)
+        if(val){return val}
+        if(element.children.length){
+            for(let item of element.children){
+                const v = this.getAttribute(item,dataName)
+                if(v){
+                    return v
+                }
+            }
         }
-      }
-      return null
+        return null
 
     },
     // 固定头尾分页使用
@@ -268,9 +295,7 @@ export default {
       if (dataTag == 'T1') {
         inner: for (let c = 0; c < this.data.T1[j].pagedata.length; c++) {
           newTable.push(this.shengchengtable(this.data.T1[j].pagedata[c], tds.cloneNode(true)))
-
-
-          if (this.getAttribute(tds, "data-tag") === 'T1.大写子表金额合计') {
+          if(this.getAttribute(tds,"data-tag") ==='T1.大写子表金额合计' || this.getAttribute(tds,"data-tag") ==='T1.小写子表金额合计' || this.getAttribute(tds,"data-tag") ==='T1.子表数量合计'){
             console.log("单行生成 return")
             return
           }
@@ -370,10 +395,10 @@ export default {
       downloadElement.click()
       document.body.removeChild(downloadElement)
       window.URL.revokeObjectURL(href)
+      this.$emit('close')
     },
     print() {
       let print = this.$refs.tsPrint.innerHTML
-      // return
       this.$nextTick(() => {
         let newStr = print
         const iframe = document.createElement('iframe');
@@ -385,14 +410,27 @@ export default {
         doc.write(`<link href="./printForm.scss" media="print" rel="stylesheet" />`);
         doc.write(newStr);
         const link = doc.getElementsByTagName('link')[0];
-        link.onload = () => { // 样式文件加载完毕后打印// 5.执行打印
-          iframe.contentWindow.print();
-          iframe.contentWindow.location.reload(true)
-          // 6.重置工作
-          // document.body.removeChild(iframe);
-          iframe.remove()
-          this.$refs.tsPrint.removeAttribute('style');
+        link.onload = async () => {
+          try {
+            iframe.contentWindow.print()
+            iframe.contentWindow.location.reload(true)
+          } catch (e) {
+            console.error('记录打印失败:', e)
+          } finally {
+            iframe.remove()
+            this.$refs.tsPrint.removeAttribute('style');
+            this.$emit('close')
+          }
         }
+        // link.onload = () => { // 样式文件加载完毕后打印// 5.执行打印
+        //   iframe.contentWindow.print();
+        //   iframe.contentWindow.location.reload(true)
+        //   // 6.重置工作
+        //   // document.body.removeChild(iframe);
+        //   iframe.remove()
+        //   this.$refs.tsPrint.removeAttribute('style');
+        //   this.$emit('close')
+        // }
 
 
         // let newWindow = window.open('_blank')
@@ -414,10 +452,10 @@ export default {
           data[i].index = i + 1
           pagedata.push(data[i])
           pageNum++
-          if (pageNum === pageSize || (i === data.length - 1)) {
+          if (pageNum === pageSize || ( i === data.length - 1)) {
 
             printTable.push({
-              '小写子表金额合计': pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表金额'] * 1, 0),
+              '小写子表金额合计': this.jnpf.numberFormat(pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表金额'] * 1, 0),4),
               '子表数量合计': pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表数量'] * 1, 0),
               '大写子表金额合计': this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue['子表金额'] * 1, 0).toFixed(2)),
               pagedata: pagedata
@@ -428,8 +466,8 @@ export default {
         }
         if (pageSize > data.length && pagedata && pagedata.length > 0) {
           printTable.push({
-            '小写子表金额合计': pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表金额'] * 1, 0),
-            '子表数量合计': pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表数量'] * 1, 0),
+            '小写子表金额合计': this.jnpf.numberFormat(pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表金额'] * 1, 0),4),
+            '子表数量合计': this.jnpf.numberFormat(pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表数量'] * 1, 0),4),
             '大写子表金额合计': this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue['子表金额'] * 1, 0).toFixed(2)),
             pagedata: pagedata
           })
@@ -503,6 +541,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .print-content {
+  position: relative;
   background: white;
   padding: 40px 30px;
   margin: 0 auto;
@@ -512,16 +551,11 @@ export default {
   overflow: auto;
 }
 
-.print-content table td,
-th {
-  border: 1px solid gray !important;
-
-}
-table,
-td,
-th {
-    border: 1px solid  !important;
-}
+//.print-content table td,
+//th {
+//  border: 1px solid gray !important;
+//
+//}
 </style>
 <style lang="scss" scoped>
 @media print {

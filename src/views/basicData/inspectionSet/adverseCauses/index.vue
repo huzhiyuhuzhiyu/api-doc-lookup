@@ -5,7 +5,7 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @keyup.native.enter="search()"  v-model.trim="tableQuery.name" placeholder="不良名称" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="tableQuery.name" placeholder="原因" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
@@ -87,7 +87,7 @@ export default {
             superQueryJson: [
                 {
                     prop: 'name',
-                    label: '不良名称',
+                    label: '原因',
                     type: 'input'
                 },
                 {

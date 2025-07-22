@@ -764,6 +764,8 @@ export default {
 
         this.dataForm.classAttribute = id.classAttribute
         this.dataForm.drawNo = id.drawingNo
+        this.dataForm.productName = id.name
+        this.dataForm.productCode = id.code
         this.dataForm.productSource = id.productSource
         this.dataForm.productId = id.id
 

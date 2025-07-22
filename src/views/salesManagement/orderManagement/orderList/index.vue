@@ -1,14 +1,19 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import Form from './Form.vue'
+
 import {buttonList, getColumns} from "./data";
 import {deleteOrders, getsaleOrderList} from "@/api/salesManagement/assemblyOrders";
-import {getOrdersConfirmed} from "@/api/salesManagement/orderChanges";
-
+import {getOrdersConfirmed, getOrdersConfirmedIssuance} from "@/api/salesManagement/orderChanges";
+import {getPrintBusInfo} from "@/api/system/printDev";
+import Form from './Form.vue'
+import PrintDialog from '@/components/no_mount/printDialog/index.vue';
+import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 
 export default {
   name: "index",
   components: {
+    BatchPrintBrowse,
+    PrintDialog,
     SuperQuery,
     Form
   },
@@ -16,6 +21,12 @@ export default {
     return {
       loading: false,
       visible: false,
+      printVisible: false,
+      printQuery: {
+        category: ''
+      },
+      fullName: '',
+      enCode: '',
       tableData: [],
       total: 0,
       superQueryVisible: false,
@@ -62,22 +73,22 @@ export default {
         confirms: true,
         listMethod: getOrdersConfirmed,
         tableItems: [
-          {prop: 'procurementPending', label: '采购待审', sortable: 'custom'},
+          {prop: 'procurementPending', label: '采购待审', sortable: 'custom', align: 'center', minWidth: '120px'},
           {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
           {prop: 'productCode', label: '产品编码', sortable: 'custom'},
           {prop: 'drawingNo', label: '产品型号', minWidth: '220px', sortable: 'custom'},
           {prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'num', label: '订单数量', sortable: 'custom'},
-          {prop: 'stockInventoryNum', label: '总库存', sortable: 'custom'},
-          {prop: 'unpickedNum', label: '仓库未拣货数', sortable: 'custom'},
-          {prop: 'unDeliveryNum', label: '未发数', sortable: 'custom'},
-          {prop: 'onlineNum', label: '在线数', sortable: 'custom'},
-          {prop: 'inTransitNum', label: '在途数', sortable: 'custom'},
-          {prop: 'actualInventoryNum', label: '实际库存', sortable: 'custom'},
-          {prop: 'availableInventoryNum', label: '可用库存', sortable: 'custom'},
-          {prop: 'confirmedStatus', label: '状态', sortable: 'custom', minWidth: '220px',},
-          {prop: 'inventoryArrangementNum', label: '库存安排', sortable: 'custom'},
-          {prop: 'orderPoolNum', label: '订单池', sortable: 'custom'}
+          {prop: 'num', label: '订单数量', sortable: 'custom', minWidth: '120px', align: 'center'},
+          {prop: 'stockInventoryNum', label: '总库存', sortable: 'custom', minWidth: '90px', align: 'center'},
+          {prop: 'unpickedNum', label: '仓库未拣货数', sortable: 'custom', minWidth: '150px', align: 'center'},
+          {prop: 'unDeliveryNum', label: '未发数', sortable: 'custom', minWidth: '90px', align: 'center'},
+          {prop: 'onlineNum', label: '在线数', sortable: 'custom', minWidth: '90px', align: 'center'},
+          {prop: 'inTransitNum', label: '在途数', sortable: 'custom', minWidth: '90px', align: 'center'},
+          {prop: 'actualInventoryNum', label: '实际库存', sortable: 'custom', minWidth: '120px', align: 'center'},
+          {prop: 'availableInventoryNum', label: '可用库存', sortable: 'custom', minWidth: '120px', align: 'center'},
+          {prop: 'confirmedStatus', label: '状态', sortable: 'custom', minWidth: '220px', align: 'center'},
+          {prop: 'inventoryArrangementNum', label: '库存安排', sortable: 'custom', minWidth: '160px', align: 'center'},
+          {prop: 'orderPoolNum', label: '订单池', sortable: 'custom', minWidth: '160px', align: 'center'}
         ],
         listRequestObj: '',
         listDataFormatting: (res) => {
@@ -104,12 +115,55 @@ export default {
       }
     },
 
+    closePrint() {
+      this.printVisible = false
+    },
+
+    printView(row, enCode, fullName) {
+      this.selectArr = [row]
+      this.enCode = enCode
+      this.fullName = fullName
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
+
+    async printOrder(enCode) {
+      try {
+        const res = await getPrintBusInfo(enCode)
+        if (!res.data) {
+          return this.$message.warning('未找到相应打印模版')
+        }
+        const id = res.data.id
+        const printData = this.selectArr.map(item => ({
+          formId: item.id,
+          id: id
+        }))
+        this.$refs.batchPrint.print(printData);
+      } catch (e) {
+      }
+    },
+
     handleChangeStatus(val, row) {
-      this.$refs.ComSelectProductRef.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(row, true)
+    },
+    calcInventoryArrangementNum() {
+    },
+    calcOrderPoolNum() {
     },
 
     async submitAllProduct(data) {
-      console.log("data ✈️ ", data)
+      const params = data.map(item => ({
+        ...item,
+        ordersLineId: item.id,
+      }))
+      const response = await getOrdersConfirmedIssuance(params);
+      if (response.msg === 'Success') {
+        this.$message.success('确认成功')
+        this.initData()
+      } else {
+        this.$message.error(response.msg || '确认失败')
+      }
     },
 
     handleButtonClick(type) {
@@ -132,10 +186,10 @@ export default {
     },
 
     handleColumnClick(row, type) {
-      console.log("row ✈️ ", row)
       switch (type) {
         case 'look':
         case 'edit':
+        case 'copy':
           this.visible = true
           this.$nextTick(() => {
             this.$refs.Form.init(row.id, type)
@@ -303,14 +357,29 @@ export default {
                 @click="handleColumnClick(row, 'edit')">
                 编辑
               </el-button>
-              <el-button size="mini" type="text"
-                @click="handleColumnClick(row, 'look')">
-                详情
-              </el-button>
               <el-button style="color: rgb(245, 108, 108)" size="mini" type="text"
                 @click="handleColumnClick(row, 'delete')">
                 删除
               </el-button>
+              <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleColumnClick(row, 'copy')">
+                    复制
+                  </el-dropdown-item>
+                  <el-dropdown-item :disable="row.documentStatus === 'draft'"
+                    @click.native="printView(row,'p002','销售单打印')">
+                    打印
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
+                    详情
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -330,6 +399,12 @@ export default {
           </el-option>
         </el-select>
       </template>
+      <template #inventoryArrangementNum="row">
+        <el-input v-model="row.row.inventoryArrangementNum"></el-input>
+      </template>
+      <template #orderPoolNum="row">
+        <el-input v-model="row.row.orderPoolNum"></el-input>
+      </template>
       <template slot="table-action">
         <div></div>
       </template>
@@ -340,5 +415,8 @@ export default {
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <Form ref="Form" v-if="visible" @close="close"/>
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
+    <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
   </div>
 </template>

@@ -198,6 +198,13 @@ export function getBasicFormSchema(dataFormRef, context) {
 export function getColumns() {
   return [
     {
+      prop: "orderNo",
+      label: "订单编号",
+      minWidth: 200,
+      align: "left",
+      sortable: 'custom',
+    },
+    {
       prop: "cooperativePartnerCode",
       label: "客户编码",
       minWidth: 200,

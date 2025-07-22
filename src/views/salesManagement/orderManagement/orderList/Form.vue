@@ -283,6 +283,7 @@ export default {
       ],
       linesTableHeight: 0,
       uploadProduct,
+      productRefType: '',
       addProductProps: {
         title: '选择产品',
         activeType: '',
@@ -648,6 +649,7 @@ export default {
     },
 
     selectProductRefOpenDialog(type) {
+      this.productRefType = type
       if (type === 'customer') {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
         this.addProductProps = {
@@ -702,17 +704,16 @@ export default {
     },
 
     async submitAllProduct(id, data) {
-      console.log("data ✈️ ", data)
       const newData = data.map(item => ({
         ...this.createdObj(),
         ...item.all,
-        productName: item.name,
-        productCode: item.code,
-        productsDrawingNo: item.drawingNo,
-        productsId: item.id,
+        productName: item.all.name,
+        productCode: item.all.code,
+        productsDrawingNo: item.all.drawingNo,
+        productsId: this.productRefType === 'customer' ? item.all.productsId : item.all.id,
+        ...(this.productRefType === 'customer' && {cooperativePartnerProductId: item.all.id})
+      }));
 
-        cooperativePartnerProductId: item?.productsId || '',
-      }))
       this.linesList = [...this.linesList, ...newData]
     },
 
@@ -787,9 +788,12 @@ export default {
         attachmentList: attachmentList,
         flowData: this.flowData
       }
+      if (this.btnType === 'copy') {
+        params.order.id = ''
+      }
       let MSG = '提交成功'
       try {
-        const apiMethod = this.dataForm.id ? editOrders : addOrders
+        const apiMethod = params.order.id ? editOrders : addOrders
         const res = await apiMethod(params)
         const {msg} = res
         if (msg === 'Success') {
@@ -863,8 +867,8 @@ export default {
                       }">
                         <template slot="top">
                           <div class="tableTopContainer">
-                            <div v-if="activeType" class="left">
-                              <template>
+                            <div class="left">
+                              <template v-if="activeType">
                                 <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('customer')">选择客户产品</el-button>
                                 <span>|</span>
                                 <el-button type="text" icon="el-icon-plus" @click="addLineForm">新增一行</el-button>
@@ -877,25 +881,27 @@ export default {
                               </template>
                             </div>
                             <div class="right">
-                              <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
-                              <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
-                                <el-form-item label="包装">
-                                  <el-select v-model="globalPackagingMethod" placeholder="包装"
-                                    @change="(val) => globalChange(val,'packagingMethod')"
-                                    style="width: 80px">
-                                    <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
-                                      :label="item.label" :value="item.value"/>
-                                  </el-select>
-                                </el-form-item>
-                                <el-form-item label="品牌">
-                                  <el-select v-model="globalBrand" placeholder="品牌"
-                                    @change="(val) => globalChange(val,'clearance')"
-                                    style="width: 100px">
-                                    <el-option v-for="item in getDictDataSync('brand')" :key="item.value"
-                                      :label="item.label" :value="item.value"/>
-                                  </el-select>
-                                </el-form-item>
-                              </el-form>
+                              <template v-if="activeType">
+                                <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
+                                <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
+                                  <el-form-item label="包装">
+                                    <el-select v-model="globalPackagingMethod" placeholder="包装"
+                                      @change="(val) => globalChange(val,'packagingMethod')"
+                                      style="width: 80px">
+                                      <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
+                                        :label="item.label" :value="item.value"/>
+                                    </el-select>
+                                  </el-form-item>
+                                  <el-form-item label="品牌">
+                                    <el-select v-model="globalBrand" placeholder="品牌"
+                                      @change="(val) => globalChange(val,'clearance')"
+                                      style="width: 100px">
+                                      <el-option v-for="item in getDictDataSync('brand')" :key="item.value"
+                                        :label="item.label" :value="item.value"/>
+                                    </el-select>
+                                  </el-form-item>
+                                </el-form>
+                              </template>
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                                   @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>

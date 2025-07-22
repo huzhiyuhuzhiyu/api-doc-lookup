@@ -2,6 +2,33 @@ import moment from "moment";
 import {deleteBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import {Message, MessageBox} from "element-ui";
 import store from '@/store'
+
+
+/**
+ * 等待改变
+ * @description 这个函数会一直等待，直到fn函数的返回值发生变化
+ * @param fn 每隔 gapTime 次执行一次此函数，直至此函数返回 true 或函数运行时间已超maxTime
+ * @param maxTime 最大等待时间 默认10s
+ * @param gapTime  每次执行fn函数的间隔时间 默认 0.3s
+ * @returns {Promise<void>}
+ */
+export function waitChange(fn,maxTime=10000,gapTime=300) {
+  const { promise, resolve, reject } = getPromise()
+  const timer = setInterval(()=>{
+    let hasChange = fn()
+    if (hasChange) {
+      timer &&  clearInterval(timer)
+      return resolve()
+    }
+  }, gapTime)
+
+  setTimeout(()=>{
+    timer && clearInterval(timer)
+    reject && reject()
+  }, maxTime)
+  return promise
+}
+
 /**
  *
  * @returns {{resolve, reject, promise: Promise<unknown>}}

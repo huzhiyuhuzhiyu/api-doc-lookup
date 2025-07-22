@@ -33,10 +33,22 @@
                             "></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="12">
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="申请部门" prop="applicationDepartmentId">
+                          <ComSelect v-model="organizeIdTrees" :disabled="type === 'look'" placeholder="请选择申请部门" auth @change="onOrganizeChangeHandle" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="申请人" prop="applicationUserId">
+                          <el-select v-model="dataForm.applicationUserId" placeholder="请选择申请人" :disabled="type === 'look'" clearable style="width: 100%;"  filterable>
+                            <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="24">
                         <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
                           <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
-                            maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
+                            maxlength="200" :disabled="type == 'look'"></el-input>
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -118,7 +130,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <!-- 
+                      <!--
                       <el-table-column prop="planQuantity2" label="数量(副)" min-width="200" key="planQuantity2">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity2'"
@@ -292,7 +304,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <!-- 
+                  <!--
                       <el-table-column prop="planQuantity2" label="数量(副)" min-width="200" key="planQuantity2">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity2'"
@@ -377,12 +389,16 @@ import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
+import {getOrganization} from "@/api/permission/user";
+import {getOrganizeInfo} from "@/api/permission/organize";
 
 export default {
   components: { Process, recordList },
   mixins: [busFlow, AbProjectMixin],
   data() {
     return {
+      salesList: [],
+      organizeIdTrees: [],
       isProjectSwitch: '',
       tableDataFlag: false,
       isattachmentswitch: '',
@@ -399,6 +415,8 @@ export default {
 
       inquirySheetId: '', //询价单id
       dataForm: {
+        applicationUserId: '', //申请人
+        applicationDepartmentId: '', //申请部门
         applicationReason: '', // 申请理由
         approvalCompletionDate: '', // 审批完成时间
         // approvalStatus: "",               // 审批状态
@@ -519,7 +537,7 @@ export default {
         { prop: 'projectName', label: '所属项目',render:false},
         { prop: 'code', label: '产品编码'},
         { prop: 'name', label: '产品名称',render:false},
-        
+
         { prop: 'drawingNo', label: '品名规格' },
         // { prop: 'spec', label: '规格型号' }
         // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
@@ -552,6 +570,24 @@ export default {
     this.switchStyle()
   },
   methods: {
+    onOrganizeChangeHandle(val) {
+      this.$nextTick(() => { this.$refs['elForm'].validateField('applicationDepartmentId') })
+      this.dataForm.applicationUserId = ""
+      this.$forceUpdate()
+      if (!val || !val.length) return this.dataForm.applicationDepartmentId = ''
+      this.dataForm.applicationDepartmentId = val[val.length - 1]
+      this.getOrganization()
+    },
+    getOrganization(){
+      getOrganization({ keyword: "", organizeId: this.dataForm.applicationDepartmentId }).then(res => {
+        if (res.data.length > 0) {
+          res.data.forEach(item => {
+            item.name = item.fullName.split('/')[0]
+          });
+        }
+        this.salesList = res.data
+      })
+    },
     //自适应窗口
     async switchStyle() {
       await this.$nextTick();
@@ -740,7 +776,7 @@ export default {
       this.approvalFlag = approvalFlag
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
-      this.$nextTick(() => {
+      this.$nextTick( async () => {
         this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
           this.fetchData('QGD')
@@ -748,7 +784,7 @@ export default {
           this.getBusInfo()
         } else if (this.dataForm.id && this.type == 'add') {
           this.loading = true
-          getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
+         await getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
             this.dataForm = res.data
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
@@ -780,7 +816,7 @@ export default {
         } else {
           this.loading = true
           if (this.type === 'edit') {
-            getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
+           await getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
               this.dataForm = res.data
               if (res.data.attachmentList) {
                 res.data.attachmentList.forEach((item) => {
@@ -801,7 +837,7 @@ export default {
             })
             this.getBusInfo()
           } else {
-            getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
+           await getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
               this.dataForm = res.data
               if (res.data.attachmentList) {
                 res.data.attachmentList.forEach((item) => {
@@ -819,6 +855,12 @@ export default {
               })
               // 流程信息和流转记录
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            })
+          }
+          this.getOrganization()
+          if (this.dataForm.applicationDepartmentId){
+            getOrganizeInfo(this.dataForm.applicationDepartmentId).then(res => {
+              this.organizeIdTrees = [...res.data.organizeIdTree,this.dataForm.applicationDepartmentId]
             })
           }
         }

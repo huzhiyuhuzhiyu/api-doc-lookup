@@ -22,6 +22,7 @@ import AttributeDictionaryMain from '@/components/no_mount/AttributeDictionaryMa
 import AttributeColumns from '@/components/no_mount/AttributeColumns'
 import TableDataExportButton from '@/components/TableDataExportButton'
 import CustomButton from "@/components/CustomButton";
+import UploadImportData from "@/components/Upload-ImportData";
 // 代码生成器专供
 import JNPFText from '@/components/Generator/components/JNPFText'
 import JNPFTableText from '@/components/Generator/components/JNPFTableText'
@@ -119,5 +120,6 @@ export default {
     Vue.component('AttributeColumns', AttributeColumns)// 产品属性组件
     Vue.component('TableDataExportButton', TableDataExportButton) // 表格数据导出按钮
     Vue.component('CustomButton', CustomButton) // 按钮功能组件
+    Vue.component('UploadImportData', UploadImportData) // 数据导入
   }
 }

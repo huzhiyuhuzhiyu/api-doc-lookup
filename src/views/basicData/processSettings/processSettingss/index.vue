@@ -53,13 +53,13 @@
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
+                @click="superQueryVisible = true"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()"/>
             </el-tooltip>
           </div>
         </div>
@@ -72,9 +72,13 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
-          <el-table-column prop="processNames" label="工序名称" align="left" min-width="220" />
-          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180"/>
+          <el-table-column prop="processNames" label="工艺路线" align="left" min-width="220"/>
+          <el-table-column prop="source" label="工艺类型" align="center" min-width="180" sortable="custom">
+            <template slot-scope="scope">
+              <el-tag>{{ global.getDictLabelGlobal('craftType', scope.row.source) }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" sortable="custom" width="160">
             <template slot-scope="scope">
               <div v-if="scope.row.reportRulesFlag == '0'">否</div>
@@ -82,9 +86,9 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" align="left" width="100" sortable="custom" />
-          <el-table-column prop="remark" label="备注" align="left" min-width="180" />
+          <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom"/>
+          <el-table-column prop="createByName" label="创建人" align="left" width="100" sortable="custom"/>
+          <el-table-column prop="remark" label="备注" align="left" min-width="180"/>
           <!-- <el-table-column prop="state" label="工艺状态" align="center" sortable="custom" width="120" >
               <template slot-scope="scope">
                 <div v-if="scope.row.state == 'enable'"><el-tag type="success">启用</el-tag></div>
@@ -93,8 +97,12 @@
             </el-table-column> -->
           <el-table-column prop="documentStatus" label="单据状态" align="center" sortable="custom" width="120">
             <template slot-scope="scope">
-              <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
-              <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+              <div v-if="scope.row.documentStatus == 'draft'">
+                <el-tag type="warning">草稿</el-tag>
+              </div>
+              <div v-if="scope.row.documentStatus == 'submit'">
+                <el-tag type="success">提交</el-tag>
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
@@ -149,15 +157,15 @@
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" class="pagination" />
+          @pagination="initData" class="pagination"/>
       </div>
     </div>
-    <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
+    <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm"/>
 
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download"/>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
 
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
@@ -191,16 +199,16 @@
 
 <script>
 import JNPFForm from './Form'
-import { getProcessList, detailProcess, importProcess, deleteProcess } from '@/api/basicData/processSettingss'
+import {deleteProcess, detailProcess, getProcessList, importProcess} from '@/api/basicData/processSettingss'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { excelExport } from '@/api/basicData/index'
+import {excelExport} from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { withdrawn } from '@/api/basicData/approvalAdministrator'
+import {withdrawn} from '@/api/basicData/approvalAdministrator'
 import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
-  name:'processSettingss',
-  components: { JNPFForm, ExportForm, SuperQuery },
+  name: 'processSettingss',
+  components: {JNPFForm, ExportForm, SuperQuery},
   mixins: [getProjectList],
   data() {
     return {
@@ -224,17 +232,17 @@ export default {
           prop: 'documentStatus',
           label: '单据状态',
           type: 'select',
-          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+          options: [{label: '草稿', value: 'draft'}, {label: '提交', value: 'submit'}]
         },
         {
           prop: 'approvalStatus',
           label: '审批状态',
           type: 'select',
           options: [
-            { label: '审批中', value: 'ing' },
-            { label: '审批通过', value: 'ok' },
-            { label: '审批拒绝', value: 'rebut' },
-            { label: '审批撤回', value: 'withdrawn' }
+            {label: '审批中', value: 'ing'},
+            {label: '审批通过', value: 'ok'},
+            {label: '审批拒绝', value: 'rebut'},
+            {label: '审批撤回', value: 'withdrawn'}
           ]
         },
         {
@@ -344,7 +352,7 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        routeType:'processLibrary',
+        routeType: 'processLibrary',
         code: '',
         name: '',
         state: '',
@@ -387,8 +395,10 @@ export default {
       this.uploadVisib = true
 
     },
-    handleRemove(file, fileList) { },
-    handlePreview(file) { },
+    handleRemove(file, fileList) {
+    },
+    handlePreview(file) {
+    },
     handleFileChange(file) {
       this.file = file.raw
     },
@@ -469,7 +479,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在工艺路线相关信息错误！'),
+            h('p', {style: 'font-size:14px;'}, '导入成功，存在工艺路线相关信息错误！'),
             h(
               'el-button',
               {
@@ -516,7 +526,8 @@ export default {
             })
           })
         })
-        .catch(() => { })
+        .catch(() => {
+        })
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
@@ -553,7 +564,7 @@ export default {
         this.detailLoading = false
       })
     },
-    sortChange({ prop, order }) {
+    sortChange({prop, order}) {
       let newProp
       if (prop === 'createByName') {
         newProp = 'create_by'
@@ -572,7 +583,7 @@ export default {
       this.exportFormVisible = true
       let columnList = this.$refs.listTable.columnList.filter((item) => !!item.label && !!item.prop)
       columnList = columnList.map((item) => {
-        return { label: item.label, prop: item.prop }
+        return {label: item.label, prop: item.prop}
       })
 
       this.$nextTick(() => {
@@ -599,7 +610,8 @@ export default {
             if (!res.data.url) return
             this.jnpf.downloadFile(res.data.url)
           })
-          .catch(() => { })
+          .catch(() => {
+          })
       }
     },
     initData() {
@@ -639,7 +651,8 @@ export default {
             })
           })
         })
-        .catch(() => { })
+        .catch(() => {
+        })
     },
     // 新增数据
     addOrUpdateHandle(id, type) {
@@ -698,12 +711,12 @@ export default {
 
   // border: 1px solid #dedede;
   // box-shadow: inset 0 0 0 1px #dedede;
-  >.dataTable:first-child {
+  > .dataTable:first-child {
     flex: 3;
     margin: 0 3px 0 0;
   }
 
-  >.dataTable:last-child {
+  > .dataTable:last-child {
     flex: 2;
   }
 }

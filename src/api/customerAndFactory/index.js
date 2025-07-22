@@ -42,3 +42,12 @@ export function removeCompany(id) {
     method: 'delete',
   })
 }
+
+// 批量设置客户公司抬头
+export function setCompany(data) {
+  return request({
+    url: '/api/erp/cooperative/partner/batch/set/company',
+    method: 'post',
+    data: data
+  })
+}

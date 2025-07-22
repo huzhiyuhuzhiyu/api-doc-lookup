@@ -27,13 +27,13 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="客户编号" prop="cooperativePartnerId">
-                    <el-input v-model="dataForm.bidder" placeholder="请选择待询价单" :disabled="formDisabled" />
+                  <el-form-item label="客户编号" prop="customerCode">
+                    <el-input v-model="dataForm.customerCode" placeholder="请选择待询价单" :disabled="formDisabled" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="询价日期" prop="inquiryTime">
-                    <el-date-picker v-model="dataForm.inquiryTime" type="date" value-format="yyyy-MM-dd"
+                  <el-form-item label="询价日期" prop="quotationDate">
+                    <el-date-picker v-model="dataForm.quotationDate" type="date" value-format="yyyy-MM-dd"
                       style="width: 100%;" placeholder="请选择待询价单" :disabled="formDisabled">
                     </el-date-picker>
                   </el-form-item>
@@ -136,8 +136,7 @@
                 </el-table-column>
                 <el-table-column prop="remark1" label="采购反馈">
                   <template slot-scope="scope">
-                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'remark1'"
-                      :rules='productRules.remark1'>
+                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'remark1'" :rules='productRules.remark1'>
                       <el-input :title="scope.row.remark1" v-model="scope.row.remark1" placeholder="请输入采购反馈"
                         :disabled="status" maxlength="11">
                       </el-input>
@@ -290,12 +289,12 @@ import { mapGetters, mapState } from 'vuex'
 import busFlow from '@/mixins/generator/busFlow';
 import flowMixin from '@/mixins/generator/flowMixin'
 import getProjectList from '@/mixins/generator/getProjectList'
-import { getWaitEnquiryOrdersList } from '@/api/enquiryManagement/index'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTree } from '@/api/basicData/index'
 import { getCooperativeData } from '@/api/basicData/index'
-import { getQuotationInfo } from "@/api/salesManagement/index";
+import { getQuotationInfo, getQuotationLists } from "@/api/salesManagement/index";
+import { addEnquiryManagement, getEnquiryManagementInfo, editEnquiryManagement } from '@/api/enquiryManagement/index'
 export default {
   components: {
   },
@@ -411,6 +410,10 @@ export default {
           { required: true, trigger: 'blur' },
         ],
       },
+      flowData: {},
+      tipsvisible: false,
+      btnLoading: false,
+      submitmethodsTitle: ''
     }
   },
   watch: {
@@ -428,26 +431,81 @@ export default {
   async created() {
   },
   methods: {
+    goBack() {
+      this.$emit('close', true)
+      this.tipsvisible = false
+    },
+    // 继续修改
+    continueEdit() {
+      this.init(this.dataForm.id, this.btnType)
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    // 继续新增
+    continueAdd() {
+      this.init('', 'add')
+      this.btnLoading = false
+      this.tipsvisible = false
+    },
+    async switchStyle(type) {
+      await this.$nextTick();
+      const mainRegion = this.$refs.main // 可用区域
+      if (JSON.stringify(this.customStyleData) === "{}" || type === 'onresize') {
+        if (type !== 'onresize') this.$message.success('适配模式')
+        // 获取可用区域的高度
+        const mainHeight = mainRegion.clientHeight;
+        // 其他同级组件占用高度
+        let bortherHeight = 0
+        const bortherItems = mainRegion.querySelectorAll('.orderInfo > *')
+        bortherItems.forEach(item => {
+          if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+        })
+        // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+        let maxHeight = mainHeight - bortherHeight - 112
+        // 计算高度最低500
+        maxHeight = maxHeight > 500 ? maxHeight : 500
+        this.customStyleData = {
+          height: 10000,
+          maxHeight
+        }
+        // 附带防抖的监听适配模式屏幕缩放
+        window.onresize = () => {
+          clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            this.switchStyle('onresize')
+          }, 100);
+        };
+      } else {
+        this.$message.success('全展模式')
+        window.onresize = null
+        this.customStyleData = {}
+        // 重新加载表格
+        this.tableVisible = false
+        this.$nextTick(() => this.$refs.product.doLayout())
+      }
+    },
     // 待询价工单查询子产品列表
-    getProductsList() {
-      getQuotationInfo(this.dataForm.id).then(res => {
-            if (res.data.attachmentList) {
-              res.data.attachmentList.forEach((item) => {
-                this.datafilelist.push(
-                  {
-                    name: item.document.fullName,
-                    fileSize: item.document.fileSize,
-                    filename: item.document.filePath,
-                    id: item.document.id,
-                    url: item.url
-                  }
-                )
-              })
+    getProductsList(row) {
+      getQuotationInfo(row.id).then(res => {
+        console.log(res);
+        const { lines = [], sale = {} } = res.data
+        this.dataFormTwo = {
+          lines: lines.map(item => {
+            return {
+              ...item,
+              productName: item.productName || '',
+              productCode: item.productCode || '',
+              minNumStr: item.minNumStr || 0,
+              amounts: item.amounts || 0,
+              moldAmounts: item.moldAmounts || 0,
+              deliveryDate: item.deliveryDate || ''
             }
-            this.formLoading = false
-          }).catch(err => {
-            this.formLoading = false
-          })
+          }),
+        }
+        this.formLoading = false
+      }).catch(err => {
+        this.formLoading = false
+      })
     },
     // 保存提交
     async handleConfirm(type) {
@@ -465,16 +523,21 @@ export default {
       }
       const productFormRef = this.$refs['productForm']
       const productValid = await productFormRef.validate().catch(err => false)
+      let productFormFlag = true;
       if (!productValid) {
         const formItems = productFormRef.fields
         formItems.some(formItem => {
           if (formItem.validateState === 'error') {
             this.jnpf.focusItem(formItem.$children[1].$el)
             this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            productFormFlag = false
             return true
           }
         });
       }
+      if (!productFormFlag) return false
+      // 校验产品信息是否为空
+      let emptyProductMsg = true; 
       if (this.dataFormTwo.lines.length) {
         for (let index = 0; index < this.dataFormTwo.lines.length; index++) {
           const item = this.dataFormTwo.lines[index];
@@ -484,40 +547,63 @@ export default {
               type: 'error',
               duration: 1500,
             })
+            emptyProductMsg = false;
             break
           }
         }
       }
-
-      // formMethod(obj).then(res => {
-      //   if (value == "draft") {
-      //     this.submitmethodsTitle = "保存成功"
-      //   } else {
-      //     this.submitmethodsTitle = "提交成功"
-      //   }
-      //   if (this.btnType == 'edit') {
-      //     this.btnText = "继续修改"
-      //   } else if (this.btnType == 'add' || this.btnType == 'copy') {
-      //     this.btnText = "继续新增"
-      //   } else {
-      //     if (res.data) {
-      //       this.btnLoading = false
-      //       this.handleMessage(res.data)
-      //       return
-      //     }
-      //   }
-      //   this.tipsvisible = true
-      // }).catch(() => {
-      //   this.btnLoading = false
-      // })
+      if (!emptyProductMsg) return false
+      const { quotationId, cooperativePartnerId, id } = this.dataForm
+      const paramsObj = {
+        bimInquiry: {
+          quotationId,
+          cooperativePartnerId,
+          documentStatus: type,
+        },
+        bimInquiryLineList: this.dataFormTwo.lines,
+        flowData: this.flowData
+      }
+      let formMethod = null;
+      if (this.btnType === 'edit') {
+        formMethod = editEnquiryManagement
+        paramsObj.bimInquiry.id = id
+      } else if (this.btnType == 'add' || this.btnType == 'copy') {
+        formMethod = addEnquiryManagement
+      }
+      formMethod(paramsObj).then(res => {
+        if (type == "draft") {
+          this.submitmethodsTitle = "保存成功"
+        } else {
+          this.submitmethodsTitle = "提交成功"
+        }
+        if (this.btnType == 'edit') {
+          this.btnText = "继续修改"
+        } else if (this.btnType == 'add' || this.btnType == 'copy') {
+          this.btnText = "继续新增"
+        } else {
+          if (res.data) {
+            this.btnLoading = false
+            this.handleMessage(res.data)
+            return
+          }
+        }
+        this.tipsvisible = true
+      }).catch(() => {
+        this.btnLoading = false
+      })
     },
     // 设置基本信息
     setBasicInfo(row) {
-      this.dataForm = { ...this.dataForm, ...row }
+      this.dataForm = {
+        ...this.dataForm,
+        inquiryNo: row.quotationNo,
+        ...row,
+        quotationId: row.id
+      }
       this.inquiryNoListDialog = false
       this.$refs['dataForm'].clearValidate(['inquiryNo'])
       // 根据待询价工单查询产品信息
-      this.getProductsList()
+      this.getProductsList(row)
     },
     supplierdata(id, data) {
       // 如果传入的data为空数组
@@ -540,8 +626,8 @@ export default {
     },
     async beforeSubmit(data, paramsObj) {
       let flag = true
-      if (paramsObj.oldData) {
-        flag = await this.$confirm('切换供应商将更新产品信息的含税单价和税率，是否继续？', '提示', {
+      if (this.dataForm.cooperativePartnerName) {
+        flag = await this.$confirm('更换供应商，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -634,11 +720,34 @@ export default {
     },
     // 初始化方法
     init(id, type) {
+      // 表格表单适配模式
+      this.$nextTick(() => { this.switchStyle('onresize') });
       this.btnType = type
       if (type === 'add') {
         this.dataFormTwo.lines = []
         this.dataFormTwo.lines.push({})
       }
+      if(id) {
+        this.getEnquiryDetails(id)
+      }
+    },
+    // 询价单详情
+    getEnquiryDetails(id) {
+      getEnquiryManagementInfo(id).then((res) => {
+        const { inquiry = {}, inquiryLineList = [] } = res.data
+        this.dataForm = {
+          ...inquiry,
+          inquiryNo: inquiry.quotationNo,
+          cooperativePartnerName: inquiry.supplierName
+        },
+        this.dataFormTwo.lines = inquiryLineList.map(item => {
+          return {
+            ...item,
+            productCode: item.productsCode,
+            productName: item.productsName
+          }
+        })
+      })
     },
     // 选择待询价单弹窗
     showInquiryNoListDialog() {
@@ -647,7 +756,7 @@ export default {
     },
     // 获取待询价列表
     getWaitEnquiryOrdersListFun() {
-      getWaitEnquiryOrdersList({
+      getQuotationLists({
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -670,7 +779,7 @@ export default {
       // 判断是否已经有选择的待询价订单
       const inquiryNo = this.dataForm.inquiryNo
       if (inquiryNo) {
-        const flag = await this.$confirm('切换待询价单将更新基础信息的数据，是否继续？', '提示', {
+        const flag = await this.$confirm('切换待询价单将更新基础信息和产品数据，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

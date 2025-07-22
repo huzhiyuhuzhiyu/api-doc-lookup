@@ -396,7 +396,7 @@
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index"
-import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct } from "@/api/salesManagement/index";
+import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct, getHistoricalQuotationByProductsId } from "@/api/salesManagement/index";
 import { getCounryData, getPrivateList, deletePrivate, getcategoryTree, privateDetail } from '@/api/basicData/index'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
@@ -712,8 +712,8 @@ export default {
     this.tableFlag = true
   },
   methods: {
-    getHistoryPriceFun() {
-      getQuotationmxLists(this.historyPriceRequestObj).then(res => {
+    getProductsHistoryPriceFun(productsId) {
+      getHistoricalQuotationByProductsId(productsId).then(res => {
         this.historyPriceData = res.data.records
         this.historyPriceTotal = res.data.total
       })
@@ -722,9 +722,8 @@ export default {
     historyPriceFun({row, index}) {
       console.log(row);
       if (!row.productName) return this.$message.error("请先选择产品")
-      this.historyPriceRequestObj.productName = row.productName
       this.historyVisiblt = true
-      this.getHistoryPriceFun()
+      this.getProductsHistoryPriceFun(row.productsId)
     },
     // 查看库存明细
     viewFun(row) {

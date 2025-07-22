@@ -58,7 +58,8 @@
             <el-table-column prop="customerCode" label="客户编码"/>
             <el-table-column prop="quotationDate" label="询价日期"/>
             <el-table-column prop="supplierCode" label="供应商编号"/>
-            <el-table-column prop="supplierName" label="供应商名称" align="center">
+            <el-table-column prop="supplierName" label="供应商名称"/>
+            <el-table-column prop="documentStatus" label="状态" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>
                 </div>
@@ -127,7 +128,7 @@
 </template>
 
 <script>
-import { getEnquiryManagementList } from '@/api/enquiryManagement/index'
+import { getEnquiryManagementList, deleteEnquiryManagement } from '@/api/enquiryManagement/index'
 import EstablishForm from './establishForm'
 export default {
   name: 'enquiryManagementPage',
@@ -173,6 +174,29 @@ export default {
     this.search()
   },
   methods: {
+    // 编辑
+    addOrUpdateHandle(res, type) {
+      this.establishVisible = true
+      this.$nextTick(() => {
+        this.$refs.establishForm.init(res.id, type)
+      })
+    },
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deleteEnquiryManagement(id).then(res => {
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+            onClose: () => {
+              this.initData()
+            }
+          })
+        })
+      }).catch(() => { })
+    },
     // 关闭新建、编辑页面
     closeForm() {
       this.establishVisible = false

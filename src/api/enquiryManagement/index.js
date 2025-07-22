@@ -7,13 +7,37 @@ export function getEnquiryManagementList (data) {
     data
   })
 }
-// 查询待询价单
-export function getWaitEnquiryOrdersList (data) {
+
+// 新增询价
+export function addEnquiryManagement (data) {
   return request({
-    url: '/api/erp/sale/quotation/detail/list',
+    url: '/api/erp/bimInquiry/add',
     method: 'post',
     data
   })
 }
 
+// 编辑询价
+export function editEnquiryManagement (data) {
+  return request({
+    url: '/api/erp/bimInquiry/edit',
+    method: 'put',
+    data
+  })
+}
 
+// 删除询价
+export function deleteEnquiryManagement (id) {
+  return request({
+    url: `/api/erp/bimInquiry/del/${id}`,
+    method: 'delete',
+  })
+}
+
+// 查询询价详情
+export function getEnquiryManagementInfo (id) {
+  return request({
+    url: `/api/erp/bimInquiry/detail/${id}`,
+    method: 'get',
+  })
+}

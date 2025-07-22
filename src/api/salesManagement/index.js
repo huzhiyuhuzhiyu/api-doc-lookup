@@ -381,3 +381,12 @@ export function withdrawApi (id) {
     
   })
 }
+
+// 根据产品id去查历史报价
+export function getHistoricalQuotationByProductsId (productsId) {
+  return request({
+    url: `/api/erp/sale/quotation/historicalQuotation/${productsId}`,
+    method: 'get',
+  })
+}
+

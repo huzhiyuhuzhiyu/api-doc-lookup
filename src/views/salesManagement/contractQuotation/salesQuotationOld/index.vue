@@ -69,24 +69,15 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="deliver" label="致" width="200" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" min-width="120" />
             <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" min-width="160" />
-            <el-table-column prop="bidder" label="报价人" sortable="custom" width="100" />
-            <el-table-column prop="quotationTime" label="报价日期" width="130" sortable="custom" />
-            <el-table-column prop="validEnd" label="有效日期止" width="130" sortable="custom" />
-            <el-table-column prop="address" label="地址" min-width="300" />
-            <el-table-column prop="phone" label="电话" width="120" sortable="custom" />
-            <el-table-column prop="fax" label="传真" width="120" sortable="custom" />
-            <el-table-column prop="totalAmount" label="总金额" width="100" sortable="custom" />
-            <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
-              <template slot-scope="scope">
-                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>
-                </div>
-                <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-              </template>
+            <el-table-column prop="quotationTime" label="询价日期" width="130"/>
+            <el-table-column prop="" label="制单人" width="100"/>
+            <el-table-column prop="" label="业务员" width="120" align="center">
             </el-table-column>
-            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+            <el-table-column prop="" label="采购负责人" width="120" align="center">
+            </el-table-column>
+            <el-table-column prop="approvalStatus" label="状态" width="120" align="center"
               v-if="showAppCodeFlag">
               <template slot-scope="scope">
                 <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
@@ -103,11 +94,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="reasonRejection" label="驳回理由" min-width="230" />
-
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" width="110"  />
-            <el-table-column prop="remark" label="备注" min-width="280" />
+            <el-table-column prop="quotationTime" label="报价日期" width="130" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button type="text" @click="addOrUpdateHandle(scope.row, 'edit')" size="mini"

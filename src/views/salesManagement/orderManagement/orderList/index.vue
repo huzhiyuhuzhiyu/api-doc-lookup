@@ -3,7 +3,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 
 import {buttonList, getColumns} from "./data";
 import {deleteOrders, getsaleOrderList} from "@/api/salesManagement/assemblyOrders";
-import {getOrdersConfirmed, getOrdersConfirmedIssuance} from "@/api/salesManagement/orderChanges";
+import {getOrdersConfirmed, getOrdersConfirmedIssuance, ordersFeedbackDeliveryFinished} from "@/api/salesManagement/orderChanges";
 import {getPrintBusInfo} from "@/api/system/printDev";
 import Form from './Form.vue'
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
@@ -166,6 +166,18 @@ export default {
       }
     },
 
+    validateSelectedRows() {
+      if (!this.selectedRow.length) {
+        this.$message.warning('请至少选择一条数据');
+        return false;
+      }
+      if (this.selectedRow.length > 1) {
+        this.$message.warning('只能选择一条数据');
+        return false;
+      }
+      return true;
+    },
+
     handleButtonClick(type) {
       switch (type) {
         case 'add':
@@ -175,13 +187,32 @@ export default {
           })
           break;
         case 'confirm':
-          if (!this.selectedRow.length) return this.$message.warning('请至少选择一条数据')
-          if (this.selectedRow.length > 1) return this.$message.warning('只能选择一条数据')
-          const row = this.selectedRow[0]
-          this.addProductProps.listRequestObj = row.id
+          if (!this.validateSelectedRows()) return;
+          this.addProductProps.listRequestObj = this.selectedRow[0].id
           this.$refs.ComSelectProductRef.openDialog()
           break;
+        case 'confirmDeliveryDate':
+          if (!this.validateSelectedRows()) return;
+          this.handleConfirmDeliveryDate()
+          break;
         default:
+      }
+    },
+
+    async handleConfirmDeliveryDate() {
+      try {
+        await this.$confirm('确定要执行此操作吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        });
+        try {
+          await ordersFeedbackDeliveryFinished(this.selectedRow[0].id)
+          this.$message.success('确认成功')
+        } catch (e) {
+          this.$message.success('确认失败')
+        }
+      } catch (error) {
       }
     },
 
@@ -392,7 +423,7 @@ export default {
       <template #confirmedStatus="row">
         <el-select v-model="row.row.confirmedStatus" placeholder="" @change="(val)=>handleChangeStatus(val,row.row)">
           <el-option
-            v-for="item in getDictDataSync('order_confirmed_status')"
+            v-for="item in global.orderConfirmedStatus"
             :key="item.value"
             :label="item.label"
             :value="item.value">

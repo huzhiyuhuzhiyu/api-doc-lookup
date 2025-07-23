@@ -1531,6 +1531,15 @@ export function checkBomCodeExist(code) {
     method: 'GET'
   })
 }
+
+// 生产BOM 根据产品ID查询BOM子件
+export function getBomByProductBomLine(productId) {
+  return request({
+    url: `/api/erp/bom/line/list/${productId}`,
+    method: 'GET'
+  })
+}
+
 // 生产BOM 根据产品ID查询BOM ID
 export function getBomByProductId(productId) {
   return request({

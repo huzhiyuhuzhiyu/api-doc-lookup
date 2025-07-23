@@ -124,3 +124,11 @@ export function getOrdersConfirmedIssuance(data) {
     data
   })
 }
+
+// 销售订单-确认交期
+export function ordersFeedbackDeliveryFinished(id) {
+  return request({
+    url: `/api/erp/sale/orders/feedbackDeliveryFinished/${ id }`,
+    method: 'get',
+  })
+}

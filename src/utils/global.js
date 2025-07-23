@@ -65,40 +65,62 @@ const global = {
     {label: '客户订单', value: 'normal', type: 'warning'},
     {label: '预测订单', value: 'prediction', type: 'success'}
   ],
+  orderConfirmedStatus: [
+    {label: '已有库存', value: 'existing_inventory'},
+    {label: '无需采购', value: 'no_need_purchase'},
+    {label: '需要采购', value: 'need_purchase'},
+    {label: '待生产', value: 'need_production'},
+  ],
+  // 交期状态
+  deliveryStatus: [
+    {label: '待回复', value: 'pending_reply', type: 'warning'},
+    {label: '已回复', value: 'replied', type: 'info'},
+    {label: '已完成', value: 'finished', type: 'success'},
+  ],
 
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {
     // 先从本地获取字典
     let targetList = this[dictType]
+
     // 本地不存在字典时，从store获取
     if (!Array.isArray(targetList)) {
-      const data = store.getters.dictionaryMap[dictType][enCode]
-      return data || this.handleFallback(enCode, options);
+      try {
+        const data = store.getters.dictionaryMap[dictType][enCode]
+        return data || this.handleFallback(enCode, options);
+      } catch (e) {
+        return this.handleFallback(enCode, options)
+      }
     }
+
     // 空值处理逻辑
     if (enCode == null || enCode === '') {
       return options.withType ? {label: '', type: ''} : '--';
     }
+
     // 精确匹配字典项
     const matchedItem = targetList.find(item =>
       String(item.value) === String(enCode)
     );
+
     // 返回匹配结果或兜底数据
     return matchedItem
       ? this.formatResult(matchedItem, options)
       : this.handleFallback(enCode, options);
   },
-  // 统一格式化成功结果
-  formatResult(item, options) {
-    return options.withType
-      ? {label: item.label, type: item.type}
-      : item.label;
-  },
+
   // 统一处理兜底数据
   handleFallback(enCode, options) {
     return options.withType
       ? {label: enCode || '--', type: 'default'}
       : enCode || '--';
+  },
+
+  // 统一格式化成功结果
+  formatResult(item, options) {
+    return options.withType
+      ? {label: item.label, type: item.type}
+      : item.label;
   },
   timePicker: { // 日期/时间选择器通用选项（禁用未发生的时间）
     disabledDate(time) {

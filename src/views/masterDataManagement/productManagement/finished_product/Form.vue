@@ -1,6 +1,6 @@
 <script>
 import {deepClone} from "@/utils";
-import {getBasicFormSchema} from "@/views/masterDataManagement/productManagement/finished_product/data";
+import {getBasicFormSchema} from "@/views/masterDataManagement/productManagement/components/data";
 import {cpAddProduct, detailProduct, updateProductData} from "@/api/masterDataManagement/productManage";
 import {getUnitData} from "@/api/basicData/materialSettings";
 

@@ -11,14 +11,6 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-if="abProjectSwitchVisible" >
-                    <el-form-item>
-                      <el-select v-model="listQuery.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable>
-                        <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
-                          :value="item.id"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
           <el-col :span="4" v-if="isProductNameSwitch === '1'">
             <el-form-item>
               <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
@@ -76,7 +68,7 @@
         <JNPF-table v-if="tableFlag" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column @row-click="handleRowClick"
           :checkSelectable="checkSelectable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_904807">
-          <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="abProjectSwitchVisible "></el-table-column>
+           <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="120"
             v-if="isProductNameSwitch === '1'"></el-table-column>
@@ -100,19 +92,11 @@
             :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
           <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
           <el-table-column prop="planDemandQuantity" label="计划需求数量" min-width="150" sortable="custom" />
-          <!-- <el-table-column prop="hasPrice" label="有无价格" width="90">
-            <template slot-scope="scope">
-              <div v-if="scope.row.hasPrice">有</div>
-              <div v-else>无</div>
-            </template>
-          </el-table-column> -->
           <el-table-column prop="orderedQuantity" label="已下单数量" min-width="140" sortable="custom" >
             <template slot-scope="scope">
               {{ scope.row.orderedQuantity?scope.row.orderedQuantity:0 }}
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
-
           <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
           <el-table-column prop="demandDate" label="需求日期" width="120" sortable="custom" v-if="isMS"/>
           <el-table-column prop="source" label="来源" width="100" sortable="custom">
@@ -141,7 +125,6 @@
             </template>
           </el-table-column>
           <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
-          <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
 

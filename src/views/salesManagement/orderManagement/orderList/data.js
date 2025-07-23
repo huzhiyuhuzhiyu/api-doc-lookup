@@ -19,7 +19,14 @@ export const buttonList = [
     permission: 'btn_confirm',
     icon: '',
     text: '确认'
-  }
+  },
+  {
+    buttonType: 'primary',
+    type: 'confirmDeliveryDate',
+    permission: 'btn_confirmDeliveryDate',
+    icon: '',
+    text: '确认交期'
+  },
 ]
 
 /**
@@ -244,14 +251,21 @@ export function getColumns() {
       minWidth: 120,
     },
     {
+      prop: "num",
+      label: "订单数量",
+      minWidth: 120,
+    },
+    {
       prop: "deliveryDate",
       label: "交货日期",
       minWidth: 120,
     },
     {
-      prop: "num",
-      label: "订单数量",
+      prop: "deliveryStatus",
+      label: "交期状态",
       minWidth: 120,
+      slot: true,
+      dictType: 'deliveryStatus',
     },
     {
       prop: "documentStatus",

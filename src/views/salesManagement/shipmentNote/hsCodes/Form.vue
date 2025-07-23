@@ -116,7 +116,6 @@ export default {
 
 <template>
   <transition name="el-zoom-in-center">
-    <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-preview-main transitionForm org-form">
@@ -149,6 +148,5 @@ export default {
           </div>
         </div>
       </div>
-    </div>
   </transition>
 </template>

@@ -179,16 +179,10 @@ export default {
       detailFlag: false,
 
       orderForm: {
-        // approvalStatus: 'ok',
-        // documentStatus: 'submit',
-        // orderState: 'not_finish',
         orderType: 'procure',
         receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',
-        classAttribute: 'other',
-        // extensionFlag: 1,
-        // deliverQueryFlag: 1,
         mergeFlag:0,
         pageNum: 1,
         pageSize: 20,
@@ -345,7 +339,7 @@ export default {
   },
   methods: {
     mergeOrdrFun(){
-     
+
       if( this.orderForm.mergeFlag){
          this.orderForm.mergeFlag=0
          this.btnTitle="合并待收货订单"
@@ -545,7 +539,6 @@ export default {
         receiptQueryFlag: 1,
         // deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',
-        classAttribute: 'other',
         // extensionFlag: 1,
         // deliverQueryFlag: 1,
         pageNum: 1,

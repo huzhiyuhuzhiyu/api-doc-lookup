@@ -8,6 +8,16 @@ export function insertPurchaseOrder(data) {
       data
     })
   }
+
+// 采购订单 编辑
+export function editPurchaseOrder(data) {
+  return request({
+    url: `/api/erp/purPurchaseOrder/modifyPurchaseOrder`,
+    method: 'put',
+    data
+  })
+}
+
 // 外协订单生成
 /**
  * 批量撤回

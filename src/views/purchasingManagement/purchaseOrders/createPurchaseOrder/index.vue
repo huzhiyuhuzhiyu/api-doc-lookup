@@ -1,78 +1,55 @@
 <script>
 import {deepClone} from "@/utils";
-import {getBasicFormSchema} from "./data";
+import {getBasicFormSchema, getOtherFormSchema} from "./data";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import TypingEditorDialog from './typingEditDialog.vue'
 import {getcategoryTree} from "@/api/basicData/materialSettings";
-import {getOrganization} from "@/api/permission/user";
-import {getOrganizeInfo} from "@/api/permission/organize";
-import {mapGetters} from "vuex";
-import moment from "moment";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
-import {addOrders, editOrders, getcooperativeProduct, getOrderDetail, uploadProduct} from "@/api/salesManagement/assemblyOrders";
 import {getProducts} from "@/api/masterDataManagement";
+import {editPurchaseOrder, insertPurchaseOrder, purPurchaseOrderdetail} from "@/api/purchasingAndOutsourcingOrders";
+import {purProcurementDemandPoolList} from "@/api/purchasingManagement/purchaseInquirySheet";
+import * as _ from "highcharts";
 
 export default {
+  props: {
+    autoInit: {
+      type: Boolean,
+      default: true,
+    },
+  },
   name: "Form",
-  components: {TableFormProduct, TypingEditorDialog},
+  components: {TableFormProduct},
   mixins: [flowMixin, busFlow],
   data() {
     return {
-      title: '销售订单',
+      title: '采购单',
       btnType: '',
       loading: false,
       btnLoading: false,
-      uploadVisible: false,
-      showDialog: false,
-      departments: [],
-      salesList: [],
-      globalPackagingMethod: '',
-      globalBrand: '',
-      originalFormData: {},
       dataForm: {
+        orderType: 'procure',
         orderNo: '',
-        orderType: '',
-        departments: [],
-        cooperativePartnerId: '',
+        currency: '',
+        orderDate: '',
         cooperativePartnerName: '',
         cooperativePartnerCode: '',
-        departmentId: '',
-        salesId: '',
-        orderDate: '',
         deliveryDate: '',
-        remark: '',
-        remark1: '',
+        taxAmount: '',
+        totalAmount: '',
+        excludingTaxTotalAmount: '',
       },
-      extraFormData: {},
-      fileList: [],
+      dataOtherForm: {
+        paymentTerms: '',
+        qualityRequirements: '',
+        sealingCoverTyping: '',
+        packagingRequirements: '',
+        remark: '',
+      },
       basicFormSchema: [],
+      otherFormSchema: [],
+      paymentFormSchema: [],
       linesList: [],
       linesListItems: [
-        {
-          prop: 'customerProductNo',
-          label: '客户料号',
-          type: 'input',
-          minWidth: 180,
-        },
-        {
-          prop: 'customerProductName',
-          label: '客户产品名称',
-          type: 'view',
-          minWidth: 200,
-        },
-        {
-          prop: 'customerProductDrawingNo',
-          label: '客户型号',
-          type: 'view',
-          minWidth: 200,
-        },
-        {
-          prop: 'contractNo',
-          label: '客户合同号',
-          type: 'input',
-          minWidth: 180,
-        },
         {
           prop: 'productName',
           label: '产品名称',
@@ -88,11 +65,8 @@ export default {
         {
           prop: 'drawingNo',
           label: '型号',
-          type: 'input',
-          remote: true,
+          type: 'view',
           minWidth: 160,
-          remoteMethod: this.drawingNoFetchSuggestions,
-          select: (item, scope) => this.drawingSelect(item, scope),
         },
         {
           prop: 'productCategoryName',
@@ -101,26 +75,41 @@ export default {
           minWidth: 120,
         },
         {
+          prop: 'customerProductDrawingNo',
+          label: '客户型号',
+          type: 'view',
+          minWidth: 200,
+        },
+        {
+          prop: 'demandDate',
+          label: '订单交期',
+          type: 'date',
+          minWidth: 180,
+          itemRules: [
+            {required: true, message: '订单交期不能为空', trigger: 'change',},
+          ]
+        },
+        {
           prop: 'mainUnit',
           label: '单位',
           type: 'view',
           minWidth: 80,
         },
         {
-          prop: 'num',
-          label: '数量',
+          prop: 'purchaseQuantity',
+          label: '采购数',
           type: 'input',
           minWidth: 160,
           itemRules: [
             {
-              validator: this.formValidate('noZero', '数量不能为0', (errMsg) => {
+              validator: this.formValidate('noZero', '采购数不能为0', (errMsg) => {
                 this.$message.error(errMsg)
               }), trigger: ['blur', 'change']
             },
             {
               validator: this.formValidate({
-                type: 'noEmtry', params: ['数量不能为空', (errMsg) => {
-                  this.$message.error(`	数量不能为空`)
+                type: 'noEmtry', params: ['采购数不能为空', (errMsg) => {
+                  this.$message.error(`	采购数不能为空`)
                 }]
               }), trigger: 'blur',
             },
@@ -132,7 +121,7 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
-            {required: true, message: '数量不能为空', trigger: ['blur', 'change'],},
+            {required: true, message: '采购数不能为空', trigger: ['blur', 'change'],},
           ]
         },
         {
@@ -199,90 +188,22 @@ export default {
           minWidth: 150,
         },
         {
-          prop: 'targetPrice',
-          label: '目标价',
+          prop: 'discount',
+          label: '加点',
           type: 'input',
-          minWidth: 120,
-          itemRules: [
-            {
-              validator: this.formValidate('noZero', '目标价不能为0', (errMsg) => {
-                this.$message.error(errMsg)
-              }), trigger: ['blur', 'change']
-            },
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['目标价不能为空', (errMsg) => {
-                  this.$message.error(`	目标价不能为空`)
-                }]
-              }), trigger: 'blur',
-            },
-            {
-              validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
-                }]
-              }),
-              trigger: ['blur', 'change'],
-            },
-            {required: true, message: '目标价不能为空', trigger: ['blur', 'change'],},
-          ]
+          minWidth: 180,
         },
         {
           prop: 'deliveryDate',
-          label: '交货日期',
+          label: '确认交期',
           type: 'date',
           minWidth: 180,
           itemRules: [
-            {required: true, message: '交货日期不能为空', trigger: 'change',},
+            {required: true, message: '订单交期不能为空', trigger: 'change',},
           ]
         },
-        {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'view',
-          minWidth: 180,
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: this.getDictDataSync('packaging'),
-          minWidth: 120,
-        },
-        {
-          prop: 'specialRequire',
-          label: '包装要求',
-          type: 'input',
-          minWidth: 180,
-        },
-        {
-          prop: 'clearance',
-          label: '品牌',
-          type: 'select',
-          options: this.getDictDataSync('brand'),
-          minWidth: 150,
-        },
-        {
-          prop: 'oil',
-          label: '机型',
-          type: 'input',
-          minWidth: 150,
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '制令号',
-          type: 'input',
-          minWidth: 160,
-        },
-        {
-          prop: 'vibrationLevel',
-          label: '图纸版本号',
-          type: 'input',
-          minWidth: 180,
-        }
       ],
       linesTableHeight: 0,
-      uploadProduct,
       productRefType: '',
       addProductProps: {
         title: '选择产品',
@@ -296,7 +217,7 @@ export default {
             classAttribute: ''
           },
         },
-        listMethod: getcooperativeProduct,
+        listMethod: getProducts,
         tableItems: [
           {prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom'},
           {prop: 'code', label: '产品编码', sortable: 'custom'},
@@ -344,7 +265,6 @@ export default {
       actions: {
         edit: async (id) => {
           await this.getDetail(id);
-
         },
         look: async (id) => {
           await this.getDetail(id);
@@ -360,7 +280,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
     activeType() {
       return this.btnType !== 'look'
     },
@@ -373,12 +292,12 @@ export default {
         );
         // 计算税额 = 含税金额 - 不含税金额
         const totalAmount = this.jnpf.numberFormat(
-          this.calcTotalAmount(item.price, item.num),  // 使用num字段
+          this.calcTotalAmount(item.price, item.purchaseQuantity),
           2
         );
         // 计算不含税金额 = 数量 × 不含税单价
         const excludingTaxAmount = this.jnpf.numberFormat(
-          this.calcExcludingTaxAmount(item.price, item.num, item.taxRate),
+          this.calcExcludingTaxAmount(item.price, item.purchaseQuantity, item.taxRate),
           2
         );
         // 计算含税总金额 = 数量 × 含税单价
@@ -397,7 +316,7 @@ export default {
       });
     },
     totalNum() {
-      return this.computedLinesList.reduce((sum, item) => sum + (parseFloat(item.num) || 0), 0);
+      return this.computedLinesList.reduce((sum, item) => sum + (parseFloat(item.purchaseQuantity) || 0), 0);
     },
     totalAmount() {
       return this.jnpf.numberFormat(
@@ -412,16 +331,24 @@ export default {
       );
     }
   },
-  created() {
+  // 菜单进入 走activated
+  activated() {
+    this.btnType = ''
+    this.title = '采购单'
+    this.init('', 'add')
   },
-  mounted() {
-    this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
+  // 列表操作进入 走created
+  created() {
+    this.autoInit && this.init('', 'add')
   },
   methods: {
     async init(id = '', type) {
       this.btnType = type
       this.title = this.getTitle(type)
-      this.getBusInfo('b025')
+      this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
+      this.otherFormSchema = getOtherFormSchema(this.$refs.dataForm, this)
+      // this.paymentFormSchema = getPaymentFormSchema(this.$refs.dataForm, this)
+      this.getBusInfo('b009')
       if (id && this.actions[type]) {
         await this.actions[type](id);
       } else {
@@ -449,181 +376,26 @@ export default {
     calcTaxAmount(totalAmount, excludingTaxAmount) {
       return totalAmount - excludingTaxAmount;
     },
+    calculateAndAssign() {
+      this.dataForm.taxAmount = this.jnpf.numberFormat(
+        this.computedLinesList.reduce((sum, item) => sum + (item.taxAmount || 0), 0),
+        2
+      );
 
-    handleTypingEditorConfirm(data) {
-      this.linesList = this.linesList.map((item, index) => ({
-        ...item,
-        sealingCoverTyping: data[index]?.sealingCoverTyping
-      }));
-    },
+      this.dataForm.totalAmount = this.jnpf.numberFormat(
+        this.computedLinesList.reduce((sum, item) => sum + (item.totalAmount || 0), 0),
+        2
+      );
 
-    globalChange(val, prop) {
-      this.linesList.forEach(item => {
-        item[prop] = val;
-      });
-    },
-
-    importProduct() {
-      if (!this.dataForm.cooperativePartnerId) {
-        return this.$message.error("请先选择客户");
-      }
-      this.extraFormData = {
-        partnerId: this.dataForm.cooperativePartnerId,
-      }
-      if (this.linesList.length) {
-        const hasExistingProducts = this.linesList.some(item => item.id);
-        if (hasExistingProducts) {
-          this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, {type: 'warning'})
-            .then(() => {
-              this.uploadVisible = true
-            })
-            .catch(() => {
-            });
-        } else {
-          this.uploadVisible = true;
-        }
-      }
-    },
-
-    importDataSuccess(res, file, fileList) {
-      if (!res.data) {
-        this.$message.success(`导入成功`)
-        this.uploadVisible = false
-      } else {
-        this.uploadVisible = false
-        this.handleMessage(res.data)
-      }
-    },
-    // 提示
-    handleMessage(data) {
-      const h = this.$createElement
-      this.$message({
-        type: 'error',
-        duration: 0,
-        showClose: true,
-        customClass: 'my-message', // 自定义类名，用于设置样式
-        message: h(
-          'div',
-          {
-            style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
-          },
-          [
-            h('p', {style: 'font-size:14px;'}, '导入成功，存在产品标准工时相关信息错误！'),
-            h(
-              'el-button',
-              {
-                props: {
-                  type: 'text',
-                  size: 'mini',
-                  icon: 'el-icon-download'
-                },
-                on: {
-                  click: () => {
-                    this.downNoProduct(data)
-                  }
-                },
-                style: {
-                  border: 'none',
-                  textAlign: 'center',
-                  // width:"20%",
-                  margin: '0 5px 0 5px '
-                }
-              },
-              '下载导入错误数据'
-            )
-          ]
-        )
-      })
-    },
-
-    async drawingSelect(item, scope) {
-      const {
-        drawingNo,
-        mainUnit,
-        ratio,
-        classAttribute,
-        calculationDirection,
-        id,
-        name,
-        code,
-        customerProductNo,
-        taxRate
-      } = item;
-      Object.assign(this.linesList[scope.$index], {
-        productDrawingNo: drawingNo,
-        mainUnit,
-        ratio,
-        classAttribute,
-        calculationDirection,
-        productsId: id,
-        productName: name,
-        productCode: code,
-        customerProductNo,
-        taxRate,
-      });
-    },
-
-    async drawingNoFetchSuggestions(queryString, cb) {
-      try {
-        const params = {
-          saleFlag: true,
-          productDrawingNo: queryString,
-          productStatus: 'enable',
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'create_time'
-            }
-          ]
-        }
-        const response = await getProducts(params)
-        const suggestions = response.data.records.map(item => ({
-          value: item.drawingNo,
-          ...item
-        }))
-        cb(suggestions)
-      } catch (error) {
-        console.error('Error fetching suggestions:', error)
-        cb([])
-      }
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(
+        this.computedLinesList.reduce((sum, item) => sum + (item.excludingTaxAmount || 0), 0),
+        2
+      );
     },
 
     async getOrderNoConfig() {
-      const {number} = await this.$store.dispatch('base/getOrderNoConfig', 'SHDD')
-      this.dataForm.orderNo = `${ number }D`
-      this.dataForm.orderDate = moment(new Date()).format('YYYY-MM-DD')
-    },
-
-    async fetchDepartment() {
-      const res = await getOrganizeInfo(this.dataForm.departmentId);
-      this.dataForm.departments = [...res.data.organizeIdTree, this.dataForm.departmentId]
-      await this.$nextTick()
-      this.$refs.tableForm.setDefaultValue()
-    },
-
-    async fetchOrganization() {
-      try {
-        const params = {
-          keyword: "",
-          organizeId: this.dataForm.departmentId
-        };
-        const res = await getOrganization(params);
-        this.salesList = res.data?.length
-          ? res.data.map(item => ({
-            ...item,
-            label: item.fullName?.split('/')[0] || '',
-            value: item.id
-          }))
-          : [];
-      } finally {
-        this.loading = false
-      }
+      const {number} = await this.$store.dispatch('base/getOrderNoConfig', 'CGDH')
+      this.dataForm.orderNo = `${ number }`
     },
 
     async refreshTableHeight(...args) {
@@ -643,35 +415,9 @@ export default {
       }, {});
     },
 
-    addLineForm() {
-      this.linesList.push(this.createdObj());
-    },
-
     selectProductRefOpenDialog(type) {
       this.productRefType = type
-      if (type === 'customer') {
-        if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
-        this.addProductProps = {
-          ...this.addProductProps,
-          renderTree: false,
-          tableItems: [
-            {prop: 'customerProductNo', label: ' 客户料号', fixed: 'left'},
-            {prop: 'customerProductName', label: ' 客户产品名称', fixed: 'left'},
-            {prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom'},
-            {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-            {prop: 'productCode', label: '产品编码', sortable: 'custom'},
-            {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-            {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-            {prop: 'createTime', label: '创建时间', sortable: 'custom'}
-          ],
-          listRequestObj: {
-            ...this.addProductProps.listRequestObj,
-            partnerId: this.dataForm.cooperativePartnerId,
-            partnerType: 'customer'
-          }
-        }
-        delete this.addProductProps.listRequestObj.saleFlag
-      } else {
+      if (type === 'product') {
         this.addProductProps = {
           ...this.addProductProps,
           renderTree: true,
@@ -685,12 +431,36 @@ export default {
           listRequestObj: {
             ...this.addProductProps.listRequestObj,
             saleFlag: true,
-          }
+          },
+          searchList: [
+            {prop: 'productName', label: '产品名称', type: 'input'},
+            {prop: 'productCode', label: '产品编码', type: 'input'},
+          ]
         }
-        delete this.addProductProps.listRequestObj.partnerId
-        delete this.addProductProps.listRequestObj.partnerType
+      } else {
+        this.addProductProps = {
+          ...this.addProductProps,
+          title: '选择需求单',
+          renderTree: false,
+          tableItems: [
+            {prop: 'sourceOrderNo', label: '来源单号', minWidth: '220px', sortable: 'custom'},
+            {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
+            {prop: 'productCode', label: '产品编码', sortable: 'custom'},
+            {prop: 'deliveryDate', label: '交货日期', minWidth: '160px', sortable: 'custom'},
+            {prop: 'productDrawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
+            {prop: 'mainUnit', label: '单位', sortable: 'custom'},
+            {prop: 'createTime', label: '创建时间', minWidth: '180px', sortable: 'custom'}
+          ],
+          listRequestObj: {
+            ...this.addProductProps.listRequestObj,
+            sourceOrderNo: '',
+          },
+          searchList: [
+            {prop: 'sourceOrderNo', label: '来源单号', type: 'input'},
+          ]
+        }
       }
-      this.addProductProps.listMethod = type === 'customer' ? getcooperativeProduct : getProducts
+      this.addProductProps.listMethod = type === 'product' ? getProducts : purProcurementDemandPoolList
       this.$refs.ComSelectProductRef.openDialog()
     },
 
@@ -703,17 +473,26 @@ export default {
     },
 
     async submitAllProduct(id, data) {
-      const newData = data.map(item => ({
-        ...this.createdObj(),
-        ...item.all,
-        productName: item.all.name,
-        productCode: item.all.code,
-        productsDrawingNo: item.all.drawingNo,
-        productsId: this.productRefType === 'customer' ? item.all.productsId : item.all.id,
-        ...(this.productRefType === 'customer' && {cooperativePartnerProductId: item.all.id})
-      }));
-
-      this.linesList = [...this.linesList, ...newData]
+      const isProduct = this.productRefType === 'product';
+      const newData = data.map(({all}) => {
+        const {
+          name, productName,
+          code, productCode,
+          drawingNo, productDrawingNo,
+          id, productsId,
+          ...restAll
+        } = all;
+        return {
+          ...this.createdObj(),
+          ...restAll,
+          productName: isProduct ? name : productName,
+          productCode: isProduct ? code : productCode,
+          drawingNo: isProduct ? drawingNo : productDrawingNo,
+          productsId: isProduct ? id : productsId,
+          ...(!isProduct && {procurementDemandPoolId: id})
+        };
+      });
+      this.linesList = [...this.linesList, ...newData];
     },
 
     getTitle(type) {
@@ -731,43 +510,15 @@ export default {
     async getDetail(id) {
       this.loading = true
       try {
-        const res = await getOrderDetail(id)
+        const res = await purPurchaseOrderdetail(id)
         const {msg, data} = res
         if (msg === 'Success') {
-          this.dataForm = Object.assign(this.dataForm, data.order)
-          this.originalFormData = deepClone(this.dataForm)
-          this.fileList = this.fileListMap('', data.attachmentList)
-          this.linesList = data.orderLines
-          await this.fetchDepartment()
-          await this.fetchOrganization()
+          this.linesList = data.purchaseOrderLineVOList
+          this.dataForm = Object.assign(this.dataForm, data)
+          this.loading = false
         }
       } catch (err) {
         this.loading = false
-      }
-    },
-
-    fileListMap(type, fileList) {
-      if (!fileList && !fileList?.length) return
-      if (['submit', 'draft'].includes(type)) {
-        return fileList.map((item, index) => ({
-          ...item,
-          bimAttachments: {
-            businessType: '',
-            configKey: '',
-            documentId: item.id,
-            fileFlag: '',
-            sort: index
-          }
-        }))
-      } else {
-        return fileList.map((item, index) => ({
-          ...item,
-          name: item.document.fullName,
-          fileSize: item.document.fileSize,
-          filename: item.document.filePath,
-          id: item.document.id,
-          url: item.url
-        }))
       }
     },
 
@@ -779,20 +530,16 @@ export default {
       const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
       if (!valid_1 || !valid_2) return this.btnLoading = false
       this.dataForm.documentStatus = type
-      const deepParams = deepClone(this.dataForm)
-      const attachmentList = this.fileListMap(type, this.fileList)
+      this.calculateAndAssign()
+      const deepParams = _.merge({}, this.dataForm, this.dataOtherForm)
       const params = {
-        order: deepParams,
-        orderLineList: this.computedLinesList,
-        attachmentList: attachmentList,
+        ...deepParams,
+        purchaseOrderLines: this.computedLinesList,
         flowData: this.flowData
-      }
-      if (this.btnType === 'copy') {
-        params.order.id = ''
       }
       let MSG = '提交成功'
       try {
-        const apiMethod = params.order.id ? editOrders : addOrders
+        const apiMethod = params.id ? editPurchaseOrder : insertPurchaseOrder
         const res = await apiMethod(params)
         const {msg} = res
         if (msg === 'Success') {
@@ -806,7 +553,13 @@ export default {
     },
 
     goBack() {
-      this.$emit('close', this.activeType);
+      if ('close' in this.$listeners) {
+        this.$emit('close', this.activeType);
+      } else {
+        setTimeout(() => {
+          this.$router.push('/purchasingManagement/purchaseOrders/purchaseOrder')
+        }, 100)
+      }
     }
   }
 }
@@ -819,7 +572,8 @@ export default {
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-preview-main transitionForm org-form">
             <div class="JNPF-common-page-header">
-              <el-page-header @back="goBack" :content="title"/>
+              <el-page-header :class="btnType === 'add' ? 'el-page-header_left_none' : '' " @back="goBack"
+                :content="title"/>
               <div class="options">
                 <template v-if="activeType">
                   <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
@@ -829,7 +583,7 @@ export default {
                     保存并提交
                   </el-button>
                 </template>
-                <el-button @click="goBack">{{
+                <el-button v-if="btnType !== 'add'" @click="goBack">{{
                     $t('common.cancelButton')
                   }}
                 </el-button>
@@ -862,45 +616,20 @@ export default {
                         height: linesTableHeight,
                         rowKey: 'id',
                         defaultExpandAll: true,
-                        customColumn: true,
+                        customColumn: true
                       }">
                         <template slot="top">
                           <div class="tableTopContainer">
                             <div class="left">
                               <template v-if="activeType">
-                                <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('customer')">选择客户产品</el-button>
+                                <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('product')">选择产品</el-button>
                                 <span>|</span>
-                                <el-button type="text" icon="el-icon-plus" @click="addLineForm">新增一行</el-button>
-                                <span>|</span>
-                                <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('')">选择产品</el-button>
-                                <span>|</span>
-                                <el-button type="text" icon="el-icon-plus" @click="importProduct">导入产品</el-button>
+                                <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog">从需求单选择</el-button>
                                 <span>|</span>
                                 <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.tableForm.batchDelete()">批量删除</el-button>
                               </template>
                             </div>
                             <div class="right">
-                              <template v-if="activeType">
-                                <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
-                                <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
-                                  <el-form-item label="包装">
-                                    <el-select v-model="globalPackagingMethod" placeholder="包装"
-                                      @change="(val) => globalChange(val,'packagingMethod')"
-                                      style="width: 80px">
-                                      <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
-                                        :label="item.label" :value="item.value"/>
-                                    </el-select>
-                                  </el-form-item>
-                                  <el-form-item label="品牌">
-                                    <el-select v-model="globalBrand" placeholder="品牌"
-                                      @change="(val) => globalChange(val,'clearance')"
-                                      style="width: 100px">
-                                      <el-option v-for="item in getDictDataSync('brand')" :key="item.value"
-                                        :label="item.label" :value="item.value"/>
-                                    </el-select>
-                                  </el-form-item>
-                                </el-form>
-                              </template>
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                                   @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
@@ -917,23 +646,27 @@ export default {
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
-                  <UploadWj v-model="fileList" :disabled="!activeType" :detailed="!activeType"></UploadWj>
+                <el-tab-pane label="其他要求" name="other">
+                  <JNPF-col v-model="dataOtherForm" :tabContent="otherFormSchema" ref="dataForm"
+                    :btnType="btnType"/>
                 </el-tab-pane>
+                <!--                <el-tab-pane label="付款信息" name="payment">-->
+                <!--                  <JNPF-col v-model="dataForm" :tabContent="paymentFormSchema" ref="dataForm"-->
+                <!--                    :btnType="btnType"/>-->
+                <!--                </el-tab-pane>-->
               </el-tabs>
             </div>
           </div>
         </div>
       </div>
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct"/>
-      <TypingEditorDialog
-        :visible.sync="showDialog"
-        :linesFormList="linesList"
-        @confirm="handleTypingEditorConfirm"
-      />
-      <!--  导入-->
-      <UploadImportData ref="uploadRef" v-if="uploadVisible" :extraFormData="extraFormData" :uploadApi="uploadProduct" @success="importDataSuccess"
-        @close="uploadVisible = false" templateDownLoadPath="/static/销售订单导入模板.xlsx"/>
     </div>
   </transition>
 </template>
+<style scoped lang="scss">
+::v-deep .el-page-header_left_none {
+  .el-page-header__left {
+    display: none;
+  }
+}
+</style>

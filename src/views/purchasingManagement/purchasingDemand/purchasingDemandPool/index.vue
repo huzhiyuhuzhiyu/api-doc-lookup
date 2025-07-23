@@ -48,6 +48,7 @@
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
+            <el-button size="mini" type="primary" @click="addOrUpdateHandle(true)">合并采购</el-button>
 
             <!-- <el-button size="mini" type="primary" @click="batchFixed()">批量定价</el-button>  -->
           </div>
@@ -74,6 +75,8 @@
             v-if="isProductNameSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+          <el-table-column prop="departmentName" label="申请部门" width="160" sortable="custom" />
+          <el-table-column prop="userName" label="申请人" width="160" sortable="custom" />
 
 
           <el-table-column prop="classAttribute" label="类别属性" min-width="110" sortable="custom">
@@ -113,6 +116,9 @@
               </el-link>
               <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)" v-if="scope.row.source == 'plan'">
                 计划下达
+              </el-link>
+              <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)" v-if="scope.row.source == 'sale_order'">
+                销售订单
               </el-link>
             </template>
           </el-table-column>
@@ -301,17 +307,15 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['productCode', 'source', 'createByName'],
+      columnList: ['productCode', 'createByName'],
       deliveryDateArr: [],
       sourceDialog: false,
-      sourceList: [],
       title: '更多查询',
       background: true, //分页器背景颜色
       visible: false,
       quiryVisible: false,
       fixedVisible: false,
       tableDataList: [],
-      formVisible: false,
       listLoading: false,
       sourceListData: [],
       classAttributeOptions: [
@@ -344,7 +348,6 @@ export default {
         endTime: '',
         pageNum: 1,
         pageSize: 20,
-        classAttribute: 'other',
         demandStatus: null, //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
@@ -728,7 +731,6 @@ if (classAttributeObj) {
         endTime: '',
         pageNum: 1,
         pageSize: 20,
-        classAttribute: 'other',
         demandStatus: null, //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
@@ -750,7 +752,7 @@ if (classAttributeObj) {
     //   })
     // },
     // 生成采购订单 将选中的数据传递过去
-    addOrUpdateHandle() {
+    addOrUpdateHandle(isSameSource) {
       if (this.selectData.length === 0) {
         this.$message({
           message: '请选择你要生成的采购订单',
@@ -758,9 +760,20 @@ if (classAttributeObj) {
           duration: 1500
         })
       } else {
+        if (isSameSource) {
+          const firstOrderNo = this.selectData[0].sourceOrderNo
+          const allSameOrderNo = this.selectData.every(item => item.sourceOrderNo === firstOrderNo)
+
+          if (!allSameOrderNo) {
+            this.$message.error('仅支持同一个订单来源合并！')
+            return
+          }
+        }
+
         let msg = true
         let tempList = JSON.parse(JSON.stringify(this.selectData))
         let hasItemList = []
+
         for (let i = 0; i < this.selectData.length; i++) {
           let item = this.selectData[i]
 
@@ -776,6 +789,7 @@ if (classAttributeObj) {
             }
           }
         }
+
         if (msg) {
           this.selectData.forEach((item, index) => {
             item.purchaseQuantity = item.planDemandQuantity - item.orderedQuantity * 1
@@ -793,6 +807,7 @@ if (classAttributeObj) {
               )
             }
           })
+
           var maxDate = null // 最大日期初始值设为null
           // 遍历列表中的数据 找到最大交期
           for (var i = 0; i < this.selectData.length; i++) {
@@ -801,6 +816,7 @@ if (classAttributeObj) {
               maxDate = currentDate
             }
           }
+
           let demandDelivery = null
           demandDelivery = maxDate.toISOString().split('T')[0]
           this.formVisible = true

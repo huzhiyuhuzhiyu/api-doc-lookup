@@ -207,21 +207,22 @@ export function getColumns() {
     {
       prop: "orderNo",
       label: "订单编号",
-      minWidth: 200,
+      minWidth: 220,
       align: "left",
       sortable: 'custom',
     },
     {
       prop: "cooperativePartnerCode",
       label: "客户编码",
-      minWidth: 200,
+      minWidth: 220,
       align: "left",
       sortable: 'custom',
     },
     {
       prop: "cooperativePartnerName",
       label: "客户名称",
-      minWidth: 160,
+      minWidth: 180,
+      align: "left",
     },
     {
       prop: "orderType",
@@ -234,6 +235,7 @@ export function getColumns() {
       prop: "departmentName",
       label: "所属部门",
       minWidth: 120,
+      align: "left",
     },
     {
       prop: "salesName",
@@ -248,12 +250,13 @@ export function getColumns() {
     {
       prop: "contractNo",
       label: "客户合同号",
-      minWidth: 120,
+      minWidth: 220,
+      align: "left",
     },
     {
       prop: "num",
       label: "订单数量",
-      minWidth: 120,
+      minWidth: 100,
     },
     {
       prop: "deliveryDate",
@@ -277,7 +280,7 @@ export function getColumns() {
     {
       prop: "createTime",
       label: "创建时间",
-      minWidth: 120,
+      minWidth: 180,
     },
     {
       prop: "createByName",

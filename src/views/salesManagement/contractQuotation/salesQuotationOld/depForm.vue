@@ -30,9 +30,9 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="所属客户" prop="cooperativePartnerIdText">
                         <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText"
+                          :renderTree="renderTree"
                           @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择所属客户" treeTitle="客户分类"
                           placeholder="请选择客户"
-                          :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }"
                           :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj"
                           :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
                           :isdisabled="btnType === 'look'" />
@@ -85,7 +85,7 @@
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
                           <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="数量" :disabled="status"
-                            maxlength="11" @input="watchnums(scope.row, scope.$index)">
+                            maxlength="11">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -103,16 +103,18 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="sampleAmounts" label="样品报价" width="140">
+                    <el-table-column prop="sampleQuotationFlag" label="样品报价" width="140">
                       <template slot="header">
                         <span class="required">*</span>样品报价
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'sampleAmounts'"
-                          :rules='productRules.sampleAmounts'>
-                          <el-input :title="scope.row.sampleAmounts" v-model="scope.row.sampleAmounts"
-                            placeholder="请输入样品报价" :disabled="status" maxlength="11">
-                          </el-input>
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'sampleQuotationFlag'"
+                          :rules='productRules.sampleQuotationFlag'>
+                          <el-select v-model="dataForm.sampleQuotationFlag" placeholder="请选择是否样品报价" style="width: 100%;"
+                            :disabled="status">
+                            <el-option v-for="(item, index) in sampleQuotationFlagOption" :key="index" :label="item.text"
+                              :value="item.value"></el-option>
+                          </el-select>
                         </el-form-item>
                       </template>
                     </el-table-column>
@@ -129,7 +131,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="procurementAmounts" label="采购价" width="140" v-if="quoteType === 'directly_quotation'">
+                    <el-table-column prop="procurementAmounts" label="采购价" width="140"
+                      v-if="quoteType === 'directly_quotation'">
                       <template slot="header">
                         <span class="required">*</span>采购价
                       </template>
@@ -154,7 +157,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxAmounts" label="未税价" width="120" v-if="quoteType === 'directly_quotation'">
+                    <el-table-column prop="excludingTaxAmounts" label="未税价" width="120"
+                      v-if="quoteType === 'directly_quotation'">
                       <template slot="header">
                         <span class="required">*</span>未税价
                       </template>
@@ -167,7 +171,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="moldAmounts" label="模具费" width="120" v-if="quoteType === 'directly_quotation'">
+                    <el-table-column prop="moldAmounts" label="模具费" width="120"
+                      v-if="quoteType === 'directly_quotation'">
                       <template slot="header">
                         <span class="required">*</span>模具费
                       </template>
@@ -180,16 +185,17 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="deliveryDate" label="交期" width="170" v-if="quoteType === 'directly_quotation'">
+                    <el-table-column prop="deliveryDate" label="交期" width="170"
+                      v-if="quoteType === 'directly_quotation'">
                       <template slot="header">
                         <span class="required">*</span>交期
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'deliveryDate'"
                           :rules='productRules.deliveryDate'>
-                          <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择交期" :disabled="status">
-                          </el-date-picker>
+                          <el-input :title="scope.row.deliveryDate" v-model="scope.row.deliveryDate" placeholder="请输入交期"
+                            :disabled="status" maxlength="11">
+                          </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
@@ -201,14 +207,11 @@
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'add' || btnType == 'edit'">
                       <template slot-scope="scope">
                         <el-button type="text" @click="deltable(scope)" style=" color: #ff3a3a">删除</el-button>
-                        <el-button type="text" v-if="quoteType !== 'directly_quotation'" @click="historyPriceFun(scope)">历史价格</el-button>
+                        <el-button type="text" v-if="quoteType !== 'directly_quotation'"
+                          @click="historyPriceFun(scope)">历史价格</el-button>
                       </template>
                     </el-table-column>
                   </el-table>
-                  <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
-                    <span style="font-weight:500;margin:0 10px">总数量：{{ totalNum }}</span>
-                    <span style="font-weight:500;margin:0 10px">总金额：{{ totalAmount }}</span>
-                  </div>
                 </el-form>
               </el-collapse-item>
             </el-collapse>
@@ -274,21 +277,21 @@
                   @click="exportForm('dataTable')">导出</el-button>
               </div>
               <JNPF-table :data="historyPriceData" ref="dataTable" custom-column customKey="JNPFTableKey_861720">
-                <el-table-column prop="quotationNo" label="报价单号" width="150"/>
-                <el-table-column prop="quotationTime" label="报价日期" width="150"/>
-                <el-table-column prop="cooperativePartnerId" label="客户编号" width="150"/>
-                <el-table-column prop="productCode" label="产品型号" width="200"/>
+                <el-table-column prop="quotationNo" label="报价单号" width="150" />
+                <el-table-column prop="quotationTime" label="报价日期" width="150" />
+                <el-table-column prop="cooperativePartnerId" label="客户编号" width="150" />
+                <el-table-column prop="productCode" label="产品型号" width="200" />
                 <el-table-column prop="productName" label="产品名称" width="160" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="minNumStr" label="起订量" min-width="120" v-if="isProjectSwitch == 1"/>
-                <el-table-column prop="sampleNumStr" label="样品数" width="80"/>
-                <el-table-column prop="procurementAmounts" label="采购报价" width="80"/>
-                <el-table-column prop="amounts" label="报价" width="130"/>
+                <el-table-column prop="minNumStr" label="起订量" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="sampleNumStr" label="样品数" width="80" />
+                <el-table-column prop="procurementAmounts" label="采购报价" width="80" />
+                <el-table-column prop="amounts" label="报价" width="130" />
                 <el-table-column prop="excludingTaxAmounts" label="未税价" width="110"></el-table-column>
-                <el-table-column prop="moldAmounts" label="模具费" width="140"/>
-                <el-table-column prop="excludingTaxUnitPrice" label="报模具费" width="140"/>
-                <el-table-column prop="deliveryDate" label="交期" width="140"/>
-                <el-table-column prop="sampleAmounts" label="样品报价" width="140"/>
-                <el-table-column prop="remark" label="备注" width="130"/>
+                <el-table-column prop="moldAmounts" label="模具费" width="140" />
+                <el-table-column prop="excludingTaxUnitPrice" label="报模具费" width="140" />
+                <el-table-column prop="deliveryDate" label="交期" width="140" />
+                <el-table-column prop="sampleAmounts" label="样品报价" width="140" />
+                <el-table-column prop="remark" label="备注" width="130" />
               </JNPF-table>
               <pagination :total="historyPriceTotal" :page.sync="historyPriceRequestObj.pageNum"
                 :limit.sync="historyPriceRequestObj.pageSize" @pagination="getHistoryPriceFun" />
@@ -466,12 +469,14 @@ export default {
       partnerSearchList: [
         { prop: 'code', label: '客户编码', type: 'input' },
         { prop: 'name', label: '客户名称', type: 'input' },
-        { prop: 'taxId', label: '税号', type: 'input' }
       ], // 客户搜索条件
       partnerTableItems: [
-        { prop: 'code', label: '客户编码' },
-        { prop: 'name', label: '客户名称' },
-        { prop: 'taxId', label: '税号' },
+        {prop: 'name', label: '客户名称', minWidth: '220px', sortable: 'custom'},
+        {prop: 'code', label: '客户编码', sortable: 'custom'},
+        {prop: 'contacts', label: '联系人', sortable: 'custom'},
+        {prop: 'mobilePhone', label: '手机', sortable: 'custom'},
+        {prop: 'phone', label: '电话', sortable: 'custom'},
+        {prop: 'salespersonIdText', label: '所属销售', sortable: 'custom'},
       ], // 客户列表字段
       datafilelist: [],
       iszt: true,
@@ -523,7 +528,6 @@ export default {
         num: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
         ],
         // 样品数
         sampleNumStr: [
@@ -532,10 +536,9 @@ export default {
           { validator: this.formValidate('positiveNumber', '样品数必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
         ],
         // 样品报价
-        sampleAmounts: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["样品报价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '样品报价必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        sampleQuotationFlag: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["样品报价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
+          { required: true, trigger: 'change' },
         ],
         // 起订量
         minNumStr: [
@@ -658,6 +661,11 @@ export default {
       selectArr: [],
       tableFlag: false,
       formVisible: false,
+      sampleQuotationFlagOption: [
+        { text: '是', value: 1 },
+        { text: '否', value: 0 },
+      ],
+      renderTree: false
     }
   },
   watch: {
@@ -1331,80 +1339,6 @@ export default {
       }
       this.dataFormTwo.lines = productArr
     },
-    // 监听主数量输入
-    watchnums(row, index) {
-      console.log("ROW", row, index);
-      // 数量处理
-      row.num = row.num ? row.num.replace(/[^\d.]/g, '') : ''
-      if (row.num.length == 1 && row.num == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.num = '';
-      } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
-      } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
-        row.num = row.num.substring(1, row.num.length)
-      }
-      if (row.num.includes('.')) {
-        let dotCount = 0; // 小数点的数量
-        let result = ''; // 处理后的结果
-        for (let i = 0; i < row.num.length; i++) {
-          const char = row.num[i];
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
-              result += char;
-              dotCount++;
-            }
-          } else {
-            result += char;
-          }
-        }
-        row.num = result;
-        let arr = row.num.split('.')
-        if (arr[0].length > 8) {
-          arr[0] = arr[0].substring(0, 8)
-        }
-        if (arr[1].length > 2) {
-          arr[1] = arr[1].substring(0, 2)
-        }
-        row.num = arr[0] + '.' + arr[1]
-      } else {
-        if (row.num.length > 8) {
-          row.num = row.num.substring(0, 8);
-        }
-      }
-      if (row.unitPrice && row.unitPrice != '0') {
-        let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 2)
-        row.excludingTaxUnitPrice = b ? b : 0
-      } else {
-        row.excludingTaxUnitPrice = ''
-      }
-      if (!row.num || !row.unitPrice) {
-        row.amounts = ''
-        row.totalTaxAmount = ''
-        this.dataForm.totalAmount = 0
-      } else {
-        let a = this.jnpf.numberFormat((row.unitPrice * row.num), 2)
-        row.amounts = a ? a : '' // 含税金额
-      }
-      var totalPrice = 0;
-      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        let item = this.dataFormTwo.lines[a]
-        console.log("item", item.amounts);
-        totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
-      }
-      if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 2)
-        row.excludingTaxAmounts = c ? c : ''
-      } else {
-        row.excludingTaxAmounts = ''
-      }
-      if (row.excludingTaxAmounts && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 2)
-        row.totalTaxAmount = d ? d : 0
-      }
-    },
     // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
@@ -1456,7 +1390,6 @@ export default {
         if (this.btnType == 'copy') {
           this.formLoading = true
           getQuotationInfo(this.dataForm.id).then(res => {
-            // this.$nextTick(() => {
             this.dataForm = res.data.sale
             this.dataFormTwo.lines = res.data.lines
             this.dataForm.totalAmount = 0
@@ -1484,7 +1417,6 @@ export default {
               this.getBusInfo('b001')
             })//暂时注释
             this.formLoading = false
-            // })
           }).catch(err => {
             this.formLoading = false
           })

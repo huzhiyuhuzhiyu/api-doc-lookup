@@ -57,7 +57,7 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="供应商" prop="cooperativePartnerName" ref="cooperativePartnerName">
                     <!-- 供应商选择弹窗  -->
-                    <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                    <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                       v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                       @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
                       treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
@@ -70,8 +70,6 @@
           </el-collapse-item>
           <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
             <div v-if="btnType != 'look'">
-              <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
-                icon="el-icon-plus" @click="addProduct">选择产品</el-button>
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
@@ -91,7 +89,7 @@
                   <template slot-scope="scope">
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'amounts'" :rules='productRules.amounts'>
                       <el-input :title="scope.row.amounts" v-model="scope.row.amounts" placeholder="请输入样品报价"
-                        :disabled="status" maxlength="11">
+                        :disabled="tableFormDisabled" maxlength="11">
                       </el-input>
                     </el-form-item>
                   </template>
@@ -104,7 +102,7 @@
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'moldAmounts'"
                       :rules='productRules.moldAmounts'>
                       <el-input :title="scope.row.moldAmounts" v-model="scope.row.moldAmounts" placeholder="请输入模具费"
-                        :disabled="status" maxlength="11">
+                        :disabled="tableFormDisabled" maxlength="11">
                       </el-input>
                     </el-form-item>
                   </template>
@@ -116,7 +114,7 @@
                   <template slot-scope="scope">
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'minNumStr'" :rules='productRules.minNumStr'>
                       <el-input :title="scope.row.minNumStr" v-model="scope.row.minNumStr" placeholder="请输入起订量"
-                        :disabled="status" maxlength="11">
+                        :disabled="tableFormDisabled" maxlength="11">
                       </el-input>
                     </el-form-item>
                   </template>
@@ -129,7 +127,7 @@
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'deliveryDate'"
                       :rules='productRules.deliveryDate'>
                       <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                        style="width: 100%;" placeholder="请选择交期" :disabled="status">
+                        style="width: 100%;" placeholder="请选择交期" :disabled="tableFormDisabled">
                       </el-date-picker>
                     </el-form-item>
                   </template>
@@ -138,7 +136,7 @@
                   <template slot-scope="scope">
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'remark1'" :rules='productRules.remark1'>
                       <el-input :title="scope.row.remark1" v-model="scope.row.remark1" placeholder="请输入采购反馈"
-                        :disabled="status" maxlength="11">
+                        :disabled="tableFormDisabled" maxlength="11">
                       </el-input>
                     </el-form-item>
                   </template>
@@ -425,6 +423,10 @@ export default {
   computed: {
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token']),
+    tableFormDisabled: function () {
+      console.log(this.btnType === 'look');
+      return this.btnType === 'look'
+    } // 表单禁用
   },
   mounted() {
   },

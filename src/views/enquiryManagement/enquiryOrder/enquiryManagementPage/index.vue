@@ -54,11 +54,11 @@
           </div>
           <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_388658">
-            <el-table-column prop="quotationNo" label="询价单号"/>
-            <el-table-column prop="customerCode" label="客户编码"/>
-            <el-table-column prop="quotationDate" label="询价日期"/>
-            <el-table-column prop="supplierCode" label="供应商编号"/>
-            <el-table-column prop="supplierName" label="供应商名称"/>
+            <el-table-column prop="quotationNo" label="询价单号" />
+            <el-table-column prop="customerCode" label="客户编码" />
+            <el-table-column prop="quotationDate" align="center" label="询价日期" />
+            <el-table-column prop="supplierCode" label="供应商编号" />
+            <el-table-column prop="supplierName" label="供应商名称" />
             <el-table-column prop="documentStatus" label="状态" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>
@@ -110,9 +110,6 @@
                     <el-dropdown-item @click.native="copyFun(scope.row.id, 'copy')">
                       复制
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="downloadOrder(scope.row.id)">
-                      下载报价单
-                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -144,7 +141,7 @@ export default {
         { field: 'customerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       form: {},
-      tableDataList:[],
+      tableDataList: [],
       total: 0,
       listLoading: false,
       basicQuery: {},
@@ -173,7 +170,25 @@ export default {
   async created() {
     this.search()
   },
+  activated() {
+    // 刷新表格
+    if (this.$refs.tableForm) {
+      this.$refs.tableForm.doLayout()
+    }
+  },
   methods: {
+    copyFun(id, type) {
+      this.establishVisible = true
+      this.$nextTick(() => {
+        this.$refs.establishForm.init(id, type)
+      })
+    },
+    handleUserRelation(row, type) {
+      this.establishVisible = true
+      this.$nextTick(() => {
+        this.$refs.establishForm.init(row.id, type)
+      })
+    },
     // 编辑
     addOrUpdateHandle(res, type) {
       this.establishVisible = true

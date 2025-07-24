@@ -69,13 +69,13 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" min-width="120" />
+            <el-table-column prop="cooperativePartnerCode" label="客户编号" sortable="custom" min-width="120" />
             <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" min-width="160" />
-            <el-table-column prop="quotationTime" label="询价日期" width="130"/>
-            <el-table-column prop="" label="制单人" width="100"/>
-            <el-table-column prop="" label="业务员" width="120" align="center">
+            <el-table-column prop="inquiryTime" label="询价日期" width="130"/>
+            <el-table-column prop="bidder1" label="制单人" width="100"/>
+            <el-table-column prop="bidder" label="业务员" width="120" align="center">
             </el-table-column>
-            <el-table-column prop="" label="采购负责人" width="120" align="center">
+            <el-table-column prop="purchaseUserId" label="采购负责人" width="120" align="center">
             </el-table-column>
             <el-table-column prop="approvalStatus" label="状态" width="120" align="center"
               v-if="showAppCodeFlag">
@@ -168,7 +168,7 @@ export default {
       ],
 
 
-      columnList: ["deliver", "cooperativePartnerCode", "address", "fax", "reasonRejection", "createByName", "remark"],
+      columnList: ["deliver", "address", "fax", "reasonRejection", "createByName", "remark"],
       superQueryVisible: false,
 
       deliveryDatefahuo: [],

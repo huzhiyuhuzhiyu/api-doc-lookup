@@ -386,7 +386,24 @@ export function withdrawApi (id) {
   return request({
     url: `/api/erp/sale/orders/notice/revoke/${id}`,
     method: 'post',
-    
+
+  })
+}
+
+// // 退发货通知单-仓库确认
+// export function confirmOrdersNotice (data) {
+//   return request({
+//     url: `/api/erp/sale/orders/notice/confirm/${data.id}`,
+//     method: 'get',
+//   })
+// }
+
+// 退发货通知单-包装组、拣货组确认
+export function confirmOrdersNotice (data) {
+  return request({
+    url: `/api/erp/sale/orders/notice/confirm`,
+    method: 'post',
+    data
   })
 }
 

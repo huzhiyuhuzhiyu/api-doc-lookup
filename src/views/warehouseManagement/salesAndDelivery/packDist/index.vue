@@ -1,12 +1,12 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 
-import {buttonList, getColumns} from "../createPurchaseOrder/data";
+import {buttonList, getColumns} from "./data";
 import {getPrintBusInfo} from "@/api/system/printDev";
-import Form from '../createPurchaseOrder/index.vue'
+import Form from './Form.vue'
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
-import {deletePurPurchaseOrder, purchaseOrderList} from "@/api/purchasingAndOutsourcingOrders";
+import {getQuotationdatasendlist} from "@/api/salesManagement";
 
 export default {
   name: "index",
@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       loading: false,
-      visible: false,
+      visible: true,
       printVisible: false,
       printQuery: {
         category: ''
@@ -31,20 +31,20 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'orderType',
-          label: "订单类型",
+          prop: 'priority',
+          label: "发货优先级",
           type: 'select',
-          options: this.global.salesOrderType
-        },
-        {
-          prop: 'orderState',
-          label: "订单状态",
-          type: 'select',
-          options: this.global.salesOrderState
+          options: this.global.shippingPriority
         },
       ],
       initListQuery: {
-        orderType: 'procure',
+        orderNo: '',
+        cooperativePartnerName: '',
+        cooperativePartnerCode: '',
+        priority: '',
+        notifyType: "sale",
+        returnDeliveryType: 'delivery',
+        deliveryStatus: 'confirm',
         orderItems: [
           {
             asc: false,
@@ -63,7 +63,6 @@ export default {
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
-      selectedRow: [],
     }
   },
   created() {
@@ -74,7 +73,7 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await purchaseOrderList(this.listQuery);
+        const res = await getQuotationdatasendlist(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -113,25 +112,7 @@ export default {
       }
     },
 
-    validateSelectedRows() {
-      if (!this.selectedRow.length) {
-        this.$message.warning('请至少选择一条数据');
-        return false;
-      }
-      if (this.selectedRow.length > 1) {
-        this.$message.warning('只能选择一条数据');
-        return false;
-      }
-      return true;
-    },
-
     handleButtonClick(type) {
-      switch (type) {
-        case 'print':
-          if (!this.validateSelectedRows()) return;
-          this.printView(this.selectedRow[0], 'p006', '打印');
-          break;
-      }
     },
 
     handleColumnClick(row, type) {
@@ -144,25 +125,8 @@ export default {
             this.$refs.Form.init(row.id, type)
           })
           break;
-        case 'delete':
-          this.handleRemove(row.id)
-          break;
         default:
       }
-    },
-
-    handleRemove(id) {
-      this.$confirm('您确定要删除这些数据吗, 是否继续？', '提示', {
-        type: 'warning'
-      }).then(async () => {
-        const res = await deletePurPurchaseOrder(id);
-        const {msg} = res
-        if (msg === 'Success') {
-          this.$message.success('删除成功')
-          this.initData()
-        }
-      }).catch(() => {
-      })
     },
 
     close(isInitData = true) {
@@ -213,22 +177,41 @@ export default {
         <el-form @submit.native.prevent @keyup.enter.native="search()">
           <el-col :span="4">
             <el-form-item>
+              <el-input v-model.trim="listQuery.orderNo"
+                  placeholder="订单号"
+                  clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
               <el-input v-model.trim="listQuery.cooperativePartnerCode"
-                placeholder="供应商编码"
-                clearable/>
+                  placeholder="客户编码"
+                  clearable/>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model.trim="listQuery.cooperativePartnerName"
-                placeholder="供应商名称"
-                clearable/>
+                  placeholder="客户名称"
+                  clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="listQuery.priority" placeholder="发货优先级">
+                <el-option
+                    v-for="item in global.shippingPriority"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search"
-                @click="search()">查询
+                  @click="search()">查询
               </el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置
               </el-button>
@@ -240,52 +223,50 @@ export default {
         <div class="JNPF-common-head" style="padding: 8px">
           <div class="JNPF-common-head-left">
             <CustomButton
-              :btnList="btnList"
-              @click="handleButtonClick"
+                :btnList="btnList"
+                @click="handleButtonClick"
             />
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true"/>
+                  @click="superQueryVisible = true"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()"/>
+                  @click="columnSetFun()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()"/>
+                  @click="initData()"/>
             </el-tooltip>
           </div>
         </div>
         <JNPF-table customKey="hsCodes"
-          v-loading="loading"
-          :data="tableData"
-          :has-c="true"
-          @selection-change="(val) => selectedRow = val"
-          :row-key="'id'"
-          fixedNO
-          :setColumnDisplayList="columnList"
-          @sort-change="sortChange"
-          ref="dataTable"
-          custom-column>
+            v-loading="loading"
+            :data="tableData"
+            :row-key="'id'"
+            fixedNO
+            :setColumnDisplayList="columnList"
+            @sort-change="sortChange"
+            ref="dataTable"
+            custom-column>
           <template v-for="column in columnsConfig">
             <el-table-column
-              v-if="typeof column.show === 'function' ? column.show() : true"
-              :key="column.prop"
-              :prop="column.prop"
-              :label="column.label"
-              :min-width="column.minWidth"
-              :sortable="column.sortable"
-              :fixed="column.fixed"
-              :align="getAlign(column.align)"
+                v-if="typeof column.show === 'function' ? column.show() : true"
+                :key="column.prop"
+                :prop="column.prop"
+                :label="column.label"
+                :min-width="column.minWidth"
+                :sortable="column.sortable"
+                :fixed="column.fixed"
+                :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
                 <template v-if="column.dictType">
                    <span>
                 <el-tag
-                  :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
+                    :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
                     global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
                   }}</el-tag>
                    </span>
@@ -296,41 +277,33 @@ export default {
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text"
-                @click="handleColumnClick(row, 'edit')">
+                  @click="handleColumnClick(row, 'packDist')">
+                装箱分配
+              </el-button>
+              <el-button size="mini" type="text"
+                  @click="handleColumnClick(row, 'edit')">
                 编辑
               </el-button>
-              <el-button style="color: rgb(245, 108, 108)" size="mini" type="text"
-                @click="handleColumnClick(row, 'delete')">
-                删除
+              <el-button size="mini" type="text"
+                  @click="handleColumnClick(row, 'look')">
+                详情
               </el-button>
-              <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
-                    详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
             </template>
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData"
+            @pagination="initData"
         />
       </div>
     </div>
     <!-- 高级查询 -->
     <SuperQuery partentOrChild="TransitionApplicationRecordQuery" :show="superQueryVisible" ref="SuperQuery"
-      table-ref="dataTable"
-      :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
-    <Form ref="Form" v-if="visible" @close="close" :autoInit="false"/>
+        table-ref="dataTable"
+        :columnOptions="superQueryJson"
+        @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
+    <Form ref="Form" v-if="visible" @close="close"/>
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
     <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
   </div>
 </template>

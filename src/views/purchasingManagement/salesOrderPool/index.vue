@@ -1,18 +1,14 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-
-import {buttonList, getColumns} from "../createPurchaseOrder/data";
-import {getPrintBusInfo} from "@/api/system/printDev";
-import Form from '../createPurchaseOrder/index.vue'
-import PrintDialog from '@/components/no_mount/printDialog/index.vue';
-import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
-import {deletePurPurchaseOrder, purchaseOrderList} from "@/api/purchasingAndOutsourcingOrders";
+import {buttonList, getColumns} from "./data";
+import {feedbackDeliveryOrderPool, getSalesOrderPoolPage} from "@/api/salesOrderPool";
+import Form from './Form.vue'
+import FeedbackEditDialog from "./feedbackEditDialog.vue";
 
 export default {
   name: "index",
   components: {
-    BatchPrintBrowse,
-    PrintDialog,
+    FeedbackEditDialog,
     SuperQuery,
     Form
   },
@@ -20,12 +16,7 @@ export default {
     return {
       loading: false,
       visible: false,
-      printVisible: false,
-      printQuery: {
-        category: ''
-      },
-      fullName: '',
-      enCode: '',
+      showDialog: false,
       tableData: [],
       total: 0,
       superQueryVisible: false,
@@ -37,14 +28,19 @@ export default {
           options: this.global.salesOrderType
         },
         {
-          prop: 'orderState',
-          label: "订单状态",
+          prop: 'deliveryStatus',
+          label: "交期状态",
           type: 'select',
-          options: this.global.salesOrderState
+          options: this.global.deliveryStatus
         },
       ],
       initListQuery: {
-        orderType: 'procure',
+        orderNo: '',
+        cooperativePartnerName: '',
+        cooperativePartnerCode: '',
+        orderType: '',
+        deliveryStatus: '',
+        productSourceList: ['purchase', 'assemble'],
         orderItems: [
           {
             asc: false,
@@ -52,7 +48,7 @@ export default {
           },
           {
             asc: false,
-            column: 'create_time'
+            column: 't1.create_time'
           }
         ],
         superQuery: {},
@@ -64,6 +60,10 @@ export default {
       columnList: [],
       columnsConfig: getColumns(),
       selectedRow: [],
+      productSourceOperate: {
+        purchase: '主件需求',
+        assemble: '子件需求',
+      },
     }
   },
   created() {
@@ -74,7 +74,7 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await purchaseOrderList(this.listQuery);
+        const res = await getSalesOrderPoolPage(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -83,98 +83,53 @@ export default {
       }
     },
 
-    closePrint() {
-      this.printVisible = false
-    },
-
-    printView(row, enCode, fullName) {
-      this.selectArr = [row]
-      this.enCode = enCode
-      this.fullName = fullName
-      this.printVisible = true
-      this.$nextTick(() => {
-        this.$refs.printTemplate.init(enCode)
-      })
-    },
-
-    async printOrder(enCode) {
+    async handleConfirm(selectedDate) {
+      const params = {
+        feedbackDeliveryDate: selectedDate,
+        id: this.selectedRow[0].id,
+      }
       try {
-        const res = await getPrintBusInfo(enCode)
-        if (!res.data) {
-          return this.$message.warning('未找到相应打印模版')
-        }
-        const id = res.data.id
-        const printData = this.selectArr.map(item => ({
-          formId: item.id,
-          id: id
-        }))
-        this.$refs.batchPrint.print(printData);
+        const res = await feedbackDeliveryOrderPool(params);
+        this.$message.success('反馈成功')
+        await this.initData()
       } catch (e) {
+        this.$message.error('反馈失败，请稍后再试')
       }
-    },
-
-    validateSelectedRows() {
-      if (!this.selectedRow.length) {
-        this.$message.warning('请至少选择一条数据');
-        return false;
-      }
-      if (this.selectedRow.length > 1) {
-        this.$message.warning('只能选择一条数据');
-        return false;
-      }
-      return true;
     },
 
     handleButtonClick(type) {
       switch (type) {
-        case 'print':
-          if (!this.validateSelectedRows()) return;
-          this.printView(this.selectedRow[0], 'p006', '打印');
-          break;
-      }
-    },
-
-    handleColumnClick(row, type) {
-      switch (type) {
-        case 'look':
-        case 'edit':
-        case 'copy':
-          this.visible = true
-          this.$nextTick(() => {
-            this.$refs.Form.init(row.id, type)
-          })
-          break;
-        case 'delete':
-          this.handleRemove(row.id)
+        case 'feedback':
+          if (!this.selectedRow.length) return this.$message.warning('请至少选择一条数据')
+          if (this.selectedRow.length > 1) return this.$message.warning('只能选择一条数据')
+          this.showDialog = true
           break;
         default:
       }
     },
 
-    handleRemove(id) {
-      this.$confirm('您确定要删除这些数据吗, 是否继续？', '提示', {
-        type: 'warning'
-      }).then(async () => {
-        const res = await deletePurPurchaseOrder(id);
-        const {msg} = res
-        if (msg === 'Success') {
-          this.$message.success('删除成功')
-          this.initData()
-        }
-      }).catch(() => {
-      })
+    handleColumnClick(row, type) {
+      switch (type) {
+        case 'purchase':
+        case 'assemble':
+          this.visible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(row, type, this.productSourceOperate)
+          })
+          break;
+        default:
+      }
     },
 
     close(isInitData = true) {
       this.visible = false
-      this.BindingVisible = false
       if (!isInitData) return
       this.initData()
     },
 
     sortChange({prop, order}) {
       let newProp = ''
-      if (prop === 'createTime') {
+      if (prop === 't.create_time') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -211,21 +166,52 @@ export default {
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
         <el-form @submit.native.prevent @keyup.enter.native="search()">
-          <el-col :span="4">
+          <el-col :span="3">
             <el-form-item>
               <el-input v-model.trim="listQuery.cooperativePartnerCode"
-                placeholder="供应商编码"
+                placeholder="客户编码"
                 clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.cooperativePartnerName"
+                placeholder="客户名称"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.orderNo"
+                placeholder="销售单号"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item>
+              <el-select v-model="listQuery.orderType" placeholder="请选择">
+                <el-option
+                  v-for="item in global.salesOrderType"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item>
+              <el-select v-model="listQuery.deliveryStatus" placeholder="请选择">
+                <el-option
+                  v-for="item in global.deliveryStatus"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerName"
-                placeholder="供应商名称"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search"
                 @click="search()">查询
@@ -296,25 +282,9 @@ export default {
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text"
-                @click="handleColumnClick(row, 'edit')">
-                编辑
+                @click="handleColumnClick(row, row.productSource)">
+                {{ productSourceOperate[row.productSource] }}
               </el-button>
-              <el-button style="color: rgb(245, 108, 108)" size="mini" type="text"
-                @click="handleColumnClick(row, 'delete')">
-                删除
-              </el-button>
-              <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
-                    详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -328,9 +298,10 @@ export default {
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
-    <Form ref="Form" v-if="visible" @close="close" :autoInit="false"/>
-    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
-    <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
+    <Form ref="Form" v-if="visible" @close="close"/>
+    <FeedbackEditDialog
+      :visible.sync="showDialog"
+      @confirm="handleConfirm"
+    />
   </div>
 </template>

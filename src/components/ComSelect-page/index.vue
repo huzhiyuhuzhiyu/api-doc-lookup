@@ -178,6 +178,7 @@
                     :key="item.prop"
                     :prop="item.prop"
                     :label="item.label"
+                    :align="item.align"
                     :fixed="item.fixed || false"
                     :sortable="item.sortable"
                     v-bind="{ width: item.width ? item.width : 0, minWidth: item.hasOwnProperty('minWidth') ? item.minWidth : 120 }">

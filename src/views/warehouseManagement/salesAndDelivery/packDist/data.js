@@ -1,33 +1,10 @@
 import {getCooperativeData} from "@/api/basicData";
-import global from "@/utils/global";
 import {deepClone} from "@/utils";
 
 /**
  * @description 按钮权限列表
  */
-export const buttonList = [
-  {
-    buttonType: 'primary',
-    type: 'add',
-    permission: 'btn_add',
-    icon: 'el-icon-plus',
-    text: '新增'
-  },
-  {
-    buttonType: 'primary',
-    type: 'confirm',
-    permission: 'btn_confirm',
-    icon: '',
-    text: '确认'
-  },
-  {
-    buttonType: 'primary',
-    type: 'confirmDeliveryDate',
-    permission: 'btn_confirmDeliveryDate',
-    icon: '',
-    text: '确认交期'
-  },
-]
+export const buttonList = []
 
 /**
  * @description 表单数据
@@ -56,23 +33,31 @@ export function getBasicFormSchema(dataFormRef, context) {
   return [
     {
       prop: "orderNo",
-      label: "订单编号",
+      label: "发货单号",
       value: "",
       type: "input",
       disabled: true,
       itemRules: [{required: true, trigger: "blur"}],
     },
     {
-      prop: "orderType",
-      label: "订单类型",
+      prop: "orderNo",
+      label: "客户单号",
       value: "",
-      type: "select",
-      options: global.salesOrderType,
-      itemRules: [{required: true, trigger: "change"}],
+      type: "input",
+      disabled: true,
+      itemRules: [{required: true, trigger: "blur"}],
+    },
+    {
+      prop: "orderNo",
+      label: "来源单号",
+      value: "",
+      type: "input",
+      disabled: true,
+      itemRules: [{required: true, trigger: "blur"}],
     },
     {
       prop: "cooperativePartnerName",
-      label: "所属客户",
+      label: "客户名称",
       value: "",
       type: "custom",
       customComponent: "ComSelect-page",
@@ -139,66 +124,65 @@ export function getBasicFormSchema(dataFormRef, context) {
       itemRules: [{required: true, trigger: "blur"}],
     },
     {
-      prop: "contractNo",
-      label: "客户订单号",
+      prop: "recipient",
+      label: "收件人",
       value: "",
       type: "input",
+      render: context.dataForm.delivery !== 'self_pickup'
     },
     {
-      prop: "departments",
-      label: "所属部门",
+      prop: "phone",
+      label: "收件人电话",
       value: "",
-      type: "custom",
-      customComponent: "ComSelect",
-      itemRules: [{required: true, trigger: "blur"}],
-      change: async (val) => {
-        context.dataForm.salesId = ""
-        if (!val || !val.length) return context.dataForm.departmentId = ''
-        context.dataForm.departmentId = val[val.length - 1]
-        context.$nextTick(() => {
-          context.$refs.dataForm.$refs.main.clearValidate('departments')
-        })
-        await context.fetchOrganization()
-      }
+      type: "input",
+      render: context.dataForm.delivery !== 'self_pickup'
     },
     {
-      prop: "salesId",
-      label: "所属销售",
+      prop: "logisticsCompany",
+      label: "发货方式",
       value: "",
       type: "select",
-      get options() {
-        return context.salesList
-      },
+      options: context.getDictDataSync('logisticsCompany'),
       itemRules: [{required: true, trigger: "change"}],
     },
     {
-      prop: "orderDate",
-      label: "订单日期",
+      prop: "priority",
+      label: "发货优先级",
+      value: "",
+      type: "select",
+      options: context.global.shippingPriority,
+      itemRules: [{required: true, trigger: "change"}],
+    },
+    {
+      prop: "deliverDate",
+      label: "计划发货日期",
       value: "",
       type: "date",
       itemRules: [{required: true, trigger: "blur"}],
     },
     {
-      prop: "deliveryDate",
-      label: "交货日期",
+      prop: "defaultAddress",
+      label: "地址",
       value: "",
-      type: "date",
-      itemRules: [{required: true, trigger: "blur"}],
+      type: "textarea",
+      sm: 24,
+      readonly: true,
+      click: () => {
+        console.log('zx')
+        if (!context.dataForm.cooperativePartnerId) return context.$message.error("请先选择客户")
+        context.addressVisible = true
+        context.$nextTick(() => {
+          context.$refs.addressRef.initData(context.dataForm.cooperativePartnerId)
+        })
+      }
     },
     {
       prop: "remark",
       label: "备注",
       value: "",
       type: "textarea",
-      sm: 12
-    },
-    {
-      prop: "remark1",
-      label: "付款条约",
-      value: "",
-      type: "textarea",
-      sm: 12
-    },
+      sm: 24
+    }
   ]
 }
 
@@ -206,7 +190,14 @@ export function getColumns() {
   return [
     {
       prop: "orderNo",
-      label: "订单编号",
+      label: "发货单号",
+      minWidth: 220,
+      align: "left",
+      sortable: 'custom',
+    },
+    {
+      prop: "ordersNo",
+      label: "来源单号",
       minWidth: 220,
       align: "left",
       sortable: 'custom',
@@ -225,67 +216,31 @@ export function getColumns() {
       align: "left",
     },
     {
-      prop: "orderType",
-      label: "订单类型",
-      minWidth: 120,
-      slot: true,
-      dictType: 'salesOrderType',
-    },
-    {
-      prop: "departmentName",
-      label: "所属部门",
-      minWidth: 120,
-      align: "left",
-    },
-    {
       prop: "salesName",
-      label: "所属销售",
+      label: "销售员",
       minWidth: 120,
     },
     {
       prop: "orderDate",
-      label: "订单日期",
+      label: "下单日期",
       minWidth: 120,
-    },
-    {
-      prop: "contractNo",
-      label: "客户合同号",
-      minWidth: 220,
-      align: "left",
-    },
-    {
-      prop: "num",
-      label: "订单数量",
-      minWidth: 100,
     },
     {
       prop: "deliveryDate",
-      label: "交货日期",
+      label: "计划交期",
       minWidth: 120,
     },
     {
-      prop: "deliveryStatus",
-      label: "交期状态",
+      prop: "purchaseReplyDate",
+      label: "采购回复交期",
       minWidth: 120,
-      slot: true,
-      dictType: 'deliveryStatus',
     },
     {
-      prop: "documentStatus",
-      label: "单据状态",
+      prop: "priority",
+      label: "发货优先级",
       minWidth: 120,
       slot: true,
-      dictType: 'documentStatusList',
-    },
-    {
-      prop: "createTime",
-      label: "创建时间",
-      minWidth: 180,
-    },
-    {
-      prop: "createByName",
-      label: "创建人",
-      minWidth: 120,
+      dictType: 'shippingPriority'
     }
   ]
 }

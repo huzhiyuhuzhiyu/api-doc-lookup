@@ -204,6 +204,9 @@ export default {
         this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
       } else if (prop) {
         this.linesList[dataOrIndex][prop] = value
+        if (prop === 'sealingCoverTyping' && value.trim() !== '') {
+          this.linesList[dataOrIndex].noTyping = false
+        }
         this.updateRowContent(this.linesList[dataOrIndex]);
       }
     },

@@ -1,12 +1,13 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 
-import {buttonList, getColumns} from "../createPurchaseOrder/data";
+import {buttonList, getColumns} from "./data";
+import {getsaleOrderList} from "@/api/salesManagement/assemblyOrders";
 import {getPrintBusInfo} from "@/api/system/printDev";
-import Form from '../createPurchaseOrder/index.vue'
+import Form from '@/views/salesManagement/orderManagement/orderList/Form.vue'
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
-import {deletePurPurchaseOrder, purchaseOrderList} from "@/api/purchasingAndOutsourcingOrders";
+import {ordersFeedbackDeliveryFinished} from "@/api/salesManagement/orderChanges";
 
 export default {
   name: "index",
@@ -44,7 +45,10 @@ export default {
         },
       ],
       initListQuery: {
-        orderType: 'procure',
+        orderNo: '',
+        cooperativePartnerName: '',
+        cooperativePartnerCode: '',
+        deliveryStatus: '',
         orderItems: [
           {
             asc: false,
@@ -74,7 +78,7 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await purchaseOrderList(this.listQuery);
+        const res = await getsaleOrderList(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -127,42 +131,47 @@ export default {
 
     handleButtonClick(type) {
       switch (type) {
-        case 'print':
+        case 'orderPrinting':
           if (!this.validateSelectedRows()) return;
-          this.printView(this.selectedRow[0], 'p006', '打印');
           break;
+        case 'contractPrinting':
+          if (!this.validateSelectedRows()) return;
+          break;
+        default:
       }
     },
 
     handleColumnClick(row, type) {
       switch (type) {
         case 'look':
-        case 'edit':
-        case 'copy':
           this.visible = true
           this.$nextTick(() => {
             this.$refs.Form.init(row.id, type)
           })
           break;
-        case 'delete':
-          this.handleRemove(row.id)
+        case 'confirmDeliveryDate':
+          this.handleConfirmDeliveryDate(row.id)
           break;
         default:
       }
     },
 
-    handleRemove(id) {
-      this.$confirm('您确定要删除这些数据吗, 是否继续？', '提示', {
-        type: 'warning'
-      }).then(async () => {
-        const res = await deletePurPurchaseOrder(id);
-        const {msg} = res
-        if (msg === 'Success') {
-          this.$message.success('删除成功')
-          this.initData()
+    async handleConfirmDeliveryDate(id) {
+      try {
+        await this.$confirm('确定要执行此操作吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        });
+        try {
+          await ordersFeedbackDeliveryFinished(id)
+          this.$message.success('确认成功')
+          await this.initData()
+        } catch (e) {
+          this.$message.success('确认失败')
         }
-      }).catch(() => {
-      })
+      } catch (error) {
+      }
     },
 
     close(isInitData = true) {
@@ -213,16 +222,35 @@ export default {
         <el-form @submit.native.prevent @keyup.enter.native="search()">
           <el-col :span="4">
             <el-form-item>
+              <el-input v-model.trim="listQuery.orderNo"
+                placeholder="订单号"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
               <el-input v-model.trim="listQuery.cooperativePartnerCode"
-                placeholder="供应商编码"
+                placeholder="客户编码"
                 clearable/>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model.trim="listQuery.cooperativePartnerName"
-                placeholder="供应商名称"
+                placeholder="客户名称"
                 clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="listQuery.deliveryStatus" placeholder="交期状态">
+                <el-option
+                  v-for="item in global.deliveryStatus"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -296,25 +324,12 @@ export default {
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text"
-                @click="handleColumnClick(row, 'edit')">
-                编辑
+                @click="handleColumnClick(row, 'look')">
+                详情
               </el-button>
-              <el-button style="color: rgb(245, 108, 108)" size="mini" type="text"
-                @click="handleColumnClick(row, 'delete')">
-                删除
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'confirmDeliveryDate')">
+                完成
               </el-button>
-              <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
-                    详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -328,7 +343,7 @@ export default {
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
-    <Form ref="Form" v-if="visible" @close="close" :autoInit="false"/>
+    <Form ref="Form" v-if="visible" @close="close" from-page="conf"/>
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
     <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>

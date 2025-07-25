@@ -44,6 +44,7 @@
       <el-input type="textarea" v-else-if="item.type === 'textarea' || item.jnpfKey === 'textarea'" v-bind="$attrs" v-on="$listeners"
         :placeholder="Placeholder" style="width:100%" :maxlength="item.maxlength || 200" :disabled="readOnly"
         :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+        @click.native="item.hasOwnProperty('click') ? item.click($event) : ''"
         @input="item.hasOwnProperty('input') ? item.input($event) : ''"
         @change="item.hasOwnProperty('change') ? item.change($event) : ''" />
 

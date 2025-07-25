@@ -8,7 +8,7 @@
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                    @keyup.enter.native="search('basic')" />
+                    @keyup.enter.native="search('basic')"/>
                   <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                     clearable>
                     <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -25,7 +25,8 @@
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
                   style="width: 100%;" placeholder="交货开始日期" clearable>
-                </el-date-picker>-
+                </el-date-picker>
+                -
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -46,7 +47,8 @@
             <el-col :span="4">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
-                  {{ $t('common.search') }}</el-button>
+                  {{ $t('common.search') }}
+                </el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
               </el-form-item>
@@ -56,67 +58,78 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
-              <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
+              <!--              <el-button type="primary" size="mini" icon="el-icon-download"-->
+              <!--                @click="exportForm('dataTable')">导出</el-button>-->
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                  @click="superQueryVisible = true"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                  @click="columnSetFun()" />
+                  @click="columnSetFun()"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()"/>
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" hasC v-if="tableDataFlag"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" hasC
             @selection-change="selectCustomerFun" :setColumnDisplayList="columnList" @sort-change="sortChange"
             custom-column customKey="JNPFTableKey_796109">
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">{{
-                  scope.row.orderNo
-                }}</el-link>
+                    scope.row.orderNo
+                  }}
+                </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
+            <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom"/>
+            <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom"/>
             <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
-            <el-table-column prop="salesName" label="所属销售" width="120" sortable="custom" />
-            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
+            <el-table-column prop="salesName" label="所属销售" width="120" sortable="custom"/>
+            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"/>
+            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom"/>
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom"/>
+            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom"/>
+            <el-table-column prop="oil" label="机型" width="160" sortable="custom"/>
+            <el-table-column prop="accuracyLevel" label="制令号" width="160" sortable="custom"/>
+            <el-table-column prop="clearance" label="品牌" width="160" sortable="custom"/>
+            <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom"/>
+            <el-table-column prop="specialRequire" label="包装要求" width="160" sortable="custom"/>
+            <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom"/>
+            <el-table-column prop="mainUnit" label="单位" min-width="120"/>
+            <el-table-column prop="num" label="数量" min-width="120"/>
+            <el-table-column prop="waitDeliverNum" label="待发货数量" width="140" sortable="custom"/>
+            <el-table-column prop="inventoryQuantity" label="库存数量" width="140" sortable="custom"/>
+            <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom"/>
 
-            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-              v-if="isProjectSwitch == 1" />
-            <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-            <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
-            </el-table-column>
-            <!-- <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" /> -->
-            <!-- <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" /> -->
-            <el-table-column prop="waitDeliverNum" label="待发货数量" width="140" sortable="custom" />
-            <el-table-column prop="inventoryQuantity" label="库存数量" width="140" sortable="custom">
+            <el-table-column prop="orderDate" label="下单日期" min-width="140" sortable="custom"/>
+            <el-table-column prop="plannedDeliveryDate" label="计划交期" min-width="140" sortable="custom"/>
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom"/>
+            <el-table-column prop="purchaseReplyDate" label="采购回复交期" min-width="140" sortable="custom"/>
+            <el-table-column prop="orderQuantity" label="订单数量" min-width="140" sortable="custom"/>
+            <el-table-column prop="currentInventory" label="当前库存" min-width="140" sortable="custom"/>
+            <el-table-column prop="onlineQuantity" label="线上数量" min-width="140" sortable="custom"/>
+            <el-table-column prop="issuedQuantity" label="已下达" min-width="140" sortable="custom"/>
+            <el-table-column prop="pendingQuantity" label="待下达" min-width="140" sortable="custom"/>
+            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="140" sortable="custom"/>
+            <el-table-column prop="specialRequire" label="包装要求" min-width="140" sortable="custom"/>
+            <el-table-column prop="typingNotification" label="是否通知打字" min-width="140" sortable="custom"/>
 
-            </el-table-column>
-            <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
-            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
-            <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
+            <el-table-column prop="remark" label="备注" width="160" sortable="custom"/>
             <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"/>
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
-                  @click.native="handleUserRelation(scope.row.ordersId, 'look')">查看详情</el-button>
-                <el-button size="mini" type="text" :disable="scope.row.documentStatus === 'draft'"
-                  @click.native="printFun(scope.row.ordersId)">打印</el-button>
+                  @click.native="handleUserRelation(scope.row.ordersId, 'look')">查看详情
+                </el-button>
+                <!--                <el-button size="mini" type="text" :disable="scope.row.documentStatus === 'draft'"-->
+                <!--                  @click.native="printFun(scope.row.ordersId)">打印</el-button>-->
               </template>
             </el-table-column>
           </JNPF-table>
@@ -127,40 +140,37 @@
         </div>
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList"/>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download"/>
+    <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm"/>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <AddForm v-if="addFormVisible" ref="addForm" @refreshDataList="initData" @close="closeForm"
-      :customList="customList" />
+      :customList="customList"/>
     <ViewForm v-if="formVisible" ref="ViewForm"></ViewForm>
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body/>
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"/>
   </div>
 </template>
 <script>
-import { UserListAll, } from '@/api/permission/user'
-import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
+import {excelExport, getOrderFiledMap} from '@/api/basicData/index'
+import {deleteOrders, getOrderLineReport, getsaleOrderDetailList} from '@/api/salesManagement/assemblyOrders'
 import Form from '../../orderManagement/orderList/Form.vue'
 import OrderFollow from '../../orderManagement/orderList/orderFollow.vue'
 import UserRelationList from '../../orderManagement/orderList/userRelation.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import moment from 'moment'
 import AddForm from "../saleMetalworking/Form.vue"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import ViewForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
-import { mapGetters, mapState } from 'vuex'
+import {mapGetters} from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
-import { getPrintBusInfo } from '@/api/system/printDev'
-import {
-  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
-} from "@/api/masterDataManagement/index"
+import {getPrintBusInfo} from '@/api/system/printDev'
+import {getbimProductAttributes, getbimProductAttributesListMap} from "@/api/masterDataManagement/index"
+
 export default {
   name: 'carrierProfile',
   components: {
@@ -179,7 +189,7 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        {field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120},
       ],
       addFormVisible: false,
       btnsearchFlag: true,
@@ -200,8 +210,8 @@ export default {
         deliveryEndTime: "",
         deliveryStartTime: "",
         extensionFlag: 0,
-        shipmentStatus:"not_finish",
-        deliverQueryFlag:1,
+        shipmentStatus: "not_finish",
+        deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -309,10 +319,6 @@ export default {
         },
       ],
       list: [],
-      tableDataFlag: false,
-      mainUnitFlag: null,
-      isProjectSwitch: '',
-      isProductNameSwitch: '',
       // 属性字段  控制属性字段显示隐藏
       accuracyLevelFlag: "",
       clearanceFlag: "",
@@ -325,7 +331,6 @@ export default {
       materialFlag: '',
       colourFlag: '',
       bimProductAttributesList: [],
-      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   watch: {
@@ -341,19 +346,6 @@ export default {
   async created() {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
-    await this.getProjectSwitch('system', 'project')
-    await this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
-    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
-    this.advancedQueryFun()
-    this.isProjectSwitchFlag = true
-    await this.getProductNameSwitch('product', 'enable_productName')
-    if (this.isProductNameSwitch == 1) {
-      this.superQueryJson.splice(7, 0, {
-        prop: 'productName',
-        label: '产品名称',
-        type: 'input'
-      })
-    }
     // 默认设置为近3天
     const end = new Date();
     const start = new Date();
@@ -365,13 +357,6 @@ export default {
     this.search('basic')
   },
   methods: {
-     // 配对方式显示隐藏
-     async getPairingModeSwitch(code, type) {
-      try {
-        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
-        this.tableDataFlag = true
-      } catch (error) { }
-    },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
@@ -388,8 +373,8 @@ export default {
       });
     },
     closePrint() {
-            this.printVisible = false
-        },
+      this.printVisible = false
+    },
     printFun(id) {
       this.enCode = 'p002' // 筛选出 businessType 等于 type 的项
       this.formId = id
@@ -413,148 +398,7 @@ export default {
         this.colourFlag = res.data.colour
       })
     },
-    advancedQueryFun() {
-      // sealingCoverTyping //打字内容
-      //     accuracyLevel //精度等级
-      //     vibrationLevel //振动等级
-      //     oil //油脂
-      //     oilQuantity //油脂量
-      //     clearance //游隙
-      //     packagingMethod //包装方式
-      //     specialRequire //特殊要求
-      let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'deliveryDate')
-      if (this.colourFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'colour',
-          label: '颜色',
-          type: 'select',
-          options: this.bimProductAttributesList.pa010.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.materialFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'material',
-          label: '保持架材质',
-          type: 'select',
-          options: this.bimProductAttributesList.pa021.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.specialRequireFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'specialRequire',
-          label: '特殊要求',
-          type: 'select',
-          options: this.bimProductAttributesList.pa016.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.packagingMethodFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: this.bimProductAttributesList.pa015.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.clearanceFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: this.bimProductAttributesList.pa001.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.oilQuantityFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: this.bimProductAttributesList.pa003.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.oilFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: this.bimProductAttributesList.pa002.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.vibrationLevelFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: this.bimProductAttributesList.pa005.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.accuracyLevelFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: this.bimProductAttributesList.pa006.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.sealingCoverTypingFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: this.bimProductAttributesList.pa007.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-    },
-   async getProductClassFun() {
+    async getProductClassFun() {
       // 产品属性
       const res = await getbimProductAttributesListMap()
       this.bimProductAttributesList = res.data
@@ -576,19 +420,6 @@ export default {
           oilObj.options = arr;
         }
       })
-    },
-    async getProductNameSwitch(code, type) {
-      try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-        this.tableDataFlag = true
-      } catch (error) { }
-    },
-    async getMainUnitFun(code, type) {
-      this.listLoading = true
-      try {
-        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.listLoading = false
-      } catch (error) { }
     },
     // 查看库存明细
     viewFun(id, type, warehouseId) {
@@ -614,7 +445,7 @@ export default {
       const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)
       const day = String(date.getDate()).padStart(2, '0'); // 获取日期，并补齐两位数
       // 拼接成年月日格式
-      const formattedDate = `${year}-${month}-${day}`;
+      const formattedDate = `${ year }-${ month }-${ day }`;
       console.log("forma", formattedDate);
       return formattedDate
     },
@@ -624,8 +455,8 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.orderForm.extensionFlag=1
-        this.search('basic')
+      this.orderForm.extensionFlag = 1
+      this.search('basic')
     },
     // 为近3天
     btnsearch2() {
@@ -635,7 +466,7 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.orderForm.extensionFlag=0
+      this.orderForm.extensionFlag = 0
       this.search('basic')
     },
     // 为近7天
@@ -646,7 +477,7 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.orderForm.extensionFlag=0
+      this.orderForm.extensionFlag = 0
       this.search('basic')
     },
     // 为近30天
@@ -657,7 +488,7 @@ export default {
       this.deliveryDateArr = ["", end];
       this.deliveryDateArr[0] = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.orderForm.extensionFlag=0
+      this.orderForm.extensionFlag = 0
       this.search('basic')
     },
     superQuerySearch(query) {
@@ -677,7 +508,7 @@ export default {
         return cellValue;
       }
     },
-    sortChange({ prop, order }) {
+    sortChange({prop, order}) {
       let newProp;
       if (prop === 'productName' || prop == 'pairingModeName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName' || prop == 'waitDeliverNum') {
         newProp = prop
@@ -706,7 +537,7 @@ export default {
     initData() {
       if (this.orderNoS) {
         this.orderForm.superQuery.condition.push(
-          { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
+          {"field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like"}
         )
       }
       if (this.orderNoS) {
@@ -719,18 +550,7 @@ export default {
         this.orderForm.tenant = localStorage.getItem('loginTenant')
       }
       getsaleOrderDetailList(this.orderForm).then(res => {
-        setTimeout(() => {
-          res.data.records.forEach(item => {
-            if (this.mainUnitFlag == 1) {
-              if (item.calculationDirection == 'multiplication') {
-                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
-              } else {
-                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
-              }
-            }
-          });
-          this.tableData = res.data.records
-        }, 600);
+        this.tableData = res.data.records
         this.total = res.data.total
         this.getOrderLineReportFun()
       }).catch(() => {
@@ -773,13 +593,13 @@ export default {
       this.superForm = this.orderForm = {
         approvalStatus: "ok",
         documentStatus: "submit",
-        deliveryEndTime:  this.dateFun(this.deliveryDateArr[1]),
+        deliveryEndTime: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartTime: "",
         extensionFlag: 0,
-        deliverQueryFlag:1,
+        deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
-        shipmentStatus:"not_finish",
+        shipmentStatus: "not_finish",
         orderItems: [{
           asc: false,
           column: ""
@@ -794,7 +614,7 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        {field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120},
       ]
       this.search('basic')
     },
@@ -857,7 +677,8 @@ export default {
             duration: 1500,
           })
         })
-      }).catch(() => { })
+      }).catch(() => {
+      })
     },
     handleUserRelation(id, btnType) {
       this.formVisible = true
@@ -870,8 +691,12 @@ export default {
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
       let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      columnList = columnList.map(item => {
+        return {label: item.label, prop: item.prop}
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
     },
     download(data) {
       this.exportFormVisible = false

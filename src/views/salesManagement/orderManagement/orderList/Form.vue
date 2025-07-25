@@ -17,6 +17,12 @@ export default {
   name: "Form",
   components: {TableFormProduct, TypingEditorDialog},
   mixins: [flowMixin, busFlow],
+  props: {
+    fromPage: {
+      type: String,
+      default: "form",
+    }
+  },
   data() {
     return {
       title: '销售订单',
@@ -48,7 +54,7 @@ export default {
       fileList: [],
       basicFormSchema: [],
       linesList: [],
-      linesListItems: [
+      formLinesListItems: [
         {
           prop: 'customerProductNo',
           label: '客户料号',
@@ -281,8 +287,102 @@ export default {
           minWidth: 180,
         }
       ],
+      confLinesListItems: [
+        {
+          prop: 'drawingNo',
+          label: '产品型号',
+          type: 'view',
+        },
+        {
+          prop: 'productName',
+          label: '产品名称',
+          type: 'view',
+          minWidth: 180,
+        },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'view',
+          minWidth: 150,
+        },
+        {
+          prop: 'customerProductNo',
+          label: '客户料号',
+          type: 'input',
+          minWidth: 180,
+        },
+        {
+          prop: 'customerProductName',
+          label: '客户产品名称',
+          type: 'view',
+          minWidth: 200,
+        },
+        {
+          prop: 'customerProductDrawingNo',
+          label: '客户型号',
+          type: 'view',
+          minWidth: 200,
+        },
+        {
+          prop: 'contractNo',
+          label: '客户合同号',
+          type: 'view',
+          minWidth: 180,
+        },
+        {
+          prop: 'productCategoryName',
+          label: '产品分类',
+          type: 'view',
+          minWidth: 120,
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'view',
+          minWidth: 80,
+        },
+        {
+          prop: 'cgzt',
+          label: '采购状态',
+          type: 'view',
+          minWidth: 80,
+        },
+        {
+          prop: 'deliveryStatus',
+          label: '交期状态',
+          type: 'select',
+          options: this.global.deliveryStatus,
+          minWidth: 160,
+        },
+        {
+          prop: 'deliveryDate',
+          label: '计划交期',
+          type: 'view',
+          minWidth: 180,
+        },
+        {
+          prop: 'feedbackDeliveryDate',
+          label: '反馈交期',
+          type: 'view',
+          minWidth: 160,
+        },
+        {
+          prop: 'kcap',
+          label: '库存安排',
+          type: 'view',
+          minWidth: 120,
+        },
+        {
+          prop: 'zt',
+          label: '状态',
+          type: 'view',
+          minWidth: 120,
+        },
+      ],
+      linesListItems: [],
       linesTableHeight: 0,
       uploadProduct,
+      productRefType: '',
       addProductProps: {
         title: '选择产品',
         activeType: '',
@@ -396,7 +496,7 @@ export default {
       });
     },
     totalNum() {
-      return this.linesList.reduce((sum, item) => sum + (parseFloat(item.num) || 0), 0);
+      return this.computedLinesList.reduce((sum, item) => sum + (parseFloat(item.num) || 0), 0);
     },
     totalAmount() {
       return this.jnpf.numberFormat(
@@ -418,7 +518,6 @@ export default {
   },
   methods: {
     async init(id = '', type) {
-      console.log("id ✈️ ", id)
       this.btnType = type
       this.title = this.getTitle(type)
       this.getBusInfo('b025')
@@ -427,10 +526,19 @@ export default {
       } else {
         await this.actions.default();
       }
+      this.updateLinesListItems()
       this.dataForm.approvalFlag && this.getFlowDetail(id)
       this.$nextTick(() => {
         this.$refs.dataForm.$refs.main.clearValidate()
         this.refreshTableHeight()
+      })
+    },
+
+    updateLinesListItems() {
+      const {formLinesListItems, confLinesListItems, fromPage} = this
+      this.linesListItems = fromPage === 'form' ? formLinesListItems : confLinesListItems
+      this.$nextTick(() => {
+        this.$refs.tableForm.setDefaultValue()
       })
     },
 
@@ -448,6 +556,22 @@ export default {
     },
     calcTaxAmount(totalAmount, excludingTaxAmount) {
       return totalAmount - excludingTaxAmount;
+    },
+    calculateAndAssign() {
+      this.dataForm.taxAmount = this.jnpf.numberFormat(
+        this.computedLinesList.reduce((sum, item) => sum + (item.taxAmount || 0), 0),
+        2
+      );
+
+      this.dataForm.totalAmount = this.jnpf.numberFormat(
+        this.computedLinesList.reduce((sum, item) => sum + (item.totalAmount || 0), 0),
+        2
+      );
+
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(
+        this.computedLinesList.reduce((sum, item) => sum + (item.excludingTaxAmount || 0), 0),
+        2
+      );
     },
 
     handleTypingEditorConfirm(data) {
@@ -648,6 +772,7 @@ export default {
     },
 
     selectProductRefOpenDialog(type) {
+      this.productRefType = type
       if (type === 'customer') {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
         this.addProductProps = {
@@ -702,17 +827,16 @@ export default {
     },
 
     async submitAllProduct(id, data) {
-      console.log("data ✈️ ", data)
       const newData = data.map(item => ({
         ...this.createdObj(),
         ...item.all,
-        productName: item.name,
-        productCode: item.code,
-        productsDrawingNo: item.drawingNo,
-        productsId: item.id,
+        productName: item.all.name,
+        productCode: item.all.code,
+        productsDrawingNo: item.all.drawingNo,
+        productsId: this.productRefType === 'customer' ? item.all.productsId : item.all.id,
+        ...(this.productRefType === 'customer' && {cooperativePartnerProductId: item.all.id})
+      }));
 
-        cooperativePartnerProductId: item?.productsId || '',
-      }))
       this.linesList = [...this.linesList, ...newData]
     },
 
@@ -779,17 +903,21 @@ export default {
       const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
       if (!valid_1 || !valid_2) return this.btnLoading = false
       this.dataForm.documentStatus = type
+      this.calculateAndAssign()
       const deepParams = deepClone(this.dataForm)
       const attachmentList = this.fileListMap(type, this.fileList)
       const params = {
         order: deepParams,
-        orderLineList: this.linesList,
+        orderLineList: this.computedLinesList,
         attachmentList: attachmentList,
         flowData: this.flowData
       }
+      if (this.btnType === 'copy') {
+        params.order.id = ''
+      }
       let MSG = '提交成功'
       try {
-        const apiMethod = this.dataForm.id ? editOrders : addOrders
+        const apiMethod = params.order.id ? editOrders : addOrders
         const res = await apiMethod(params)
         const {msg} = res
         if (msg === 'Success') {
@@ -863,8 +991,8 @@ export default {
                       }">
                         <template slot="top">
                           <div class="tableTopContainer">
-                            <div v-if="activeType" class="left">
-                              <template>
+                            <div class="left">
+                              <template v-if="activeType">
                                 <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('customer')">选择客户产品</el-button>
                                 <span>|</span>
                                 <el-button type="text" icon="el-icon-plus" @click="addLineForm">新增一行</el-button>
@@ -877,25 +1005,27 @@ export default {
                               </template>
                             </div>
                             <div class="right">
-                              <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
-                              <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
-                                <el-form-item label="包装">
-                                  <el-select v-model="globalPackagingMethod" placeholder="包装"
-                                    @change="(val) => globalChange(val,'packagingMethod')"
-                                    style="width: 80px">
-                                    <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
-                                      :label="item.label" :value="item.value"/>
-                                  </el-select>
-                                </el-form-item>
-                                <el-form-item label="品牌">
-                                  <el-select v-model="globalBrand" placeholder="品牌"
-                                    @change="(val) => globalChange(val,'clearance')"
-                                    style="width: 100px">
-                                    <el-option v-for="item in getDictDataSync('brand')" :key="item.value"
-                                      :label="item.label" :value="item.value"/>
-                                  </el-select>
-                                </el-form-item>
-                              </el-form>
+                              <template v-if="activeType">
+                                <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
+                                <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
+                                  <el-form-item label="包装">
+                                    <el-select v-model="globalPackagingMethod" placeholder="包装"
+                                      @change="(val) => globalChange(val,'packagingMethod')"
+                                      style="width: 80px">
+                                      <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
+                                        :label="item.label" :value="item.value"/>
+                                    </el-select>
+                                  </el-form-item>
+                                  <el-form-item label="品牌">
+                                    <el-select v-model="globalBrand" placeholder="品牌"
+                                      @change="(val) => globalChange(val,'clearance')"
+                                      style="width: 100px">
+                                      <el-option v-for="item in getDictDataSync('brand')" :key="item.value"
+                                        :label="item.label" :value="item.value"/>
+                                    </el-select>
+                                  </el-form-item>
+                                </el-form>
+                              </template>
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                                   @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>

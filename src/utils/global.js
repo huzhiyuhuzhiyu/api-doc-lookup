@@ -46,6 +46,7 @@ const global = {
   ],
   // 公共状态 示例：未完成 已完成 已取消
   publicState: [
+    {label: "确认", value: "confirm", type: "success"},
     {label: "未完成", value: "not_finished", type: "processing"},
     {label: "已完成", value: "finished", type: "success"},
     {label: "已取消", value: "canceled", type: "danger"},
@@ -82,10 +83,18 @@ const global = {
     {label: '已完成', value: 'finish', type: 'success'},
     {label: '已停止', value: 'stopped', type: 'danger'},
   ],
+  // 发货状态
+
   // 销售订单类型
   salesOrderType: [
     {label: '客户订单', value: 'normal', type: 'warning'},
     {label: '预测订单', value: 'prediction', type: 'success'}
+  ],
+  // 发货优先级
+  shippingPriority: [
+    {label: '高', value: 1, type: 'danger'},
+    {label: '中', value: 2, type: 'warning'},
+    {label: '低', value: 3, type: 'success'}
   ],
   orderConfirmedStatus: [
     {label: '已有库存', value: 'existing_inventory'},
@@ -98,6 +107,16 @@ const global = {
     {label: '待回复', value: 'pending_reply', type: 'warning'},
     {label: '已回复', value: 'replied', type: 'info'},
     {label: '已完成', value: 'finished', type: 'success'},
+  ],
+  shippingStatus: [
+    {label: '等待', value: 'waiting', type: 'warning'},
+    {label: '就绪', value: 'ready', type: 'info'},
+    {label: '已安排', value: 'arranged', type: 'info'},
+    {label: '已拣货', value: 'picked', type: 'primary'},
+    {label: '已核对', value: 'verified', type: 'primary'},
+    {label: '已确认', value: 'confirmed', type: 'success'},
+    {label: '已完成', value: 'finished', type: 'success'},
+    {label: '已取消', value: 'canceled', type: 'danger'}
   ],
 
   // 字典数据映射方法

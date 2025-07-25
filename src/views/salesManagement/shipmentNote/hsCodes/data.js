@@ -7,10 +7,10 @@ import {getcategoryTree} from "@/api/basicData/materialSettings";
 export const buttonList = [
   {
     buttonType: 'primary',
-    type: 'add',
-    permission: 'btn_add',
-    icon: 'el-icon-plus',
-    text: '新增'
+    type: 'confirm',
+    permission: 'btn_confirm',
+    icon: '',
+    text: '确认'
   }
 ]
 

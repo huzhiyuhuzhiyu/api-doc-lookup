@@ -6,10 +6,10 @@
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-col :span="item.searchType === 3 ? 4 : 3">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                    @keyup.enter.native="search('basic')" />
+                    @keyup.enter.native="search('basic')"/>
 
                   <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                     clearable>
@@ -27,7 +27,8 @@
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
-                  {{ $t('common.search') }}</el-button>
+                  {{ $t('common.search') }}
+                </el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
               </el-form-item>
@@ -41,24 +42,25 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
-                :loading="qxbtnLoading">
-                取消发货
-              </el-button>
-              <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
+<!--              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"-->
+<!--                :loading="qxbtnLoading">-->
+<!--                取消发货-->
+<!--              </el-button>-->
+<!--              <el-button type="primary" size="mini" icon="el-icon-download"-->
+<!--                @click="exportForm('dataTable')">导出-->
+<!--              </el-button>-->
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                  @click="superQueryVisible = true"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                  @click="columnSetFun()" />
+                  @click="columnSetFun()"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()"/>
               </el-tooltip>
             </div>
           </div>
@@ -67,74 +69,75 @@
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">{{
-                  scope.row.orderNo
-                }}</el-link>
+                    scope.row.orderNo
+                  }}
+                </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
+            <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom"/>
             <el-table-column prop="deliverDate" label="发货日期" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
-            <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
-            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <el-table-column prop="recipient" label="收件人" width="140" sortable="custom"/>
+            <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom"/>
+            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"/>
+            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom"/>
             <el-table-column prop="productName" label="产品名称" width="160" sortable="custom"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-            <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom"/>
+            <el-table-column prop="productSourceName" label="产品来源"></el-table-column>
 
-            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
-
-
-            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-              v-if="isProjectSwitch == 1" />
-            <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom"/>
+            <el-table-column prop="oil" label="机型" width="160" sortable="custom"/>
+            <el-table-column prop="accuracyLevel" label="制令号" width="160" sortable="custom"/>
+            <el-table-column prop="clearance" label="品牌" width="160" sortable="custom"/>
+            <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom"/>
+            <el-table-column prop="specialRequire" label="包装要求" width="160" sortable="custom"/>
+            <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom"/>
+            <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120"/>
             <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '发货数量(主)' : '发货数量'" min-width="120">
             </el-table-column>
-            <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-            <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-            <el-table-column prop="outboundQuantity" label="已发出库数量" min-width="150" />
+            <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1"/>
+            <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1"/>
+            <el-table-column prop="outboundQuantity" label="已发出库数量" min-width="150"/>
 
-            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
-            <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
-            <!-- <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
-              <template slot-scope="scope">
-                <div v-if="scope.row.exchangeGoodsFlag">
-                  换货发货
-                </div>
-                <div v-else>
-                  正常发货
-                </div>
-              </template>
-            </el-table-column> -->
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'"/>
+            <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom"/>
             <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
-                <div v-if="scope.row.deliveryStatus == 'not_finished'">
-                  <el-tag type="primary">未完成</el-tag>
-                </div>
-                <div v-else-if="scope.row.deliveryStatus == 'finished'">
-                  <el-tag type="success">已完成 </el-tag>
-                </div>
-                <div v-else-if="scope.row.deliveryStatus == 'canceled'">
-                  <el-tag type="danger">已取消</el-tag>
-                </div>
+                <el-tag :type="global.getDictLabelGlobal('shippingStatus', scope.row.deliveryStatus, { withType: true }).type">{{
+                    global.getDictLabelGlobal('shippingStatus', scope.row.deliveryStatus)
+                  }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="priority" label="发货优先级" width="120" sortable="custom" align="center">
+              <template slot-scope="scope">
+                <el-tag :type="global.getDictLabelGlobal('shippingPriority', scope.row.priority, { withType: true }).type">{{
+                    global.getDictLabelGlobal('shippingPriority', scope.row.priority)
+                  }}
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
-                <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+                <div v-if="scope.row.documentStatus == 'draft'">
+                  <el-tag type="warning">草稿</el-tag>
+                </div>
+                <div v-if="scope.row.documentStatus == 'submit'">
+                  <el-tag type="success">提交</el-tag>
+                </div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="140" sortable="custom"/>
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
-                  @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
+                  @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑
+                </el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
                   :disabled="scope.row.documentStatus == 'draft' ? false : true"
-                  @click="handleDel(scope.row.id)">删除</el-button>
+                  @click="handleDel(scope.row.id)">删除
+                </el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -154,35 +157,44 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-            @pagination="initData" />
+            @pagination="initData"/>
         </div>
       </div>
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList"/>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download"/>
   </div>
 </template>
 
 <script>
-import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasenddatalist, Cancelshipmentlist, Cancelshipmentlinelist, mergelist, splitlist } from '@/api/salesManagement'
-import { UserListAll, } from '@/api/permission/user'
+import {
+  getQuotationdatasendlist,
+  deleteQuotationsendlist,
+  getQuotationdatasenddatalist,
+  Cancelshipmentlist,
+  Cancelshipmentlinelist,
+  mergelist,
+  splitlist
+} from '@/api/salesManagement'
+import {UserListAll,} from '@/api/permission/user'
 import Form from '../saleMetalworking/Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
-import { mapGetters, mapState } from 'vuex'
+import {excelExport, getOrderFiledMap} from '@/api/basicData/index'
+import {mapGetters, mapState} from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
+
 export default {
   name: 'foreigntradenotice',
-  components: { Form, SuperQuery, ExportForm },
+  components: {Form, SuperQuery, ExportForm},
   mixins: [getProjectList],
   data() {
     return {
@@ -190,11 +202,11 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-
+        {field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120},
+        {field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120},
+        {field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120},
+        {field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120},
+        {field: 'priority', fieldValue: '', label: '发货优先级', symbol: 'like', searchType: 4, width: 120, options: this.global.shippingPriority},
       ],
 
 
@@ -226,30 +238,30 @@ export default {
       salespersonList: [],
       detailFlag: false,
       exchangeList: [
-        { label: "正常发货", value: false },
-        { label: "换货发货", value: true }
+        {label: "正常发货", value: false},
+        {label: "换货发货", value: true}
       ],
       shipmentsStateList: [
-        { label: "未完成", value: "undelivered" },
-        { label: "已完成", value: "delivered" }
+        {label: "未完成", value: "undelivered"},
+        {label: "已完成", value: "delivered"}
       ],
       orderStateList: [
-        { label: "待检验", value: "unInspect" },
-        { label: "已检验", value: "inspected" },
+        {label: "待检验", value: "unInspect"},
+        {label: "已检验", value: "inspected"},
       ],
       isfullReceiptFlag: [
-        { label: "是", value: 1 },
-        { label: "否", value: 0 },
+        {label: "是", value: 1},
+        {label: "否", value: 0},
       ],
       documentStateList: [
-        { label: "草稿", value: "draft" },
-        { label: "提交", value: "submit" },
+        {label: "草稿", value: "draft"},
+        {label: "提交", value: "submit"},
       ],
 
       approvalStateList: [
-        { label: "审批中", value: "ing" },
-        { label: " 审批通过", value: "ok" },
-        { label: "审批拒绝", value: "rebut" },
+        {label: "审批中", value: "ing"},
+        {label: " 审批通过", value: "ok"},
+        {label: "审批拒绝", value: "rebut"},
       ],
 
 
@@ -360,8 +372,6 @@ export default {
         //   label: "发货数量",
         //   type: 'input'
         // },
-
-
         {
           prop: 'ordersNo',
           label: "订单号",
@@ -377,14 +387,19 @@ export default {
           prop: 'deliveryStatus',
           label: "发货状态",
           type: 'select',
-          options: [{ label: "未完成", value: "not_finished" }, { label: "已完成", value: "finished" }, { label: "已取消", value: "canceled" }]
+          options: this.global.shippingStatus
         },
-
+        {
+          prop: 'priority',
+          label: "发货优先级",
+          type: 'select',
+          options: this.global.shippingPriority
+        },
         {
           prop: 'documentStatus',
           label: "单据状态",
           type: 'select',
-          options: [{ label: "草稿", value: "draft" }, { label: "提交", value: "submit" },]
+          options: [{label: "草稿", value: "draft"}, {label: "提交", value: "submit"},]
         },
         {
           prop: 'createTime',
@@ -396,7 +411,6 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
       ],
-      isProjectSwitch: '',
       isProductNameSwitch: "",
       // 属性字段  控制属性字段显示隐藏
       accuracyLevelFlag: "",
@@ -407,8 +421,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
-      materialFlag:'',
-      colourFlag:'',
+      materialFlag: '',
+      colourFlag: '',
       bimProductAttributesList: [],
       isPairingModeSwitch: '', // 配对方式显示隐藏
     }
@@ -440,12 +454,13 @@ export default {
 
   },
   methods: {
-     // 配对方式显示隐藏
-     async getPairingModeSwitch(code, type) {
+    // 配对方式显示隐藏
+    async getPairingModeSwitch(code, type) {
       try {
         this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.tableDataFlag = true
-      } catch (error) { }
+      } catch (error) {
+      }
     },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
@@ -629,7 +644,8 @@ export default {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.tableDataFlag = true
-      } catch (error) { }
+      } catch (error) {
+      }
     },
     async getMainUnitFun(code, type) {
       this.listLoading = true
@@ -638,7 +654,8 @@ export default {
         this.listLoading = false
 
 
-      } catch (error) { }
+      } catch (error) {
+      }
     },
 
     superQuerySearch(query) {
@@ -655,7 +672,8 @@ export default {
           this.$message.success('取消成功')
           this.initData()
         })
-      }).catch(() => { })
+      }).catch(() => {
+      })
     },
     //禁用复选框
     checkSelectable(row) {
@@ -673,7 +691,7 @@ export default {
       this.selectArr.map(i => {
         if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
       })
-      if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发货`)
+      if (hasItemList.length) return this.$message.error(`已出库的订单：${ hasItemList.join('、') }不能取消发货`)
       this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
@@ -688,7 +706,8 @@ export default {
         }).catch(() => {
           this.qxbtnLoading = false
         })
-      }).catch(() => { })
+      }).catch(() => {
+      })
     },
     //合并订单
     mergeorderNo() {
@@ -697,7 +716,7 @@ export default {
       this.selectArr.map(i => {
         if (i.stockStatus == 'finished') hasItemList.push(i.orderNo)
       })
-      if (hasItemList.length) return this.$message.error(`已经备货的订单：${hasItemList.join('、')}不能合并`)
+      if (hasItemList.length) return this.$message.error(`已经备货的订单：${ hasItemList.join('、') }不能合并`)
       if (this.selectArr.some(item => item.partnerCode !== this.selectArr[0].partnerCode)) return this.$message.error("所选订单客户不同")
       this.$confirm('确定合并所选订单', this.$t('common.tipTitle'), {
         type: 'warning'
@@ -713,7 +732,8 @@ export default {
         }).catch(() => {
           this.hbbtnLoading = false
         })
-      }).catch(() => { })
+      }).catch(() => {
+      })
     },
     //拆分订单
     splitorderNo(row) {
@@ -725,14 +745,15 @@ export default {
           this.$message.success('拆分成功')
           this.initData()
         })
-      }).catch(() => { })
+      }).catch(() => {
+      })
     },
     handleClick(e) {
       this.activeName = e.name
     },
-    sortChange({ prop, order }) {
+    sortChange({prop, order}) {
       let newProp;
-      if (prop === 'partnerCode'  ||prop=='pairingModeName'  || prop == 'productName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'
+      if (prop === 'partnerCode' || prop == 'pairingModeName' || prop == 'productName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'
         || prop == 'ordersNo' || prop == 'oilQuantity' || prop == 'vibrationLevel' || prop == 'accuracyLevel' || prop == 'sealingCoverTyping' ||
         prop == 'productCode' || prop == 'productDrawingNo') {
         if (prop === 'createByName') {
@@ -811,17 +832,11 @@ export default {
       this.initData()
     },
     reset() {
-
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-
       this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-      this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-
-      ]
+      this.searchList.forEach(item => {
+        item.fieldValue = ''
+      })
       this.$refs.SuperQuery.conditionList = []
       this.search('basic')
     },
@@ -855,7 +870,8 @@ export default {
             duration: 1500,
           })
         })
-      }).catch(() => { })
+      }).catch(() => {
+      })
     },
     handleUserRelation(id, btnType) {
       this.formVisible = true
@@ -879,10 +895,14 @@ export default {
       this.exportFormVisible = true
       let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
       columnList = columnList.filter(item => item.prop !== "deputyNum");
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      columnList = columnList.map(item => {
+        return {label: item.label, prop: item.prop}
+      })
       delete columnList.deputyNum
-      console.log("columnList1",columnList);
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      console.log("columnList1", columnList);
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
     },
     download(data) {
       this.exportFormVisible = false
@@ -915,4 +935,4 @@ export default {
   margin-bottom: 5px;
 }
 </style>
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped/>

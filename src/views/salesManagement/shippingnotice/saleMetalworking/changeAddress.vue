@@ -1,8 +1,8 @@
 <template>
-  <el-dialog title="收货地址" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll
+  <el-dialog title="收货地址" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll
     class="JNPF-dialog JNPF-dialog_center" width="1000px">
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-   
+
         <div class="JNPF-common-layout-center JNPF-flex-main">
 
           <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -38,7 +38,7 @@
                     <div v-else-if="scope.row.defaultFlag == '0'">
                       <span>否</span>
                     </div>
-              
+
                   </template>
               </el-table-column>
               <el-table-column prop="address" label="地址" width="310" />
@@ -46,10 +46,10 @@
               <el-table-column label="操作" width="180" fixed="right">
                 <template slot-scope="scope">
                   <el-button size="mini" type="text" @click="changeVal(scope.row)">选择</el-button>
-                  <el-button size="mini" type="text" 
+                  <el-button size="mini" type="text"
                     @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
                   <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                    
+
                     @click="handleDel(scope.row.id)">删除</el-button>
                 </template>
               </el-table-column>
@@ -58,7 +58,7 @@
               @pagination="initData" /> -->
           </div>
         </div>
-   
+
     </div>
     <addressForm v-if="depFormVisibled" ref="depFormRef" @initData="initData(id)"></addressForm>
 
@@ -102,7 +102,7 @@ export default {
         console.log(res,'地址列表');
         // this.listLoading  = true
         this.tableData = res.data
-        
+
       })
     },
     changeVal(val) {

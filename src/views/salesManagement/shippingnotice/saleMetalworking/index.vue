@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
- 
+
     <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
@@ -49,18 +49,18 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
-                @click="batchPrint">批量打印</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="mergeorderNo()"
-                :loading="hbbtnLoading">
-                合并订单
-              </el-button>
-              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
-                :loading="qxbtnLoading">
-                取消发货
-              </el-button>
-              <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
+<!--              <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"-->
+<!--                @click="batchPrint">批量打印</el-button>-->
+<!--              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="mergeorderNo()"-->
+<!--                :loading="hbbtnLoading">-->
+<!--                合并订单-->
+<!--              </el-button>-->
+<!--              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"-->
+<!--                :loading="qxbtnLoading">-->
+<!--                取消发货-->
+<!--              </el-button>-->
+<!--              <el-button type="primary" size="mini" icon="el-icon-download"-->
+<!--                @click="exportForm('dataTable')">导出</el-button>-->
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -91,29 +91,36 @@
             <el-table-column prop="deliverDate" label="发货日期" min-width="120" sortable="custom"></el-table-column>
             <el-table-column prop="recipient" label="收件人" min-width="120" sortable="custom" />
             <el-table-column prop="phone" label="收件人电话" min-width="140" sortable="custom" />
-
-            <el-table-column prop="delivery" label="发货方式" min-width="120">
+            <el-table-column prop="logisticsCompany" label="发货方式" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
-                <!-- <div v-if="scope.row.delivery == 'deliver_goods'">
-                  <span>送货</span>
-                </div>
-                <div v-else-if="scope.row.delivery == 'self_pickup'">
-                  <span>自提</span>
-                </div>
-                <div v-else-if="scope.row.delivery == 'express_delivery'">
-                  <span>快递</span>
-                </div>
-                <div v-else-if="scope.row.delivery == 'freight_transport'">
-                  <span>货运</span>
-                </div>
-                <div v-else-if="scope.row.delivery == 'collect_payment'">
-                  <span>到付</span>
-                </div> -->
-                <div v-for="(item, index) in departMentList" :key="index">{{ scope.row.delivery == item.value ?
-                  item.label : ""
-                  }}</div>
+                <el-tag :type="global.getDictLabelGlobal('logisticsCompany', scope.row.logisticsCompany, { withType: true }).type">{{
+                    global.getDictLabelGlobal('logisticsCompany', scope.row.logisticsCompany)
+                  }}
+                </el-tag>
               </template>
             </el-table-column>
+<!--            <el-table-column prop="delivery" label="发货方式" min-width="120">-->
+<!--              <template slot-scope="scope">-->
+<!--                &lt;!&ndash; <div v-if="scope.row.delivery == 'deliver_goods'">-->
+<!--                  <span>送货</span>-->
+<!--                </div>-->
+<!--                <div v-else-if="scope.row.delivery == 'self_pickup'">-->
+<!--                  <span>自提</span>-->
+<!--                </div>-->
+<!--                <div v-else-if="scope.row.delivery == 'express_delivery'">-->
+<!--                  <span>快递</span>-->
+<!--                </div>-->
+<!--                <div v-else-if="scope.row.delivery == 'freight_transport'">-->
+<!--                  <span>货运</span>-->
+<!--                </div>-->
+<!--                <div v-else-if="scope.row.delivery == 'collect_payment'">-->
+<!--                  <span>到付</span>-->
+<!--                </div> &ndash;&gt;-->
+<!--                <div v-for="(item, index) in departMentList" :key="index">{{ scope.row.delivery == item.value ?-->
+<!--                  item.label : ""-->
+<!--                  }}</div>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
             <el-table-column prop="countryName" label="国家" min-width="160" />
             <el-table-column prop="provinceName" label="省" min-width="160" />
             <el-table-column prop="cityName" label="市" min-width="160" />
@@ -129,17 +136,20 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="deliveryStatus" label="发货状态" min-width="120" sortable="custom" align="center">
+            <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
-                <div v-if="scope.row.deliveryStatus == 'not_finished'">
-                  <el-tag type="primary">未完成</el-tag>
-                </div>
-                <div v-else-if="scope.row.deliveryStatus == 'finished'">
-                  <el-tag type="success">已完成 </el-tag>
-                </div>
-                <div v-else-if="scope.row.deliveryStatus == 'canceled'">
-                  <el-tag type="danger">已取消</el-tag>
-                </div>
+                <el-tag :type="global.getDictLabelGlobal('shippingStatus', scope.row.deliveryStatus, { withType: true }).type">{{
+                    global.getDictLabelGlobal('shippingStatus', scope.row.deliveryStatus)
+                  }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="priority" label="发货优先级" width="120" sortable="custom" align="center">
+              <template slot-scope="scope">
+                <el-tag :type="global.getDictLabelGlobal('shippingPriority', scope.row.priority, { withType: true }).type">{{
+                    global.getDictLabelGlobal('shippingPriority', scope.row.priority)
+                  }}
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" min-width="120" sortable="custom">
@@ -409,7 +419,7 @@ export default {
 
   methods: {
     withdrawFun(id){
-      
+
       this.$confirm('您确认撤回该发货通知单吗？', this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
@@ -426,16 +436,16 @@ export default {
         codes.add(item.cooperativePartnerId);
       }
 
-      return codes.size > 1; // 如果有多个不同的代码，则返回 true  
+      return codes.size > 1; // 如果有多个不同的代码，则返回 true
     },
     // 批量打印
     batchPrint() {
       if (!this.selectArr.length) return this.$message.error("请选择你要打印的数据")
       let flag = this.hasDifferentCooperativePartnerCode(this.selectArr)
       if (flag) return this.$message.error("只能选择相同客户的数据")
-      this.enCode = 'p003' // 筛选出 businessType 等于 type 的项  
+      this.enCode = 'p003' // 筛选出 businessType 等于 type 的项
 
-      this.fullName = "发货通知单" // 筛选出 businessType 等于 type 的项  
+      this.fullName = "发货通知单" // 筛选出 businessType 等于 type 的项
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode,this.selectArr[0].partnerName)
@@ -472,7 +482,7 @@ export default {
 
           let oilObj = this.superQueryJson.find(item => item.prop === 'delivery');
           if (oilObj) {
-            // 将options赋值为5  
+            // 将options赋值为5
             oilObj.options = this.departMentList;
           }
         });
@@ -656,7 +666,7 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },
-        
+
 
       ]
       this.$refs.SuperQuery.conditionList = []

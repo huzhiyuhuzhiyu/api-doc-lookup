@@ -34,7 +34,7 @@
                   <el-descriptions-item label="税额">{{ dataForm.taxAmount }}</el-descriptions-item>
 
                 </el-descriptions>
-               
+
               </div>
 
             </el-collapse-item>
@@ -91,7 +91,7 @@
                   </template>
                 </el-table-column>
 
-             
+
 
                 <el-table-column label="操作" width="100" fixed="right">
                   <template slot-scope="scope">
@@ -106,7 +106,7 @@
                     item.fullName
                   }}</el-radio-button>
               </el-radio-group>
-                   
+
               <!-- 收货单 -->
               <div v-if="categoryType == 'deliveryNote'">
                 <JNPF-table ref="finishpurchase" :data="purchaseData" fixedNO v-loading="tableloading" :height="height" customKey="JNPFTableKey_229699">
@@ -217,7 +217,7 @@
                   </el-table-column>
 
                 </JNPF-table>
-              </div> 
+              </div>
               <!-- 出入库记录 -->
               <div v-if="categoryType == 'outinboundwarehouse'">
                 <JNPF-table ref="outinboundwarehouse" :height="height" :data="outInboundData" fixedNO
@@ -331,7 +331,7 @@
                       </template>
                     </el-table-column>
                 </JNPF-table>
-              </div> 
+              </div>
             </el-collapse-item>
 
 
@@ -789,7 +789,7 @@ export default {
           pageSize: -1,
           pageNum: -1,
         }
-         
+
       } else if (this.categoryType == 'checklist') {
         // 检验单
         this.requestObj.source = 'plan'
@@ -843,7 +843,7 @@ export default {
           console.log("质检退货单", res);
           this.shipmentData = res.data.records
         })
-      }   
+      }
     },
     goBack() {
       this.$emit('close')

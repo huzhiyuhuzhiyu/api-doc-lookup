@@ -30,14 +30,16 @@
                   <div class="TableForm_title" v-if="activeType">
                     <div class="cooperative-style">
                       <span class="lable-style">供应商：</span>
-                      <el-select v-model="cooperativePartnerName" placeholder="请选择供应商" style="width: 100%;">
-                        <el-option v-for="(item, index) in cooperativePartnerOption" :key="index" :label="item.text"
+                      <el-select v-model="supplierCode" @change="changeSupplier" placeholder="请选择供应商"
+                        style="width: 100%;">
+                        <el-option v-for="(item, index) in supplierOption" :key="index" :label="item.text"
                           :value="item.value"></el-option>
                       </el-select>
                     </div>
                   </div>
-                  <TableForm-product @input="contentChanges" :value="linesList" :hasToolbar="false" ref="tableForm"
-                    :tableItems="linesListItems" :btnType="btnType" :hasActionbar="false" :tableProps="{
+                  <TableForm-product v-loading="productLoading" @input="contentChanges" :value="linesList"
+                    :hasToolbar="false" ref="tableForm" :tableItems="linesListItems" :btnType="btnType"
+                    :hasActionbar="false" :tableProps="{
                       is: 'JNPF-table',
                       fixedNO: true,
                       hasC: activeType,
@@ -83,6 +85,7 @@ import { getcooperativeProduct, getOrderDetail, uploadProduct } from "@/api/sale
 import { getProducts } from "@/api/masterDataManagement";
 import { getQuotationInfo } from "@/api/salesManagement/index";
 import { submitWaitEnquiryData } from '@/api/enquiryManagement/waitEnquiry'
+import { getEnquiryManagementList } from '@/api/enquiryManagement/index'
 export default {
   name: "Form",
   components: { TableFormProduct },
@@ -208,7 +211,7 @@ export default {
       },
 
       approvalFlag: false,
-      flowData: {},   
+      flowData: {},
       flowTemplateJson: {},
       flowTaskOperatorRecordList: [],
 
@@ -224,8 +227,8 @@ export default {
           this.setTableItems('look');
         },
       },
-      cooperativePartnerName: '',
-      cooperativePartnerOption: [],
+      supplierCode: '',
+      supplierOption: [],
       editFormListItems: [
         {
           prop: 'sampleAmounts',
@@ -258,6 +261,27 @@ export default {
           minWidth: 160,
         },
       ],
+      formData: {
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: "create_time"
+        }],
+        quotationNo: "",
+        cooperativePartnerIdText: "",
+        deliver: "",
+        bidder: "",
+        approvalStatus: '',
+        documentStatus: "",
+        submitStartDate: '',
+        submitEndDate: '',
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+      },
+      productLoading: false
     }
   },
   computed: {
@@ -272,16 +296,57 @@ export default {
     this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
   },
   methods: {
+    // 改变供应商
+    changeSupplier(val) {
+      // 改变上面的供应商 对应的子产品的供应商配置都改成一致
+      this.linesList.forEach(element => {
+        element.supplierCode = val
+      });
+    },
+    // 获取供应商下拉框
+    async getSupplierOption() {
+      try {
+        const res = await getEnquiryManagementList(this.formData)
+        const records = res.data.records
+        let supplierOption = []
+        if (records?.length) {
+          records.forEach(element => {
+            const findIndex = supplierOption.findIndex(item => item.supplierCode === element.supplierCode)
+            if (findIndex === -1) {
+              supplierOption.push({
+                ...element,
+                label: element.supplierName,
+                text: element.supplierName,
+                value: element.cooperativePartnerId,
+                disabled: false,
+              })
+            }
+          })
+        }
+        this.supplierOption = supplierOption
+        const supplierIndex = this.linesListItems.findIndex(item => item.prop === 'supplierCode')
+        if (supplierIndex === -1) {
+          this.linesListItems.splice(0, 0, {
+            type: 'select',
+            prop: 'cooperativePartnerId',
+            label: '供应商',
+            minWidth: '220px',
+            options: supplierOption
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.productLoading = false
+      }
+    },
     // 重置表格属性
     setTableItems(type) {
       let linesListItems = deepClone(this.lookLinesListItems)
       if (type === 'edit') {
-        linesListItems.unshift({
-          prop: 'cooperativePartnerId',
-          label: '供应商',
-          type: 'select',
-          minWidth: 150,
-        })
+        this.productLoading = true
+        // 获取供应商下拉框
+        this.getSupplierOption()
         const sampleNumStrIndex = linesListItems.findIndex(item => item.prop === 'sampleNumStr')
         linesListItems.splice(sampleNumStrIndex, 0, ...this.editFormListItems)
       }
@@ -304,7 +369,7 @@ export default {
     },
     // 复制一行数据
     copyLProduct(scope) {
-      this.linesList.push(scope.row)
+      this.linesList.push(deepClone(scope.row))
     },
     async init(id = '', type) {
       this.btnType = type
@@ -453,7 +518,10 @@ export default {
         if (msg === 'Success') {
           this.dataForm = Object.assign(this.dataForm, data.sale)
           this.originalFormData = deepClone(this.dataForm)
-          this.linesList = data.lines
+          this.linesList = data.lines.map(item => ({
+            ...item,
+            cooperativePartnerId: ''
+          }))
           await this.fetchDepartment()
           await this.fetchOrganization()
         }
@@ -475,6 +543,7 @@ export default {
         purchaseInquiry: {
           ...deepParams,
           inquiryNo: deepParams.quotationNo,
+          quotationId: deepParams.id
         },
         purchaseInquiryLineList: this.linesList,
         flowData: this.flowData

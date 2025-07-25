@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent @keyup.enter.native="search()">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.quotationNo" placeholder="询价单号" clearable />
+              <el-input v-model.trim="listQuery.inquiryNo" placeholder="询价单号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -64,10 +64,6 @@
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" width="150" fixed="right">
-            <template slot-scope="{ row }">
-            </template>
-          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData" />
@@ -113,7 +109,7 @@ export default {
         },
       ],
       initListQuery: {
-        quotationNo: '',
+        inquiryNo: '',
         quotationTimeArr: [],
         cooperativePartnerIdText: '',
         cooperativePartnerId: '',
@@ -125,7 +121,7 @@ export default {
           },
           {
             asc: false,
-            column: 'create_time'
+            column: 't1.create_time'
           }
         ],
         superQuery: {},

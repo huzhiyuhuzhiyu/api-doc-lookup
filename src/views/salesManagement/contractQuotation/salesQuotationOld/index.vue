@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!depFormVisible">
+      <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!depFormVisible && !quoteFormVisible">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <template v-for="item in searchList">
@@ -71,36 +71,36 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="客户编号" sortable="custom" min-width="120" />
             <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" min-width="160" />
-            <el-table-column prop="inquiryTime" label="询价日期" width="130"/>
-            <el-table-column prop="bidder1" label="制单人" width="100"/>
-            <el-table-column prop="bidder" label="业务员" width="120" align="center">
+            <el-table-column prop="inquiryTime" label="询价日期" align="center" width="130" />
+            <el-table-column prop="bidder1" label="制单人" width="100" />
+            <el-table-column prop="bidder" label="业务员" width="120">
             </el-table-column>
-            <el-table-column prop="purchaseUserId" label="采购负责人" width="120" align="center">
+            <el-table-column prop="purchaseUserId" label="采购负责人" width="120">
             </el-table-column>
-            <el-table-column prop="approvalStatus" label="状态" width="120" align="center"
-              v-if="showAppCodeFlag">
+            <el-table-column prop="quotationStatus" label="状态" width="120" align="center">
               <template slot-scope="scope">
-                <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
-                  <el-tag>审批中</el-tag>
+                <div v-if="scope.row.quotationStatus == 'feedback_received'">
+                  <el-tag>已反馈</el-tag>
                 </div>
-                <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
-                  <el-tag type="success">审批通过</el-tag>
+                <div v-else-if="scope.row.quotationStatus == 'finished'">
+                  <el-tag type="success">完成</el-tag>
                 </div>
-                <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
-                  <el-tag type="danger">审批拒绝</el-tag>
+                <div v-else-if="scope.row.quotationStatus == 'not_submit'">
+                  <el-tag type="danger">未提交</el-tag>
                 </div>
-                <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
-                  <el-tag type="warning">审批撤回</el-tag>
+                <div v-else-if="scope.row.quotationStatus == 'pending_feedback'">
+                  <el-tag type="warning">待反馈</el-tag>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="quotationTime" label="报价日期" width="130" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column prop="quotationTime" label="报价日期" width="130" align="center" sortable="custom" />
+            <el-table-column label="操作" width="190" fixed="right">
               <template slot-scope="scope">
                 <el-button type="text" @click="addOrUpdateHandle(scope.row, 'edit')" size="mini"
                   :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
                 <el-button type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" size="mini"
-                  @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn">删除</el-button>
+                  @click="handleDel(scope.row.id)" class="JNPF-table-delBtn">删除</el-button>
+                <el-button type="text" size="mini" @click="quoteHandle(scope.row, 'quote')">报价</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -138,6 +138,7 @@
 
     </div>
     <DepForm v-if="depFormVisible" :quoteType="quoteType" ref="depForm" @close="closeForm" />
+    <QuoteForm v-if="quoteFormVisible" ref="quoteForm" @close="closeForm"></QuoteForm>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -148,13 +149,14 @@
 <script>
 import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation } from '@/api/salesManagement/index'
 import DepForm from './depForm'
+import QuoteForm from './quoteForm'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'salesQuotationOld',
-  components: { DepForm, SuperQuery, ExportForm },
+  components: { DepForm, SuperQuery, ExportForm, QuoteForm },
   data() {
     return {
       superQuery: {},
@@ -163,11 +165,7 @@ export default {
       searchList: [
         { field: 'quotationNo', fieldValue: '', label: '报价单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'bidder', fieldValue: '', label: '报价人', symbol: 'like', searchType: 1, width: 120 },
-
       ],
-
-
       columnList: ["deliver", "address", "fax", "reasonRejection", "createByName", "remark"],
       superQueryVisible: false,
 
@@ -190,6 +188,7 @@ export default {
         { label: "提交", value: "submit" },
       ],
       depFormVisible: false,
+      quoteFormVisible: false,
       background: true,//分页器背景颜色
       tableDataList: [],
       form: {},
@@ -274,7 +273,7 @@ export default {
           prop: 'approvalStatus',
           label: "审批状态",
           type: 'input'
-        }, 
+        },
         {
           prop: 'reasonRejection',
           label: "驳回理由",
@@ -287,7 +286,7 @@ export default {
           valueFormat: "yyyy-MM-dd HH:mm:ss",
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
-        }, 
+        },
         {
           prop: 'createByName',
           label: "创建人",
@@ -298,7 +297,7 @@ export default {
           label: "备注",
           type: 'input'
         },
-      ], 
+      ],
       submitDate: [],
       listLoading: false,
       total: 0,
@@ -338,7 +337,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'cooperativePartnerIdText'||prop=='cooperativePartnerCode') {
+      if (prop == 'cooperativePartnerIdText' || prop == 'cooperativePartnerCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -350,7 +349,8 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.depFormVisible = false
-        this.search('basic')
+      this.quoteFormVisible = false
+      this.search('basic')
     },
     initData() {
       this.listLoading = true
@@ -398,15 +398,13 @@ export default {
     reset() {
       console.log(this.$refs);
       this.$refs.tableForm.$refs.JNPFTable.clearSort()
-      this.superForm=this.form = JSON.parse(JSON.stringify(this.formlist))
+      this.superForm = this.form = JSON.parse(JSON.stringify(this.formlist))
       this.$refs.SuperQuery.conditionList = []
-      this.searchList= [
+      this.searchList = [
         { field: 'quotationNo', fieldValue: '', label: '报价单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'bidder', fieldValue: '', label: '报价人', symbol: 'like', searchType: 1, width: 120 },
-
       ],
-      this.search('basic')
+        this.search('basic')
     },
     addSupplier(id, type, quoteType) {
       this.depFormVisible = true
@@ -429,19 +427,19 @@ export default {
     // 编辑
     addOrUpdateHandle(res, type) {
       this.depFormVisible = true
-
-
       let id = res.id
       if (id) {
-        // setTimeout(() => {
         this.$nextTick(() => {
           this.$refs.depForm.init(id, type)
         })
-        // }, 600);
       }
     },
-
-
+    quoteHandle(row) {
+      this.quoteFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.quoteForm.init(row.id)
+      })
+    },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -460,7 +458,7 @@ export default {
     },
     handleUserRelation(row, type) {
       this.depFormVisible = true
-      const { id, quotationType='' } = row
+      const { id, quotationType = '' } = row
       this.quoteType = quotationType
       this.$nextTick(() => {
         this.$refs.depForm.init(id, type)

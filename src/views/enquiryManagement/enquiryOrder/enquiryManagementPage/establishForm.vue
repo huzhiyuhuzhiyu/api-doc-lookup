@@ -561,6 +561,7 @@ export default {
           quotationId,
           cooperativePartnerId,
           documentStatus: type,
+          quotationId: id
         },
         bimInquiryLineList: this.dataFormTwo.lines,
         flowData: this.flowData

@@ -107,7 +107,7 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="copyFun(scope.row.id, 'copy')">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'copy')">
                       复制
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -168,6 +168,7 @@ export default {
     }
   },
   async created() {
+    this.form = JSON.parse(JSON.stringify(this.formlist))
     this.search()
   },
   activated() {
@@ -177,11 +178,14 @@ export default {
     }
   },
   methods: {
-    copyFun(id, type) {
-      this.establishVisible = true
-      this.$nextTick(() => {
-        this.$refs.establishForm.init(id, type)
+    // 查询条件重置
+    reset() {
+      this.$refs.tableForm.$refs.JNPFTable.clearSort()
+      this.form = JSON.parse(JSON.stringify(this.formlist))
+      this.searchList.forEach(item => {
+        item.fieldValue = ''
       })
+      this.search('basic')
     },
     handleUserRelation(row, type) {
       this.establishVisible = true
@@ -243,7 +247,18 @@ export default {
     // 查询接口
     initData() {
       this.listLoading = true
-      getEnquiryManagementList(this.formlist).then(res => {
+      // 处理查询条件
+      const searchData = {}
+      this.searchList.forEach((item) => {
+        if (item.fieldValue) {
+          searchData[item.field] = item.fieldValue
+        }
+      })
+      console.log(searchData);
+      getEnquiryManagementList({
+        ...this.form,
+        ...searchData
+      }).then(res => {
         this.tableDataList = res.data.records
         this.listLoading = false
         this.total = res.data.total

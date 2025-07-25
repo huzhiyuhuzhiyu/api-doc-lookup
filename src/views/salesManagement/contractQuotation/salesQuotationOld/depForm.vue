@@ -63,8 +63,8 @@
                 <div v-if="btnType != 'look'">
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
                     icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
-                  <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
-                    icon="el-icon-plus" @click="addProduct">选择客户产品</el-button>
+                  <!-- <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
+                    icon="el-icon-plus" @click="addProduct">选择客户产品</el-button> -->
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"

@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerId" placeholder="客户编码" clearable />
+              <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="客户编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -102,6 +102,7 @@ import { buttonList, getColumns } from "./data";
 import { deleteOrders, getcategoryTrees } from "@/api/salesManagement/assemblyOrders";
 import { getQuotationLists } from "@/api/salesManagement/index";
 import { getCooperativeData } from '@/api/basicData/index'
+import { editCooperativePartner } from "@/api/salesManagement/index";
 
 export default {
   name: "WaitEnquiry",
@@ -183,7 +184,7 @@ export default {
       getCooperativeData,
       getcategoryTrees,
       lineRowData: {},
-      renderTree: false
+      renderTree: false,
     }
   },
   created() {
@@ -191,20 +192,35 @@ export default {
     this.initData()
   },
   methods: {
+    closeSelectDialog() {
+      this.$nextTick(() => {
+        this.$refs.comSelectPage.visible = false
+        // 刷新列表
+        this.initData()
+      })
+    },
     // 客户信息修改提交
     clientInfoSubmit() {
       // 判断信息有没有修改 没修改不调用接口
       const cooperativePartnerId = this.clientInfoData.cooperativePartnerId
       if (cooperativePartnerId === this.lineRowData.cooperativePartnerId) {
-        this.$message.warning('修改成功')
-        this.clientInfoVisible = false
-        return
+        this.$message.warning('修改客户信息成功')
+        this.closeSelectDialog()
       } else {
-
+        const { cooperativePartnerId, cooperativePartnerIdText } = this.clientInfoData
+        const { id } = this.lineRowData
+        const editData = {
+          id,
+          cooperativePartnerId,
+          cooperativePartnerIdText
+        }
+        editCooperativePartner(editData).then(res => {
+          this.$message.success('修改客户信息成功')
+          this.closeSelectDialog()
+        }).catch(() => {
+          this.$message.error('修改客户信息失败')
+        })
       }
-      this.$nextTick(() => {
-        this.$refs.comSelectPage.visible = false
-      })
     },
     // 客户选框点击确定按钮前
     beforePartnerChange(data, paramsObj) {
@@ -235,7 +251,6 @@ export default {
     // 修改用户信息
     editClientInfo(row) {
       this.lineRowData = row
-      this.clientInfoData = deepClone(row)
       this.clientInfoVisible = true
       this.$nextTick(() => {
         this.$refs.comSelectPage.openDialog()

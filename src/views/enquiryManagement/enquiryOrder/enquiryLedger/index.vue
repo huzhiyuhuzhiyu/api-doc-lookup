@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent @keyup.enter.native="search()">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.quotationNo" placeholder="询价单号" clearable />
+              <el-input v-model.trim="listQuery.inquiryNo" placeholder="询价单号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -116,7 +116,7 @@ export default {
         },
       ],
       initListQuery: {
-        quotationNo: '',
+        inquiryNo: '',
         cooperativePartnerIdText: '',
         cooperativePartnerId: '',
         quotationStatus: '',

@@ -146,6 +146,14 @@ export function editQuotationMData (data) {
     data
   })
 }
+// 修改
+export function editCooperativePartner (data) {
+  return request({
+    url: `/api/erp/sale/quotation/modify/cooperative`,
+    method: 'put',
+    data
+  })
+}
 // 详情
 export function getQuotationInfo (id) {
   return request({

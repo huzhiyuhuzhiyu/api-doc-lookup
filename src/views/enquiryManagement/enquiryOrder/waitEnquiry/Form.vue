@@ -300,7 +300,7 @@ export default {
     changeSupplier(val) {
       // 改变上面的供应商 对应的子产品的供应商配置都改成一致
       this.linesList.forEach(element => {
-        element.supplierCode = val
+        element.cooperativePartnerId = val
       });
     },
     // 获取供应商下拉框

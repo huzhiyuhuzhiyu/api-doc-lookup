@@ -54,10 +54,10 @@
           </div>
           <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_388658">
-            <el-table-column prop="quotationNo" label="询价单号" />
-            <el-table-column prop="customerCode" label="客户编码" />
-            <el-table-column prop="quotationDate" align="center" label="询价日期" />
-            <el-table-column prop="supplierCode" label="供应商编号" />
+            <el-table-column prop="quotationNo" label="询价单号" sortable="custom"/>
+            <el-table-column prop="customerCode" label="客户编码" sortable="custom"/>
+            <el-table-column prop="quotationDate" align="center" label="询价日期" sortable="custom"/>
+            <el-table-column prop="cooperativePartnerId" label="供应商编号" sortable="custom"/>
             <el-table-column prop="supplierName" label="供应商名称" />
             <el-table-column prop="documentStatus" label="状态" align="center">
               <template slot-scope="scope">
@@ -178,6 +178,17 @@ export default {
     }
   },
   methods: {
+    sortChange({ prop, order }) {
+      let newProp
+      if (prop == 'cooperativePartnerIdText' || prop == 'cooperativePartnerCode') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order !== 'descending'
+      this.form.orderItems[0].column = newProp
+      this.search('basic')
+    },
     // 查询条件重置
     reset() {
       this.$refs.tableForm.$refs.JNPFTable.clearSort()

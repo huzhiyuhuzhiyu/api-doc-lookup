@@ -95,7 +95,7 @@
                     <!-- <el-table-column prop="originPreload" label="原预负荷" width="160" show-overflow-tooltip key="originPreload" /> -->
                     <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip
                       v-if="btnType !== 'look'" key="availableQuantity" />
-         
+
                     <el-table-column prop="originPairingModeName" label="原配对方式" width="160" show-overflow-tooltip
                       key="originPairingModeName" />
                     <el-table-column prop="mainUnit" label="原单位" width="110" show-overflow-tooltip key="mainUnit" />
@@ -183,7 +183,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-         
+
                     <el-table-column prop="targetBatchNumber" label="目标产品批次号" width="230" key="targetBatchNumber">
                       <!-- <template slot="header">
                         <span class="required">*</span>目标产品批次号
@@ -448,7 +448,7 @@
                 <el-table-column prop="originPackagingMethod" label="原包装方式" width="160" show-overflow-tooltip
                   key="originPackagingMethod" />
                 <el-table-column prop="originColour" label="原颜色" width="140" show-overflow-tooltip key="originColour" />
-              
+
                 <el-table-column prop="originSpecialRequire" label="原特殊要求" width="200" show-overflow-tooltip
                   key="originSpecialRequire" />
                 <el-table-column prop="originAperture" label="原孔径" width="140" show-overflow-tooltip
@@ -535,7 +535,7 @@
                   key="targetPackagingMethod" />
                 <el-table-column prop="targetColour" label="目标颜色" width="140" show-overflow-tooltip
                   key="targetColour" />
-     
+
                 <el-table-column prop="targetSpecialRequire" label="目标特殊要求" width="200" show-overflow-tooltip
                   key="targetSpecialRequire" />
                 <el-table-column prop="targetAperture" label="目标孔径" width="140" show-overflow-tooltip
@@ -653,7 +653,7 @@ import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
 import { getWarehouseList,getWarehouseInfo } from '@/api/basicData/index'// 仓库树
 import { getProductionLotList, getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimProcessList } from '@/api/bimProcess'
-import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getClassAttributeListByCode } from '@/api/masterDataManagement/index'
 export default {
   mixins: [busFlow, flowMixin, getProjectList],
   components: { Process, recordList },
@@ -1013,8 +1013,8 @@ export default {
       } catch (error) {
       }
     },
-   
-  
+
+
     listDataFormatting(res) {
       let data = { barCode: '整箱转换', realityTotalNum: '' }
       let treeData = res.data
@@ -1110,7 +1110,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -1215,7 +1215,7 @@ export default {
     },
     // 获取当前仓库类别属性
     getclassAttributeList() {
-      getclassAttributelistByCode({ code: this.warehouseInfo.code }).then(res => {
+      getClassAttributeListByCode({ code: this.warehouseInfo.code }).then(res => {
         console.log("类别属性", res);
         this.classAttributeList = res.data
         this.productRequestObj.classAttributeList = this.classAttributeList
@@ -1309,18 +1309,18 @@ export default {
     //     getWarehouseInfo(res.data[0].id).then(response => {
     //       this.warehouseInfo = response.data
     //       this.dataForm.warehouseType = response.data.type
-          
+
     //     })
     //   })
     // },
     init(id, btnType, approvalFlag, obj) {
       console.log("obj",obj);
-      this.approvalFlag = approvalFlag 
+      this.approvalFlag = approvalFlag
       this.dataForm.id = id || ''
       this.btnType = btnType
-      console.log("obj.warehouseInfo",obj.warehouseInfo); 
+      console.log("obj.warehouseInfo",obj.warehouseInfo);
       this.warehouseInfo = obj.warehouseInfo
-      this.formLoading = true 
+      this.formLoading = true
       if (this.btnType === 'add' || this.btnType === 'edit') {
         this.getBusInfo('b064')
         this.fetchData('MSDH')

@@ -681,14 +681,9 @@ export default {
     },
     addOrUpdateHandle(id, btntype) {
       this.formVisible = true
-      if (id) {
-        console.log(id);
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
-        })
-        // }, 600);
-      }
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btntype)
+      })
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {

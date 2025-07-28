@@ -597,7 +597,7 @@ import CustomerForm from './customerForm.vue'
 import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getClassAttributeListByCode } from '@/api/masterDataManagement/index'
 import { getCooperativeData, getOrderFiledMap, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import flowMixin from '@/mixins/generator/flowMixin'
@@ -1087,7 +1087,7 @@ export default {
       }
     },
     getclassAttributeList() {
-      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+      getClassAttributeListByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
         this.classAttributeList = res.data
       })

@@ -110,7 +110,7 @@ import Form from '../directMaterialRequisition/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getClassAttributeListByCode } from '@/api/masterDataManagement/index'
 import { getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -265,7 +265,7 @@ export default {
       this.selectData = value
     },
     getclassAttributeList() {
-      getclassAttributelistByCode({ code: this.warehouseCode }).then((res) => {
+      getClassAttributeListByCode({ code: this.warehouseCode }).then((res) => {
         console.log('类别属性', res)
         this.classAttributeList = res.data
         this.initData()

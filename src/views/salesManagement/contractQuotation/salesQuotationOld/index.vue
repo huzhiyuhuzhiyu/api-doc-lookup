@@ -100,7 +100,8 @@
                   :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
                 <el-button type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" size="mini"
                   @click="handleDel(scope.row.id)" class="JNPF-table-delBtn">删除</el-button>
-                <el-button type="text" size="mini" @click="quoteHandle(scope.row, 'quote')">报价</el-button>
+                <!-- 已反馈状态才能报价 -->
+                <el-button type="text" size="mini" v-if="scope.row.quotationStatus == 'feedback_received'" @click="quoteHandle(scope.row, 'quote')">报价</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">

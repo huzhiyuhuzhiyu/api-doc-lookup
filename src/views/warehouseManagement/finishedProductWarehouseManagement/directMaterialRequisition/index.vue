@@ -62,7 +62,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_338920">
-            <el-table-column prop="orderNo" label="领料单号" min-width="180" sortable="custom"> 
+            <el-table-column prop="orderNo" label="领料单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.id, 'look')">{{
                 scope.row.orderNo
@@ -128,7 +128,7 @@ import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getClassAttributeListByCode } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 
@@ -136,7 +136,7 @@ export default {
   name: 'directMaterialRequisition',
   components: { Form, ExportForm, SuperQuery },
   props:{
-    warehouseCode: "", 
+    warehouseCode: "",
   },
   mixins: [ getProjectList],
   data() {
@@ -239,7 +239,7 @@ export default {
   },
   methods: {
     getclassAttributeList() {
-      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+      getClassAttributeListByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
         this.classAttributeList = res.data
         this.initData()
@@ -373,7 +373,7 @@ export default {
       })
 
     },
-    // 检查字段是否相同  
+    // 检查字段是否相同
     areFieldsEqual(arr, fields) {
       const firstEntry = arr[0];
       const values = new Set();
@@ -397,7 +397,7 @@ export default {
       })
 
     },
- 
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -470,7 +470,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important; 
+  margin-left: 0!important;
 
   margin-bottom: 5px;
 }

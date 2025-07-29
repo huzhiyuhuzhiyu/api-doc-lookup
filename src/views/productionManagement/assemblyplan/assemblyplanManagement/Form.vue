@@ -722,12 +722,12 @@ export default {
   },
 
   methods: {
-    delethHandle(scope){ 
+    delethHandle(scope){
       this.$confirm(this.$t('此操作将删除当前数据，确认删除？'), this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => { 
+      }).then(() => {
       this.dataFormTwo.data.splice(scope.$index, 1)
-    
+
       }).catch(() => { })
     },
     // 输入编排数量，重新计算投料数量
@@ -1197,7 +1197,7 @@ export default {
         this.$message.error("该产品没有BOM，请配置BOM后再试")
 
       }
-     
+
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       if (this.dataForm.planStartDate && this.dataForm.planEndDate) {
         this.dataForm.planDate[0] = this.dataForm.planStartDate
@@ -1280,7 +1280,7 @@ export default {
         this.dataForm.materialFlag = false
 
       }
-      if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
+      // if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
 
       console.log("表单", this.dataForm);
       console.log("工序", this.dataFormTwo.data);

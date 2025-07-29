@@ -270,10 +270,9 @@ export function getQuotationdatasendlist (data) {
   })
 }
 // 获取分类类型
-export function getStockMovelist (data,projectId,warehouseCode) {
-  let classAttributeList=data.classAttributeList
+export function getStockMoveList (data,warehouseCode) {
   return request({
-    url: `/api/wms/stock/move/todo/list?projectId=${projectId}&warehouseCode=${warehouseCode}`,
+    url: `/api/wms/stock/move/todo/list?warehouseCode=${warehouseCode}`,
     method: 'POST',
     data
   })

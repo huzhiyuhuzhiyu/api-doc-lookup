@@ -383,7 +383,7 @@ import { getcategoryTrees, getcooperativeProduct, getsaleOrderDetailList } from 
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { addTransferData, updateTransferData, detailTransferData, TransferBarCode } from '@/api/warehouseManagement/transferManagement'
-import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getClassAttributeListByCode } from '@/api/masterDataManagement/index'
 
 import {
   getbimProductAttributesList, getbimProductAttributes

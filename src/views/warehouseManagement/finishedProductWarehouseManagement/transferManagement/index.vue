@@ -144,7 +144,7 @@ import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getClassAttributeListByCode } from '@/api/masterDataManagement/index'
 import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -263,7 +263,7 @@ export default {
 
   methods: {
     getclassAttributeList() {
-      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+      getClassAttributeListByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
         this.classAttributeList = res.data
         this.initData()
@@ -408,7 +408,7 @@ export default {
       })
 
     },
-    // 检查字段是否相同  
+    // 检查字段是否相同
     areFieldsEqual(arr, fields) {
       const firstEntry = arr[0];
       const values = new Set();

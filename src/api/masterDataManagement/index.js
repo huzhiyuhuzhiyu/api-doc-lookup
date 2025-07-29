@@ -505,11 +505,11 @@ export const closeWarehouseMenu = (data) => {
 }
 
 // 根据仓库编码获取类别属性
-export const getclassAttributelistByCode = (data) => {
+export const getClassAttributeListByCode = (data) => {
   return request({
     url: `/api/wms/stockWarehouse/classAttribute/listByCode`,
     method: 'get',
-    data:data
+    data: data
   })
 }
 

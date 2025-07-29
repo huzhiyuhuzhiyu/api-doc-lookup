@@ -369,7 +369,7 @@
 import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves,getOrderFiledMap } from '@/api/basicData/index'
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { addTransferData, updateTransferData, detailTransferData, TransferBarCode } from '@/api/warehouseManagement/transferManagement'
-import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getClassAttributeListByCode } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import Process from '@/components/Process/Preview'
@@ -841,7 +841,7 @@ export default {
 
     },
     getclassAttributeList() {
-      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+      getClassAttributeListByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
         this.classAttributeList = res.data
       })

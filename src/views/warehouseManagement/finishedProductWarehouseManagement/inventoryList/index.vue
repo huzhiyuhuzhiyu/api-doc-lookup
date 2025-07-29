@@ -327,7 +327,7 @@ import InboundExternalForm from '../dbIncomAndOutInventory/inboundExternalForm.v
 import OutboundPickOutForm from '../dbIncomAndOutInventory/outboundPickOutForm.vue'
 import InboundReturnMaterialsForm from '../dbIncomAndOutInventory/inboundReturnMaterialsForm.vue'
 import Transfer from '../dbIncomAndOutInventory/transferForm.vue'
-import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getClassAttributeListByCode } from '@/api/masterDataManagement/index'
 import SaleOutboundForm from '../dbIncomAndOutInventory/saleOutboundForm.vue'
 import ExternalMaterOutboundForm from '../dbIncomAndOutInventory/externalMaterialsForm.vue'
 import PurchaseOrderInboundForm from '../dbIncomAndOutInventory/purchaseOrderInboundForm.vue'
@@ -690,9 +690,9 @@ export default {
     // 打印
     PrintFun(row) {
       console.log(this.arr, row);
-      this.enCode = this.arr.find(item => item.businessType === row.businessType).code // 筛选出 businessType 等于 type 的项  
+      this.enCode = this.arr.find(item => item.businessType === row.businessType).code // 筛选出 businessType 等于 type 的项
       this.formId = row.id
-      this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项  
+      this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项
       if (row.businessType == 'outbound_sale_send' && row.sourceType == 'notice') {
         this.enCode = 'p003'
         // detailWarehouseData(row.id).then(res => {
@@ -716,7 +716,7 @@ export default {
     // 合并打印
     printMergeForm() {
       console.log(this.selectArr, '看');
-      
+
       this.formId = this.selectArr.map(item => item.id).join(',')
       this.enCode = 'p031'
       this.printVisible = true
@@ -734,7 +734,7 @@ export default {
       this.printVisible = false
     },
     getclassAttributeList() {
-      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+      getClassAttributeListByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
         this.classAttributeList = res.data
         this.search('basic')
@@ -1004,14 +1004,14 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.classAttributeList = this.classAttributeList
-      // this.listQuery.approvalStatus = 'ok' 
+      // this.listQuery.approvalStatus = 'ok'
 
       this.listQuery.projectId = this.isProjectSwitch === '1' ? this.initListQuery.projectId || '' : ''
       if (localStorage.getItem('loginTenant')) {
         this.listQuery.tenant = localStorage.getItem('loginTenant')
       }
       getWarehouseList(this.listQuery).then(res => {
-        
+
         this.tableData = res.data.records ? res.data.records : []
         this.total = res.data.total
         this.listLoading = false

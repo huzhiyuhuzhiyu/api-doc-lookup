@@ -96,6 +96,7 @@ import { getCooperativeData } from '@/api/basicData/index'
 import { getQuotationInfo, getQuotationLists } from "@/api/salesManagement/index";
 import { addEnquiryManagement, getEnquiryManagementInfo, editEnquiryManagement } from '@/api/enquiryManagement/index'
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
+import { deepClone } from "@/utils";
 
 export default {
   components: {
@@ -292,8 +293,7 @@ export default {
             { prop: 'name', label: '供应商名称', type: 'input' }
           ],
           change: (id, data) => {
-            console.log(this.dataForm.cooperativePartnerName);
-            if (this.dataForm.cooperativePartnerName && this.dataForm.cooperativePartnerName !== data[0].all.name) {
+            if (this.changeNum !== 0 && this.dataForm.cooperativePartnerName && this.dataForm.cooperativePartnerName !== this.oldSupplierData.id) {
               this.$confirm('切换供应商，是否继续？', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -301,14 +301,18 @@ export default {
               }).then(() => {
                 this.supplierdata(id, data, true);
               }).catch((err) => {
-                log(err);
+                this.setOldSupplierData();
+                console.log(err);
               });
             } else {
               this.supplierdata(id, data, false);
             }
+            this.changeNum++
           },
-        }
+        },
       ],
+      changeNum: 0,
+      oldSupplierData: {}
     }
   },
   watch: {
@@ -391,7 +395,6 @@ export default {
     // 待询价工单查询子产品列表
     getProductsList(row) {
       getQuotationInfo(row.id).then(res => {
-        console.log(res);
         const { lines = [], sale = {} } = res.data
         this.dataFormTwoList
           = lines.map(item => {
@@ -439,27 +442,18 @@ export default {
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         formMethod = addEnquiryManagement
       }
-      console.log(paramsObj)
-      // formMethod(paramsObj).then(res => {
-      //   if (type == "draft") {
-      //     this.submitmethodsTitle = "保存成功"
-      //   } else {
-      //     this.submitmethodsTitle = "提交成功"
-      //   }
-      //   if (this.btnType == 'edit') {
-      //     this.btnText = "继续修改"
-      //   } else if (this.btnType == 'add' || this.btnType == 'copy') {
-      //     this.btnText = "继续新增"
-      //   } else {
-      //     if (res.data) {
-      //       this.btnLoading = false
-      //       this.handleMessage(res.data)
-      //       return
-      //     }
-      //   }
-      // }).catch(() => {
-      //   this.btnLoading = false
-      // })
+      formMethod(paramsObj).then(res => {
+        let MSG = '提交成功'
+        if (type == "draft") {
+          MSG = "保存成功"
+        }
+        if (msg === 'Success') {
+          this.$message.success(MSG)
+          this.goBack()
+        }
+      }).catch(() => {
+        this.btnLoading = false
+      })
     },
     // 设置基本信息
     setBasicInfo(row) {
@@ -474,6 +468,12 @@ export default {
       // 根据待询价工单查询产品信息
       this.getProductsList(row)
     },
+    setOldSupplierData() {
+      const data = deepClone(this.oldSupplierData) 
+      this.dataForm.cooperativePartnerName = data.name
+      this.dataForm.cooperativePartnerCode = data.code
+      this.dataForm.cooperativePartnerId = data.id
+    },
     supplierdata(id, data) {
       // 如果传入的data为空数组
       if (data.length === 0) {
@@ -482,6 +482,7 @@ export default {
         this.dataForm.cooperativePartnerCode = ''
         this.dataForm.cooperativePartnerId = ''
       } else {
+        this.oldSupplierData = deepClone(data[0].all)
         this.dataForm.cooperativePartnerName = data[0].all.name
         this.dataForm.cooperativePartnerCode = data[0].all.code
         this.dataForm.cooperativePartnerId = data[0].all.id
@@ -531,7 +532,6 @@ export default {
             productName: item.productsName
           }
         })
-        console.log(this.dataFormTwoList)
       })
     },
     // 选择待询价单弹窗

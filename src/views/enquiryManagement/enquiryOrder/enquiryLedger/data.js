@@ -92,6 +92,7 @@ export function getColumns() {
       prop: "quotationDate",
       label: "询价日期",
       minWidth: 120,
+      sortable: 'custom',
     },
     {
       prop: "bidder",
@@ -114,12 +115,14 @@ export function getColumns() {
       label: "供应商编号",
       align: "left",
       minWidth: 150,
+      sortable: 'custom',
     },
     {
       prop: "supplierName",
       label: "供应商名称",
       align: "left",
       minWidth: 150,
+      sortable: 'custom',
     },
   ]
 }

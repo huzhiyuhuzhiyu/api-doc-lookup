@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="客户编码" clearable />
+              <el-input v-model.trim="listQuery.cooperativePartnerId" placeholder="客户编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">

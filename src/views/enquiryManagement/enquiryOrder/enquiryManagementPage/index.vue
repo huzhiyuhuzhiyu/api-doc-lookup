@@ -52,42 +52,34 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_388658">
-            <el-table-column prop="quotationNo" label="询价单号" sortable="custom"/>
-            <el-table-column prop="customerCode" label="客户编码" sortable="custom"/>
-            <el-table-column prop="quotationDate" align="center" label="询价日期" sortable="custom"/>
-            <el-table-column prop="cooperativePartnerId" label="供应商编号" sortable="custom"/>
-            <el-table-column prop="supplierName" label="供应商名称" />
-            <el-table-column prop="documentStatus" label="状态" align="center">
-              <template slot-scope="scope">
-                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>
-                </div>
-                <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="approvalStatus" label="审批状态" align="center" v-if="showAppCodeFlag">
-              <template slot-scope="scope">
-                <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
-                  <el-tag>审批中</el-tag>
-                </div>
-                <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
-                  <el-tag type="success">审批通过</el-tag>
-                </div>
-                <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
-                  <el-tag type="danger">审批拒绝</el-tag>
-                </div>
-                <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
-                  <el-tag type="warning">审批撤回</el-tag>
-                </div>
-              </template>
-            </el-table-column>
+          <JNPF-table customKey="hsCodes" v-loading="loading" :data="tableDataList" :has-c="true"
+            @selection-change="(val) => selectedRow = val" :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
+            @sort-change="sortChange" ref="dataTable" custom-column>
+            <template v-for="column in columnsConfig">
+              <el-table-column v-if="typeof column.show === 'function' ? column.show() : true" :key="column.prop"
+                :prop="column.prop" :label="column.label" :min-width="column.minWidth" :sortable="column.sortable"
+                :fixed="column.fixed" :align="getAlign(column.align)">
+                <template v-if="column.slot" v-slot="scope">
+                  <template v-if="column.dictType">
+                    <span>
+                      <el-tag
+                        :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
+                          global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
+                        }}</el-tag>
+                    </span>
+                  </template>
+                </template>
+              </el-table-column>
+            </template>
             <el-table-column label="操作" width="180" fixed="right">
-              <template slot-scope="scope">
-                <el-button type="text" @click="addOrUpdateHandle(scope.row, 'edit')" size="mini"
-                  :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
-                <el-button type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" size="mini"
-                  @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn">删除</el-button>
+              <template slot-scope="{ row }">
+                <el-button :disabled="row.documentStatus == 'draft' ? false : true" size="mini" type="text" @click="addOrUpdateHandle(row, 'edit')">
+                  编辑
+                </el-button>
+                <el-button :disabled="row.documentStatus == 'draft' ? false : true" style="color: rgb(245, 108, 108)" size="mini" type="text"
+                  @click="handleDel(row.id)">
+                  删除
+                </el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -95,28 +87,15 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag"
-                      @click.native="addEnquiry(scope.row.id, 'add')">
-                      重新提交
-                    </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
-                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                      审批撤回
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'copy')">
-                      复制
+                    <el-dropdown-item @click.native="handleUserRelation(row, 'look')">
+                      详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
-            @pagination="initData" />
+          <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize" @pagination="initData" />
         </div>
       </div>
     </div>
@@ -164,7 +143,50 @@ export default {
           condition: [],
           matchLogic: ""
         },
+        columnList: [],
       },
+      columnsConfig: [
+        {
+          prop: "quotationNo",
+          label: "询价单号",
+          minWidth: 220,
+          align: "left",
+          sortable: 'custom',
+        },
+        {
+          prop: "customerCode",
+          label: "客户编码",
+          minWidth: 220,
+          align: "left",
+          sortable: 'custom',
+        },
+        {
+          prop: "quotationDate",
+          label: "询价日期",
+          minWidth: 120,
+          sortable: 'custom',
+        },
+        {
+          prop: "cooperativePartnerId",
+          label: "供应商编号",
+          minWidth: 220,
+          align: "left",
+          sortable: 'custom',
+        },
+        {
+          prop: "supplierName",
+          label: "供应商名称",
+          minWidth: 220,
+          align: "left",
+        },
+        {
+          prop: "documentStatus",
+          label: "单据状态",
+          minWidth: 120,
+          slot: true,
+          dictType: 'documentStatusList',
+        },
+      ]
     }
   },
   async created() {
@@ -178,6 +200,9 @@ export default {
     }
   },
   methods: {
+    getAlign(align) {
+      return align || 'center'
+    },
     sortChange({ prop, order }) {
       let newProp
       if (prop == 'cooperativePartnerIdText' || prop == 'cooperativePartnerCode') {

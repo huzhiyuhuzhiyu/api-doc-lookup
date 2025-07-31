@@ -36,7 +36,7 @@ export function getBasicFormSchema(dataFormRef, context) {
     },
     {
       prop: "cooperativePartnerId",
-      label: "客户编号",
+      label: "客户编码",
       value: "",
       type: "input",
       disabled: true,
@@ -92,6 +92,7 @@ export function getColumns() {
       prop: "quotationTime",
       label: "询价日期",
       minWidth: 120,
+      sortable: 'custom',
     },
     {
       prop: "bidder",

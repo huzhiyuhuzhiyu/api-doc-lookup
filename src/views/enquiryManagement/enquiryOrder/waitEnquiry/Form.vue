@@ -235,30 +235,45 @@ export default {
           label: '样品报价',
           type: 'input',
           minWidth: 150,
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: ["样品报价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+            { required: true, trigger: 'blur' },
+            { validator: this.formValidate('positiveNumber', '样品报价必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }]
         },
         {
           prop: 'procurementAmounts',
           label: '采购价',
           type: 'input',
           minWidth: 180,
+          itemRules: [{ validator: this.formValidate({ type: 'noEmtry', params: ["采购价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '采购价必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }]
         },
         {
           prop: 'moldAmounts',
           label: '模具费',
           type: 'input',
           minWidth: 160,
+          itemRules: [{ validator: this.formValidate({ type: 'noEmtry', params: ["模具费不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '模具费必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }]
         },
         {
           prop: 'minNumStr',
           label: '起订量',
           type: 'input',
           minWidth: 80,
+          itemRules: [{ validator: this.formValidate({ type: 'noEmtry', params: ["起订量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '起订量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }]
         },
         {
           prop: 'deliveryDate',
           label: '交期',
           type: 'date',
           minWidth: 160,
+          itemRules: [{ validator: this.formValidate({ type: 'noEmtry', params: ["交期不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
+          { required: true, trigger: 'change' }]
         },
       ],
       formData: {
@@ -331,7 +346,10 @@ export default {
             prop: 'cooperativePartnerId',
             label: '供应商',
             minWidth: '220px',
-            options: supplierOption
+            options: supplierOption,
+            itemRules: [
+              { validator: this.formValidate({ type: 'noEmtry', params: ["供应商不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
+              { required: true, trigger: 'change' }],
           })
         }
       } catch (error) {

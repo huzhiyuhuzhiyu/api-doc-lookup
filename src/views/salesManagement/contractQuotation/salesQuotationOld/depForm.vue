@@ -110,7 +110,7 @@
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'sampleQuotationFlag'"
                           :rules='productRules.sampleQuotationFlag'>
-                          <el-select v-model="dataForm.sampleQuotationFlag" placeholder="请选择是否样品报价" style="width: 100%;"
+                          <el-select v-model="scope.row.sampleQuotationFlag" placeholder="请选择是否样品报价" style="width: 100%;"
                             :disabled="status">
                             <el-option v-for="(item, index) in sampleQuotationFlagOption" :key="index" :label="item.text"
                               :value="item.value"></el-option>
@@ -193,9 +193,9 @@
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'deliveryDate'"
                           :rules='productRules.deliveryDate'>
-                          <el-input :title="scope.row.deliveryDate" v-model="scope.row.deliveryDate" placeholder="请输入交期"
-                            :disabled="status" maxlength="11">
-                          </el-input>
+                          <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                            style="width: 100%;" placeholder="请选择交期" :disabled="status">
+                          </el-date-picker>
                         </el-form-item>
                       </template>
                     </el-table-column>
@@ -662,8 +662,8 @@ export default {
       tableFlag: false,
       formVisible: false,
       sampleQuotationFlagOption: [
-        { text: '是', value: 1 },
-        { text: '否', value: 0 },
+        { text: '是', value: true },
+        { text: '否', value: false },
       ],
       renderTree: false
     }

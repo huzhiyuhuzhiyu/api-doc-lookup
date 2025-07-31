@@ -124,7 +124,7 @@ export default {
           label: '包装方式',
           type: 'select',
           options: this.getDictDataSync('packaging'),
-          minWidth: 120,
+          minWidth: 170,
         },
         {
           prop: 'deliveryQuantity',

@@ -1,9 +1,9 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 
-import {buttonList, getColumns, getSearchList} from "./data";
+import {getButtonList, getColumns, getSearchList} from "./data";
 import {getPrintBusInfo} from "@/api/system/printDev";
-import Form from './Form.vue'
+import packingForm from './module/packingForm.vue'
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 import {getStockMoveList} from "@/api/salesManagement";
@@ -11,14 +11,16 @@ import {getClassAttributeListByCode} from "@/api/masterDataManagement";
 import {getQuotationdatasendlist} from "@/api/orderFollow";
 import {deepClone} from "@/utils";
 import {detailpurchaseOrderList, purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders";
+import autoRecBatchPacking from "./module/components/autoRecBatchPacking.vue";
 
 export default {
   name: "index",
   components: {
+    autoRecBatchPacking,
     BatchPrintBrowse,
     PrintDialog,
     SuperQuery,
-    Form
+    packingForm
   },
   props: {
     warehouseCode: {
@@ -29,7 +31,8 @@ export default {
   data() {
     return {
       loading: false,
-      visible: false,
+      autoRecBatchPackingFormVisible: false,
+      packingFormVisible: false,
       printVisible: false,
       printQuery: {
         category: ''
@@ -50,10 +53,11 @@ export default {
       initListQuery: {},
       searchList: getSearchList('default'),
       listQuery: {},
-      btnList: buttonList,
+      btnList: getButtonList('default'),
       columnList: [],
       columnsConfig: getColumns('default'),
 
+      selectedRow: [],
       classAttributeList: [],
       businessTypeData: [],
       activeProcess: '',
@@ -61,12 +65,11 @@ export default {
     }
   },
   computed: {
-    businessTypeConfig(){
+    businessTypeConfig() {
       return {
         // 生产领料入库
         outbound_pick_out: {
           api: purPurchaseReceiptReturnGoodsList,
-          columns: getColumns('outbound_pick_out'),
           initListQuery: {
             orderNo: '',
             cooperativePartnerName: '',
@@ -95,15 +98,12 @@ export default {
         // 销售发货出库
         outbound_sale_send: {
           api: getQuotationdatasendlist,
-          columns: getColumns('outbound_sale_send'),
           initListQuery: {
             orderNo: '',
             cooperativePartnerName: '',
-            cooperativePartnerCode: '',
-            priority: '',
             notifyType: "sale",
             returnDeliveryType: 'delivery',
-            deliveryStatus: 'confirm',
+            deliveryStatus: '',
             approvalStatus: 'ok',
             orderItems: [
               {
@@ -123,7 +123,6 @@ export default {
         // 销售退货入库
         inbound_sale_return: {
           api: getQuotationdatasendlist,
-          columns: getColumns('inbound_sale_return'),
           initListQuery: {
             orderNo: '',
             cooperativePartnerName: '',
@@ -152,7 +151,6 @@ export default {
         // 采购收货入库
         inbound_purchase: {
           api: detailpurchaseOrderList,
-          columns: getColumns('inbound_purchase'),
           initListQuery: {
             orderNo: '',
             cooperativePartnerName: '',
@@ -177,7 +175,6 @@ export default {
         // 采购退货出库
         outbound_purchase: {
           api: purPurchaseReceiptReturnGoodsList,
-          columns: getColumns('inbound_purchase'),
           initListQuery: {
             orderNo: '',
             cooperativePartnerName: '',
@@ -202,7 +199,6 @@ export default {
         // 外协发料出库
         outbound_external_send: {
           api: getQuotationdatasendlist,
-          columns: getColumns('outbound_external_send'),
           initListQuery: {
             orderNo: '',
             cooperativePartnerName: '',
@@ -227,7 +223,6 @@ export default {
         // 外协退料入库
         inbound_external_return: {
           api: getQuotationdatasendlist,
-          columns: getColumns('inbound_external_return'),
           initListQuery: {
             orderNo: '',
             cooperativePartnerName: '',
@@ -254,7 +249,6 @@ export default {
         // 外协收货入库
         inbound_external: {
           api: purPurchaseReceiptReturnGoodsList,
-          columns: getColumns('inbound_external'),
           initListQuery: {
             orderNo: '',
             cooperativePartnerName: '',
@@ -280,7 +274,6 @@ export default {
         // 外协退货出库
         outbound_external: {
           api: purPurchaseReceiptReturnGoodsList,
-          columns: getColumns('inbound_external'),
           initListQuery: {
             orderNo: '',
             cooperativePartnerName: '',
@@ -311,11 +304,15 @@ export default {
     },
     // 出库
     isOutbound() {
-      return ['outbound_sale_send'].includes(this.activeProcess);
+      return ['outbound_purchase', 'outbound_external_send', 'outbound_external'].includes(this.activeProcess);
     },
     // 入库
     isInbound() {
-      return ['inbound_purchase', 'inbound_sale_return'].includes(this.activeProcess);
+      return ['inbound_purchase', 'inbound_sale_return', 'inbound_external_return', 'inbound_external'].includes(this.activeProcess);
+    },
+    // 装箱
+    isPacking() {
+      return ['outbound_sale_send'].includes(this.activeProcess);
     }
   },
   watch: {
@@ -352,9 +349,73 @@ export default {
       }
     },
 
+    validateSelectedRows() {
+      if (!this.selectedRow.length) {
+        this.$message.warning('请至少选择一条数据');
+        return false;
+      }
+      if (this.selectedRow.length > 1) {
+        this.$message.warning('只能选择一条数据');
+        return false;
+      }
+      return true;
+    },
+
+    handleButtonClick(type) {
+      switch (type) {
+        case 'outboundSaleSendConfirm':
+          if (!this.validateSelectedRows()) return;
+          const outboundSaleSendConfirmStatus = new Set(['waiting', 'finished'])
+          if (outboundSaleSendConfirmStatus.has(this.selectedRow[0].deliveryStatus)) {
+            this.$message.warning('当前状态不允许操作');
+            return;
+          }
+          this.onPackingForm(this.selectedRow[0], 'confirm')
+          break;
+      }
+    },
+
+    // 装箱
+    handlePacking(row) {
+      this.onPackingForm(row, 'packing')
+    },
+    // 装箱&批次编辑
+    handlePackingEdit(row, actionType, btnType) {
+      this.autoRecBatchPackingFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs.autoRecBatchPacking.init({
+          id: row.id,
+          formType: actionType,
+          type: btnType,
+        })
+      })
+    },
+
+    handleOutbound(row) {
+
+    },
+
+    handleInbound(row) {
+
+    },
+
+    onPackingForm(row, btnType) {
+      this.packingFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.packingForm.init({
+          id: row.id,
+          btnType: btnType,
+          businessType: this.activeProcess,
+          classAttributeList: this.classAttributeList,
+          warehouseCode: this.warehouseCode
+        })
+      })
+    },
+
     switchBusinessType(businessType) {
       const config = this.businessTypeConfig[businessType];
       if (!config) return;
+      this.btnList = getButtonList(businessType)
       this.columnsConfig = getColumns(businessType);
       this.searchList = getSearchList(businessType);
       this.initListQuery = config.initListQuery || {};
@@ -384,7 +445,7 @@ export default {
     },
 
     printView(row, enCode, fullName) {
-      this.selectArr = [row]
+      this.selectedRow = [row]
       this.enCode = enCode
       this.fullName = fullName
       this.printVisible = true
@@ -400,7 +461,7 @@ export default {
           return this.$message.warning('未找到相应打印模版')
         }
         const id = res.data.id
-        const printData = this.selectArr.map(item => ({
+        const printData = this.selectedRow.map(item => ({
           formId: item.id,
           id: id
         }))
@@ -409,28 +470,12 @@ export default {
       }
     },
 
-    handleButtonClick(type) {
-    },
-
-    handleColumnClick(row, type) {
-      switch (type) {
-        case 'look':
-        case 'edit':
-        case 'copy':
-          this.visible = true
-          this.$nextTick(() => {
-            this.$refs.Form.init(row.id, type)
-          })
-          break;
-        default:
-      }
-    },
-
-    close(isInitData = true) {
-      this.visible = false
-      this.BindingVisible = false
+    async close(isInitData = true) {
+      this.packingFormVisible = false
+      this.autoRecBatchPackingFormVisible = false
       if (!isInitData) return
-      this.initData()
+      await this.getStockMoveList()
+      await this.initData()
     },
 
     sortChange({prop, order}) {
@@ -554,8 +599,10 @@ export default {
           v-loading="loading"
           :data="tableData"
           :row-key="'id'"
+          :hasC="true"
           fixedNO
           :setColumnDisplayList="columnList"
+          @selection-change="(val)=> selectedRow = val"
           @sort-change="sortChange"
           ref="dataTable"
           custom-column>
@@ -592,12 +639,27 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="160" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text"
-                @click="handleColumnClick(row, 'look')">
-                详情
+              <el-button v-if="isOutbound" size="mini" type="text"
+                @click="handleOutbound(row)">
+                出库
               </el-button>
+              <el-button v-if="isInbound" size="mini" type="text"
+                @click="handleInbound(row)">
+                入库
+              </el-button>
+              <template v-if="isPacking">
+                <el-button size="mini" type="text" :disabled="row.deliveryStatus === 'arranged'"
+                  @click="handlePacking(row)">
+                  装箱
+                </el-button>
+                <el-button size="mini" type="text" :disabled="row.deliveryStatus === 'arranged'"
+                  @click="handlePackingEdit(row,'packing','edit')">
+                  编辑装箱单
+                </el-button>
+              </template>
+
             </template>
           </el-table-column>
         </JNPF-table>
@@ -611,7 +673,8 @@ export default {
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
-    <Form ref="Form" v-if="visible" @close="close"/>
+    <autoRecBatchPacking ref="autoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="close"/>
+    <packingForm ref="packingForm" v-if="packingFormVisible" @close="close"/>
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
     <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>

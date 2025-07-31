@@ -35,22 +35,6 @@ export function getBasicFormSchema(dataFormRef, context) {
       itemRules: [{required: true, trigger: "blur"}],
     },
     {
-      prop: "orderNo",
-      label: "客户单号",
-      value: "",
-      type: "input",
-      disabled: true,
-      itemRules: [{required: true, trigger: "blur"}],
-    },
-    {
-      prop: "orderNo",
-      label: "来源单号",
-      value: "",
-      type: "input",
-      disabled: true,
-      itemRules: [{required: true, trigger: "blur"}],
-    },
-    {
       prop: "partnerName",
       label: "客户名称",
       value: "",

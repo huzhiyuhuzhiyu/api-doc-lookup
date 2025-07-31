@@ -385,11 +385,11 @@ export default {
           </template>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text"
+              <el-button size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
                 @click="handleColumnClick(row, 'edit')">
                 编辑
               </el-button>
-              <el-button style="color: rgb(245, 108, 108)" size="mini" type="text"
+              <el-button style="color: rgb(245, 108, 108)" size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
                 @click="handleColumnClick(row, 'delete')">
                 删除
               </el-button>

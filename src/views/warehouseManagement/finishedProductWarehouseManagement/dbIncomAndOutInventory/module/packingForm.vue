@@ -1,34 +1,30 @@
 <script>
 import {deepClone} from "@/utils";
-import {getBasicFormSchema} from "./data";
+import {getPackingBasicFormSchema} from "./data";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import flowMixin from "@/mixins/generator/flowMixin";
-import busFlow from "@/mixins/generator/busFlow";
-import {getsaleOrderDetailList} from "@/api/salesManagement/assemblyOrders";
 import {getAddressInfo} from "@/api/basicData";
-import * as _ from "highcharts";
-import changeAddress from "@/views/salesManagement/shippingnotice/saleMetalworking/changeAddress.vue";
-import {addQuotationsendlist, editQuotationMsendlist, getQuotationsendlist} from "@/api/salesManagement";
+import {confirmOrdersNotice, getQuotationsendlist} from "@/api/salesManagement";
+import autoRecBatchPacking from "./components/autoRecBatchPacking.vue";
 
 export default {
-  name: "Form",
-  components: {changeAddress, TableFormProduct},
-  mixins: [flowMixin, busFlow],
+  name: "packingForm",
+  components: {autoRecBatchPacking, TableFormProduct},
   data() {
     return {
       title: '销售发货通知单',
       btnType: '',
       loading: false,
       btnLoading: false,
-      addressVisible: false,
+      autoRecBatchPackingFormVisible: false,
       globalPackagingMethod: '',
-      originalFormData: {},
+      classAttributeList: [],
+      warehouseCode: '',
+      businessType: '',
       dataForm: {
         notifyType: 'sale',
         returnDeliveryType: 'delivery',
         delivery: 'deliver_goods',
         inspectionResults: 'qualified',
-        documentType: 'sale_deliver',
         exchangeGoodsFlag: false,
         orderNo: '',
         cooperativePartnerId: '',
@@ -49,13 +45,13 @@ export default {
       linesListItems: [
         {
           prop: 'ordersNo',
-          label: '订单号',
+          label: '客户订单号',
           type: 'view',
           minWidth: 180,
         },
         {
           prop: 'drawingNo',
-          label: '型号',
+          label: '产品型号',
           type: 'view',
           minWidth: 220,
         },
@@ -90,28 +86,62 @@ export default {
           minWidth: 150,
         },
         {
-          prop: 'notifiedQuantity',
+          prop: 'noticeNum',
           label: '已通知数',
           type: 'view',
           minWidth: 150,
         },
         {
-          prop: 'warehouseDelivery',
+          prop: 'packingQuantity',
           label: '仓库发货数',
           type: 'view',
           minWidth: 150,
         },
         {
-          prop: 'onlineQuantity',
+          prop: 'inventoryQuantity ',
+          label: '当前库存',
+          type: 'view',
+          minWidth: 150,
+        },
+        {
+          prop: 'onlineNum',
           label: '线上数',
           type: 'view',
           minWidth: 150,
         },
         {
-          prop: 'availableQuantity',
-          label: '当前库存',
+          prop: 'onlineInventoryNum',
+          label: '线上库存',
           type: 'view',
           minWidth: 150,
+        },
+        {
+          prop: 'deliveryQuantity',
+          label: '本次发货数',
+          type: 'view',
+          minWidth: 160
+        },
+        {
+          prop: 'unrecommendQuantity',
+          label: '未推荐数',
+          type: 'view',
+          minWidth: 150,
+        },
+        {
+          prop: 'urgentQuantity',
+          label: '加急数',
+          type: 'input',
+          minWidth: 160,
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'decimal', params: [20, 4, null, (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：加急数${ errMsg }`)
+                }]
+              }),
+              trigger: ['blur', 'change'],
+            },
+          ],
         },
         {
           prop: 'packagingMethod',
@@ -121,127 +151,61 @@ export default {
           minWidth: 170,
         },
         {
-          prop: 'waitDeliverNum',
-          label: '待发货数量',
+          prop: 'oil',
+          label: '机型',
           type: 'view',
-          minWidth: 120,
+          minWidth: 150,
         },
         {
-          prop: 'deliveryQuantity',
-          label: '本次发货数',
+          prop: 'specialRequire',
+          label: '包装要求',
+          type: 'input',
+          minWidth: 180,
+        },
+        {
+          prop: 'accuracyLevel',
+          label: '制令号',
           type: 'input',
           minWidth: 160,
-          itemRules: [
-            {
-              validator: this.formValidate('noZero', '本次发货数不能为0', (errMsg) => {
-                this.$message.error(errMsg)
-              }), trigger: ['blur', 'change']
-            },
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['本次发货数不能为空', (errMsg) => {
-                  this.$message.error(`	本次发货数不能为空`)
-                }]
-              }), trigger: 'blur',
-            },
-            {
-              validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
-                }]
-              }),
-              trigger: ['blur', 'change'],
-            },
-            {required: true, message: '本次发货数不能为空', trigger: ['blur', 'change'],},
-          ]
         },
         {
-          prop: "remark",
-          label: "备注",
+          prop: 'sealingCoverTyping',
+          label: '打字内容',
+          type: 'input',
+          minWidth: 160,
+        },
+        {
+          prop: "saleLineRemark",
+          label: "销售备注",
           value: "",
           minWidth: 220,
-          type: "input",
+          type: "view",
         }
       ],
+      confirmProps: new Set([
+        'ordersNum',
+        'packingQuantity',
+        'onlineNum',
+        'deliveryQuantity',
+        'urgentQuantity'
+      ]),
+      // 装箱操作特有的字段
+      packingProps: new Set([
+        'oil',
+        'sealingCoverTyping',
+        'onlineInventoryNum',
+        'unrecommendQuantity'
+      ]),
       linesTableHeight: 0,
-      productRefType: '',
-      addProductProps: {
-        title: '选择产品',
-        activeType: '',
-        renderTree: false,
-        multiple: true,
-        treeTitle: '产品分类',
-        methodArr: {},
-        listMethod: getsaleOrderDetailList,
-        tableItems: [
-          {prop: 'orderNo', label: '订单号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-          {prop: 'productCode', label: '产品编码', sortable: 'custom'},
-          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-          {prop: 'waitDeliverNum', label: '待发货数量', minWidth: '160px', sortable: 'custom'},
-          {prop: 'deliveryDate', label: '交货日期', minWidth: '160px', sortable: 'custom'},
-          {prop: 'remark', label: '备注', minWidth: '160px'},
-          {prop: 'createTime', label: '创建时间', sortable: 'custom'}
-        ],
-        listRequestObj: {
-          cooperativePartnerId: '',
-          deliverQueryFlag: 1,
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 't1.create_time'
-            }
-          ]
-        },
-        searchList: [
-          {prop: 'productName', label: '产品名称', type: 'input'},
-          {prop: 'productCode', label: '产品编码', type: 'input'},
-        ]
-      },
-
-      approvalFlag: false,
-      flowData: {},
-      flowTemplateJson: {},
-      flowTaskOperatorRecordList: [],
 
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
-      actions: {
-        edit: async (id) => {
-          await this.getDetail(id);
-        },
-        look: async (id) => {
-          await this.getDetail(id);
-        },
-        copy: async (id) => {
-          await this.getDetail(id);
-          await this.getOrderNoConfig();
-        },
-        default: async (data) => {
-          this.defaultInit(data);
-          await this.getOrderNoConfig();
-        },
-      },
-      apiMethodActions: {
-        edit: {
-          api: editQuotationMsendlist,
-          deliveryStatus: '',
-        },
-        add: {
-          api: addQuotationsendlist,
-          deliveryStatus: 'waiting',
-        },
-        copy: {
-          api: addQuotationsendlist,
-          deliveryStatus: 'waiting',
-        }
+      deliveryStatusMap: {
+        ready: 'arranged',
+        arranged: 'picked',
+        picked: 'verified',
+        verified: 'confirmed',
+        confirmed: 'finished',
       }
     }
   },
@@ -249,47 +213,71 @@ export default {
     activeType() {
       return this.btnType !== 'look'
     },
+    isEdit() {
+      return this.btnType === 'confirm' && this.dataForm.deliveryStatus === 'ready'
+    },
+    isConfirm() {
+      return this.btnType === 'confirm'
+    },
+    isPacking() {
+      return this.btnType === 'packing'
+    },
     totalNum() {
       return this.linesList.reduce((sum, item) => sum + (parseFloat(item.deliveryQuantity) || 0), 0);
     },
   },
   mounted() {
-    this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
+    this.basicFormSchema = getPackingBasicFormSchema(this.$refs.dataForm, this)
   },
   methods: {
-    async init(id = '', type, approvalFlag, prefillData = []) {
-      this.btnType = type
-      this.approvalFlag = approvalFlag
-      this.title = this.getTitle(type)
-      this.getBusInfo('b026')
+    async init(params) {
+      const {id, btnType, businessType, classAttributeList, warehouseCode} = params;
+      this.btnType = btnType
+      this.title = this.getTitle(btnType)
+      this.classAttributeList = classAttributeList
+      this.warehouseCode = warehouseCode
+      this.businessType = businessType
+      this.updateLinesListItems()
+      await this.getDetail(id);
 
-      if (id && this.actions[type]) {
-        await this.actions[type](id);
-      } else {
-        await this.actions.default(prefillData);
-      }
-
-      this.dataForm.approvalFlag && this.getFlowDetail(id)
       this.$nextTick(() => {
         this.$refs.dataForm.$refs.main.clearValidate()
         this.refreshTableHeight()
       })
     },
 
-    async defaultInit(prefillData) {
-      const firstData = prefillData[0]
-      this.dataForm = _.merge({}, this.dataForm, firstData)
-      this.dataForm.partnerName = firstData.cooperativePartnerName
-      this.dataForm.partnerCode = firstData.cooperativePartnerCode
-      await this.getAddressInfo(firstData.cooperativePartnerId)
-      this.linesList = prefillData.map(item => ({
-        ...item,
-        notifyType: 'sale',
-        ordersLineId: item.id,
-        ordersNum: item.num,
-        productDrawingNo: item.drawingNo,
-        deliveryQuantity: item.waitDeliverNum
-      })) || []
+    updateLinesListItems() {
+      this.linesListItems = this.linesListItems.map(item => {
+        if (item.prop === 'urgentQuantity') {
+          return {...item, render: this.isConfirm}
+        }
+
+        if (this.confirmProps.has(item.prop)) {
+          return {...item, render: this.isConfirm}
+        } else if (this.packingProps.has(item.prop)) {
+          return {...item, render: this.isPacking}
+        }
+
+        return item
+      })
+    },
+
+    handleOpenTransitionPage(actionType, btnType) {
+      switch (actionType) {
+        case 'packing':
+        case 'autoRecommend':
+          this.autoRecBatchPackingFormVisible = true;
+          this.$nextTick(() => {
+            this.$refs.autoRecBatchPacking.init({
+              id: this.dataForm.id,
+              formType: actionType,
+              type: btnType,
+              formData: this.dataForm
+            })
+          })
+          break;
+        default:
+      }
     },
 
     async getAddressInfo(id) {
@@ -324,17 +312,6 @@ export default {
       };
     },
 
-    globalChange(val, prop) {
-      this.linesList.forEach(item => {
-        item[prop] = val;
-      });
-    },
-
-    async getOrderNoConfig() {
-      const {number} = await this.$store.dispatch('base/getOrderNoConfig', 'SSDH')
-      this.dataForm.orderNo = `${ number }`
-    },
-
     async refreshTableHeight(...args) {
       if (args.length) await new Promise(resolve => setTimeout(resolve, 500))
       const mainRef = this.$refs.main
@@ -345,74 +322,12 @@ export default {
       this.linesTableHeight = maxHeight
     },
 
-    createdObj() {
-      return this.linesListItems.reduce((acc, item) => {
-        acc[item.prop] = '';
-        return acc;
-      }, {});
-    },
-
-    selectProductRefOpenDialog() {
-      this.addProductProps.listRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      this.$refs.ComSelectProductRef.openDialog()
-    },
-
-    contentChanges(dataOrIndex, prop, value) {
-      if (Array.isArray(dataOrIndex)) {
-        this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
-      } else if (prop) {
-        this.linesList[dataOrIndex][prop] = value
-      }
-    },
-
-    submitAddress(data) {
-      const {
-        recipient,
-        phone,
-        country,
-        province,
-        city,
-        area,
-        address,
-        countryText,
-        provinceText,
-        cityText,
-        areaText
-      } = data;
-
-      this.dataForm = {
-        ...this.dataForm,
-        recipient,
-        phone,
-        country,
-        province,
-        city,
-        area,
-        address,
-        defaultAddress: country === 'CN'
-          ? `${ countryText }${ provinceText }${ cityText }${ areaText }${ address }`
-          : `${ countryText }${ address }`
-      };
-    },
-
-    async submitAllProduct(id, data) {
-      const newData = data.map(item => ({
-        ...this.createdObj(),
-        ...item.all,
-        notifyType: 'sale',
-        ordersLineId: item.id,
-      }));
-
-      this.linesList = [...this.linesList, ...newData]
-    },
-
     getTitle(type) {
       switch (type) {
-        case 'add':
-        case 'copy':
-          return `创建${ this.title }`
-        case 'edit':
-          return `编辑${ this.title }`
+        case 'packing':
+          return `${ this.title }装箱`
+        case 'confirm':
+          return `${ this.title }确认`
         case 'look':
           return `查看${ this.title }`
       }
@@ -426,9 +341,11 @@ export default {
         if (msg === 'Success') {
           const {country, countryName, provinceName, cityName, areaName, address} = data.notice
           this.dataForm = data.notice
-          this.originalFormData = deepClone(this.dataForm)
           this.fileList = this.fileListMap('', data.attachmentList)
-          this.linesList = data.noticeLineList
+          this.linesList = data.noticeLineList.map(item => ({
+            ...item,
+            urgentNumber: item.urgentNumber || 0,
+          }))
           this.dataForm.defaultAddress = country === 'CN'
             ? `${ countryName }${ provinceName }${ cityName }${ areaName }${ address }`
             : `${ countryName }${ address }`
@@ -436,6 +353,20 @@ export default {
         }
       } catch (err) {
         this.loading = false
+      }
+    },
+
+    globalChange(val, prop) {
+      this.linesList.forEach(item => {
+        item[prop] = val;
+      });
+    },
+
+    contentChanges(dataOrIndex, prop, value) {
+      if (Array.isArray(dataOrIndex)) {
+        this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
+      } else if (prop) {
+        this.linesList[dataOrIndex][prop] = value
       }
     },
 
@@ -464,30 +395,20 @@ export default {
       }
     },
 
-    async handleSubmit(type) {
-      if (!this.linesList.length) return this.$message.error('无产品信息，请添加产品！')
-      // 校验表单
+    async handleSubmit() {
       this.btnLoading = true
-      const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
-      const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
-      if (!valid_1 || !valid_2) return this.btnLoading = false
-      this.dataForm.documentStatus = type
       const deepParams = deepClone(this.dataForm)
-      deepParams.deliveryStatus = this.apiMethodActions[this.btnType].deliveryStatus || this.dataForm.deliveryStatus
-      const attachmentList = this.fileListMap(type, this.fileList)
+      const deliveryStatus = this.deliveryStatusMap[this.dataForm.deliveryStatus]
+      deepParams.deliveryStatus = deliveryStatus ? deliveryStatus : this.dataForm.deliveryStatus
+      const attachmentList = this.fileListMap('submit', this.fileList)
       const params = {
         notice: deepParams,
         noticeLineList: this.linesList,
         attachmentList: attachmentList,
-        flowData: this.flowData
       }
-      if (this.btnType === 'copy') {
-        params.notice.id = ''
-      }
-      let MSG = '提交成功'
+      let MSG = '确认成功'
       try {
-        const apiMethod = this.apiMethodActions[this.btnType].api
-        const res = await apiMethod(params)
+        const res = await confirmOrdersNotice(params)
         const {msg} = res
         if (msg === 'Success') {
           this.$message.success(MSG)
@@ -516,14 +437,27 @@ export default {
               <el-page-header @back="goBack" :content="title"/>
               <div class="options">
                 <template v-if="activeType">
-                  <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
-                    保存草稿
-                  </el-button>
-                  <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
-                    保存并提交
-                  </el-button>
+                  <template v-if="btnType === 'confirm'">
+                    <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">
+                      确认
+                    </el-button>
+                  </template>
+                  <template v-else-if="btnType === 'packing'">
+                    <el-button type="primary" :loading="btnLoading" @click="handleOpenTransitionPage('packing','add')">
+                      装箱单
+                    </el-button>
+                    <el-button type="primary" :loading="btnLoading" @click="handleOpenTransitionPage('autoRecommend','add')">
+                      自动推荐批次
+                    </el-button>
+                    <el-button type="primary" :loading="btnLoading">
+                      完成
+                    </el-button>
+                    <el-button type="danger" :loading="btnLoading">
+                      箱单撤回
+                    </el-button>
+                  </template>
                 </template>
-                <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+                <el-button @click="$emit('close',false)">{{ $t('common.cancelButton') }}</el-button>
               </div>
             </div>
             <div class="main" v-loading="loading" ref="main">
@@ -532,45 +466,34 @@ export default {
                   <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
                       <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                        :btnType="btnType"/>
+                        btnType="look"/>
                     </el-collapse-item>
                     <el-collapse-item class="productInfo"
                       title="产品信息"
                       name="productInfo">
-                      <div class="TableForm_title">
-                      </div>
                       <TableForm-product
                         @input="contentChanges"
                         :value="linesList"
                         :hasToolbar="false"
                         ref="tableForm"
+                        :btnType="isEdit ? '' : 'look'"
                         :tableItems="linesListItems"
-                        :btnType="btnType"
                         :hasActionbar="false"
                         :tableProps="{
                         is: 'JNPF-table',
                         fixedNO: true,
-                        hasC: activeType,
+                        hasC: false,
                         height: linesTableHeight,
                         rowKey: 'id',
                         defaultExpandAll: true,
-                        customColumn: true
+                        customColumn: true,
                       }">
                         <template slot="top">
                           <div class="tableTopContainer">
                             <div class="left">
-                              <template v-if="activeType">
-                                <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog()">
-                                  选择产品
-                                </el-button>
-                                <span>|</span>
-                                <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
-                                  @click="$refs.tableForm.batchDelete()">批量删除
-                                </el-button>
-                              </template>
                             </div>
                             <div class="right">
-                              <template v-if="activeType">
+                              <template v-if="isEdit">
                                 <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
                                   <el-form-item label="包装">
                                     <el-select v-model="globalPackagingMethod" placeholder="包装"
@@ -598,16 +521,14 @@ export default {
                   </el-collapse>
                 </el-tab-pane>
                 <el-tab-pane label="附件" name="annex">
-                  <UploadWj v-model="fileList" :disabled="!activeType" :detailed="!activeType"></UploadWj>
+                  <UploadWj v-model="fileList" :disabled="true" :detailed="true"></UploadWj>
                 </el-tab-pane>
               </el-tabs>
             </div>
           </div>
         </div>
       </div>
-      <changeAddress v-if="addressVisible" ref="addressRef" @getChangeAddress="submitAddress"></changeAddress>
-      <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false"
-        @change="submitAllProduct"/>
+      <autoRecBatchPacking ref="autoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="autoRecBatchPackingFormVisible = false"/>
     </div>
   </transition>
 </template>

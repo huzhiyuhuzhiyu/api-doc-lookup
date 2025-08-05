@@ -50,21 +50,21 @@ export default {
           minWidth: 120,
           itemRules: [
             {
-              validator: this.formValidate('noZero', '比例不能为0', (errMsg) => {
-                this.$message.error(errMsg)
+              validator: this.formValidate('noZero', '比例不能为0', (errMsg,rowIndex) => {
+                this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
               }), trigger: ['blur', 'change']
             },
             {
               validator: this.formValidate({
-                type: 'noEmtry', params: ['比例不能为空', (errMsg) => {
-                  this.$message.error(`	比例不能为空`)
+                type: 'noEmtry', params: ['比例不能为空', (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
                 }]
               }), trigger: 'blur',
             },
             {
               validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
+                type: 'decimal', params: [20, 4, null, (errMsg,rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：比例${ errMsg }`)
                 }]
               }),
               trigger: ['blur', 'change'],

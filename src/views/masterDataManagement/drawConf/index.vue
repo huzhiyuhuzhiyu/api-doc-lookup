@@ -1,8 +1,8 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {buttonList} from "@/views/salesManagement/shipmentNote/hsCodes/data";
-import Form from '@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue'
-import {getQuotationdatasendlist} from "@/api/salesManagement";
+import {buttonList, getColumns} from "./data";
+import Form from './Form.vue'
+import {getPurPurchaseDrawingPage} from "@/api/drawConf";
 
 export default {
   name: "index",
@@ -14,13 +14,14 @@ export default {
     return {
       loading: false,
       visible: false,
-      tableData: [],
-      total: 0,
+      btnList: buttonList,
       superQueryVisible: false,
       superQueryJson: [],
       initListQuery: {
-        notifyType: "sale",
-        returnDeliveryType: 'delivery',
+        orderNo: '',
+        cooperativePartnerName: '',
+        customerProductDrawingNo: '',
+        drawingNo: '',
         orderItems: [
           {
             asc: false,
@@ -28,7 +29,7 @@ export default {
           },
           {
             asc: false,
-            column: 'create_time'
+            column: 't1.create_time'
           }
         ],
         superQuery: {},
@@ -36,21 +37,10 @@ export default {
         pageSize: 20
       },
       listQuery: {},
-      btnList: buttonList,
+      tableData: [],
+      total: 0,
       columnList: [],
-      columnsConfig: [
-        {prop: 'orderNo', label: '单号', minWidth: 120, sortable: 'custom'},
-        {prop: 'partnerCode', label: '客户编码', minWidth: 200, sortable: 'custom'},
-        {prop: 'partnerName', label: '客户名称', minWidth: 120, sortable: 'custom'},
-        {prop: 'deliverDate', label: '发货日期', minWidth: 120, sortable: 'custom'},
-        {prop: "salesName", label: "销售员", minWidth: 120,},
-        {prop: 'orderDate', label: '下单日期', minWidth: 140, sortable: 'custom'},
-        {prop: 'deliveryDate', label: '计划交期', minWidth: 140, sortable: 'custom'},
-        {prop: 'purchaseReplyDate', label: '采购回复交期', minWidth: 140, sortable: 'custom'},
-        {prop: 'recipient', label: '收件人', minWidth: 120, sortable: 'custom'},
-        {prop: 'phone', label: '收件人电话', minWidth: 120, sortable: 'custom'},
-        {prop: 'priority', label: '发货优先级', minWidth: 120, sortable: 'custom', slot: true, dictType: 'shippingPriority'},
-      ],
+      columnsConfig: getColumns(),
       selectedRow: [],
     }
   },
@@ -62,7 +52,7 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await getQuotationdatasendlist(this.listQuery);
+        const res = await getPurPurchaseDrawingPage(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -85,12 +75,13 @@ export default {
 
     handleButtonClick(type) {
       switch (type) {
-        case 'confirm':
+        case 'drawConf':
           if (!this.validateSelectedRows()) return;
-          this.visible = true
+          if (this.selectedRow[0]?.status) return this.$message.warning('已进行过图纸确认，不能重复操作');
+          this.visible = true;
           this.$nextTick(() => {
-            this.$refs.Form.init(this.selectedRow[0].id, 'confirm')
-          })
+            this.$refs.Form.init(this.selectedRow[0]?.purPurchaseOrderLineId, 'add');
+          });
           break;
         default:
       }
@@ -104,7 +95,7 @@ export default {
 
     sortChange({prop, order}) {
       let newProp = ''
-      if (prop === 'createTime') {
+      if (prop === 't.create_time') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -115,6 +106,9 @@ export default {
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
+    },
+    getAlign(align) {
+      return align || 'center'
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
@@ -137,15 +131,36 @@ export default {
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
-        <el-form @submit.native.prevent>
-          <el-col :span="8">
+        <el-form @submit.native.prevent @keyup.enter.native="search()">
+          <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.keyword"
-                placeholder="请输入商品名称"
-                clearable @keyup.enter.native="search()"/>
+              <el-input v-model.trim="listQuery.orderNo"
+                placeholder="采购单号"
+                clearable/>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.cooperativePartnerName"
+                placeholder="客户名称"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.customerProductDrawingNo"
+                placeholder="客户产品型号"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.drawingNo"
+                placeholder="型号"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search"
                 @click="search()">查询
@@ -163,6 +178,9 @@ export default {
               :btnList="btnList"
               @click="handleButtonClick"
             />
+            <TableDataExportButton :disabled="tableData.length <= 0" tableRef="dataTable"
+              :listQuery="listQuery" exportType="1018"
+              exportName="图纸确认"/>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -181,9 +199,11 @@ export default {
         </div>
         <JNPF-table customKey="hsCodes"
           v-loading="loading"
+          :data="tableData"
           :has-c="true"
           @selection-change="(val) => selectedRow = val"
-          :data="tableData" :row-key="'id'" fixedNO
+          :row-key="'id'"
+          fixedNO
           :setColumnDisplayList="columnList"
           @sort-change="sortChange"
           ref="dataTable"
@@ -197,7 +217,7 @@ export default {
               :min-width="column.minWidth"
               :sortable="column.sortable"
               :fixed="column.fixed"
-              :align="column.align"
+              :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
                 <template v-if="column.dictType">

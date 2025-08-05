@@ -9,6 +9,13 @@ import {getcategoryTrees} from "@/api/salesManagement/assemblyOrders";
 export const buttonList = [
   {
     buttonType: 'primary',
+    type: 'add',
+    permission: 'btn_add',
+    icon: 'el-icon-plus',
+    text: '新增'
+  },
+  {
+    buttonType: 'primary',
     type: 'print',
     permission: 'btn_print',
     icon: 'el-icon-printer',

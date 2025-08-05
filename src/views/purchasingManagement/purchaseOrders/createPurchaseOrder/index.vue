@@ -1,5 +1,4 @@
 <script>
-import {deepClone} from "@/utils";
 import {getBasicFormSchema, getOtherFormSchema} from "./data";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import {getcategoryTree} from "@/api/basicData/materialSettings";
@@ -342,11 +341,12 @@ export default {
     this.autoInit && this.init('', 'add')
   },
   methods: {
-    async init(id = '', type) {
+    async init(id = '', type, source) {
       this.btnType = type
       this.title = this.getTitle(type)
       this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
       this.otherFormSchema = getOtherFormSchema(this.$refs.dataForm, this)
+      this.dataForm.source = source
       // this.paymentFormSchema = getPaymentFormSchema(this.$refs.dataForm, this)
       this.getBusInfo('b009')
       if (id && this.actions[type]) {
@@ -572,7 +572,8 @@ export default {
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-preview-main transitionForm org-form">
             <div class="JNPF-common-page-header">
-              <el-page-header :class="btnType === 'add' ? 'el-page-header_left_none' : '' " @back="goBack"
+              <!-- :class="btnType === 'add' ? 'el-page-header_left_none' : '' "-->
+              <el-page-header @back="goBack"
                 :content="title"/>
               <div class="options">
                 <template v-if="activeType">
@@ -583,7 +584,7 @@ export default {
                     保存并提交
                   </el-button>
                 </template>
-                <el-button v-if="btnType !== 'add'" @click="goBack">{{
+                <el-button @click="$emit('close',false)">{{
                     $t('common.cancelButton')
                   }}
                 </el-button>

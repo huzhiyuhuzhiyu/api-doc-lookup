@@ -119,21 +119,21 @@ export default {
           minWidth: 160,
           itemRules: [
             {
-              validator: this.formValidate('noZero', '数量不能为0', (errMsg) => {
-                this.$message.error(errMsg)
+              validator: this.formValidate('noZero', '数量不能为0', (errMsg, rowIndex) => {
+                this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
               }), trigger: ['blur', 'change']
             },
             {
               validator: this.formValidate({
-                type: 'noEmtry', params: ['数量不能为空', (errMsg) => {
-                  this.$message.error(`	数量不能为空`)
+                type: 'noEmtry', params: ['数量不能为空', (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
                 }]
               }), trigger: 'blur',
             },
             {
               validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
+                type: 'decimal', params: [20, 4, null, (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：数量${ errMsg }`)
                 }]
               }),
               trigger: ['blur', 'change'],
@@ -148,21 +148,21 @@ export default {
           minWidth: 180,
           itemRules: [
             {
-              validator: this.formValidate('noZero', '单价(含税)不能为0', (errMsg) => {
-                this.$message.error(errMsg)
+              validator: this.formValidate('noZero', '单价(含税)不能为0', (errMsg, rowIndex) => {
+                this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
               }), trigger: ['blur', 'change']
             },
             {
               validator: this.formValidate({
-                type: 'noEmtry', params: ['单价(含税)不能为空', (errMsg) => {
-                  this.$message.error(`	单价(含税)不能为空`)
+                type: 'noEmtry', params: ['单价(含税)不能为空', (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
                 }]
               }), trigger: 'blur',
             },
             {
               validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
+                type: 'decimal', params: [20, 4, null, (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：单价(含税)${ errMsg }`)
                 }]
               }),
               trigger: ['blur', 'change'],
@@ -208,24 +208,24 @@ export default {
           prop: 'targetPrice',
           label: '目标价',
           type: 'input',
-          minWidth: 120,
+          minWidth: 160,
           itemRules: [
             {
-              validator: this.formValidate('noZero', '目标价不能为0', (errMsg) => {
-                this.$message.error(errMsg)
+              validator: this.formValidate('noZero', '目标价不能为0', (errMsg, rowIndex) => {
+                this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
               }), trigger: ['blur', 'change']
             },
             {
               validator: this.formValidate({
-                type: 'noEmtry', params: ['目标价不能为空', (errMsg) => {
-                  this.$message.error(`	目标价不能为空`)
+                type: 'noEmtry', params: ['目标价不能为空', (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
                 }]
               }), trigger: 'blur',
             },
             {
               validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
+                type: 'decimal', params: [20, 4, null, (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：目标价${ errMsg }`)
                 }]
               }),
               trigger: ['blur', 'change'],
@@ -253,7 +253,7 @@ export default {
           label: '包装方式',
           type: 'select',
           options: this.getDictDataSync('packaging'),
-          minWidth: 120,
+          minWidth: 170,
         },
         {
           prop: 'specialRequire',

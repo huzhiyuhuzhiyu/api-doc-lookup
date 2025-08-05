@@ -243,7 +243,7 @@ export default {
                 @click="handleColumnClick(row, 'look')">
                 详情
               </el-button>
-              <el-button style="color: rgb(245, 108, 108)" size="mini" type="text"
+              <el-button class="JNPF-table-delBtn" size="mini" type="text"
                 @click="handleColumnClick(row, 'delete')">
                 删除
               </el-button>

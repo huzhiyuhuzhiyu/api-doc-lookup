@@ -1220,7 +1220,7 @@ export default {
         goBack() {
             this.$emit('close')
         },
-        init(data, classAttributeFlag, type) {
+        init(data, classAttributeFlag, type,source) {
             this.formLoading = true
             this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
             console.log(data, 'uuuu')
@@ -1256,6 +1256,7 @@ export default {
                 }
             })
 
+            this.dataForm.source = source
             this.dataForm.classAttribute = classAttributeFlag
             this.ProductListRequestObj = {
                 classAttribute: this.dataForm.classAttribute,

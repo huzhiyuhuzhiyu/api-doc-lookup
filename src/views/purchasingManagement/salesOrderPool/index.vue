@@ -40,7 +40,7 @@ export default {
         cooperativePartnerCode: '',
         orderType: '',
         deliveryStatus: '',
-        productSourceList: ['purchase', 'assemble'],
+        productSourceList: ['purchase', 'assemble', 'virtual_assemble'],
         orderItems: [
           {
             asc: false,
@@ -61,8 +61,9 @@ export default {
       columnsConfig: getColumns(),
       selectedRow: [],
       productSourceOperate: {
-        purchase: '主件需求',
-        assemble: '子件需求',
+        purchase: '成品需求',
+        virtual_assemble: '成品需求',
+        assemble: '物料需求'
       },
     }
   },

@@ -3,14 +3,14 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" @change="classAttributeChange">
-                <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="4">-->
+<!--            <el-form-item>-->
+<!--              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" @change="classAttributeChange">-->
+<!--                <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"-->
+<!--                  :value="item.value"></el-option>-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
           <el-col :span="4" v-if="isProductNameSwitch === '1'">
             <el-form-item>
               <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
@@ -101,27 +101,26 @@
             </template>
           </el-table-column>
           <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-          <el-table-column prop="demandDate" label="需求日期" width="120" sortable="custom" v-if="isMS"/>
-          <el-table-column prop="source" label="来源" width="100" sortable="custom">
-            <template slot-scope="scope">
-              <!-- <div v-if="scope.row.source == 'procure'">请购单</div>
-              <div v-if="scope.row.source == 'mrp'">MRP下发</div>
-              <div v-if="scope.row.source == 'order_distribute'">订单分配</div> -->
-              <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)"
-                v-if="scope.row.source == 'procure'">
-                请购单
-              </el-link>
-              <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)" v-if="scope.row.source == 'mrp'">
-                MRP下发
-              </el-link>
-              <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)" v-if="scope.row.source == 'plan'">
-                计划下达
-              </el-link>
-              <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)" v-if="scope.row.source == 'sale_order'">
-                销售订单
-              </el-link>
-            </template>
-          </el-table-column>
+<!--          <el-table-column prop="source" label="来源" width="100" sortable="custom">-->
+<!--            <template slot-scope="scope">-->
+<!--              &lt;!&ndash; <div v-if="scope.row.source == 'procure'">请购单</div>-->
+<!--              <div v-if="scope.row.source == 'mrp'">MRP下发</div>-->
+<!--              <div v-if="scope.row.source == 'order_distribute'">订单分配</div> &ndash;&gt;-->
+<!--              <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)"-->
+<!--                v-if="scope.row.source == 'procure'">-->
+<!--                请购单-->
+<!--              </el-link>-->
+<!--              <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)" v-if="scope.row.source == 'mrp'">-->
+<!--                MRP下发-->
+<!--              </el-link>-->
+<!--              <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)" v-if="scope.row.source == 'plan'">-->
+<!--                计划下达-->
+<!--              </el-link>-->
+<!--              <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)" v-if="scope.row.source == 'sale_order'">-->
+<!--                销售订单-->
+<!--              </el-link>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
           <el-table-column prop="demandStatus" label="需求状态" width="120" align="center" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.demandStatus == 'not_finish'"><el-tag type="warning">未完成</el-tag></div>
@@ -194,7 +193,12 @@ export default {
   name: 'purchasingDemandPool',
   components: { JNPFForm, QuiryForm, fixedForm, SuperQuery },
   mixins: [AbProjectMixin,tenantMinix],
-
+  props: {
+    source: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       isProjectSwitch: '',
@@ -353,7 +357,7 @@ export default {
         productCode: '', //产品编码
         productName: '', //产品名称
         productDrawingNo: '', //品名规格
-        source: '', //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
+        source: this.source, //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
         sourceOrderNo: '', //来源单号
         startTime: '', //创建开始时间
         hasPrice: ''
@@ -736,7 +740,7 @@ if (classAttributeObj) {
         productCode: '', //产品编码
         productName: '', //产品名称
         productDrawingNo: '', //品名规格
-        source: '', //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
+        source: this.source, //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
         sourceOrderNo: '', //来源单号
         startTime: ''
       }
@@ -821,7 +825,7 @@ if (classAttributeObj) {
           demandDelivery = maxDate.toISOString().split('T')[0]
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool')
+            this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool',this.listQuery.source)
           })
         }
       }

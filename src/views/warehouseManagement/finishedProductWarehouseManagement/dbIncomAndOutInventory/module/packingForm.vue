@@ -263,6 +263,10 @@ export default {
     },
 
     handleOpenTransitionPage(actionType, btnType) {
+      if (actionType === 'autoRecommend' && this.dataForm.packingStatus !== 'boxed') {
+        this.$message.warning('请先完成装箱操作,再进行自动推荐批次操作')
+        return
+      }
       switch (actionType) {
         case 'packing':
         case 'autoRecommend':
@@ -420,6 +424,11 @@ export default {
       }
     },
 
+    closeBatchPacking() {
+      this.autoRecBatchPackingFormVisible = false;
+      this.getDetail(this.dataForm.id);
+    },
+
     goBack() {
       this.$emit('close', this.activeType);
     }
@@ -528,7 +537,7 @@ export default {
           </div>
         </div>
       </div>
-      <autoRecBatchPacking ref="autoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="autoRecBatchPackingFormVisible = false"/>
+      <autoRecBatchPacking ref="autoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="closeBatchPacking"/>
     </div>
   </transition>
 </template>

@@ -119,6 +119,7 @@ export default {
     formatLinesList(data) {
       return data.map(item => ({
         ...item,
+        productsId: item.productId,
         deliveryDate: this.dataForm.deliveryDate,
         planDemandQuantity: this.calcQuantity(
           item.qty,

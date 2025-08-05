@@ -16,6 +16,12 @@ export default {
     SuperQuery,
     Form
   },
+  props: {
+    source: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       loading: false,
@@ -44,6 +50,7 @@ export default {
         },
       ],
       initListQuery: {
+        source: this.source,
         orderType: 'procure',
         orderItems: [
           {
@@ -127,6 +134,12 @@ export default {
 
     handleButtonClick(type) {
       switch (type) {
+        case 'add':
+          this.visible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init('', type, this.listQuery.source)
+          })
+          break;
         case 'print':
           if (!this.validateSelectedRows()) return;
           this.printView(this.selectedRow[0], 'p006', '打印');
@@ -295,11 +308,11 @@ export default {
           </template>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text"
+              <el-button size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
                 @click="handleColumnClick(row, 'edit')">
                 编辑
               </el-button>
-              <el-button style="color: rgb(245, 108, 108)" size="mini" type="text"
+              <el-button class="JNPF-table-delBtn" size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
                 @click="handleColumnClick(row, 'delete')">
                 删除
               </el-button>

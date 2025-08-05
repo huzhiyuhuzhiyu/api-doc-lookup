@@ -13,9 +13,13 @@ import {deepClone} from "@/utils";
 import {detailpurchaseOrderList, purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders";
 import autoRecBatchPacking from "./module/components/autoRecBatchPacking.vue";
 
+import outboundSaleSendForm from "@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue";
+import {getStockPickedPage} from "@/api/batchPacking";
+
 export default {
   name: "index",
   components: {
+    outboundSaleSendForm,
     autoRecBatchPacking,
     BatchPrintBrowse,
     PrintDialog,
@@ -59,18 +63,31 @@ export default {
 
       selectedRow: [],
       classAttributeList: [],
-      businessTypeData: [],
+      businessTypeData: this.getDictDataSync('warehouseBusinessType'),
       activeProcess: '',
-      processes: []
-    }
-  },
-  computed: {
-    businessTypeConfig() {
-      return {
+      processes: [],
+
+      commonQueryConfig: {
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        superQuery: {},
+        pageNum: 1,
+        pageSize: 20
+      },
+      businessTypeConfig: {
         // 生产领料入库
         outbound_pick_out: {
           api: purPurchaseReceiptReturnGoodsList,
           initListQuery: {
+            ...this.commonQueryConfig,
             orderNo: '',
             cooperativePartnerName: '',
             cooperativePartnerCode: '',
@@ -80,50 +97,29 @@ export default {
             approvalStatus: 'ok',
             receivingStatus: 'not_finished',
             classAttributeList: this.classAttributeList,
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20
           },
         },
-        // 销售发货出库
+        // 销售发货出库 （销售发货出库 功能：装箱单&推荐批次）
         outbound_sale_send: {
           api: getQuotationdatasendlist,
           initListQuery: {
+            ...this.commonQueryConfig,
             orderNo: '',
             cooperativePartnerName: '',
             notifyType: "sale",
             returnDeliveryType: 'delivery',
             deliveryStatus: '',
             approvalStatus: 'ok',
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20
           },
+          viewForm: 'outboundSaleSendForm',
+          rowId: 'id',
+          visible: false
         },
         // 销售退货入库
         inbound_sale_return: {
           api: getQuotationdatasendlist,
           initListQuery: {
+            ...this.commonQueryConfig,
             orderNo: '',
             cooperativePartnerName: '',
             cooperativePartnerCode: '',
@@ -133,97 +129,62 @@ export default {
             inspectionStatus: 'inspected',
             deliveryStatus: 'confirm',
             approvalStatus: 'ok',
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20
+          },
+        },
+        // 成品拣货出库
+        finished_product_picking_send: {
+          api: getStockPickedPage,
+          initListQuery: {
+            ...this.commonQueryConfig,
+            orderNo: '',
+            cooperativePartnerName: '',
+            notifyType: "sale",
+            returnDeliveryType: 'delivery',
+            deliveryStatus: '',
+            approvalStatus: 'ok',
           },
         },
         // 采购收货入库
         inbound_purchase: {
           api: detailpurchaseOrderList,
           initListQuery: {
+            ...this.commonQueryConfig,
             orderNo: '',
             cooperativePartnerName: '',
             cooperativePartnerCode: '',
             orderType: "procure",
             approvalStatus: 'ok',
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20
           },
         },
         // 采购退货出库
         outbound_purchase: {
           api: purPurchaseReceiptReturnGoodsList,
           initListQuery: {
+            ...this.commonQueryConfig,
             orderNo: '',
             cooperativePartnerName: '',
             cooperativePartnerCode: '',
             receiptReturnType: "back",
             approvalStatus: 'ok',
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20
           },
         },
         // 外协发料出库
         outbound_external_send: {
           api: getQuotationdatasendlist,
           initListQuery: {
+            ...this.commonQueryConfig,
             orderNo: '',
             cooperativePartnerName: '',
             cooperativePartnerCode: '',
             classAttributeList: this.classAttributeList,
             approvalStatus: 'ok',
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20
           },
         },
         // 外协退料入库
         inbound_external_return: {
           api: getQuotationdatasendlist,
           initListQuery: {
+            ...this.commonQueryConfig,
             orderNo: '',
             cooperativePartnerName: '',
             cooperativePartnerCode: '',
@@ -231,50 +192,26 @@ export default {
             classAttributeList: this.classAttributeList,
             receiptReturnType: "back",
             approvalStatus: 'ok',
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20
           },
         },
         // 外协收货入库
         inbound_external: {
           api: purPurchaseReceiptReturnGoodsList,
           initListQuery: {
+            ...this.commonQueryConfig,
             orderNo: '',
             cooperativePartnerName: '',
             cooperativePartnerCode: '',
             receiptInboundFlag: 1,
             receiptReturnType: "back",
             approvalStatus: 'ok',
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20
           },
         },
         // 外协退货出库
         outbound_external: {
           api: purPurchaseReceiptReturnGoodsList,
           initListQuery: {
+            ...this.commonQueryConfig,
             orderNo: '',
             cooperativePartnerName: '',
             cooperativePartnerCode: '',
@@ -284,27 +221,19 @@ export default {
             approvalStatus: 'ok',
             receivingStatus: 'not_finished',
             classAttributeList: this.classAttributeList,
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20
           },
         },
 
       }
+    }
+  },
+  computed: {
+    currentTypeConfig() {
+      return this.businessTypeConfig[this.activeProcess] || {};
     },
     // 出库
     isOutbound() {
-      return ['outbound_purchase', 'outbound_external_send', 'outbound_external'].includes(this.activeProcess);
+      return ['outbound_purchase', 'outbound_external_send', 'outbound_external', 'finished_product_picking_send'].includes(this.activeProcess);
     },
     // 入库
     isInbound() {
@@ -313,6 +242,12 @@ export default {
     // 装箱
     isPacking() {
       return ['outbound_sale_send'].includes(this.activeProcess);
+    },
+    // 已装箱
+    isPacked() {
+      return (row) =>
+        row.packingStatus === 'boxed' &&
+        row.deliveryStatus === 'arranged';
     }
   },
   watch: {
@@ -321,26 +256,18 @@ export default {
     }
   },
   async created() {
-    this.init()
     await this.getClassAttributeListByCode();
     await this.getStockMoveList();
     await this.initData()
   },
   methods: {
-    init() {
-      const businessTypeData = this.$store.getters.dictionaryList.find(item => item.enCode === 'warehouseBusinessType')
-      this.businessTypeData = businessTypeData.dictionaryList.map(item => ({
-        label: item.fullName,
-        value: item.enCode
-      }))
-    },
+    init() {},
 
     async initData() {
       this.loading = true
       try {
-        const config = this.businessTypeConfig[this.activeProcess];
-        if (!config || !config.api) return
-        const res = await config.api(this.listQuery);
+        if (!this.currentTypeConfig || !this.currentTypeConfig.api) return
+        const res = await this.currentTypeConfig.api(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -399,6 +326,19 @@ export default {
 
     },
 
+    handleView(row) {
+      if (!this.currentTypeConfig ||
+        !this.currentTypeConfig.viewForm ||
+        !this.currentTypeConfig.rowId) {
+        this.$message.warning('当前业务类型不支持查看详情')
+        return
+      }
+      this.currentTypeConfig.visible = true
+      this.$nextTick(() => {
+        this.$refs[this.currentTypeConfig.viewForm].init(row[this.currentTypeConfig.rowId], 'look')
+      })
+    },
+
     onPackingForm(row, btnType) {
       this.packingFormVisible = true
       this.$nextTick(() => {
@@ -411,6 +351,7 @@ export default {
         })
       })
     },
+
 
     switchBusinessType(businessType) {
       const config = this.businessTypeConfig[businessType];
@@ -509,9 +450,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.searchList.forEach(item => {
-        item.fieldValue = '';
-      });
+      this.searchList = getSearchList(this.activeProcess)
       this.search()
     },
   }
@@ -618,6 +557,13 @@ export default {
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
+                <template v-if="column.prop === 'orderNo'">
+                  <el-link type="primary"
+                    @click.native="handleView(scope.row)">{{
+                      scope.row.orderNo
+                    }}
+                  </el-link>
+                </template>
                 <template v-if="column.prop === 'hairExchangeGoodsFlag'">
                   <span>
                     {{ scope.row.exchangeGoodsFlag ? '换货发货' : '正常发货' }}
@@ -650,11 +596,11 @@ export default {
                 入库
               </el-button>
               <template v-if="isPacking">
-                <el-button size="mini" type="text" :disabled="row.deliveryStatus === 'arranged'"
+                <el-button size="mini" type="text" :disabled="!row.deliveryStatus === 'arranged'"
                   @click="handlePacking(row)">
                   装箱
                 </el-button>
-                <el-button size="mini" type="text" :disabled="row.deliveryStatus === 'arranged'"
+                <el-button size="mini" type="text" :disabled="!isPacked(row)"
                   @click="handlePackingEdit(row,'packing','edit')">
                   编辑装箱单
                 </el-button>
@@ -678,6 +624,8 @@ export default {
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
     <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
+
+    <outboundSaleSendForm ref="outboundSaleSendForm" v-if="currentTypeConfig.visible" @close="currentTypeConfig.visible = false"/>
   </div>
 </template>
 <style lang="scss" scoped>

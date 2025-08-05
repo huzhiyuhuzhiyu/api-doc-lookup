@@ -59,6 +59,7 @@ const global = {
     {label: "生产", value: "produce", type: "success"},
     {label: "采购", value: "purchase", type: "danger"},
     {label: "外协", value: "out", type: "danger"},
+    {label: "虚拟组装", value: "virtual_assemble", type: "processing"},
   ],
   // 工艺类型
   craftType: [
@@ -111,12 +112,18 @@ const global = {
   shippingStatus: [
     {label: '等待', value: 'waiting', type: 'warning'},
     {label: '就绪', value: 'ready', type: 'info'},
-    {label: '已安排', value: 'arranged', type: 'info'},
+    {label: '已安排', value: 'arranged', type: 'success'},
     {label: '已拣货', value: 'picked', type: 'primary'},
     {label: '已核对', value: 'verified', type: 'primary'},
     {label: '已确认', value: 'confirmed', type: 'success'},
     {label: '已完成', value: 'finished', type: 'success'},
     {label: '已取消', value: 'canceled', type: 'danger'}
+  ],
+
+  // 图纸确认状态
+  drawConfStatus: [
+    {label: '按上次已确认的图纸', value: 'last_confirmed', type: 'warning'},
+    {label: '已确认', value: 'confirmed', type: 'success'},
   ],
 
   // 字典数据映射方法

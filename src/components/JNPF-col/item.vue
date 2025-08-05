@@ -112,10 +112,43 @@
         @input="item.hasOwnProperty('input') ? item.input($event) : ''"
         @change="item.hasOwnProperty('change') ? item.change($event) : ''" />
 
+      <el-checkbox-group
+        v-else-if="item.type === 'checkbox'"
+        v-bind="$attrs"
+        v-on="$listeners"
+        :disabled="item.disabled||readOnly"
+      >
+        <template v-if="item.button">
+          <el-checkbox-button
+            v-for="o in rowOptions"
+            :key="o.value"
+            :label="o.value"
+            :disabled="o.disabled"
+          >
+            {{ o.label }}
+          </el-checkbox-button>
+        </template>
+        <template v-else>
+          <el-checkbox
+            v-for="o in rowOptions"
+            :key="o.value"
+            :label="o.value"
+            :disabled="o.disabled"
+            :border="item.border"
+          >
+            {{ o.label }}
+          </el-checkbox>
+        </template>
+      </el-checkbox-group>
 
-      <!-- 复选框 -->
-      <!-- <el-checkbox v-else-if="item.type === 'switch' && item.appearance === 'checkbox'" v-bind="$attrs"
-        v-on="$listeners"></el-checkbox> -->
+      <el-checkbox
+        v-else-if="item.type === 'switch' && item.appearance === 'checkbox'"
+        v-bind="$attrs"
+        v-on="$listeners"
+        :disabled="item.disabled||readOnly"
+      >
+        {{ item.label }}
+      </el-checkbox>
 
       <!-- 开关 -->
       <el-switch :disabled="item.disabled||readOnly" style="top:6px" v-else-if="item.type === 'switch'" v-bind="$attrs" v-on="$listeners"></el-switch>

@@ -1,7 +1,15 @@
 <script>
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import packingForm from "@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/module/packingForm.vue";
-import {addStockPackingList, allocationBatchPacking, getBatchPackingList, getStockPackingListNoticeDetail, updateStockPackingList} from "@/api/batchPacking";
+import {
+  addStockedList,
+  addStockPackingList,
+  allocationBatch,
+  allocationPacking,
+  getBatchPackingList,
+  getStockPackingListNoticeDetail,
+  updateStockPackingList
+} from "@/api/batchPacking";
 import {getPackingBasicFormSchema} from "@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/module/data";
 import * as _ from "highcharts";
 
@@ -20,6 +28,7 @@ export default {
         returnDeliveryType: 'delivery',
         delivery: 'deliver_goods',
         inspectionResults: 'qualified',
+        documentType: 'sale_deliver',
         exchangeGoodsFlag: false,
         orderNo: '',
         cooperativePartnerId: '',
@@ -67,13 +76,13 @@ export default {
           prop: 'warehouseName',
           label: '仓库',
           type: 'view',
-          minWidth: 200,
+          minWidth: 160,
         },
         {
           prop: 'shelfSpaceName',
           label: '库位',
           type: 'view',
-          minWidth: 200,
+          minWidth: 160,
         },
         {
           prop: 'batchNumber',
@@ -312,8 +321,9 @@ export default {
         {
           prop: 'traySize',
           label: '大小',
-          type: 'view',
+          type: 'select',
           minWidth: 160,
+          options: this.getDictDataSync('traySize'),
         },
         {
           prop: 'outboundQuantity',
@@ -332,10 +342,21 @@ export default {
           ],
         }
       ],
+      distributionList: [],
       packingProps: new Set(['waitDeliveryQuantity', 'totalBoxCount', 'boxCount', 'singleBoxCount', 'remnant', 'totalQuantity', 'remark', 'oil', 'grossWeight', 'trayNo', 'traySize']),
       nonPackingProps: new Set(['warehouseName', 'shelfSpaceName', 'batchNumber', 'outboundQuantity']),
       linesTableHeight: 200,
       activeNames: ['basicInfo', 'productInfo'],
+      apiMethodActions: {
+        packing: {
+          add: addStockPackingList,
+          edit: updateStockPackingList
+        },
+        autoRecommend: {
+          add: addStockedList,
+          edit: null
+        }
+      },
     }
   },
   computed: {
@@ -389,7 +410,17 @@ export default {
         if (msg === 'Success') {
           const {notice, packingListLines} = data
           this.dataForm = notice
-          this.linesList = packingListLines
+          this.dataForm.id = data.id
+          this.linesList = packingListLines.map(item => ({
+            ...item,
+            productDrawingNo: item.drawingNo,
+            productName: item.productsName,
+            productCode: item.productsCode,
+            totalBoxCount: item.standardBox,
+            boxCount: item.oddBox,
+            singleBoxCount: item.packing,
+            totalQuantity: item.totalNum,
+          }))
           this.loading = false
         }
       } catch (err) {
@@ -400,12 +431,13 @@ export default {
     async getInitBatchPackingList(id) {
       this.loading = true
       try {
-        const res = await getBatchPackingList(id)
+        const res = await getBatchPackingList(id, this.isPacking)
         const {msg, data} = res
         if (msg === 'Success') {
           const {batchNumberList, distributionList, stockInventoryList} = data
           this.linesInventoryList = stockInventoryList
           this.linesList = this.formType === 'packing' ? distributionList : batchNumberList
+          this.distributionList = distributionList
           this.loading = false
         }
       } catch (err) {
@@ -418,10 +450,11 @@ export default {
       try {
         const params = {
           autoAllocation: isAuto,
-          distributionList: this.linesList,
+          distributionList: this.isPacking ? this.linesList : this.distributionList,
           stockInventoryList: this.linesInventoryList,
         }
-        const res = await allocationBatchPacking(params)
+        const apiMethod = this.isPacking ? allocationPacking : allocationBatch;
+        const res = await apiMethod(params)
         const {msg, data} = res
         if (msg === 'Success') {
           const {batchNumberList, distributionList, stockInventoryList} = data
@@ -481,26 +514,37 @@ export default {
       this.btnLoading = true
       const valid = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
       if (!valid) return this.btnLoading = false
-      if (this.isTypeAdd && this.dataForm.packingStatus === 'boxed') return this.$message.warning('已装箱，请勿重复装箱')
+      if (this.isTypeAdd && this.isPacking && this.dataForm.packingStatus === 'boxed') {
+        this.$message.warning('已装箱，请勿重复装箱')
+        this.btnLoading = false
+      }
 
       this.dataForm.documentId = this.dataForm.id
       this.dataForm.sourceOrderNo = this.dataForm.orderNo
 
-      const stockPackingListLines = this.isPacking ? this.linesList.map(item => ({
+      const linesFieldName = this.formType === 'autoRecommend' ? 'stockPickedLines' : 'stockPackingListLines';
+      const mainFieldName = this.formType === 'autoRecommend' ? 'stockPicked' : 'stockPackingList';
+      const linesData = this.isPacking ? this.linesList.map(item => ({
         ...item,
         standardBox: item.totalBoxCount,
         oddBox: item.boxCount,
         packing: item.singleBoxCount,
         totalNum: item.totalQuantity,
-      })) : this.linesList
+      })) : this.linesList.map(item => ({
+        ...item,
+        num: item.outboundQuantity,
+        documentId: this.dataForm.id,
+        storageDate: item.orderDate,
+        documentLineId: item.returnDeliveryNoticeLineId
+      }))
 
       const params = {
-        stockPackingList: this.dataForm,
-        stockPackingListLines
-      }
+        [mainFieldName]: this.dataForm,
+        [linesFieldName]: linesData
+      };
       let MSG = '提交成功'
       try {
-        const apiMethod = this.isTypeAdd ? addStockPackingList : updateStockPackingList;
+        const apiMethod = this.apiMethodActions[this.formType][this.btnType];
         const res = await apiMethod(params)
         const {msg} = res
         if (msg === 'Success') {

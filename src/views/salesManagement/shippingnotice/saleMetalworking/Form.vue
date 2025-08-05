@@ -28,7 +28,6 @@ export default {
         returnDeliveryType: 'delivery',
         delivery: 'deliver_goods',
         inspectionResults: 'qualified',
-        documentType: 'sale_deliver',
         exchangeGoodsFlag: false,
         orderNo: '',
         cooperativePartnerId: '',

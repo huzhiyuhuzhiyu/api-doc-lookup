@@ -20,7 +20,7 @@ export function getPackingBasicFormSchema(dataFormRef, context) {
       itemRules: [{required: true, trigger: "blur"}],
     },
     {
-      prop: "orderNo",
+      prop: "ordersNo",
       label: "来源单号",
       value: "",
       type: "input",

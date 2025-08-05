@@ -55,7 +55,7 @@ export function getSearchList(type = 'default') {
         searchType: 'input'
       },
       {
-        fieldValue: '',
+        fieldValue: 'ready',
         field: 'deliveryStatus',
         label: '状态',
         prop: 'deliveryStatus',
@@ -83,6 +83,35 @@ export function getSearchList(type = 'default') {
         symbol: 'like',
         searchType: 'input'
       },
+    ],
+    // 成品拣货
+    finished_product_picking_send: [
+      ...defaultSearch,
+      {
+        fieldValue: '',
+        field: 'orderNo',
+        label: '通知单号',
+        prop: 'orderNo',
+        symbol: 'like',
+        searchType: 'input'
+      },
+      {
+        fieldValue: '',
+        field: 'partnerName',
+        label: '客户名称',
+        prop: 'partnerName',
+        symbol: 'like',
+        searchType: 'input'
+      },
+      // {
+      //   fieldValue: 'ready',
+      //   field: 'deliveryStatus',
+      //   label: '状态',
+      //   prop: 'deliveryStatus',
+      //   symbol: '==',
+      //   searchType: 'select',
+      //   options: global.shippingStatus
+      // },
     ],
     // 采购收货
     inbound_purchase: [
@@ -159,6 +188,7 @@ export function getColumns(type = 'default') {
         minWidth: 220,
         align: "left",
         sortable: 'custom',
+        slot: true
       },
       {
         prop: "partnerCode",
@@ -201,6 +231,7 @@ export function getColumns(type = 'default') {
         minWidth: 220,
         align: "left",
         sortable: 'custom',
+        slot: true
       },
       {
         prop: "ordersNo",
@@ -279,6 +310,7 @@ export function getColumns(type = 'default') {
         minWidth: 220,
         align: "left",
         sortable: 'custom',
+        slot: true
       },
       {
         prop: "ordersNo",
@@ -313,6 +345,73 @@ export function getColumns(type = 'default') {
       ...createColumns,
     ],
 
+    // 成品拣货出库
+    finished_product_picking_send: [
+      ...defaultColumns,
+      {
+        prop: "orderNo",
+        label: "通知单号",
+        minWidth: 220,
+        align: "left",
+        sortable: 'custom',
+        slot: true
+      },
+      {
+        prop: "sourceOrderNo",
+        label: "来源单号",
+        minWidth: 220,
+        align: "left",
+        sortable: 'custom',
+      },
+      {
+        prop: "cooperativePartnerCode",
+        label: "客户编码",
+        minWidth: 180,
+        align: "left",
+      },
+      {
+        prop: "cooperativePartnerName",
+        label: "客户名称",
+        minWidth: 180,
+        align: "left",
+      },
+      {
+        prop: "warehouseName",
+        label: "仓库",
+        minWidth: 160,
+      },
+      {
+        prop: "shelfSpaceName",
+        label: "库位",
+        minWidth: 120,
+      },
+      {
+        prop: "deliverDate",
+        label: "预定日期",
+        minWidth: 120,
+      },
+      // {
+      //   prop: "abv",
+      //   label: "完成日期",
+      //   minWidth: 120,
+      // },
+      {
+        prop: "priority",
+        label: "优先级",
+        minWidth: 120,
+        slot: true,
+        dictType: 'shippingPriority'
+      },
+      // {
+      //   prop: "deliveryStatus",
+      //   label: "状态",
+      //   minWidth: 120,
+      //   slot: true,
+      //   dictType: 'shippingStatus'
+      // },
+      ...createColumns,
+    ],
+
     // 采购收货入库
     inbound_purchase: [
       {
@@ -321,6 +420,7 @@ export function getColumns(type = 'default') {
         minWidth: 220,
         align: "left",
         sortable: 'custom',
+        slot: true
       },
       {
         prop: "cooperativePartnerCode",
@@ -390,6 +490,7 @@ export function getColumns(type = 'default') {
         minWidth: 220,
         align: "left",
         sortable: 'custom',
+        slot: true
       },
       {
         prop: "partnerCode",
@@ -447,6 +548,7 @@ export function getColumns(type = 'default') {
         minWidth: 220,
         align: "left",
         sortable: 'custom',
+        slot: true
       },
       {
         prop: "partnerCode",
@@ -487,6 +589,7 @@ export function getColumns(type = 'default') {
         minWidth: 220,
         align: "left",
         sortable: 'custom',
+        slot: true
       },
       {
         prop: "partnerCode",
@@ -516,6 +619,7 @@ export function getColumns(type = 'default') {
         minWidth: 220,
         align: "left",
         sortable: 'custom',
+        slot: true
       },
       {
         prop: "partnerCode",
@@ -554,7 +658,8 @@ export function getColumns(type = 'default') {
         prop: 'orderNo',
         label: '通知单号',
         minWidth: 180,
-        sortable: 'custom'
+        sortable: 'custom',
+        slot: true
       },
       {
         prop: 'partnerName',

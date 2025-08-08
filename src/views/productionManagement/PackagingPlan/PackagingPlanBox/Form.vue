@@ -106,7 +106,12 @@ export default {
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
 
-      packagingMaterialList: []
+      packagingMaterialList: [],
+      packagingActives: {
+        '卷': 'volumeSingleBoxNum',
+        '缠': 'wrappedSingleBoxNum',
+        '单': 'danSingleBoxNum',
+      }
     }
   },
   computed: {
@@ -126,7 +131,8 @@ export default {
         return {
           ...item,
           netWeight: this.jnpf.numberFormat(num * singleWeight, 2),
-          grossWeight: this.jnpf.numberFormat(num * singleWeight + packagingWeight, 2)
+          grossWeight: this.jnpf.numberFormat(num * singleWeight + packagingWeight, 2),
+          full: this.checkIfFull(item.num)
         };
       });
     },
@@ -147,10 +153,22 @@ export default {
       this.title = this.getTitle(type)
       await this.getPackagingMaterial()
       this.dataForm = _.merge(this.dataForm, row)
+      this.dataForm.packagingMethod = '卷'
+      this.dataForm.singleBoxNum = row.volumeSingleBoxNum
       this.$nextTick(() => {
         this.$refs.dataForm.$refs.main.clearValidate()
         this.refreshTableHeight()
       })
+    },
+
+    handlePackagingChange(val) {
+      this.dataForm.singleBoxNum = this.packagingActives[val] || 0;
+    },
+
+    checkIfFull(num) {
+      const singleBoxNum = parseFloat(this.dataForm.singleBoxNum);
+      const currentNum = parseFloat(num);
+      return !isNaN(singleBoxNum) && !isNaN(currentNum) && currentNum >= singleBoxNum;
     },
 
     checkQuantityExceed() {
@@ -177,8 +195,6 @@ export default {
           (totalNum - (i * singleBoxNum)) :
           singleBoxNum;
 
-        const isFull = i !== boxCount - 1 || boxNum === singleBoxNum;
-
         lines.push({
           ...this.createdObj,
           productsDrawingNo: this.dataForm.productDrawingNo,
@@ -186,7 +202,7 @@ export default {
           batchNumber: this.dataForm.batchNumber,
           mainUnit: this.dataForm.mainUnit,
           num: boxNum,
-          full: isFull
+          full: this.checkIfFull(boxNum)
         });
       }
 
@@ -288,6 +304,8 @@ export default {
       deepParams.documentId = deepParams.id
       const stockPlanPackageLineList = this.computedLinesList.map(item => ({
         ...item,
+        singleWeight: deepParams.singleWeight,
+        packagingMethod: deepParams.packagingMethod,
         productsId: deepParams.productsId,
         documentId: deepParams.id,
       }))

@@ -220,6 +220,9 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: '包装方式',
       type: 'select',
       options: context.getDictDataSync('packaging'),
+      change: (val) => {
+        context.handlePackagingChange(val)
+      }
     },
     {
       prop: 'singleBoxNum',

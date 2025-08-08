@@ -10,6 +10,7 @@ import moment from "moment";
 import {getcategoryTree} from "@/api/basicData/materialSettings";
 import {getProducts} from "@/api/masterDataManagement";
 import {addProdOrder} from "@/api/productOrdes/finishedProductOrders";
+import {deepClone} from "@/utils";
 
 export default {
   name: "packingForm",
@@ -23,6 +24,8 @@ export default {
       resIdList: [],
       productionLineList: [],
       dataForm: {
+        taskMethod: 'not_appoint',
+        source: 'package_plan',
         orderNo: '',
         productCode: '',
         drawingNo: '',
@@ -33,7 +36,6 @@ export default {
         planProductionQuantity: '',
         availableArrangeQuantity: '',
         productionQuantity: '',
-        taskMethod: 'not_appoint',
         productionLineId: '',
         planDate: [],
         routingName: '',
@@ -312,7 +314,7 @@ export default {
       return this.btnType === 'arrange' ? '编排数量' : '生产数量';
     },
     isShowMaterialList() {
-      return this.dataForm.source === 'assemble'
+      return this.dataForm.productSource === 'assemble'
     }
   },
   mounted() {
@@ -405,7 +407,7 @@ export default {
                 const _data = data[0].all
                 this.dataForm.bomId = _data.bomId
                 this.dataForm.orderType = 'manually'
-                this.dataForm.source = _data.source
+                this.dataForm.productSource = _data.productSource
                 this.dataForm.drawingNo = _data.drawingNo
                 this.dataForm.productsDrawingNo = _data.drawingNo
                 this.dataForm.productsId = _data.id
@@ -457,7 +459,7 @@ export default {
     },
 
     async getBOMLineList() {
-      if (this.dataForm.source !== 'assemble') return
+      if (this.dataForm.productSource !== 'assemble') return
       if (!this.dataForm.bomId) return this.$message.error('该产品没有BOM，请配置BOM后再试！')
       const res = await BOMLineList(this.dataForm.bomId)
       this.materialList = res.data.map(item => {
@@ -606,7 +608,7 @@ export default {
     },
 
     async handleSubmit() {
-      if (!this.dataForm.bomId && this.dataForm.source === 'assemble') {
+      if (!this.dataForm.bomId && this.dataForm.productSource === 'assemble') {
         return this.$message.error('该产品没有BOM，请配置BOM后再试！')
       }
       // 校验表单
@@ -614,12 +616,15 @@ export default {
       const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
       const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
       if (!valid_1 || !valid_2) return this.btnLoading = false
+      const deepDataForm = deepClone(this.dataForm)
+      deepDataForm.planStartDate = deepDataForm.planDate[0]
+      deepDataForm.planEndDate = deepDataForm.planDate[1]
       const newLinesList = this.linesList.map(item => ({
         ...item,
         workOrderResList: item.routingProResList
       }))
       const params = {
-        prodOrder: this.dataForm,
+        prodOrder: deepDataForm,
         workOrderList: newLinesList,
         collect: this.isShowMaterialList ? this.pickForm : null,
         materialList: this.isShowMaterialList ? this.materialList : null,

@@ -33,20 +33,7 @@ export default {
       tableData: [],
       total: 0,
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'orderType',
-          label: "订单类型",
-          type: 'select',
-          options: this.global.salesOrderType
-        },
-        {
-          prop: 'orderState',
-          label: "订单状态",
-          type: 'select',
-          options: this.global.salesOrderState
-        },
-      ],
+      superQueryJson: [],
       initListQuery: {
         planType: 'package_plan',
         productionPlanNo: '',

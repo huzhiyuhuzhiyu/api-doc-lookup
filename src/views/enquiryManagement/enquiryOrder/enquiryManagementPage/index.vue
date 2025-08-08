@@ -50,7 +50,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table customKey="hsCodes" v-loading="listLoading" :data="tableDataList" :has-c="true"
+          <JNPF-table customKey="hsCodes" v-loading="listLoading" :data="tableDataList" 
             @selection-change="(val) => selectedRow = val" :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
             @sort-change="sortChange" ref="dataTable" custom-column>
             <template v-for="column in columnsConfig">

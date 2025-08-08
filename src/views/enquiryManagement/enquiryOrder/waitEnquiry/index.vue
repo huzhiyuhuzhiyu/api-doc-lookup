@@ -51,8 +51,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="hsCodes" v-loading="loading" :data="tableData" :has-c="true"
-          @selection-change="(val) => selectedRow = val" :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
+        <JNPF-table customKey="hsCodes" v-loading="loading" :data="tableData"
+           :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
           @sort-change="sortChange" ref="dataTable" custom-column>
           <template v-for="column in columnsConfig">
             <el-table-column v-if="typeof column.show === 'function' ? column.show() : true" :key="column.prop"
@@ -154,7 +154,6 @@ export default {
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
-      selectedRow: [],
       clientInfoVisible: false,
       clientInfoData: {
         cooperativePartnerIdText: ''

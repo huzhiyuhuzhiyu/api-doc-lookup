@@ -7,7 +7,7 @@
         <div class="options">
           <el-button size="mini" type="success" :loading="btnLoading" @click="handleConfirm('draft')"
             v-if="btnType !== 'look'">
-            保存</el-button>
+            保存草稿</el-button>
           <el-button size="mini" type="primary" v-if="btnType !== 'look'" :loading="btnLoading"
             @click="handleConfirm('submit')">
             保存并提交</el-button>
@@ -34,7 +34,7 @@
               <template #actions>
                 <el-table-column label="操作" width="120" :fixed="'right'" v-if="activeType" key="actionBar">
                   <template slot-scope="scope">
-                    <el-button type="text" @click="deltable(scope)" style=" color: #ff3a3a">删除</el-button>
+                    <el-button type="text" @click="deltable(scope)" class="JNPF-table-delBtn">删除</el-button>
                   </template>
                 </el-table-column>
               </template>
@@ -449,6 +449,10 @@ export default {
         return false
       }
       const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
+      if (!valid_2) {
+        this.$message.error('子表信息校验不通过，请检查')
+        return false
+      }
 
       const { quotationId, cooperativePartnerId, id } = this.dataForm
       const paramsObj = {
@@ -471,6 +475,7 @@ export default {
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         formMethod = addEnquiryManagement
       }
+      this.btnLoading = true
       formMethod(paramsObj).then(res => {
         let MSG = '提交成功'
         if (type == "draft") {
@@ -480,6 +485,7 @@ export default {
           this.$message.success(MSG)
           this.goBack()
         }
+        this.btnLoading = false
       }).catch(() => {
         this.btnLoading = false
       })

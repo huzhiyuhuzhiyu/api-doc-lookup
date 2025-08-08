@@ -286,7 +286,7 @@ export function getColumns() {
     {
       prop: 'status',
       label: '状态',
-      minWidth: 140,
+      minWidth: 180,
       sortable: 'custom',
       slot: true,
       dictType: "drawConfStatus"

@@ -10,10 +10,11 @@ export function getPurPurchaseDrawingPage(data) {
 }
 
 // 采购图纸确认-详情
-export function getPurPurchaseDrawing(id) {
+export function getPurPurchaseDrawing(data) {
   return request({
-    url: `/api/erp/purPurchaseDrawing/detail/${ id }`,
-    method: 'get',
+    url: `/api/erp/purPurchaseDrawing/detail`,
+    method: 'post',
+    data
   })
 }
 
@@ -21,6 +22,17 @@ export function getPurPurchaseDrawing(id) {
 export function addPurPurchaseDrawing(data) {
   return request({
     url: '/api/erp/purPurchaseDrawing/insert',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
+// 采购图纸确认-变更记录列表
+export function getChangeRecordListPage(data) {
+  return request({
+    url: '/api/erp/purPurchaseDrawing/changeRecordList/condition',
     method: 'post',
     data: data
   })

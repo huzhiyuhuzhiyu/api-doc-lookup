@@ -56,12 +56,12 @@ export default {
       getcategoryTree,
       requestObjTwo: {
         pageSize: -1,
-        type: 'supplier'
+        type: 'factory_supplier'
       },
       dataForm: {
         name: '',
         remark: '',
-        type: 'supplier',
+        type: 'factory_supplier',
         parentId: '',
         parentName: ''
       },
@@ -77,11 +77,10 @@ export default {
     }
   },
   methods: {
-    init(id, parentId,type) {
+    init(id, parentId) {
       this.visible = true
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
-      this.dataForm.type = type
       if (parentId == '-1') {
         this.isdisabled = true
       } else {
@@ -112,8 +111,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true
+          this.dataForm.type = 'factory_supplier'
           let formMethod = this.dataForm.id ? editCategory : addCategory
-          console.log('formMethod', formMethod)
           if (formMethod == editCategory) {
             checkCategorychildNode(this.dataForm)
               .then((res) => {

@@ -130,8 +130,8 @@ export function getColumns() {
       minWidth: 120,
     },
     {
-      prop: "num",
-      label: "订单数",
+      prop: "issuanceNum",
+      label: "需求数量",
       minWidth: 120,
     },
     {

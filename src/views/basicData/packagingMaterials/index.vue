@@ -1,14 +1,12 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {buttonList, getColumns} from "./data";
-import {feedbackDeliveryOrderPool, getSalesOrderPoolPage} from "@/api/salesOrderPool";
 import Form from './Form.vue'
-import FeedbackEditDialog from "./feedbackEditDialog.vue";
+import {deleteBimPackagingMaterials, getBimPackagingMaterialsPage} from "@/api/packagingMaterials";
 
 export default {
   name: "index",
   components: {
-    FeedbackEditDialog,
     SuperQuery,
     Form
   },
@@ -16,32 +14,20 @@ export default {
     return {
       loading: false,
       visible: false,
-      showDialog: false,
       tableData: [],
       total: 0,
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'orderType',
-          label: "订单类型",
+          prop: 'packagingType',
+          label: "物料类型",
           type: 'select',
-          options: this.global.salesOrderType
-        },
-        {
-          prop: 'deliveryStatus',
-          label: "交期状态",
-          type: 'select',
-          options: this.global.deliveryStatus
+          options: this.global.packagingType
         },
       ],
       initListQuery: {
-        orderNo: '',
-        cooperativePartnerName: '',
-        cooperativePartnerCode: '',
-        orderType: '',
-        deliveryStatus: '',
-        confirmedStatus: 'need_purchase',
-        productSourceList: ['purchase', 'assemble', 'virtual_assemble'],
+        name: '',
+        packagingType: '',
         orderItems: [
           {
             asc: false,
@@ -49,7 +35,7 @@ export default {
           },
           {
             asc: false,
-            column: 't1.create_time'
+            column: 'create_time'
           }
         ],
         superQuery: {},
@@ -60,12 +46,6 @@ export default {
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
-      selectedRow: [],
-      productSourceOperate: {
-        purchase: '成品需求',
-        virtual_assemble: '成品需求',
-        assemble: '物料需求'
-      },
     }
   },
   created() {
@@ -76,7 +56,7 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await getSalesOrderPoolPage(this.listQuery);
+        const res = await getBimPackagingMaterialsPage(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -85,26 +65,16 @@ export default {
       }
     },
 
-    async handleConfirm(selectedDate) {
-      const params = {
-        feedbackDeliveryDate: selectedDate,
-        id: this.selectedRow[0].id,
-      }
-      try {
-        const res = await feedbackDeliveryOrderPool(params);
-        this.$message.success('反馈成功')
-        await this.initData()
-      } catch (e) {
-        this.$message.error('反馈失败，请稍后再试')
-      }
+    handleAdd(type) {
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init('', 'add', type)
+      })
     },
 
     handleButtonClick(type) {
       switch (type) {
-        case 'feedback':
-          if (!this.selectedRow.length) return this.$message.warning('请至少选择一条数据')
-          if (this.selectedRow.length > 1) return this.$message.warning('只能选择一条数据')
-          this.showDialog = true
+        case '':
           break;
         default:
       }
@@ -112,15 +82,33 @@ export default {
 
     handleColumnClick(row, type) {
       switch (type) {
-        case 'purchase':
-        case 'assemble':
+        case 'look':
+        case 'edit':
+        case 'copy':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(row, type, this.productSourceOperate)
+            this.$refs.Form.init(row.id, type)
           })
+          break;
+        case 'delete':
+          this.handleRemove(row.id)
           break;
         default:
       }
+    },
+
+    handleRemove(id) {
+      this.$confirm('您确定要删除这些数据吗, 是否继续？', '提示', {
+        type: 'warning'
+      }).then(async () => {
+        const res = await deleteBimPackagingMaterials(id);
+        const {msg} = res
+        if (msg === 'Success') {
+          this.$message.success('删除成功')
+          this.initData()
+        }
+      }).catch(() => {
+      })
     },
 
     close(isInitData = true) {
@@ -131,7 +119,7 @@ export default {
 
     sortChange({prop, order}) {
       let newProp = ''
-      if (prop === 't.create_time') {
+      if (prop === 'createTime') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -168,52 +156,26 @@ export default {
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
         <el-form @submit.native.prevent @keyup.enter.native="search()">
-          <el-col :span="3">
+          <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerCode"
-                placeholder="客户编码"
+              <el-input v-model.trim="listQuery.name"
+                placeholder="订单号"
                 clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerName"
-                placeholder="客户名称"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo"
-                placeholder="销售单号"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-select v-model="listQuery.orderType" placeholder="请选择">
-                <el-option
-                  v-for="item in global.salesOrderType"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-select v-model="listQuery.deliveryStatus" placeholder="请选择">
-                <el-option
-                  v-for="item in global.deliveryStatus"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="listQuery.packagingType" placeholder="物料类型">
+                <el-option
+                  v-for="item in global.packagingType"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search"
                 @click="search()">查询
@@ -227,6 +189,15 @@ export default {
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
           <div class="JNPF-common-head-left">
+            <el-dropdown v-has="'btn_add'">
+              <el-button type="primary">
+                新建<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="handleAdd('packing_manage')">包装物料</el-dropdown-item>
+                <el-dropdown-item @click.native="handleAdd('warehouse_manage')">仓库物料</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
             <CustomButton
               :btnList="btnList"
               @click="handleButtonClick"
@@ -250,8 +221,6 @@ export default {
         <JNPF-table customKey="hsCodes"
           v-loading="loading"
           :data="tableData"
-          :has-c="true"
-          @selection-change="(val) => selectedRow = val"
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"
@@ -270,6 +239,9 @@ export default {
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
+                <template v-if="column.prop === 'size'">
+                  <span>{{ scope.row.sizeLength }} * {{ scope.row.sizeWidth }} * {{ scope.row.sizeHeight }}</span>
+                </template>
                 <template v-if="column.dictType">
                    <span>
                 <el-tag
@@ -283,10 +255,29 @@ export default {
           </template>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text"
-                @click="handleColumnClick(row, row.productSource)">
-                {{ productSourceOperate[row.productSource] }}
+              <el-button size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
+                @click="handleColumnClick(row, 'edit')">
+                编辑
               </el-button>
+              <el-button class="JNPF-table-delBtn" size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
+                @click="handleColumnClick(row, 'delete')">
+                删除
+              </el-button>
+              <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleColumnClick(row, 'copy')">
+                    复制
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
+                    详情
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -301,9 +292,5 @@ export default {
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <Form ref="Form" v-if="visible" @close="close"/>
-    <FeedbackEditDialog
-      :visible.sync="showDialog"
-      @confirm="handleConfirm"
-    />
   </div>
 </template>

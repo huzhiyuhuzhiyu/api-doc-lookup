@@ -79,6 +79,44 @@
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''" />
 
+        <el-checkbox-group
+          v-else-if="item.type === 'checkbox'"
+          v-bind="$attrs"
+          v-on="$listeners"
+          :disabled="item.disabled||readOnly"
+        >
+          <template v-if="item.button">
+            <el-checkbox-button
+              v-for="o in rowOptions"
+              :key="o.value"
+              :label="o.value"
+              :disabled="o.disabled"
+            >
+              {{ o.label }}
+            </el-checkbox-button>
+          </template>
+          <template v-else>
+            <el-checkbox
+              v-for="o in rowOptions"
+              :key="o.value"
+              :label="o.value"
+              :disabled="o.disabled"
+              :border="item.border"
+            >
+              {{ o.label }}
+            </el-checkbox>
+          </template>
+        </el-checkbox-group>
+
+        <el-checkbox
+          v-else-if="item.type === 'switch' && item.appearance === 'checkbox'"
+          v-bind="$attrs"
+          v-on="$listeners"
+          :disabled="item.disabled||readOnly"
+        >
+          {{ item.label }}
+        </el-checkbox>
+
         <!-- 时间选择器 -->
         <!-- <el-time-picker v-else-if="item.type === 'time'" :format="item.valueFormat" v-bind="$attrs" range-separator="至"
         start-placeholder="开始时间" end-placeholder="结束时间" v-on="$listeners"></el-time-picker> -->

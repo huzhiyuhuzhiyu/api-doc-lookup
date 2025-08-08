@@ -1,47 +1,27 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {buttonList, getColumns} from "./data";
-import {feedbackDeliveryOrderPool, getSalesOrderPoolPage} from "@/api/salesOrderPool";
-import Form from './Form.vue'
-import FeedbackEditDialog from "./feedbackEditDialog.vue";
+import {getChangeRecordListPage} from "@/api/drawConf";
+import Form from "@/views/masterDataManagement/drawConf/Form.vue";
 
 export default {
   name: "index",
   components: {
-    FeedbackEditDialog,
+    Form,
     SuperQuery,
-    Form
   },
   data() {
     return {
       loading: false,
       visible: false,
-      showDialog: false,
-      tableData: [],
-      total: 0,
+      btnList: buttonList,
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'orderType',
-          label: "订单类型",
-          type: 'select',
-          options: this.global.salesOrderType
-        },
-        {
-          prop: 'deliveryStatus',
-          label: "交期状态",
-          type: 'select',
-          options: this.global.deliveryStatus
-        },
-      ],
+      superQueryJson: [],
       initListQuery: {
         orderNo: '',
         cooperativePartnerName: '',
-        cooperativePartnerCode: '',
-        orderType: '',
-        deliveryStatus: '',
-        confirmedStatus: 'need_purchase',
-        productSourceList: ['purchase', 'assemble', 'virtual_assemble'],
+        customerProductDrawingNo: '',
+        drawingNo: '',
         orderItems: [
           {
             asc: false,
@@ -49,7 +29,7 @@ export default {
           },
           {
             asc: false,
-            column: 't1.create_time'
+            column: 't2.create_time'
           }
         ],
         superQuery: {},
@@ -57,15 +37,10 @@ export default {
         pageSize: 20
       },
       listQuery: {},
-      btnList: buttonList,
+      tableData: [],
+      total: 0,
       columnList: [],
       columnsConfig: getColumns(),
-      selectedRow: [],
-      productSourceOperate: {
-        purchase: '成品需求',
-        virtual_assemble: '成品需求',
-        assemble: '物料需求'
-      },
     }
   },
   created() {
@@ -76,7 +51,7 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await getSalesOrderPoolPage(this.listQuery);
+        const res = await getChangeRecordListPage(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -85,26 +60,10 @@ export default {
       }
     },
 
-    async handleConfirm(selectedDate) {
-      const params = {
-        feedbackDeliveryDate: selectedDate,
-        id: this.selectedRow[0].id,
-      }
-      try {
-        const res = await feedbackDeliveryOrderPool(params);
-        this.$message.success('反馈成功')
-        await this.initData()
-      } catch (e) {
-        this.$message.error('反馈失败，请稍后再试')
-      }
-    },
-
     handleButtonClick(type) {
       switch (type) {
-        case 'feedback':
-          if (!this.selectedRow.length) return this.$message.warning('请至少选择一条数据')
-          if (this.selectedRow.length > 1) return this.$message.warning('只能选择一条数据')
-          this.showDialog = true
+        case '':
+
           break;
         default:
       }
@@ -112,11 +71,10 @@ export default {
 
     handleColumnClick(row, type) {
       switch (type) {
-        case 'purchase':
-        case 'assemble':
+        case 'look':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(row, type, this.productSourceOperate)
+            this.$refs.Form.init(row, type)
           })
           break;
         default:
@@ -125,8 +83,6 @@ export default {
 
     close(isInitData = true) {
       this.visible = false
-      if (!isInitData) return
-      this.initData()
     },
 
     sortChange({prop, order}) {
@@ -168,49 +124,32 @@ export default {
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
         <el-form @submit.native.prevent @keyup.enter.native="search()">
-          <el-col :span="3">
+          <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerCode"
-                placeholder="客户编码"
+              <el-input v-model.trim="listQuery.orderNo"
+                placeholder="采购单号"
                 clearable/>
             </el-form-item>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="4">
             <el-form-item>
               <el-input v-model.trim="listQuery.cooperativePartnerName"
                 placeholder="客户名称"
                 clearable/>
             </el-form-item>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo"
-                placeholder="销售单号"
+              <el-input v-model.trim="listQuery.customerProductDrawingNo"
+                placeholder="客户产品型号"
                 clearable/>
             </el-form-item>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.orderType" placeholder="请选择">
-                <el-option
-                  v-for="item in global.salesOrderType"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-select v-model="listQuery.deliveryStatus" placeholder="请选择">
-                <el-option
-                  v-for="item in global.deliveryStatus"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
+              <el-input v-model.trim="listQuery.drawingNo"
+                placeholder="型号"
+                clearable/>
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -247,11 +186,9 @@ export default {
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="hsCodes"
+        <JNPF-table customKey="drawingRevisionRecord"
           v-loading="loading"
           :data="tableData"
-          :has-c="true"
-          @selection-change="(val) => selectedRow = val"
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"
@@ -284,8 +221,8 @@ export default {
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text"
-                @click="handleColumnClick(row, row.productSource)">
-                {{ productSourceOperate[row.productSource] }}
+                @click="handleColumnClick(row, 'look')">
+                查看详情
               </el-button>
             </template>
           </el-table-column>
@@ -296,14 +233,10 @@ export default {
       </div>
     </div>
     <!-- 高级查询 -->
-    <SuperQuery partentOrChild="TransitionApplicationRecordQuery" :show="superQueryVisible" ref="SuperQuery"
+    <SuperQuery partentOrChild="drawingRevisionRecordSuperQuery" :show="superQueryVisible" ref="SuperQuery"
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <Form ref="Form" v-if="visible" @close="close"/>
-    <FeedbackEditDialog
-      :visible.sync="showDialog"
-      @confirm="handleConfirm"
-    />
   </div>
 </template>

@@ -44,10 +44,17 @@ export default {
   created() {
   },
   methods: {
-    async init(id = '', type) {
+    async init(row, type) {
       this.btnType = type
+      this.title = this.getTitle(type)
       // this.getBusInfo('b026')
-      await this.getDetail(id)
+      const {id, purPurchaseOrderLineId} = row
+      const params = {
+        id: id,
+        purchaseLineId: purPurchaseOrderLineId
+      }
+
+      await this.getDetail(params)
 
       // this.dataForm.approvalFlag && this.getFlowDetail(row.id)
       this.$nextTick(() => {
@@ -55,10 +62,10 @@ export default {
       })
     },
 
-    async getDetail(id) {
+    async getDetail(params) {
       this.loading = true
       try {
-        const res = await getPurPurchaseDrawing(id)
+        const res = await getPurPurchaseDrawing(params)
         const {msg, data} = res
         if (msg === 'Success') {
           this.dataForm = data
@@ -67,6 +74,15 @@ export default {
         }
       } catch (err) {
         this.loading = false
+      }
+    },
+
+    getTitle(type) {
+      switch (type) {
+        case 'add':
+          return `${ this.title }`
+        case 'look':
+          return `查看${ this.title }`
       }
     },
 
@@ -162,9 +178,9 @@ export default {
                 <el-button type="primary" :loading="btnLoading" @click="handleSubmit('last_confirmed')">
                   按上次已确认图纸
                 </el-button>
-                <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">
-                  历史确认
-                </el-button>
+                <!--                <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">-->
+                <!--                  历史确认-->
+                <!--                </el-button>-->
                 <el-button type="primary" :loading="btnLoading" @click="handleSubmit('confirmed')">
                   保存并提交
                 </el-button>

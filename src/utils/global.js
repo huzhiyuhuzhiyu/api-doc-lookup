@@ -97,6 +97,7 @@ const global = {
     {label: '中', value: 2, type: 'warning'},
     {label: '低', value: 3, type: 'success'}
   ],
+  // 销售订单行确认状态
   orderConfirmedStatus: [
     {label: '已有库存', value: 'existing_inventory'},
     {label: '无需采购', value: 'no_need_purchase'},
@@ -109,6 +110,7 @@ const global = {
     {label: '已回复', value: 'replied', type: 'info'},
     {label: '已完成', value: 'finished', type: 'success'},
   ],
+  // 状态
   shippingStatus: [
     {label: '等待', value: 'waiting', type: 'warning'},
     {label: '就绪', value: 'ready', type: 'info'},
@@ -132,6 +134,24 @@ const global = {
     { label: '完成', value: 'finished', type: 'success' },
     { label: '未提交', value: 'not_submit', type: 'danger' },
     { label: '待反馈', value: 'pending_feedback', type: 'warning' },
+  ],
+
+  // 编排任务方式
+  taskMethodStatus: [
+    {label: '指定加工对象', value: 'appoint', type: 'warning'},
+    {label: '不指定加工对象', value: 'not_appoint', type: 'info'},
+  ],
+
+  // 加工类型
+  processingType: [
+    {label: '自制', value: 'self_produced', type: 'info'},
+    {label: '外协', value: 'external_production', type: 'info'},
+  ],
+
+  // 包装物料用于类型
+  packagingType: [
+    {label: '包装管理', value: 'packing_manage', type: 'info'},
+    {label: '仓库管理', value: 'warehouse_manage', type: 'info'},
   ],
 
   // 字典数据映射方法

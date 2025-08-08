@@ -118,7 +118,10 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "内径",
       value: "",
       type: "input",
-      suffix: "mm",
+      itemSlot: {
+        position: 'append',
+        content: 'mm'
+      },
       sm: 12
     },
     {
@@ -126,7 +129,10 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "外径",
       value: "",
       type: "input",
-      suffix: "mm",
+      itemSlot: {
+        position: 'append',
+        content: 'mm'
+      },
       sm: 12
     },
     {
@@ -134,7 +140,10 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "宽度",
       value: "",
       type: "input",
-      suffix: "mm",
+      itemSlot: {
+        position: 'append',
+        content: 'mm'
+      },
       sm: 12
     },
     {
@@ -142,7 +151,10 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "内圈宽",
       value: "",
       type: "input",
-      suffix: "mm",
+      itemSlot: {
+        position: 'append',
+        content: 'mm'
+      },
       sm: 12
     },
     {
@@ -150,7 +162,10 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "外圈宽",
       value: "",
       type: "input",
-      suffix: "mm",
+      itemSlot: {
+        position: 'append',
+        content: 'mm'
+      },
       sm: 12
     },
     {
@@ -158,7 +173,10 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "单重",
       value: "",
       type: "input",
-      suffix: "kg",
+      itemSlot: {
+        position: 'append',
+        content: 'kg'
+      },
       sm: 12
     },
     {

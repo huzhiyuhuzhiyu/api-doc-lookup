@@ -145,6 +145,7 @@ export default {
         orderNo: deepParams.orderNo,
         ordersId: deepParams.ordersId,
         ordersLineId: deepParams.id,
+        productsId: deepParams.productsId,
         poolList: this.linesList
       }
       let MSG = '提交成功'

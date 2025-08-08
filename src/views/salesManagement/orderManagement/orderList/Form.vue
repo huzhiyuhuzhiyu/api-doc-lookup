@@ -443,7 +443,6 @@ export default {
       actions: {
         edit: async (id) => {
           await this.getDetail(id);
-
         },
         look: async (id) => {
           await this.getDetail(id);
@@ -786,7 +785,7 @@ export default {
             {prop: 'productCode', label: '产品编码', sortable: 'custom'},
             {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
             {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-            {prop: 'createTime', label: '创建时间', sortable: 'custom'}
+            {prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom'}
           ],
           listRequestObj: {
             ...this.addProductProps.listRequestObj,
@@ -804,7 +803,7 @@ export default {
             {prop: 'code', label: '产品编码', sortable: 'custom'},
             {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
             {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-            {prop: 'createTime', label: '创建时间', sortable: 'custom'}
+            {prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom'}
           ],
           listRequestObj: {
             ...this.addProductProps.listRequestObj,
@@ -944,7 +943,7 @@ export default {
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-preview-main transitionForm org-form">
             <div class="JNPF-common-page-header">
-              <el-page-header @back="goBack" :content="title"/>
+              <el-page-header @back="$emit('close',false)" :content="title"/>
               <div class="options">
                 <template v-if="activeType">
                   <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
@@ -954,7 +953,7 @@ export default {
                     保存并提交
                   </el-button>
                 </template>
-                <el-button @click="goBack">{{
+                <el-button @click="$emit('close',false)">{{
                     $t('common.cancelButton')
                   }}
                 </el-button>

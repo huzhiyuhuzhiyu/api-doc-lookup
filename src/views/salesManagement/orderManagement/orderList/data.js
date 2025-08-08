@@ -11,7 +11,7 @@ export const buttonList = [
     type: 'add',
     permission: 'btn_add',
     icon: 'el-icon-plus',
-    text: '新增'
+    text: '新建'
   },
   {
     buttonType: 'primary',

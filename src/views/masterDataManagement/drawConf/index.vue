@@ -80,7 +80,7 @@ export default {
           if (this.selectedRow[0]?.status) return this.$message.warning('已进行过图纸确认，不能重复操作');
           this.visible = true;
           this.$nextTick(() => {
-            this.$refs.Form.init(this.selectedRow[0]?.purPurchaseOrderLineId, 'add');
+            this.$refs.Form.init(this.selectedRow[0], 'add');
           });
           break;
         default:
@@ -178,9 +178,9 @@ export default {
               :btnList="btnList"
               @click="handleButtonClick"
             />
-            <TableDataExportButton :disabled="tableData.length <= 0" tableRef="dataTable"
-              :listQuery="listQuery" exportType="1018"
-              exportName="图纸确认"/>
+<!--            <TableDataExportButton :disabled="tableData.length <= 0" tableRef="dataTable"-->
+<!--              :listQuery="listQuery" exportType="1018"-->
+<!--              exportName="图纸确认"/>-->
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">

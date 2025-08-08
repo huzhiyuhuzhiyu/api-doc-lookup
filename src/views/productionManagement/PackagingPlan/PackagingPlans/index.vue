@@ -1,14 +1,19 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
+
 import {buttonList, getColumns} from "./data";
-import {feedbackDeliveryOrderPool, getSalesOrderPoolPage} from "@/api/salesOrderPool";
-import Form from './Form.vue'
-import FeedbackEditDialog from "./feedbackEditDialog.vue";
+import {getPrintBusInfo} from "@/api/system/printDev";
+import Form from '../module/Form.vue'
+import PrintDialog from '@/components/no_mount/printDialog/index.vue';
+import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
+import {closeProducePlan, getProductionPlanList} from "@/api/productionManagement";
+import {uploadProduct} from "@/api/customerManagement";
 
 export default {
   name: "index",
   components: {
-    FeedbackEditDialog,
+    BatchPrintBrowse,
+    PrintDialog,
     SuperQuery,
     Form
   },
@@ -16,7 +21,15 @@ export default {
     return {
       loading: false,
       visible: false,
-      showDialog: false,
+      printVisible: false,
+      uploadProduct,
+      uploadVisible: false,
+      extraFormData: {},
+      printQuery: {
+        category: ''
+      },
+      fullName: '',
+      enCode: '',
       tableData: [],
       total: 0,
       superQueryVisible: false,
@@ -28,20 +41,16 @@ export default {
           options: this.global.salesOrderType
         },
         {
-          prop: 'deliveryStatus',
-          label: "交期状态",
+          prop: 'orderState',
+          label: "订单状态",
           type: 'select',
-          options: this.global.deliveryStatus
+          options: this.global.salesOrderState
         },
       ],
       initListQuery: {
-        orderNo: '',
-        cooperativePartnerName: '',
-        cooperativePartnerCode: '',
-        orderType: '',
-        deliveryStatus: '',
-        confirmedStatus: 'need_purchase',
-        productSourceList: ['purchase', 'assemble', 'virtual_assemble'],
+        planType: 'package_plan',
+        productionPlanNo: '',
+        productsName: '',
         orderItems: [
           {
             asc: false,
@@ -49,7 +58,7 @@ export default {
           },
           {
             asc: false,
-            column: 't1.create_time'
+            column: 'create_time'
           }
         ],
         superQuery: {},
@@ -61,11 +70,6 @@ export default {
       columnList: [],
       columnsConfig: getColumns(),
       selectedRow: [],
-      productSourceOperate: {
-        purchase: '成品需求',
-        virtual_assemble: '成品需求',
-        assemble: '物料需求'
-      },
     }
   },
   created() {
@@ -76,7 +80,7 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await getSalesOrderPoolPage(this.listQuery);
+        const res = await getProductionPlanList(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -85,26 +89,55 @@ export default {
       }
     },
 
-    async handleConfirm(selectedDate) {
-      const params = {
-        feedbackDeliveryDate: selectedDate,
-        id: this.selectedRow[0].id,
-      }
+    closePrint() {
+      this.printVisible = false
+    },
+
+    printView(row, enCode, fullName) {
+      this.selectArr = [row]
+      this.enCode = enCode
+      this.fullName = fullName
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
+
+    async printOrder(enCode) {
       try {
-        const res = await feedbackDeliveryOrderPool(params);
-        this.$message.success('反馈成功')
-        await this.initData()
+        const res = await getPrintBusInfo(enCode)
+        if (!res.data) {
+          return this.$message.warning('未找到相应打印模版')
+        }
+        const id = res.data.id
+        const printData = this.selectArr.map(item => ({
+          formId: item.id,
+          id: id
+        }))
+        this.$refs.batchPrint.print(printData);
       } catch (e) {
-        this.$message.error('反馈失败，请稍后再试')
       }
+    },
+
+    validateSelectedRows() {
+      if (!this.selectedRow.length) {
+        this.$message.warning('请至少选择一条数据');
+        return false;
+      }
+      if (this.selectedRow.length > 1) {
+        this.$message.warning('只能选择一条数据');
+        return false;
+      }
+      return true;
     },
 
     handleButtonClick(type) {
       switch (type) {
-        case 'feedback':
-          if (!this.selectedRow.length) return this.$message.warning('请至少选择一条数据')
-          if (this.selectedRow.length > 1) return this.$message.warning('只能选择一条数据')
-          this.showDialog = true
+        case 'print':
+          if (!this.validateSelectedRows()) return;
+          this.printView(this.selectedRow[0], 'p006', '打印');
+          break;
+        case 'import':
           break;
         default:
       }
@@ -112,26 +145,58 @@ export default {
 
     handleColumnClick(row, type) {
       switch (type) {
-        case 'purchase':
-        case 'assemble':
+        case 'look':
+        case 'edit':
+        case 'copy':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(row, type, this.productSourceOperate)
+            this.$refs.Form.init(row.id, type)
           })
+          break;
+        case 'arrange':
+          this.visible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init('', type, row)
+          })
+          break;
+        case 'close':
+          this.handleClose(row.id)
           break;
         default:
       }
     },
 
+    handleClose(id) {
+      this.$confirm('您确定关闭当前计划吗, 是否继续？', '提示', {
+        type: 'warning'
+      }).then(async () => {
+        const res = await closeProducePlan([id]);
+        const {msg} = res
+        if (msg === 'Success') {
+          this.$message.success('关闭成功')
+          this.initData()
+        }
+      }).catch(() => {
+      })
+    },
+
+    importDataSuccess(res, file, fileList) {
+      if (!res.data) {
+        this.$message.success(`导入成功`)
+      }
+      this.uploadVisible = false
+    },
+
     close(isInitData = true) {
       this.visible = false
+      this.BindingVisible = false
       if (!isInitData) return
       this.initData()
     },
 
     sortChange({prop, order}) {
       let newProp = ''
-      if (prop === 't.create_time') {
+      if (prop === 'createTime') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -168,52 +233,21 @@ export default {
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
         <el-form @submit.native.prevent @keyup.enter.native="search()">
-          <el-col :span="3">
+          <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerCode"
-                placeholder="客户编码"
+              <el-input v-model.trim="listQuery.productionPlanNo"
+                placeholder="包装计划单号"
                 clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerName"
-                placeholder="客户名称"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo"
-                placeholder="销售单号"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-select v-model="listQuery.orderType" placeholder="请选择">
-                <el-option
-                  v-for="item in global.salesOrderType"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-select v-model="listQuery.deliveryStatus" placeholder="请选择">
-                <el-option
-                  v-for="item in global.deliveryStatus"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productsName"
+                placeholder="产品名称"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search"
                 @click="search()">查询
@@ -247,7 +281,7 @@ export default {
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="hsCodes"
+        <JNPF-table customKey="PackagingPlans"
           v-loading="loading"
           :data="tableData"
           :has-c="true"
@@ -283,9 +317,16 @@ export default {
           </template>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text"
-                @click="handleColumnClick(row, row.productSource)">
-                {{ productSourceOperate[row.productSource] }}
+              <el-button size="mini" type="text" :disabled="row.orderType === 'rework'"
+                @click="handleColumnClick(row, 'arrange')">
+                编排
+              </el-button>
+              <el-button class="JNPF-table-delBtn" size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
+                @click="handleColumnClick(row, 'close')">
+                关闭
+              </el-button>
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'look')">
+                详情
               </el-button>
             </template>
           </el-table-column>
@@ -296,14 +337,17 @@ export default {
       </div>
     </div>
     <!-- 高级查询 -->
-    <SuperQuery partentOrChild="TransitionApplicationRecordQuery" :show="superQueryVisible" ref="SuperQuery"
+    <SuperQuery partentOrChild="PackagingPlans" :show="superQueryVisible" ref="SuperQuery"
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
+    <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
+    <!--  导入-->
+    <UploadImportData ref="uploadRef" v-if="uploadVisible" :extraFormData="extraFormData" :uploadApi="uploadProduct" @success="importDataSuccess"
+      @close="uploadVisible = false" templateDownLoadPath="/static/销售订单导入模板.xlsx"/>
+
     <Form ref="Form" v-if="visible" @close="close"/>
-    <FeedbackEditDialog
-      :visible.sync="showDialog"
-      @confirm="handleConfirm"
-    />
   </div>
 </template>

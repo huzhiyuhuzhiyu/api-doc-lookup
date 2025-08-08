@@ -166,7 +166,7 @@
                     </el-table-column>
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'add' || btnType == 'edit'">
                       <template slot-scope="scope">
-                        <el-button type="text" @click="deltable(scope)" style=" color: #ff3a3a">删除</el-button>
+                        <el-button type="text" @click="deltable(scope)" class="JNPF-table-delBtn">删除</el-button>
                         <el-button type="text" v-if="quoteType !== 'directly_quotation'"
                           @click="historyPriceFun(scope)">历史价格</el-button>
                       </template>

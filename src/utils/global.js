@@ -127,6 +127,14 @@ const global = {
     {label: '按上次已确认的图纸', value: 'last_confirmed', type: 'warning'},
     {label: '已确认', value: 'confirmed', type: 'success'},
   ],
+  
+  // 报价状态
+  quotationStatus: [
+    { label: '已反馈', value: 'feedback_received', type: 'primary' },
+    { label: '完成', value: 'finished', type: 'success' },
+    { label: '未提交', value: 'not_submit', type: 'danger' },
+    { label: '待反馈', value: 'pending_feedback', type: 'warning' },
+  ],
 
   // 编排任务方式
   taskMethodStatus: [

@@ -1,6 +1,6 @@
 <template>
   <transition name="el-zoom-in-center">
-    <div class="JNPF-preview-main org-form">
+    <div class="JNPF-preview-main">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
         <el-page-header @back="$emit('close')"
           :content="btnType == 'add' || btnType == 'copy' ? '新建询价' : btnType == 'edit' ? '编辑询价' : '查看询价管理'" />
@@ -52,9 +52,9 @@
                 <el-table-column prop="quotationNo" label="询价单号" />
                 <el-table-column prop="cooperativePartnerId" label="客户编号" />
                 <el-table-column prop="quotationTime" label="询价日期"></el-table-column>
-                <el-table-column prop="bidder" label="制单人" />
-                <el-table-column prop="cooperativePartnerIdText" label="业务员" />
-                <el-table-column prop="purchaseUserId" label="采购负责人" />
+                <el-table-column prop="createByName" label="制单人" />
+                <el-table-column prop="bidder" label="业务员" />
+                <el-table-column prop="" label="采购负责人" />
                 <el-table-column prop="quotationStatus" label="状态" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.quotationStatus == 'feedback_received'">
@@ -152,7 +152,7 @@ export default {
           minWidth: 160,
         },
         {
-          prop: 'amounts',
+          prop: 'procurementAmounts',
           label: '报价',
           type: 'input',
           minWidth: 160,
@@ -235,21 +235,21 @@ export default {
           itemDisabled: true,
         },
         {
-          prop: "bidder",
+          prop: "createOrder",
           label: "制单人",
           value: "",
           type: "input",
           disabled: true,
         },
         {
-          prop: "cooperativePartnerIdText",
+          prop: "bidder",
           label: "业务员",
           value: "",
           type: "input",
           disabled: true,
         },
         {
-          prop: "purchaseUserId",
+          prop: "",
           label: "采购负责人",
           value: "",
           type: "input",
@@ -336,6 +336,31 @@ export default {
   async created() {
   },
   methods: {
+    // 获取制单人和业务员信息
+    async getUserInfo(quotationId) {
+      try {
+        getQuotationInfo(quotationId).then(res => {
+          const { sale = {} } = res.data
+          const { bidder, createByName } = sale
+          this.$set(this.dataForm, 'bidder', bidder)
+          this.$set(this.dataForm, 'createOrder', createByName)
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // 供应商信息变更
+    supplierdata(id, data, isChange) {
+      if (isChange) return;
+      this.oldSupplierData = JSON.parse(JSON.stringify(data));
+      this.dataForm.cooperativePartnerId = id;
+      this.dataForm.cooperativePartnerName = data.name;
+      this.dataFormTwoList = []
+      this.productLoading = true
+      setTimeout(() => {
+        this.productLoading = false
+      }, 1000)
+    },
     async refreshTableHeight(...args) {
       if (args.length) await new Promise(resolve => setTimeout(resolve, 500))
       const mainRef = this.$refs.main
@@ -395,7 +420,7 @@ export default {
     // 待询价工单查询子产品列表
     getProductsList(row) {
       getQuotationInfo(row.id).then(res => {
-        const { lines = [], sale = {} } = res.data
+        const { lines = [] } = res.data
         this.dataFormTwoList
           = lines.map(item => {
             return {
@@ -403,9 +428,10 @@ export default {
               productName: item.productName || '',
               productCode: item.productCode || '',
               minNumStr: item.minNumStr || 0,
-              amounts: item.amounts || 0,
+              procurementAmounts: item.procurementAmounts || 0,
               moldAmounts: item.moldAmounts || 0,
-              deliveryDate: item.deliveryDate || ''
+              deliveryDate: item.deliveryDate || '',
+              remark1: item.remark1 || '',
             }
           }),
           this.formLoading = false
@@ -438,7 +464,10 @@ export default {
       let formMethod = null;
       if (this.btnType === 'edit') {
         formMethod = editEnquiryManagement
-        paramsObj.bimInquiry.id = id
+        paramsObj.bimInquiry = {
+          ...this.dataForm,
+          documentStatus: type
+        }
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         formMethod = addEnquiryManagement
       }
@@ -447,7 +476,7 @@ export default {
         if (type == "draft") {
           MSG = "保存成功"
         }
-        if (msg === 'Success') {
+        if (res.msg === 'Success') {
           this.$message.success(MSG)
           this.goBack()
         }
@@ -461,7 +490,8 @@ export default {
         ...this.dataForm,
         inquiryNo: row.quotationNo,
         ...row,
-        quotationId: row.id
+        quotationId: row.id,
+        createOrder: row.createByName
       }
       this.inquiryNoListDialog = false
       this.$refs['dataForm'].$refs.main.clearValidate(['inquiryNo'])
@@ -525,6 +555,7 @@ export default {
           inquiryNo: inquiry.quotationNo,
           cooperativePartnerName: inquiry.supplierName
         }
+        this.getUserInfo(inquiry.quotationId)
         this.dataFormTwoList = inquiryLineList.map(item => {
           return {
             ...item,

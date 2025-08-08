@@ -49,14 +49,14 @@ export function getBasicFormSchema(dataFormRef, context) {
       itemDisabled: true,
     },
     {
-      prop: "bidder",
+      prop: "createByName",
       label: "制单人",
       value: "",
       type: "input",
       disabled: true,
     },
     {
-      prop: "",
+      prop: "bidder",
       label: "业务员",
       value: "",
       type: "input",
@@ -95,12 +95,12 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
-      prop: "bidder",
+      prop: "createByName",
       label: "制单人",
       minWidth: 120,
     },
     {
-      prop: "",
+      prop: "bidder",
       label: "业务员",
       minWidth: 120,
     },

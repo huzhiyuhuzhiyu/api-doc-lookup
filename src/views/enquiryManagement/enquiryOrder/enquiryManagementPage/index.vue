@@ -5,23 +5,21 @@
         <!-- 查询条件 -->
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 4">
-                <el-form-item>
-                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                    @keyup.enter.native="search('basic')" />
-                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                    clearable>
-                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                      :value="item2.value"></el-option>
-                  </el-select>
-                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                    :type="item.dateType"
-                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-                </el-form-item>
-              </el-col>
-            </template>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model.trim="form.quotationNo" placeholder="报价单号" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model.trim="form.customerCode" placeholder="客户编号" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model.trim="form.customerName" placeholder="客户名称" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
@@ -52,7 +50,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table customKey="hsCodes" v-loading="loading" :data="tableDataList" :has-c="true"
+          <JNPF-table customKey="hsCodes" v-loading="listLoading" :data="tableDataList" :has-c="true"
             @selection-change="(val) => selectedRow = val" :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
             @sort-change="sortChange" ref="dataTable" custom-column>
             <template v-for="column in columnsConfig">
@@ -100,25 +98,25 @@
       </div>
     </div>
     <EstablishForm v-if="establishVisible" @close="closeForm" ref="establishForm"></EstablishForm>
+    <SuperQuery partentOrChild="TransitionApplicationRecordQuery" :show="superQueryVisible" ref="SuperQuery"
+      table-ref="dataTable" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
+      @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
 import { getEnquiryManagementList, deleteEnquiryManagement } from '@/api/enquiryManagement/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import EstablishForm from './establishForm'
 export default {
   name: 'enquiryManagementPage',
   components: {
-    EstablishForm
+    EstablishForm,
+    SuperQuery
   },
   data() {
     return {
       establishVisible: false,
-      searchList: [
-        { field: 'quotationNo', fieldValue: '', label: '询价单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'customerCode', fieldValue: '', label: '客户编号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'customerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-      ],
       form: {},
       tableDataList: [],
       total: 0,
@@ -186,7 +184,9 @@ export default {
           slot: true,
           dictType: 'documentStatusList',
         },
-      ]
+      ],
+      superQueryVisible: false,
+      superQueryJson: [],
     }
   },
   async created() {
@@ -195,11 +195,16 @@ export default {
   },
   activated() {
     // 刷新表格
-    if (this.$refs.tableForm) {
-      this.$refs.tableForm.doLayout()
+    if (this.$refs.dataTable) {
+      this.$refs.dataTable.doLayout()
     }
   },
   methods: {
+    superQuerySearch(query) {
+      this.form.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     getAlign(align) {
       return align || 'center'
     },
@@ -216,11 +221,8 @@ export default {
     },
     // 查询条件重置
     reset() {
-      this.$refs.tableForm.$refs.JNPFTable.clearSort()
+      this.$refs.dataTable.$refs.JNPFTable.clearSort()
       this.form = JSON.parse(JSON.stringify(this.formlist))
-      this.searchList.forEach(item => {
-        item.fieldValue = ''
-      })
       this.search('basic')
     },
     handleUserRelation(row, type) {
@@ -263,37 +265,13 @@ export default {
         let item = this.form[key]
         this.form[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.form.pageNum = 1 // 重置页码
-      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
-      if (type === 'basic') {
-        this.basicQuery = {
-          matchLogic: 'AND',
-          condition: this.searchList
-            .filter((item) => item.fieldValue)
-            .map((item) => {
-              return {
-                ...item,
-                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-              }
-            })
-        }
-      }
       this.initData()
     },
     // 查询接口
     initData() {
       this.listLoading = true
-      // 处理查询条件
-      const searchData = {}
-      this.searchList.forEach((item) => {
-        if (item.fieldValue) {
-          searchData[item.field] = item.fieldValue
-        }
-      })
-      console.log(searchData);
       getEnquiryManagementList({
         ...this.form,
-        ...searchData
       }).then(res => {
         this.tableDataList = res.data.records
         this.listLoading = false
@@ -311,7 +289,7 @@ export default {
       })
     },
     columnSetFun() {
-      this.$refs.tableForm.showDrawer()
+      this.$refs.dataTable.showDrawer()
     },
   }
 }

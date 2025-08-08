@@ -19,52 +19,12 @@
           <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                  <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="报价单号" prop="quotationNo">
-                        <el-input v-model="dataForm.quotationNo" placeholder="输入报价单号" :disabled="status"
-                          maxlength="50" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="所属客户" prop="cooperativePartnerIdText">
-                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText"
-                          :renderTree="renderTree"
-                          @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择所属客户" treeTitle="客户分类"
-                          placeholder="请选择客户"
-                          :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj"
-                          :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
-                          :isdisabled="btnType === 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="业务员" prop="bidder">
-                        <el-input v-model="dataForm.bidder" placeholder="输入业务员" :disabled="status" maxlength="20" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="报价日期" prop="quotationTime">
-                        <el-date-picker v-model="dataForm.quotationTime" type="date" value-format="yyyy-MM-dd"
-                          style="width: 100%;" placeholder="请选择报价日期" :disabled="status">
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="24" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="status" type="textarea"
-                          maxlength="200" :rows="2" />
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                </el-form>
+                <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm" :btnType="btnType" />
               </el-collapse-item>
               <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                 <div v-if="btnType != 'look'">
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
-                    icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
-                    icon="el-icon-plus" @click="addProduct">选择客户产品</el-button> -->
+                    icon="el-icon-plus" @click="addProduct">选择产品</el-button>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
@@ -224,16 +184,6 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
-        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
-            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="goBack">返回列表</el-button>
-          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
-          <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
-        </span>
-      </el-dialog>
       <el-dialog title="历史价格" :close-on-click-modal="false" :close-on-press-escape="false"
         :visible.sync="historyVisiblt" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
         append-to-body>
@@ -456,28 +406,6 @@ export default {
       historyVisiblt: false,
       getcategoryTrees, // 客户列表
       getCooperativeData, // 客户列表
-      partnerRequestObj: {
-        code: "",
-        name: "",
-        taxId: "",
-        mobilePhone: '',
-        pageNum: 1,
-        pageSize: 20,
-        partnerCategoryId: "",
-        type: "customer",
-      }, // 意向客户列表入参
-      partnerSearchList: [
-        { prop: 'code', label: '客户编码', type: 'input' },
-        { prop: 'name', label: '客户名称', type: 'input' },
-      ], // 客户搜索条件
-      partnerTableItems: [
-        {prop: 'name', label: '客户名称', minWidth: '220px', sortable: 'custom'},
-        {prop: 'code', label: '客户编码', sortable: 'custom'},
-        {prop: 'contacts', label: '联系人', sortable: 'custom'},
-        {prop: 'mobilePhone', label: '手机', sortable: 'custom'},
-        {prop: 'phone', label: '电话', sortable: 'custom'},
-        {prop: 'salespersonIdText', label: '所属销售', sortable: 'custom'},
-      ], // 客户列表字段
       datafilelist: [],
       iszt: true,
       status: false,
@@ -583,7 +511,6 @@ export default {
       fontSizeValue: '',
       oldId: "",
       oldType: "",
-      tipsvisible: false,
       createdData: {
         salesQuotationId: '',
         customerProductDrawingNo: '',
@@ -665,7 +592,90 @@ export default {
         { text: '是', value: true },
         { text: '否', value: false },
       ],
-      renderTree: false
+      renderTree: false,
+      basicFormSchema: [
+        {
+          prop: "quotationNo",
+          label: "报价单号",
+          value: "",
+          type: "input",
+        },
+        {
+          prop: "cooperativePartnerIdText",
+          label: "所属客户",
+          value: "",
+          type: "custom",
+          customComponent: "ComSelect-page",
+          itemRules: [{ required: true, trigger: "change" }],
+          title: '请选择客户',
+          renderTree: false,
+          multiple: false,
+          listMethod: getCooperativeData,
+          tableItems: [
+            { prop: 'name', label: '客户名称', minWidth: '220px', sortable: 'custom' },
+            { prop: 'code', label: '客户编码', sortable: 'custom' },
+            { prop: 'contacts', label: '联系人', sortable: 'custom' },
+            { prop: 'mobilePhone', label: '手机', sortable: 'custom' },
+            { prop: 'phone', label: '电话', sortable: 'custom' },
+            { prop: 'salespersonIdText', label: '所属销售', sortable: 'custom' },
+          ],
+          listRequestObj: {
+            name: '',
+            type: "customer",
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 'create_time'
+              }
+            ]
+          },
+          searchList: [
+            { prop: 'code', label: '客户编码', type: 'input' },
+            { prop: 'name', label: '客户名称', type: 'input' },
+          ],
+          change: (id, data) => {
+            if (this.changeNum !== 0 && this.dataForm.cooperativePartnerName && this.dataForm.cooperativePartnerName !== this.oldSupplierData.id) {
+              this.$confirm('切换供应商，是否继续？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                this.supplierdata(id, data, true);
+              }).catch((err) => {
+                this.setOldSupplierData();
+                console.log(err);
+              });
+            } else {
+              this.supplierdata(id, data, false);
+            }
+            this.changeNum++
+          },
+        },
+        {
+          prop: "bidder",
+          label: "业务员",
+          value: "",
+          type: "input",
+        },
+        {
+          prop: "quotationTime",
+          label: "报价日期",
+          value: "",
+          type: "date",
+        },
+        {
+          prop: "remark",
+          label: "备注",
+          value: "",
+          type: "textarea",
+        },
+      ],
     }
   },
   watch: {
@@ -1106,19 +1116,6 @@ export default {
     },
     goBack() {
       this.$emit('close', true)
-      this.tipsvisible = false
-    },
-    // 继续修改
-    continueEdit() {
-      this.init(this.dataForm.id, this.btnType)
-      this.tipsvisible = false
-      this.btnLoading = false
-    },
-    // 继续新增
-    continueAdd() {
-      this.init('', 'add')
-      this.btnLoading = false
-      this.tipsvisible = false
     },
     submit() {
       if (this.dataFormTwo.lines.length) {
@@ -1356,9 +1353,6 @@ export default {
     init(id, btnType, approvalFlag) {
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
-      if (this.$store.getters.configData.sale.salePersonFlag) {
-        this.partnerRequestObj.salesPersonFlag = 1
-      }
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
@@ -1597,23 +1591,14 @@ export default {
           formMethod = addQuotationData
         }
         formMethod(obj).then(res => {
-          if (value == "draft") {
-            this.submitmethodsTitle = "保存成功"
-          } else {
-            this.submitmethodsTitle = "提交成功"
+          let MSG = '提交成功'
+          if (type == "draft") {
+            MSG = "保存成功"
           }
-          if (this.btnType == 'edit') {
-            this.btnText = "继续修改"
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            this.btnText = "继续新增"
-          } else {
-            if (res.data) {
-              this.btnLoading = false
-              this.handleMessage(res.data)
-              return
-            }
+          if (res.msg === 'Success') {
+            this.$message.success(MSG)
+            this.goBack()
           }
-          this.tipsvisible = true
         }).catch(() => {
           this.btnLoading = false
         })

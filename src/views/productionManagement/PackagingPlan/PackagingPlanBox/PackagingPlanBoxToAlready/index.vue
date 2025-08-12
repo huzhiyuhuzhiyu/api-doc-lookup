@@ -13,7 +13,6 @@ export default {
   data() {
     return {
       loading: false,
-      planVisible: false,
       tableData: [],
       total: 0,
       superQueryVisible: false,

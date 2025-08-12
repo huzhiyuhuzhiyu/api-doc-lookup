@@ -50,7 +50,7 @@ export function getBatchColumns() {
     {
       prop: "num",
       label: "数量/箱",
-      minWidth: 90,
+      minWidth: 160,
       sortable: 'custom'
     },
     {
@@ -108,7 +108,7 @@ export function getSingleBoxColumns() {
     {
       prop: "singleWeight",
       label: "重量(KG)",
-      minWidth: 90,
+      minWidth: 120,
       sortable: 'custom',
     },
     {

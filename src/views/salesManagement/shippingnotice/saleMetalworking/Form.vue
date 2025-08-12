@@ -42,8 +42,8 @@ export default {
         remark: '',
         deliveryStatus: '',
       },
-      fileList: [],
       basicFormSchema: [],
+      fileList: [],
       linesList: [],
       linesListItems: [
         {
@@ -204,11 +204,6 @@ export default {
           {prop: 'productCode', label: '产品编码', type: 'input'},
         ]
       },
-
-      approvalFlag: false,
-      flowData: {},
-      flowTemplateJson: {},
-      flowTaskOperatorRecordList: [],
 
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],

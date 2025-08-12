@@ -689,7 +689,6 @@ export default {
     async drawingNoFetchSuggestions(queryString, cb) {
       try {
         const params = {
-          saleFlag: true,
           productDrawingNo: queryString,
           productStatus: 'enable',
           pageNum: 1,
@@ -793,7 +792,6 @@ export default {
             partnerType: 'customer'
           }
         }
-        delete this.addProductProps.listRequestObj.saleFlag
       } else {
         this.addProductProps = {
           ...this.addProductProps,
@@ -807,7 +805,6 @@ export default {
           ],
           listRequestObj: {
             ...this.addProductProps.listRequestObj,
-            saleFlag: true,
           }
         }
         delete this.addProductProps.listRequestObj.partnerId

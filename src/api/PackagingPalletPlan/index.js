@@ -19,7 +19,7 @@ export function addStockPlanPallet(data) {
   })
 }
 
-// 包装计划装托-明细列表
+// 包装计划装托-明细列表-已装托
 export function getStockPlanPalletLinePage(data) {
   return request({
     url: '/api/wms/stock/plan/pallet/line/list',

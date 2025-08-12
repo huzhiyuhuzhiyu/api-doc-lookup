@@ -350,7 +350,7 @@ export default {
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="hsCodes"
+        <JNPF-table customKey="orderList"
           v-loading="loading"
           :data="tableData"
           :has-c="true"
@@ -443,7 +443,7 @@ export default {
       </template>
     </ComSelect-page>
     <!-- 高级查询 -->
-    <SuperQuery partentOrChild="TransitionApplicationRecordQuery" :show="superQueryVisible" ref="SuperQuery"
+    <SuperQuery partentOrChild="orderListSuperQuery" :show="superQueryVisible" ref="SuperQuery"
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>

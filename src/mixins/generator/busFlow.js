@@ -16,6 +16,11 @@ export default {
       eventType: '',
       loading: false,
       tableRequiredData: {},
+      flowTemplateJson: {},
+      flowData: {},
+      approvalFlag: false,
+      flowTaskOperatorRecordList: [],
+      endTime: 0,
     }
   },
   methods: {
@@ -53,11 +58,11 @@ export default {
                 }).catch(() => { })
               }
             })
-            
+
           }else{
             this.$refs['dataForm'].$children[0].validate((valid) => {
               if (valid) {
-                // 是不良品且是技术部人员时处理结果 
+                // 是不良品且是技术部人员时处理结果
                 let dataObj = {
                   attachmentList: data.datafilelist,
                   unqualified: data.dataForm,

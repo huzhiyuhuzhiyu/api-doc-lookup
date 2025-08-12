@@ -1,7 +1,8 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {buttonList, getBatchColumns, getSingleBoxColumns} from "./data";
-import {getStockPlanWaitPalletPage} from "@/api/PackagingPalletPlan";
+import {addStockPlanPallet, getStockPlanWaitPalletPage} from "@/api/PackagingPalletPlan";
+import {getBimPackagingMaterialsPage} from "@/api/packagingMaterials";
 
 export default {
   name: "index",
@@ -17,6 +18,9 @@ export default {
       superQueryVisible: false,
       superQueryJson: [],
       initListQuery: {
+        batchNumber: '',
+        productsDrawingNo: '',
+        packagingMethod: '',
         orderItems: [
           {
             asc: false,
@@ -28,20 +32,39 @@ export default {
           }
         ],
         superQuery: {},
-        productsName: ''
       },
       listQuery: {},
       btnList: buttonList,
       columnList: [],
       batchColumns: getBatchColumns(),
       singleBoxColumns: getSingleBoxColumns(),
+      batchSelectionLock: false,
+      singleBoxSelectionLock: false,
       selectedBatchList: [],
       selectedSingleBoxList: [],
+      palletValue: '',
+      palletOptions: [],
       superQueryTableRef: 'batchTable',
+    }
+  },
+  computed: {
+    selectedBoxCount() {
+      return this.selectedSingleBoxList.length;
+    },
+
+    boxQuantity() {
+      if (!this.selectedSingleBoxList.length) {
+        return 0;
+      }
+      return this.jnpf.numberFormat(
+        this.selectedSingleBoxList.reduce((sum, item) => sum + (parseFloat(item.num) || 0), 0),
+        2
+      );
     }
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.getPackagingMaterial()
     this.initData()
   },
   methods: {
@@ -62,11 +85,80 @@ export default {
       }
     },
 
+    async getPackagingMaterial() {
+      const params = {
+        packagingType: 'warehouse_manage',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 9999
+      }
+      const res = await getBimPackagingMaterialsPage(params)
+      const {records} = res.data
+      this.palletOptions = records.map(item => {
+        return {
+          ...item,
+          label: item.name,
+          value: item.id
+        }
+      })
+    },
+
     selectedBatch(val) {
-      this.selectedBatchList = val
-      this.selectedSingleBoxList = val.flatMap(item => item.lineList)
-      this.selectedSingleBoxList.forEach(row => {
-        this.$refs.singleBoxTable.$refs.JNPFTable.toggleRowSelection(row, true);
+      if (this.singleBoxSelectionLock) return;
+      this.batchSelectionLock = true;
+      this.selectedBatchList = val;
+      this.$nextTick(() => {
+        this.$refs.singleBoxTable.$refs.JNPFTable.clearSelection();
+        if (val.length > 0) {
+          this.selectedSingleBoxList = val.flatMap(item => item.lineList);
+          const singleBoxIdsToSelect = new Set(
+            this.selectedSingleBoxList.map(item => item.id)
+          );
+          this.singleBoxData.forEach(row => {
+            if (singleBoxIdsToSelect.has(row.id)) {
+              this.$refs.singleBoxTable.$refs.JNPFTable.toggleRowSelection(row, true);
+            }
+          });
+        } else {
+          this.selectedSingleBoxList = [];
+        }
+        this.batchSelectionLock = false;
+      });
+    },
+
+    selectedSingleBox(val) {
+      if (this.batchSelectionLock) return;
+      this.singleBoxSelectionLock = true;
+      this.selectedSingleBoxList = val;
+      this.$nextTick(() => {
+        const selectedBatchIds = new Set();
+        val.forEach(box => {
+          const matchingBatch = this.batchData.find(batch =>
+            batch.lineList.some(line => line.id === box.id)
+          );
+          if (matchingBatch) {
+            selectedBatchIds.add(matchingBatch.id);
+          }
+        });
+        this.batchData.forEach(batch => {
+          const shouldBeSelected = selectedBatchIds.has(batch.id);
+          const isSelected = this.selectedBatchList.some(
+            selected => selected.id === batch.id
+          );
+          if (shouldBeSelected !== isSelected) {
+            this.$refs.batchTable.$refs.JNPFTable.toggleRowSelection(batch, shouldBeSelected);
+          }
+        });
+        this.singleBoxSelectionLock = false;
       });
     },
 
@@ -82,8 +174,36 @@ export default {
       switch (type) {
         case 'support':
           if (!this.validateSelectedRows()) return;
+          this.addStockPlanPallet();
           break;
         default:
+      }
+    },
+
+    async addStockPlanPallet() {
+      try {
+        if (!this.palletValue) return this.$message.warning('请选择托盘');
+        const hasPallet = this.selectedSingleBoxList.some(item => item.status === 'pallet');
+        if (hasPallet) {
+          this.$message.warning('选中的箱列表中包含已装托的项，不可重复装托');
+          return;
+        }
+        const stockPlanPalletLineList = this.selectedSingleBoxList.map(item => ({
+          ...item,
+          documentId: item.planPackageId,
+          documentLineId: item.id
+        }));
+        const params = {
+          stockPlanPallet: {
+            packagingMaterialId: this.palletValue,
+          },
+          stockPlanPalletLineList
+        }
+        const res = await addStockPlanPallet(params)
+        this.$message.success('装托成功');
+        this.initData();
+      } catch (e) {
+        this.$message.error('装托失败: ' + e.message);
       }
     },
 
@@ -155,9 +275,28 @@ export default {
         <el-form @submit.native.prevent @keyup.enter.native="search()">
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productsName"
+              <el-input v-model.trim="listQuery.productsDrawingNo"
                 placeholder="产品型号"
                 clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.batchNumber"
+                placeholder="批次"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-select v-model="listQuery.packagingMethod" placeholder="包装方式">
+                <el-option
+                  v-for="item in getDictDataSync('packaging')"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -176,7 +315,25 @@ export default {
         <div class="table-section" style="flex: 1; display: flex; flex-direction: column;">
           <div class="JNPF-common-head" style="padding: 8px; position: relative;">
             <div class="JNPF-common-head-left">
-              <!-- 这里保留功能按钮区域 -->
+              <el-row :gutter="10" type="flex" align="middle">
+                <!-- 下拉选择组件 -->
+                <el-col :span="12">
+                  <el-select v-model="palletValue" placeholder="托盘">
+                    <el-option
+                      v-for="item in palletOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-col>
+                <el-col :span="10">
+                  <CustomButton
+                    :btnList="btnList"
+                    @click="handleButtonClick"
+                  />
+                </el-col>
+              </el-row>
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
@@ -235,7 +392,20 @@ export default {
         <div class="table-section" style="flex: 1; display: flex; flex-direction: column; margin-top: 20px;">
           <div class="JNPF-common-head" style="padding: 8px; position: relative;">
             <div class="JNPF-common-head-left">
-              <!-- 这里保留功能按钮区域 -->
+              <el-row :gutter="10" type="flex" align="middle">
+                <el-col :span="12">
+                  <div class="selected-count">
+                    <span class="count-label">已选箱数：</span>
+                    <span class="count-value">{{ selectedBoxCount }}</span>
+                  </div>
+                </el-col>
+                <el-col :span="12">
+                  <div class="box-quantity">
+                    <span class="quantity-label">已选数量：</span>
+                    <span class="quantity-value">{{ boxQuantity }}</span>
+                  </div>
+                </el-col>
+              </el-row>
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
@@ -258,7 +428,7 @@ export default {
               v-loading="loading"
               :data="singleBoxData"
               :has-c="true"
-              @selection-change="(val) => selectedSingleBoxList = val"
+              @selection-change="selectedSingleBox"
               :row-key="'id'"
               fixedNO
               :setColumnDisplayList="columnList"
@@ -330,7 +500,32 @@ export default {
   overflow: hidden;
 }
 
-.JNPF-table {
-  height: 100%;
+.selected-count, .box-quantity {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 14px;
+  color: #606266;
+}
+
+.count-label, .quantity-label {
+  display: inline-block;
+  min-width: 60px;
+  text-align: right;
+  margin-right: 5px;
+}
+
+.count-value, .quantity-value {
+  font-weight: bold;
+  min-width: 40px;
+  text-align: left;
+}
+
+.count-value {
+  color: #409EFF;
+}
+
+.quantity-value {
+  color: #67C23A;
 }
 </style>

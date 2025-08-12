@@ -84,13 +84,18 @@ const global = {
     {label: '已完成', value: 'finish', type: 'success'},
     {label: '已停止', value: 'stopped', type: 'danger'},
   ],
-  // 发货状态
 
   // 销售订单类型
   salesOrderType: [
     {label: '客户订单', value: 'normal', type: 'warning'},
     {label: '预测订单', value: 'prediction', type: 'success'}
   ],
+
+  returnIndication: [
+    {label: '退货', value: false, type: 'info'},
+    {label: '换货', value: true, type: 'info'}
+  ],
+
   // 发货优先级
   shippingPriority: [
     {label: '高', value: 1, type: 'danger'},
@@ -127,7 +132,7 @@ const global = {
     {label: '按上次已确认的图纸', value: 'last_confirmed', type: 'warning'},
     {label: '已确认', value: 'confirmed', type: 'success'},
   ],
-  
+
   // 报价状态
   quotationStatus: [
     { label: '已反馈', value: 'feedback_received', type: 'primary' },

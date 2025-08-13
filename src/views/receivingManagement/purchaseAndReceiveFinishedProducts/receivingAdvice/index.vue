@@ -161,7 +161,12 @@ export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
   mixins: [getProjectList],
-
+  props: {
+    source: {
+      type: String,
+      default: 'sale_order_finished_product'
+    }
+  },
   data() {
     return {
       isProjectSwitch: '',
@@ -233,7 +238,7 @@ export default {
         inspectionStatus: '',
         keyword: '',
         notificationType: 'procure',
-        classAttribute: 'finish_product',
+        source: this.source,
         notificationTypeList: [],
         orderItems: [
           {
@@ -522,7 +527,7 @@ export default {
       console.log(id, btntype)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, [],'outInboundWarehouse')
+        this.$refs.Form.init(id, btntype, false, [],this.source)
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -531,7 +536,7 @@ export default {
         console.log(id)
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype, false, [],'outInboundWarehouse')
+          this.$refs.Form.init(id, btntype, false, [],this.source)
         })
         // }, 600);
       }

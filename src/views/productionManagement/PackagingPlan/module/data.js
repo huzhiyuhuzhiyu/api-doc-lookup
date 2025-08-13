@@ -77,7 +77,10 @@ export function getBasicFormSchema(dataFormRef, context) {
           trigger: ['blur', 'change'],
         },
         {required: true, message: `${ context.formQuantityLabel }不能为空`, trigger: ['blur', 'change'],},
-      ]
+      ],
+      change: () => {
+        context.watchProductionQuantity()
+      }
     },
     {
       prop: 'taskMethod',

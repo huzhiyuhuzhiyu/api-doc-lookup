@@ -157,7 +157,12 @@ export default {
   name: 'pendingOrders',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery, Detail },
   mixins: [getProjectList],
-
+  props: {
+    source: {
+      type: String,
+      default: 'sale_order_finished_product'
+    }
+  },
   data() {
     return {
       isProjectSwitch: '',
@@ -185,7 +190,7 @@ export default {
         orderType: 'procure',
         deliveryEndDate: '',
         deliveryStartDate: '',
-        classAttribute: 'finish_product',
+        source: this.source,
         // extensionFlag: 1,
         // deliverQueryFlag: 1,
         pageNum: 1,
@@ -743,7 +748,7 @@ export default {
         orderType: 'procure',
         // deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',
-        classAttribute: 'finish_product',
+        source: this.source,
         // extensionFlag: 1,
         // deliverQueryFlag: 1,
         pageNum: 1,
@@ -784,7 +789,7 @@ export default {
       console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse')
+        this.$refs.Form.init(id, btntype, false, this.list, this.source)
       })
     },
     hasDifferentCooperativePartnerCode(arr) {

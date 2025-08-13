@@ -3,28 +3,34 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 
 import {getButtonList, getColumns, getSearchList} from "./data";
 import {getPrintBusInfo} from "@/api/system/printDev";
-import packingForm from './module/packingForm.vue'
-import PrintDialog from '@/components/no_mount/printDialog/index.vue';
-import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 import {getStockMoveList} from "@/api/salesManagement";
 import {getClassAttributeListByCode} from "@/api/masterDataManagement";
-import {getQuotationdatasendlist} from "@/api/orderFollow";
+import {getQuotationdatasendlist, purchaseOrderList} from "@/api/orderFollow";
 import {deepClone} from "@/utils";
+
 import {detailpurchaseOrderList, purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders";
-import autoRecBatchPacking from "./module/components/autoRecBatchPacking.vue";
+import {getStockPickedPage} from "@/api/batchPacking";
+
+
+import PrintDialog from '@/components/no_mount/printDialog/index.vue';
+import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 
 import outboundSaleSendForm from "@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue";
-import {getStockPickedPage} from "@/api/batchPacking";
+
+import packingForm from './module/packingForm.vue'
+import autoRecBatchPacking from "./module/components/autoRecBatchPacking.vue";
+import InboundForm from "./module/inboundForm.vue";
 
 export default {
   name: "index",
   components: {
+    InboundForm,
     outboundSaleSendForm,
     autoRecBatchPacking,
+    packingForm,
     BatchPrintBrowse,
     PrintDialog,
     SuperQuery,
-    packingForm
   },
   props: {
     warehouseCode: {
@@ -38,6 +44,7 @@ export default {
       autoRecBatchPackingFormVisible: false,
       packingFormVisible: false,
       printVisible: false,
+      inboundFormVisible: false,
       printQuery: {
         category: ''
       },
@@ -146,7 +153,7 @@ export default {
         },
         // 采购收货入库
         inbound_purchase: {
-          api: detailpurchaseOrderList,
+          api: purchaseOrderList,
           initListQuery: {
             ...this.commonQueryConfig,
             orderNo: '',
@@ -324,7 +331,17 @@ export default {
     },
 
     handleInbound(row) {
-
+      this.inboundFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs.inboundForm.init({
+          id: '',
+          prefillData: row,
+          btnType: 'add',
+          businessType: this.activeProcess,
+          classAttributeList: this.classAttributeList,
+          warehouseCode: this.warehouseCode
+        })
+      })
     },
 
     handleView(row) {
@@ -415,6 +432,7 @@ export default {
     async close(isInitData = true) {
       this.packingFormVisible = false
       this.autoRecBatchPackingFormVisible = false
+      this.inboundFormVisible = false
       if (!isInitData) return
       await this.getStockMoveList()
       await this.initData()
@@ -620,12 +638,15 @@ export default {
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
-    <autoRecBatchPacking ref="autoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="close"/>
-    <packingForm ref="packingForm" v-if="packingFormVisible" @close="close"/>
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
     <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
-
+    <!--  装箱&批次  -->
+    <autoRecBatchPacking ref="autoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="close"/>
+    <packingForm ref="packingForm" v-if="packingFormVisible" @close="close"/>
+    <!--  入库  -->
+    <inboundForm ref="inboundForm" v-if="inboundFormVisible" @close="close"/>
+    <!--  详情  -->
     <outboundSaleSendForm ref="outboundSaleSendForm" v-if="currentTypeConfig.visible" @close="currentTypeConfig.visible = false"/>
   </div>
 </template>

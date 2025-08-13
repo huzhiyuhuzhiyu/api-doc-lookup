@@ -119,7 +119,7 @@ export function getSearchList(type = 'default') {
       {
         fieldValue: '',
         field: 'orderNo',
-        label: '通知单号',
+        label: '订单号',
         prop: 'orderNo',
         symbol: 'like',
         searchType: 'input'
@@ -416,7 +416,7 @@ export function getColumns(type = 'default') {
     inbound_purchase: [
       {
         prop: "orderNo",
-        label: "通知单号",
+        label: "订单号",
         minWidth: 220,
         align: "left",
         sortable: 'custom',
@@ -435,49 +435,8 @@ export function getColumns(type = 'default') {
         align: "left",
       },
       {
-        prop: 'productName',
-        label: '产品名称',
-        minWidth: 220,
-        sortable: 'custom',
-        align: "left",
-      },
-      {
-        prop: 'productCode',
-        label: '产品编码',
-        minWidth: 220,
-        sortable: 'custom',
-        align: "left",
-      },
-      {
-        prop: 'drawingNo',
-        label: '产品型号',
-        minWidth: 220,
-        sortable: 'custom',
-        align: "left",
-      },
-      {
-        prop: "purchaseQuantity",
-        label: "数量",
-        minWidth: 90,
-      },
-      {
-        prop: "mainUnit",
-        label: "单位",
-        minWidth: 90,
-      },
-      {
-        prop: "waitReceiptNum",
-        label: "待收货数量",
-        minWidth: 160,
-      },
-      {
         prop: "deliveryDate",
         label: "交货日期",
-        minWidth: 120,
-      },
-      {
-        prop: "processName",
-        label: "工序",
         minWidth: 120,
       },
       ...createColumns

@@ -465,24 +465,40 @@ export default {
       if (!this.dataForm.bomId) return this.$message.error('该产品没有BOM，请配置BOM后再试！')
       const res = await BOMLineList(this.dataForm.bomId)
       this.materialList = res.data.map(item => {
-        const num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.qty]), 6)
-        const materialsUsedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
-        return {
-          ...item,
-          materialsUsedQuantity,
-          drawingNo: item.productDrawingNo,
-          productsId: item.productId,
-        }
+        return this.calculateMaterialItem(item);
       }) || []
     },
 
-    // 发料数量计算公式
+    calculateMaterialItem(item) {
+      const materialsUsedQuantity = this.calMaterialsQuantity(
+        item.qty,
+        this.dataForm.productionQuantity,
+        item.lossRate,
+        item.fixedLoss
+      );
+
+      return {
+        ...item,
+        materialsUsedQuantity,
+        drawingNo: item.productDrawingNo,
+        productsId: item.productId,
+      };
+    },
+
+    watchProductionQuantity() {
+      if (this.dataForm.productSource !== 'assemble') return;
+
+      this.materialList = this.materialList.map(item => {
+        return this.calculateMaterialItem(item);
+      });
+    },
+
     calMaterialsQuantity(a, b, c, d) {
-      const _a = !a ? 1 : a
-      const _c = !c ? 1 : c
+      const _a = !a ? 1 : a;
+      const _c = !c ? 1 : c;
       const result = +_a * +b * (1 + (+_c / 100)) + +d;
-      if (isNaN(result)) return
-      return Math.floor(result.toFixed(4));
+      if (isNaN(result)) return;
+      return Math.floor(this.jnpf.numberFormat(result, 4));
     },
 
     async getRoutingDetail(id) {

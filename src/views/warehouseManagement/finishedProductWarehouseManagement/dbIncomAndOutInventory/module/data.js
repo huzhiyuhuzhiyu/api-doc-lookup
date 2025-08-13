@@ -93,3 +93,38 @@ export function getPackingBasicFormSchema(dataFormRef, context) {
     }
   ]
 }
+
+
+/**
+ * 通用数据处理器
+ */
+export const dataProcessor = {
+  extractData(response, path) {
+    if (!path) return response;
+    return path.split('.').reduce((obj, key) => obj?.[key], response) || [];
+  },
+
+  applyFilter(data, filter) {
+    if (!filter) return data;
+
+    if (typeof filter === 'function') {
+      return data.filter(filter);
+    }
+
+    if (typeof filter === 'object') {
+      return data.filter(item => {
+        return Object.entries(filter).every(([key, condition]) => {
+          if (typeof condition === 'function') {
+            return condition(item[key]);
+          }
+          if (Array.isArray(condition)) {
+            return condition.includes(item[key]);
+          }
+          return item[key] === condition;
+        });
+      });
+    }
+
+    return data;
+  }
+};

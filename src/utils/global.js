@@ -136,10 +136,10 @@ const global = {
 
   // 报价状态
   quotationStatus: [
-    { label: '已反馈', value: 'feedback_received', type: 'primary' },
-    { label: '完成', value: 'finished', type: 'success' },
-    { label: '未提交', value: 'not_submit', type: 'danger' },
-    { label: '待反馈', value: 'pending_feedback', type: 'warning' },
+    {label: '已反馈', value: 'feedback_received', type: 'primary'},
+    {label: '完成', value: 'finished', type: 'success'},
+    {label: '未提交', value: 'not_submit', type: 'danger'},
+    {label: '待反馈', value: 'pending_feedback', type: 'warning'},
   ],
 
   // 编排任务方式
@@ -158,6 +158,11 @@ const global = {
   packagingType: [
     {label: '包装管理', value: 'packing_manage', type: 'info'},
     {label: '仓库管理', value: 'warehouse_manage', type: 'info'},
+  ],
+
+  workReportInspection: [
+    {label: '待确认', value: 'wait_confirmed', type: 'info'},
+    {label: '完成', value: 'confirmed', type: 'info'},
   ],
 
   // 字典数据映射方法

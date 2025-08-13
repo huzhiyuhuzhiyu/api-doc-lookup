@@ -90,24 +90,6 @@ export function getColumns() {
       dictType: 'booleanOptions'
     },
     {
-      prop: "planStartDate",
-      label: "计划开始日期",
-      minWidth: 160,
-      sortable: 'custom'
-    },
-    {
-      prop: "planEndDate",
-      label: "计划结束日期",
-      minWidth: 160,
-      sortable: 'custom'
-    },
-    {
-      prop: "arithmeticNo",
-      label: "运算单号",
-      minWidth: 160,
-      sortable: 'custom'
-    },
-    {
       prop: "remark",
       label: "备注",
       minWidth: 180,

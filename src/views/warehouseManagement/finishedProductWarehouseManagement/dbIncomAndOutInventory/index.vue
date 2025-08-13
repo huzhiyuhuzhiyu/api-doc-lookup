@@ -261,7 +261,8 @@ export default {
     await this.initData()
   },
   methods: {
-    init() {},
+    init() {
+    },
 
     async initData() {
       this.loading = true
@@ -292,7 +293,7 @@ export default {
       switch (type) {
         case 'outboundSaleSendConfirm':
           if (!this.validateSelectedRows()) return;
-          const outboundSaleSendConfirmStatus = new Set(['waiting', 'finished'])
+          const outboundSaleSendConfirmStatus = new Set(['waiting', 'verified', 'finished', 'canceled'])
           if (outboundSaleSendConfirmStatus.has(this.selectedRow[0].deliveryStatus)) {
             this.$message.warning('当前状态不允许操作');
             return;

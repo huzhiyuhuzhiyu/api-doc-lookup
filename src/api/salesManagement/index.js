@@ -414,3 +414,20 @@ export function getHistoricalQuotationByProductsId (productsId) {
   })
 }
 
+// 退发货通知单-批量批准
+export function approveOrdersNotice (data) {
+  return request({
+    url: `/api/erp/sale/orders/notice/approve`,
+    method: 'post',
+    data
+  })
+}
+
+// 退发货通知单-批量拒绝
+export function refuseOrdersNotice (data) {
+  return request({
+    url: `/api/erp/sale/orders/notice/refuse`,
+    method: 'post',
+    data
+  })
+}

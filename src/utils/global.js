@@ -118,11 +118,12 @@ const global = {
   // 状态
   shippingStatus: [
     {label: '等待', value: 'waiting', type: 'warning'},
-    {label: '就绪', value: 'ready', type: 'info'},
+    {label: '就绪', value: 'ready', type: 'primary'},
     {label: '已安排', value: 'arranged', type: 'success'},
     {label: '已拣货', value: 'picked', type: 'primary'},
     {label: '已核对', value: 'verified', type: 'primary'},
     {label: '已确认', value: 'confirmed', type: 'success'},
+    {label: "未完成", value: "not_finished", type: "danger"},
     {label: '已完成', value: 'finished', type: 'success'},
     {label: '已取消', value: 'canceled', type: 'danger'}
   ],

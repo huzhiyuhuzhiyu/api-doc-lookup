@@ -1,18 +1,29 @@
 <template>
   <div class="CustomButton">
-    <!-- 文本插槽-用于显示总数或其他文本 -->
     <slot v-if="$slots.text" name="text"></slot>
-    <!-- 按钮插槽-用于自定义按钮内容 -->
     <el-button
       v-for="(btn, index) in btnList"
-      :key="index"
+      v-if="btn.permission"
+      :key="`auth-${index}`"
       v-has="btn.permission"
       :type="btn.buttonType"
       :icon="btn.icon"
       :size="btn.size || 'mini'"
       @click="handleClick(btn.type)"
     >
-      <!-- 按钮插槽 -->
+      <slot :name="`button-${btn.type}`" :btn="btn">
+        {{ btn.text }}
+      </slot>
+    </el-button>
+    <el-button
+      v-for="(btn, index) in btnList"
+      v-if="!btn.permission"
+      :key="`oauth-${index}`"
+      :type="btn.buttonType"
+      :icon="btn.icon"
+      :size="btn.size || 'mini'"
+      @click="handleClick(btn.type)"
+    >
       <slot :name="`button-${btn.type}`" :btn="btn">
         {{ btn.text }}
       </slot>

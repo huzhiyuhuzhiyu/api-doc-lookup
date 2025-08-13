@@ -69,3 +69,13 @@ export function addStockedList(data) {
     data
   })
 }
+
+
+// 拣货单-根据条件查询拣货单明细列表
+export function getStockPickedLineList (data) {
+  return request({
+    url: `/api/wms/stockPicked/line/list/condition`,
+    method: 'post',
+    data
+  })
+}

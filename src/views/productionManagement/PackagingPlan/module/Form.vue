@@ -448,7 +448,9 @@ export default {
         this.dataForm.planDate[0] = firstData.planStartDate
         this.dataForm.planDate[1] = firstData.planEndDate
       }
+      this.dataForm.drawingNo = firstData.productsDrawingNo
       this.dataForm.productionQuantity = firstData.availableArrangeQuantity
+      this.dataForm.productCode = firstData.productsCode
       this.dataForm.productionPlanId = firstData.id
       this.dataForm.taskMethod = 'not_appoint'
 
@@ -468,9 +470,19 @@ export default {
         return {
           ...item,
           materialsUsedQuantity,
+          drawingNo: item.productDrawingNo,
           productsId: item.productId,
         }
       }) || []
+    },
+
+    // 发料数量计算公式
+    calMaterialsQuantity(a, b, c, d) {
+      const _a = !a ? 1 : a
+      const _c = !c ? 1 : c
+      const result = +_a * +b * (1 + (+_c / 100)) + +d;
+      if (isNaN(result)) return
+      return Math.floor(result.toFixed(4));
     },
 
     async getRoutingDetail(id) {
@@ -501,7 +513,7 @@ export default {
             : item;
         };
 
-        this.dataFormTwo.data = this.dataFormTwo.data.map(item => {
+        this.linesList = this.linesList.map(item => {
           if (item.processingType !== "self_produced") return item;
 
           const match = workstationList.find(el => el.processId === item.processId);
@@ -617,6 +629,7 @@ export default {
       const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
       if (!valid_1 || !valid_2) return this.btnLoading = false
       const deepDataForm = deepClone(this.dataForm)
+      deepDataForm.source = 'package_plan'
       deepDataForm.planStartDate = deepDataForm.planDate[0]
       deepDataForm.planEndDate = deepDataForm.planDate[1]
       const newLinesList = this.linesList.map(item => ({
@@ -705,7 +718,7 @@ export default {
                   </el-collapse-item>
                   <el-collapse-item class="productInfo"
                     title="领料清单"
-                    name="productInfo">
+                    name="materialInfo">
                     <TableForm-product
                       @input="contentChanges"
                       :value="materialList"

@@ -1,6 +1,5 @@
 <script>
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import packingForm from "@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/module/packingForm.vue";
 import {
   addStockedList,
   addStockPackingList,
@@ -15,7 +14,7 @@ import * as _ from "highcharts";
 
 export default {
   name: "AutoRecBatch",
-  components: {packingForm, TableFormProduct},
+  components: {TableFormProduct},
   data() {
     return {
       title: '',

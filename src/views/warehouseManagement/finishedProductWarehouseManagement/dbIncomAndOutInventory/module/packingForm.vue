@@ -204,7 +204,6 @@ export default {
         ready: 'arranged',
         arranged: 'picked',
         picked: 'verified',
-        verified: 'confirmed',
         confirmed: 'finished',
       }
     }

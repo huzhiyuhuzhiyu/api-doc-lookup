@@ -129,6 +129,7 @@ export function getBasicFormSchema(dataFormRef, context) {
         code: "",
         name: "",
         documentStatus: "submit",
+        source: "packaging",
         pageNum: 1,
         pageSize: 20,
         orderItems: [

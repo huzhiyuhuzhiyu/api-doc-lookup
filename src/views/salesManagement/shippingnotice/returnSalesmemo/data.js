@@ -51,7 +51,7 @@ export function getColumns() {
       label: "退货状态",
       minWidth: 120,
       slot: true,
-      dictType: 'publicState',
+      dictType: 'shippingStatus',
     },
     {
       prop: "documentStatus",

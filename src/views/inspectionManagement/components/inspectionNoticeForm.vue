@@ -236,14 +236,14 @@ export default {
           {
             label: '全检',
             value: 'all',
-            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(
+            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished','work_report'].includes(
               inspectionType
             )
           },
           {
             label: '抽检',
             value: 'spot_check',
-            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(inspectionType)
+            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished','work_report'].includes(inspectionType)
           },
           // {
           //   label: '免检',
@@ -458,34 +458,49 @@ export default {
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
       this.dataForm.productDrawingNo = row.productDrawingNo
       this.dataForm.mainUnit = row.mainUnit
-      console.log(inspectionType, 'inspectionType')
-      if (inspectionType === 'procure' || inspectionType === 'external') {
-        this.dataForm.inspectionQuantity = this.scope.receivedQuantity
-        this.dataForm.docId = this.scope.purchaseReceiptReturnGoodsId
-        this.dataForm.docLineId = this.scope.id
-        this.dataForm.docNo = this.scope.orderNo
-      } else if (inspectionType === 'sale_back') {
-        this.dataForm.inspectionQuantity = this.scope.deliveryQuantity
-        this.dataForm.docId = this.scope.returnDeliveryNoticeId
-        this.dataForm.inspectionMethod = 'all'
-        this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
-        this.dataForm.docLineId = this.scope.id
-        this.dataForm.docNo = this.scope.orderNo
-      } else if (inspectionType === 'process') {
-        this.dataForm.inspectionQuantity = this.scope.productionQuantity
-        this.dataForm.docId = this.scope.productionOrderId
-        this.dataForm.docLineId = this.scope.id
-        this.dataForm.docNo = this.scope.orderNo
-      } else if (inspectionType === 'finished') {
-        this.dataForm.inspectionQuantity = Number(this.scope.qualifiedQuantity) + Number(this.scope.unqualifiedQuantity)
-        this.dataForm.docId = this.scope.productionOrderId
-        this.dataForm.docLineId = this.scope.id
-        this.dataForm.docNo = this.scope.orderNo
-      } else if (inspectionType === 'produce') {
-        this.dataForm.inspectionQuantity = this.scope.num
-        this.dataForm.docId = this.scope.materialCollectId
-        this.dataForm.docLineId = this.scope.id
-        this.dataForm.docNo = this.scope.orderNo
+      const inspectionHandlers = {
+        procure: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.receivedQuantity;
+          dataForm.docId = scope.purchaseReceiptReturnGoodsId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        external: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.receivedQuantity;
+          dataForm.docId = scope.purchaseReceiptReturnGoodsId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        sale_back: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.deliveryQuantity;
+          dataForm.docId = scope.returnDeliveryNoticeId;
+          dataForm.inspectionMethod = 'all';
+          dataForm.samplingQuantity = dataForm.inspectionQuantity;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        process: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.productionQuantity;
+          dataForm.docId = scope.productionOrderId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        finished: (scope, dataForm) => {
+          dataForm.inspectionQuantity = Number(scope.qualifiedQuantity) + Number(scope.unqualifiedQuantity);
+          dataForm.docId = scope.productionOrderId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        produce: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.num;
+          dataForm.docId = scope.materialCollectId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        }
+      };
+      const handler = inspectionHandlers[inspectionType];
+      if (handler) {
+        handler(this.scope, this.dataForm);
       }
 
       this.ProductListRequestObjs = {
@@ -614,32 +629,9 @@ export default {
       } else {
         res = await detailMethod(typeof id === 'string' ? id : id.id).catch((err) => false)
       }
-
-      if (inspectionType === 'procure' || inspectionType === 'external') {
-        // 采购收货、外协收货
-
-        this.dataForm.notificationType = inspectionType
-        this.dataForm.submitMethod = 'add'
-        this.formLoading = false
-      } else if (inspectionType === 'sale_back' || inspectionType === 'back_material') {
-        // 销售退货、外协退料
-
-        this.dataForm.notificationType = inspectionType
-        this.dataForm.submitMethod = 'add'
-        this.formLoading = false
-      } else if (inspectionType === 'produce') {
-        // 生产退料
-
-        this.dataForm.notificationType = inspectionType
-        this.dataForm.submitMethod = 'add'
-        this.formLoading = false
-      } else if (inspectionType === 'finished') {
-        // 完工
-
-        this.dataForm.notificationType = inspectionType
-        this.dataForm.submitMethod = 'add'
-        this.formLoading = false
-      }
+      this.dataForm.notificationType = inspectionType
+      this.dataForm.submitMethod = 'add'
+      this.formLoading = false
     },
 
     // 提交
@@ -934,7 +926,7 @@ export default {
           { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
         ]
       }
-      
+
       // this.setDataFormItems()
     },
     // 检验方式更改

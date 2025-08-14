@@ -1,11 +1,13 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {buttonList, getColumns} from "../data";
-import {getPurPurchaseDrawingPage} from "@/api/drawConf";
+import {getInspectionList} from "@/api/inspectionManagement";
+import Form from "@/views/inspectionManagement/components/inspectionNoticeForm.vue";
 
 export default {
   name: "index",
   components: {
+    Form,
     SuperQuery,
   },
   data() {
@@ -16,10 +18,10 @@ export default {
       superQueryVisible: false,
       superQueryJson: [],
       initListQuery: {
-        orderNo: '',
-        cooperativePartnerName: '',
-        customerProductDrawingNo: '',
+        saleOrderNo: '',
         drawingNo: '',
+        inspectionMethod: 'all',
+        notificationType: 'work_report',
         orderItems: [
           {
             asc: false,
@@ -39,7 +41,6 @@ export default {
       total: 0,
       columnList: [],
       columnsConfig: getColumns(),
-      selectedRow: [],
     }
   },
   created() {
@@ -50,7 +51,7 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await getPurPurchaseDrawingPage(this.listQuery);
+        const res = await getInspectionList(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -71,15 +72,22 @@ export default {
       return true;
     },
 
+    handleColumnClick(row, type) {
+      switch (type) {
+        case 'inspection':
+          this.visible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(row, false, 'work_report', 'notice', 'QCDH')
+          })
+          break;
+        default:
+      }
+    },
+
     handleButtonClick(type) {
       switch (type) {
-        case 'drawConf':
-          if (!this.validateSelectedRows()) return;
-          if (this.selectedRow[0]?.status) return this.$message.warning('已进行过图纸确认，不能重复操作');
-          this.visible = true;
-          this.$nextTick(() => {
-            this.$refs.Form.init(this.selectedRow[0], 'add');
-          });
+        case 'inspection':
+
           break;
         default:
       }
@@ -132,22 +140,8 @@ export default {
         <el-form @submit.native.prevent @keyup.enter.native="search()">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo"
+              <el-input v-model.trim="listQuery.saleOrderNo"
                 placeholder="采购单号"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerName"
-                placeholder="客户名称"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.customerProductDrawingNo"
-                placeholder="客户产品型号"
                 clearable/>
             </el-form-item>
           </el-col>
@@ -176,9 +170,6 @@ export default {
               :btnList="btnList"
               @click="handleButtonClick"
             />
-            <!--            <TableDataExportButton :disabled="tableData.length <= 0" tableRef="dataTable"-->
-            <!--              :listQuery="listQuery" exportType="1018"-->
-            <!--              exportName="图纸确认"/>-->
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -198,8 +189,6 @@ export default {
         <JNPF-table customKey="hsCodes"
           v-loading="loading"
           :data="tableData"
-          :has-c="true"
-          @selection-change="(val) => selectedRow = val"
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"
@@ -229,6 +218,14 @@ export default {
               </template>
             </el-table-column>
           </template>
+          <el-table-column label="操作" width="120" fixed="right">
+            <template slot-scope="{ row }">
+              <el-button size="mini" type="text"
+                @click="handleColumnClick(row, 'inspection')">
+                确认
+              </el-button>
+            </template>
+          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData"
@@ -240,5 +237,6 @@ export default {
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
+    <Form v-if="visible" ref="Form" @close="close" />
   </div>
 </template>

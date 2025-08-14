@@ -1777,7 +1777,6 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
-          this.dataForm.source = source
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -1823,6 +1822,7 @@ export default {
         this.dataForm.deliverDate = this.jnpf.getToday()
         this.getBusInfo()
       }
+      this.dataForm.source = source
 
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
@@ -1845,29 +1845,19 @@ export default {
     continueAdd() {
       this.dataFormTwo.productData = []
       this.dataForm = {
+        ...this.dataForm,
         exchangeGoodsFlag: false,
         inspectionStatus: '',
-        // orderCategory: "assembly",
-        // returnDeliveryType: 'back',
-        // notificationType: 'procure',
         logisticsCompany: '',
         ordersId: '',
         deliverDate: '',
         partnerName: '',
         orderNo: '',
         logisticsNumber: '',
-        //   phone: '',
-        //   country: '',
-        //   province: '',
-        //   city: '',
-        //   area: '',
-        //   address: '',
-        //   delivery: '',
-        //   shipperId: '',
         cooperativePartnerId: '',
         remark: '',
         approvalFlag: false
-      }
+      };
       this.$refs.dataForm.resetFields()
       this.init('', 'add')
       this.tipsvisible = false
@@ -2021,7 +2011,9 @@ export default {
             taxRate: item.taxRate ? item.taxRate : '',
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : ''
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+            saleOrdersId: item.ordersId,
+            saleOrdersLineId: item.ordersLineId
           }
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
@@ -2052,6 +2044,8 @@ export default {
             weight: item.weight,
             proportion: item.proportion,
             discount: item.discount,
+            saleOrdersId: item.ordersId,
+            saleOrdersLineId: item.ordersLineId
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)

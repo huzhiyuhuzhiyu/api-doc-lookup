@@ -96,5 +96,12 @@ export function getColumns() {
       slot: true,
       dictType: "workReportInspection",
     },
+    {
+      prop: "approvalStatus",
+      label: "审批状态",
+      minWidth: 120,
+      slot: true,
+      dictType: 'approvalStateList',
+    },
   ]
 }

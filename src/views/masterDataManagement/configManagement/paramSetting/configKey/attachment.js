@@ -124,6 +124,11 @@ export default {
         description: '开启后，在退料检验新建、编辑、查看都会显示附件操作。',
         mainModule: '质量管理'
     },
+    fj_work_reportjyd: {
+      configKeyLabel: '启用报工检验附件',
+      description: '开启后，在报工检验新建、编辑、查看都会显示附件操作。',
+      mainModule: '质量管理'
+    },
     fj_qgd: {
         configKeyLabel: '启用请购单附件',
         description: '开启后，在请购单新建、编辑、查看都会显示附件操作。',
@@ -320,4 +325,4 @@ export default {
       description: '开启后，在资产管理新建、编辑、查看都会显示附件操作。',
       mainModule: '资产管理'
     },
-}    
+}

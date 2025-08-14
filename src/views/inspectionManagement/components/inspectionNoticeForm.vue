@@ -446,6 +446,7 @@ export default {
     },
     // 初始化
     async init(row, readOnly, inspectionType, type, businessCode) {
+      console.log("row ✈️ ", row)
       await this.getProjectSwitch('system', 'project')
       this.getBimBusinessDetail(inspectionType)
 
@@ -496,6 +497,13 @@ export default {
           dataForm.docId = scope.materialCollectId;
           dataForm.docLineId = scope.id;
           dataForm.docNo = scope.orderNo;
+        },
+        work_report: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.num;
+          dataForm.docId = scope.materialCollectId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+          console.log("dataForm ✈️ ", dataForm)
         }
       };
       const handler = inspectionHandlers[inspectionType];
@@ -541,11 +549,10 @@ export default {
       option ? (this.title = readOnly ? `查看${option.label}检验单` : `检验${option.label}`) : ''
       this.title.includes('生产巡检') ? (this.title = this.title.replace('检验', '')) : ''
       this.setDataFormItems()
-      if (this.dataForm.processId) {
-        this.dataForm.inspectionMethod = this.scope.processInspectionMethod
-      } else {
-        this.dataForm.inspectionMethod = this.scope.productInspectionMethod
-      }
+      console.log("this.scope ✈️ ", this.scope)
+      this.dataForm.inspectionMethod = this.dataForm.processId
+        ? this.scope.processInspectionMethod
+        : this.scope.productInspectionMethod;
 
       if (this.dataForm.inspectionMethod) {
         if (this.dataForm.inspectionMethod === 'all') {

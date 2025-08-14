@@ -935,6 +935,7 @@ export default {
         //   shipperId: '',
         cooperativePartnerId: '',
         remark: '',
+        source: '',
         approvalFlag: false
       },
       defaultAddress: '',
@@ -1823,7 +1824,6 @@ export default {
         this.getBusInfo()
       }
       this.dataForm.source = source
-
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
         this.getBusInfo()

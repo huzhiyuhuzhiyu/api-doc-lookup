@@ -160,9 +160,25 @@ const global = {
     {label: '仓库管理', value: 'warehouse_manage', type: 'info'},
   ],
 
+  // 检验状态
   workReportInspection: [
     {label: '待确认', value: 'wait_confirmed', type: 'info'},
     {label: '完成', value: 'confirmed', type: 'info'},
+  ],
+
+  // 检验方式
+  inspectionMethod: [
+    {label: '全检', value: 'all', type: 'info'},
+    {label: '抽检', value: 'spot_check', type: 'info'},
+    {label: '免检', value: 'exempt', type: 'info'},
+  ],
+
+  // 检验结果
+  inspectionResultsType: [
+    {label: '合格', value: 'qualified', type: 'success'},
+    {label: '不合格', value: 'unqualified', type: 'danger'},
+    {label: '全检', value: 'full_inspection', type: 'info'},
+    {label: '退货', value: 'unqualified', type: 'warning'},
   ],
 
   // 字典数据映射方法

@@ -1,9 +1,9 @@
 <script>
-import SuperQuery from '@/components/SuperQuery/index.vue'
+import SuperQuery from '@/components/SuperQuery/index.vue';
 
 import {buttonList, getColumns} from "./data";
-import Form from '../pendingNotifyOrders/Form.vue'
-import {purPurchaseReceiptReturnGoodsDetailList} from "@/api/purchasingManagement/purchaseInquirySheet";
+import Form from './Form.vue';
+import {getInspectionList} from "@/api/inspectionManagement";
 
 export default {
   name: "index",
@@ -20,11 +20,9 @@ export default {
       superQueryVisible: false,
       superQueryJson: [],
       initListQuery: {
-        orderNo: '',
-        partnerName: '',
-        notificationType: 'procure',
-        receiptReturnType: 'back',
-        returnDate: [],
+        purchaseOrderNo: '',
+        notificationType: 'work_report',
+        status: 'confirmed',
         orderItems: [
           {
             asc: false,
@@ -43,6 +41,7 @@ export default {
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
+      selectedRow: [],
     }
   },
   created() {
@@ -53,7 +52,7 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await purPurchaseReceiptReturnGoodsDetailList(this.listQuery);
+        const res = await getInspectionList(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;
         this.total = total
@@ -62,27 +61,30 @@ export default {
       }
     },
 
-    handleButtonClick(type) {
-      switch (type) {
-        case '':
-          break;
-
-        default:
+    validateSelectedRows() {
+      if (!this.selectedRow.length) {
+        this.$message.warning('请至少选择一条数据');
+        return false;
       }
+      if (this.selectedRow.length > 1) {
+        this.$message.warning('只能选择一条数据');
+        return false;
+      }
+      return true;
     },
 
-    handleColumnClick(row, type) {
+    handleButtonClick(type) {
       switch (type) {
-        case 'look':
+        case 'add':
+          if (!this.validateSelectedRows()) return;
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(row.purchaseReceiptReturnGoodsId, type)
+            this.$refs.Form.init('', 'add', false, this.selectedRow)
           })
           break;
         default:
       }
     },
-
 
     close(isInitData = true) {
       this.visible = false
@@ -131,15 +133,8 @@ export default {
         <el-form @submit.native.prevent @keyup.enter.native="search()">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo"
-                placeholder="单号"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.partnerName"
-                placeholder="客户名称"
+              <el-input v-model.trim="listQuery.purchaseOrderNo"
+                placeholder="采购单号"
                 clearable/>
             </el-form-item>
           </el-col>
@@ -161,9 +156,6 @@ export default {
               :btnList="btnList"
               @click="handleButtonClick"
             />
-            <TableDataExportButton :disabled="tableData.length <= 0" tableRef="dataTable"
-              :listQuery="listQuery" exportType="1073"
-              exportName="退货通知单明细"/>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -180,9 +172,11 @@ export default {
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="returnSalesmemo"
+        <JNPF-table customKey="pendingNotifyOrders"
           v-loading="loading"
           :data="tableData"
+          :has-c="true"
+          @selection-change="(val) => selectedRow = val"
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"
@@ -201,13 +195,6 @@ export default {
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
-                <template v-if="column.prop === 'orderNo'">
-                  <el-link type="primary"
-                    @click.native="handleColumnClick(scope.row,'look')">{{
-                      scope.row.orderNo
-                    }}
-                  </el-link>
-                </template>
                 <template v-if="column.dictType">
                    <span>
                 <el-tag
@@ -226,10 +213,10 @@ export default {
       </div>
     </div>
     <!-- 高级查询 -->
-    <SuperQuery partentOrChild="returnSalesmemoSuperQuery" :show="superQueryVisible" ref="SuperQuery"
+    <SuperQuery partentOrChild="pendingNotifyOrdersSuperQuery" :show="superQueryVisible" ref="SuperQuery"
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
-    <Form ref="Form" v-if="visible" @close="close"/>
+    <Form ref="Form" v-if="visible" @close="close" :autoInit="false"/>
   </div>
 </template>

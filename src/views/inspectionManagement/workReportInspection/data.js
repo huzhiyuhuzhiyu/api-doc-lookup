@@ -28,7 +28,6 @@ export function getColumns() {
       label: "批次",
       minWidth: 220,
       sortable: 'custom',
-      slot: true,
     },
     {
       prop: "customerCode",
@@ -77,13 +76,13 @@ export function getColumns() {
     {
       prop: "inspectionDate",
       label: "检验日期",
-      minWidth: 160,
+      minWidth: 150,
       sortable: 'custom',
     },
     {
       prop: "inspectionResults",
       label: "检验结果",
-      minWidth: 160,
+      minWidth: 120,
       sortable: 'custom',
       slot: true,
       dictType: "inspectionResultsType",
@@ -91,17 +90,10 @@ export function getColumns() {
     {
       prop: "status",
       label: "状态",
-      minWidth: 160,
+      minWidth: 120,
       sortable: 'custom',
       slot: true,
       dictType: "workReportInspection",
-    },
-    {
-      prop: "approvalStatus",
-      label: "审批状态",
-      minWidth: 120,
-      slot: true,
-      dictType: 'approvalStateList',
-    },
+    }
   ]
 }

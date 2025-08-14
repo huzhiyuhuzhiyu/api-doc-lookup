@@ -8,5 +8,5 @@ export default {
 </script>
 
 <template>
-  <workReportInspection inspectionMethod="all"/>
+  <workReportInspection inspectionMethod="spot_check"/>
 </template>

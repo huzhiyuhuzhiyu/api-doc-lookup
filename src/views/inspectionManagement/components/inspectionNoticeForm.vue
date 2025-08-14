@@ -3,7 +3,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', readOnly ? 'noButtons' : '']">
-        <el-page-header @back="$emit('close')" :content="title" />
+        <el-page-header @back="$emit('close')" :content="title"/>
         <div class="options" v-if="!readOnly">
           <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
@@ -17,18 +17,18 @@
               <el-tab-pane label="基础信息" name="jcInfo">
                 <el-collapse v-model="activeNames">
                   <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                    <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :openMode="openMode" />
+                    <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :openMode="openMode"/>
                   </el-collapse-item>
                   <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
-                    <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
+                    <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode"/>
                   </el-collapse-item>
 
-                  <el-collapse-item title="检验项目" name="inspectionItem">
+                  <el-collapse-item title="检验项目" name="inspectionItem" v-if="inspectionType !== 'work_report'">
                     <el-row :gutter="30" style="padding: 0 0 10px 0;">
                       <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                         :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                         @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
-                        :nowNum="nowNum" />
+                        :nowNum="nowNum"/>
                     </el-row>
                   </el-collapse-item>
 
@@ -37,31 +37,31 @@
                       <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                         :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                         @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
-                        :nowNum="nowNumTwo" />
+                        :nowNum="nowNumTwo"/>
                     </el-row>
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
               <el-tab-pane label="图纸信息" name="drawingcard">
                 <JNPF-col-table v-model="productList" ref="sleeveForm" :tableItems="ProductTableItemss"
-                  :openMode="openMode" />
+                  :openMode="openMode"/>
               </el-tab-pane>
               <el-tab-pane label="流程卡" name="flowcard" v-if="typeflag">
-                <JNPF-col v-model="flowCard" :tabContent="flowCardItems" ref="flowCardForm" />
+                <JNPF-col v-model="flowCard" :tabContent="flowCardItems" ref="flowCardForm"/>
               </el-tab-pane>
               <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist" :disabled="readOnly" :detailed="readOnly"></UploadWj>
               </el-tab-pane>
               <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
-                <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+                <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId"/>
               </el-tab-pane>
             </el-tabs>
           </div>
         </div>
       </div>
 
-      <WareSide v-if="wareVisibled" ref="wareSide" @confirm="sideConfirm" :openMode="openMode" />
-      <Preview :visible.sync="previewVisible" :file="activeFile" />
+      <WareSide v-if="wareVisibled" ref="wareSide" @confirm="sideConfirm" :openMode="openMode"/>
+      <Preview :visible.sync="previewVisible" :file="activeFile"/>
     </div>
   </transition>
 </template>
@@ -69,27 +69,28 @@
 <script>
 import {
   addInspectionData,
-  updateInspectionData,
   detailInspectionData,
-  detailInspectionDataByBizid
-} from '@/api/inspectionManagement/index' // 产品检验项目列表
-import { detailWithdrawal, detailordershengchan } from '@/api/productOrdes/index' // 生产退料
-import { inspectionTypeList } from '../data.js'
+  detailInspectionDataByBizid,
+  getInspectionItem,
+  getSamplingQuantityByProcessId,
+  getSamplingQuantityByProductId, treatmentData,
+  updateInspectionData
+} from '@/api/inspectionManagement/index' // 产品检验项目列表 // 产品检验项目列表
+import {inspectionTypeList} from '../data.js'
 import TableFormProduct from './TableForm-product.vue'
 import TableFormWare from './TableForm-ware.vue'
 import TableFormWareTwo from './TableForm-ware-two.vue'
-import { getInspectionItem, getSamplingQuantityByProductId, getSamplingQuantityByProcessId } from '@/api/inspectionManagement/index' // 产品检验项目列表
 import WareSide from './WareSide.vue'
-import { getbimDrawingData, getBimBusinessDetail } from '@/api/basicData/index'
+import {getBimBusinessDetail, getbimDrawingData} from '@/api/basicData/index'
 import Preview from '@/components/upload-wj/Preview.vue'
-import { getDownloadUrl } from '@/api/common'
-import { mapGetters } from 'vuex'
-import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import {getDownloadUrl} from '@/api/common'
+import {mapGetters} from 'vuex'
+import {getBusinessFlowInfo} from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
-  components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo, Process },
+  components: {TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo, Process},
   mixins: [getProjectList],
 
   data() {
@@ -102,11 +103,11 @@ export default {
       previewVisible: false,
       ProductListRequestObjs: {},
       ProductTableItemss: [
-        { prop: 'drawingNo', label: '品名规格' },
+        {prop: 'drawingNo', label: '品名规格'},
         // { prop: 'name', label: '产品名称' },
-        { prop: 'code', label: '产品编码' },
-        { prop: 'sheetName', label: '图纸名称' },
-        { prop: 'version', label: '版本' }
+        {prop: 'code', label: '产品编码'},
+        {prop: 'sheetName', label: '图纸名称'},
+        {prop: 'version', label: '版本'}
       ],
       getbimDrawingData,
       flowCard: {},
@@ -132,24 +133,24 @@ export default {
       ],
       // 流转记录
       flowCardItems: [
-        { prop: 'productCode', label: '产品编码', value: '', type: 'input', itemDisabled: true },
-        { prop: 'productName', label: '产品名称', value: '', type: 'input', itemDisabled: true },
-        { prop: 'productDrawingNo', label: '产品图号', value: '', type: 'input', itemDisabled: true },
-        { prop: 'hoseLength', label: '软管净长', value: '', type: 'input', itemDisabled: true },
-        { prop: 'leftCore', label: '左芯子（图号）', value: '', type: 'input', itemDisabled: true },
-        { prop: 'leftCoreLength', label: '左芯子长', value: '', type: 'input', itemDisabled: true },
-        { prop: 'rightCore', label: '右芯子（图号）', value: '', type: 'input', itemDisabled: true },
-        { prop: 'rightCoreLength', label: '右芯子长', value: '', type: 'input', itemDisabled: true },
-        { prop: 'sleeveModel', label: '套筒（图号）', value: '', type: 'input', itemDisabled: true },
-        { prop: 'sheathModel', label: '护套（图号）', value: '', type: 'input', itemDisabled: true },
-        { prop: 'innerRubberLength', label: '剥内胶长', value: '', type: 'input', itemDisabled: true },
-        { prop: 'externalAdhesive', label: '剥外胶长', value: '', type: 'input', itemDisabled: true },
-        { prop: 'compressionElongation', label: '扣压伸长量', value: '', type: 'input', itemDisabled: true },
-        { prop: 'withhold', label: '扣压量', value: '', type: 'input', itemDisabled: true },
-        { prop: 'withholdingTime', label: '扣压时间', value: '', type: 'input', itemDisabled: true },
-        { prop: 'coreHoleDeformation', label: '芯孔变型量', value: '', type: 'input', itemDisabled: true },
-        { prop: 'createTime', label: '创建时间', value: '', type: 'input', itemDisabled: true },
-        { prop: 'createByName', label: '创建人', value: '', type: 'input', itemDisabled: true }
+        {prop: 'productCode', label: '产品编码', value: '', type: 'input', itemDisabled: true},
+        {prop: 'productName', label: '产品名称', value: '', type: 'input', itemDisabled: true},
+        {prop: 'productDrawingNo', label: '产品图号', value: '', type: 'input', itemDisabled: true},
+        {prop: 'hoseLength', label: '软管净长', value: '', type: 'input', itemDisabled: true},
+        {prop: 'leftCore', label: '左芯子（图号）', value: '', type: 'input', itemDisabled: true},
+        {prop: 'leftCoreLength', label: '左芯子长', value: '', type: 'input', itemDisabled: true},
+        {prop: 'rightCore', label: '右芯子（图号）', value: '', type: 'input', itemDisabled: true},
+        {prop: 'rightCoreLength', label: '右芯子长', value: '', type: 'input', itemDisabled: true},
+        {prop: 'sleeveModel', label: '套筒（图号）', value: '', type: 'input', itemDisabled: true},
+        {prop: 'sheathModel', label: '护套（图号）', value: '', type: 'input', itemDisabled: true},
+        {prop: 'innerRubberLength', label: '剥内胶长', value: '', type: 'input', itemDisabled: true},
+        {prop: 'externalAdhesive', label: '剥外胶长', value: '', type: 'input', itemDisabled: true},
+        {prop: 'compressionElongation', label: '扣压伸长量', value: '', type: 'input', itemDisabled: true},
+        {prop: 'withhold', label: '扣压量', value: '', type: 'input', itemDisabled: true},
+        {prop: 'withholdingTime', label: '扣压时间', value: '', type: 'input', itemDisabled: true},
+        {prop: 'coreHoleDeformation', label: '芯孔变型量', value: '', type: 'input', itemDisabled: true},
+        {prop: 'createTime', label: '创建时间', value: '', type: 'input', itemDisabled: true},
+        {prop: 'createByName', label: '创建人', value: '', type: 'input', itemDisabled: true}
       ],
       linesList: [],
       spaceLines: [],
@@ -160,17 +161,17 @@ export default {
       inspectionList: [],
       linesListTwo: [],
       linesListItemsTwo: [
-        { prop: 'name', label: '不良原因名称', value: '', type: 'view', minWidth: 180 },
+        {prop: 'name', label: '不良原因名称', value: '', type: 'view', minWidth: 180},
         {
           prop: 'unqualifiedQuantity',
           label: '不良品数量',
           value: '',
           type: 'input',
           itemRules: [
-            { required: true, trigger: 'blur' },
+            {required: true, trigger: 'blur'},
             {
               validator: this.formValidate('positiveNumber', false, (errMsg) => {
-                this.$message.error(`不良品数量：${errMsg}`)
+                this.$message.error(`不良品数量：${ errMsg }`)
               }),
               trigger: 'blur'
             },
@@ -191,7 +192,7 @@ export default {
           ],
           minWidth: 180
         },
-        { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
+        {prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120}
       ],
       productList: [],
       codeConfig: {},
@@ -203,7 +204,7 @@ export default {
     getBimBusinessDetail(inspectionType) {
       let obj = {
         businessCode: 'attachment',
-        configKey: `fj_${inspectionType}jyd`
+        configKey: `fj_${ inspectionType }jyd`
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
@@ -226,334 +227,7 @@ export default {
       })
     },
 
-    // 设置主表结构
-    setDataFormItems() {
-      function generateInspectionMethodList(inspectionType) {
-        // 动态生成处理结果
-        // 采购收货、外协收货、外协退料、生产退料 不良处理结果：合格、不合格、让步接收、挑选
-        // 销售退货、生产巡检、生产完工检验 不良处理结果：合格、报废、返工返修、报废和返修
-        return [
-          {
-            label: '全检',
-            value: 'all',
-            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished','work_report'].includes(
-              inspectionType
-            )
-          },
-          {
-            label: '抽检',
-            value: 'spot_check',
-            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished','work_report'].includes(inspectionType)
-          },
-          // {
-          //   label: '免检',
-          //   value: 'exempt',
-          //   disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(inspectionType)
-          // }
-        ].filter((o) => !o.disabled)
-      }
-      this.dataFormItems = [
-        {
-          prop: 'orderNo',
-          label: '单号',
-          value: '',
-          type: 'input',
-          itemDisabled: true,
-          itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
-        },
-        {
-          prop: 'inspectorId',
-          label: '检验人',
-          value: undefined,
-          type: 'custom',
-          customComponent: 'user-select',
-          itemRules: [{ required: true, trigger: 'change' }],
-          change: () => {
-            this.$nextTick(() => {
-              this.$refs.dataForm.$refs.main.validateField('inspectorId')
-            })
-          },
-          sm: 6
-        },
-        {
-          prop: 'inspectionDate',
-          label: '检验日期',
-          value: undefined,
-          type: 'date',
-          itemRules: [{ required: true, trigger: 'change' }],
-          sm: 6
-        },
-        {
-          prop: 'projectName',
-          label: '所属项目',
-          value: '',
-          type: 'input',
-          itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 6,
-          render: this.isProjectSwitch === '1',
-          itemDisabled: true
-        },
-        {
-          prop: 'productDrawingNo',
-          label: '品名规格',
-          value: '',
-          type: 'input',
-          itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: true
-        },
-        {
-          prop: 'processName',
-          label: '工序名称',
-          value: '',
-          type: 'input',
-          itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 6,
-          render: this.dataForm.processName,
-          itemDisabled: true
-        },
-        {
-          prop: 'mainUnit',
-          label: '单位',
-          value: '',
-          type: 'input',
-          itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: true
-        },
-        {
-          prop: 'inspectionQuantity',
-          label: '报检数量',
-          value: '',
-          type: 'input',
-          sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: true
-        }
-      ]
-      this.inspectionInfo = [
-        {
-          prop: 'inspectionMethod',
-          label: '检验方式',
-          value: '',
-          type: 'select',
-          clearable: false,
-          change: this.inspectionMethodChange,
-          itemRules: [{ required: true, trigger: 'change' }],
-          sm: 6,
-          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
-          options: generateInspectionMethodList(this.inspectionType)
-        },
-        {
-          prop: 'inspectionObject',
-          label: '检验对象',
-          value: 'manual',
-          type: 'select',
-          sm: 6,
-          options: [
-            { label: '人工检验', value: 'manual' },
-            { label: '机器检验', value: 'machines' }
-          ],
-          render: this.inspectionType === 'process',
-          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
-        },
-        {
-          prop: 'samplingQuantity',
-          label: '检验数量',
-          value: '',
-          type: 'input',
-          sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled:
-            this.dataForm.inspectionMethod == 'all' ||
-            this.dataForm.inspectionMethod == 'exempt' ||
-            this.openMode === '只读',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: (rule, value, callback) => {
-                if (value > Number(this.dataForm.inspectionQuantity)) {
-                  callback(new Error('检验数量不能大于报检数量'))
-                } else if (value < Number(this.autosamplingQuantity)) {
-                  callback(new Error('检验数量不能小于规定的抽检数量'))
-                } else if (Number(value) == 0) {
-                  callback(new Error('检验数量不能为0'))
-                } else {
-                  callback()
-                }
-              },
-              trigger: 'blur'
-            }
-          ]
-        },
-        {
-          prop: 'inspectionResults',
-          label: '检验结果',
-          value: undefined,
-          type: 'select',
-          options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
-          itemDisabled: this.dataForm.inspectionMethod == 'exempt' || this.openMode === '只读',
-          change: this.inspectionResultsChange,
-          itemRules: [{ required: true, trigger: 'change' }],
-          sm: 6
-        },
-        {
-          prop: 'unqualifiedQuantity',
-          label: '不合格数量',
-          value: '',
-          type: 'input',
-          sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          // itemDisabled: this.dataForm.inspectionResults == 'unqualified' || this.openMode === '只读',
-          itemDisabled: this.openMode === '只读',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: (rule, value, callback) => {
-                if (value > Number(this.dataForm.samplingQuantity)) {
-                  callback(new Error('不合格数量不能大于检验数量'))
-                } else if (value == 0 && this.dataForm.inspectionResults == 'unqualified') {
-                  callback(new Error('不合格数量不能为0'))
-                }  else {
-                  callback()
-                }
-              },
-              trigger: 'blur'
-            }
-          ]
-        },
-        // {
-        //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 6, multiple: true,
-        //   render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
-        // },
-        { prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12 }
-      ]
-    },
-
-    async fetchData(code, flag) {
-      try {
-        const data = await this.jnpf.getBillRuleConfigFun(code)
-
-        this.codeConfig = data
-        if (flag) {
-          this.dataForm.orderNo = data.number
-        }
-      } catch (error) { }
-    },
-    // 初始化
-    async init(row, readOnly, inspectionType, type, businessCode) {
-      console.log("row ✈️ ", row)
-      await this.getProjectSwitch('system', 'project')
-      this.getBimBusinessDetail(inspectionType)
-
-      this.scope = { ...row }
-
-      this.fetchData(businessCode, true)
-      this.dataForm = { ...row, approvalFlag: false, approvalStatus: 'ing' }
-
-      this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
-      this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
-      this.dataForm.productDrawingNo = row.productDrawingNo
-      this.dataForm.mainUnit = row.mainUnit
-      const inspectionHandlers = {
-        procure: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.receivedQuantity;
-          dataForm.docId = scope.purchaseReceiptReturnGoodsId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
-        },
-        external: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.receivedQuantity;
-          dataForm.docId = scope.purchaseReceiptReturnGoodsId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
-        },
-        sale_back: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.deliveryQuantity;
-          dataForm.docId = scope.returnDeliveryNoticeId;
-          dataForm.inspectionMethod = 'all';
-          dataForm.samplingQuantity = dataForm.inspectionQuantity;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
-        },
-        process: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.productionQuantity;
-          dataForm.docId = scope.productionOrderId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
-        },
-        finished: (scope, dataForm) => {
-          dataForm.inspectionQuantity = Number(scope.qualifiedQuantity) + Number(scope.unqualifiedQuantity);
-          dataForm.docId = scope.productionOrderId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
-        },
-        produce: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.num;
-          dataForm.docId = scope.materialCollectId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
-        },
-        work_report: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.num;
-          dataForm.docId = scope.materialCollectId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
-          console.log("dataForm ✈️ ", dataForm)
-        }
-      };
-      const handler = inspectionHandlers[inspectionType];
-      if (handler) {
-        handler(this.scope, this.dataForm);
-      }
-
-      this.ProductListRequestObjs = {
-        code: this.scope.productCode,
-        drawingNo: '',
-        name: this.scope.productName,
-        orderItems: [{ asc: false, column: '' }, { asc: false, column: 'create_time' }],
-        pageNum: 1,
-        pageSize: 20
-      }
-      await getbimDrawingData(this.ProductListRequestObjs)
-        .then((res) => {
-          this.productList = res.data.records
-          this.loading = false
-        })
-        .catch((err) => {
-          this.loading = false
-        })
-
-      await getInspectionItem({ id: this.scope.productsId, inspectionCategory: inspectionType })
-        .then((res) => {
-          this.inspectionList = res.data
-          this.addOrDelInspectionItem(res.data)
-
-          this.loading = false
-        })
-        .catch((err) => {
-          this.loading = false
-        })
-      let id = row.id
-      this.inspectionType = inspectionType
-      this.getBusInfo()
-      this.businessCode = businessCode
-      this.visible = true
-      this.formLoading = true
-      this.readOnly = readOnly
-      let option = this.inspectionTypeList.find((o) => o.value === inspectionType.replace('_batch', ''))
-      option ? (this.title = readOnly ? `查看${option.label}检验单` : `检验${option.label}`) : ''
-      this.title.includes('生产巡检') ? (this.title = this.title.replace('检验', '')) : ''
-      this.setDataFormItems()
-      console.log("this.scope ✈️ ", this.scope)
-      this.dataForm.inspectionMethod = this.dataForm.processId
-        ? this.scope.processInspectionMethod
-        : this.scope.productInspectionMethod;
-
+  async  updateDataFormItems(){
       if (this.dataForm.inspectionMethod) {
         if (this.dataForm.inspectionMethod === 'all') {
           this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
@@ -581,11 +255,11 @@ export default {
         } else if (this.dataForm.inspectionMethod === 'spot_check') {
           console.log(this.dataForm.processId, 'id')
           if (this.dataForm.processId) {
-            const _data = { processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity }
+            const _data = {processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity}
             let res = await getSamplingQuantityByProcessId(_data).catch(() => false)
             this.$set(this.dataForm, 'samplingQuantity', res.data)
           } else {
-            const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
+            const _data = [{productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity}]
             let res = await getSamplingQuantityByProductId(_data).catch(() => false)
             this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
           }
@@ -594,6 +268,350 @@ export default {
 
         }
       }
+    },
+
+    // 设置主表结构
+    setDataFormItems() {
+      function generateInspectionMethodList(inspectionType) {
+        // 动态生成处理结果
+        // 采购收货、外协收货、外协退料、生产退料 不良处理结果：合格、不合格、让步接收、挑选
+        // 销售退货、生产巡检、生产完工检验 不良处理结果：合格、报废、返工返修、报废和返修
+        return [
+          {
+            label: '全检',
+            value: 'all',
+            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished', 'work_report'].includes(
+              inspectionType
+            )
+          },
+          {
+            label: '抽检',
+            value: 'spot_check',
+            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished', 'work_report'].includes(inspectionType)
+          },
+          // {
+          //   label: '免检',
+          //   value: 'exempt',
+          //   disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(inspectionType)
+          // }
+        ].filter((o) => !o.disabled)
+      }
+
+      this.dataFormItems = [
+        {
+          prop: 'orderNo',
+          label: '单号',
+          value: '',
+          type: 'input',
+          itemDisabled: true,
+          itemRules: [{required: true, trigger: 'blur'}],
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: 'inspectorId',
+          label: '检验人',
+          value: undefined,
+          type: 'custom',
+          customComponent: 'user-select',
+          itemRules: [{required: true, trigger: 'change'}],
+          change: () => {
+            this.$nextTick(() => {
+              this.$refs.dataForm.$refs.main.validateField('inspectorId')
+            })
+          },
+          sm: 6
+        },
+        {
+          prop: 'inspectionDate',
+          label: '检验日期',
+          value: undefined,
+          type: 'date',
+          itemRules: [{required: true, trigger: 'change'}],
+          sm: 6
+        },
+        {
+          prop: 'projectName',
+          label: '所属项目',
+          value: '',
+          type: 'input',
+          itemRules: [{required: true, trigger: 'blur'}],
+          sm: 6,
+          render: this.isProjectSwitch === '1',
+          itemDisabled: true
+        },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          value: '',
+          type: 'input',
+          itemRules: [{required: true, trigger: 'blur'}],
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: true
+        },
+        {
+          prop: 'processName',
+          label: '工序名称',
+          value: '',
+          type: 'input',
+          itemRules: [{required: true, trigger: 'blur'}],
+          sm: 6,
+          render: this.dataForm.processName,
+          itemDisabled: true
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          value: '',
+          type: 'input',
+          itemRules: [{required: true, trigger: 'blur'}],
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: true
+        },
+        {
+          prop: 'inspectionQuantity',
+          label: '报检数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: true
+        }
+      ]
+      this.inspectionInfo = [
+        {
+          prop: 'inspectionMethod',
+          label: '检验方式',
+          value: '',
+          type: 'select',
+          clearable: false,
+          change: this.inspectionMethodChange,
+          itemRules: [{required: true, trigger: 'change'}],
+          sm: 6,
+          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
+          options: generateInspectionMethodList(this.inspectionType)
+        },
+        {
+          prop: 'inspectionObject',
+          label: '检验对象',
+          value: 'manual',
+          type: 'select',
+          sm: 6,
+          options: [
+            {label: '人工检验', value: 'manual'},
+            {label: '机器检验', value: 'machines'}
+          ],
+          render: this.inspectionType === 'process',
+          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
+        },
+        {
+          prop: 'samplingQuantity',
+          label: '检验数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled:
+            this.dataForm.inspectionMethod == 'all' ||
+            this.dataForm.inspectionMethod == 'exempt' ||
+            this.openMode === '只读',
+          itemRules: [
+            {required: true, trigger: 'blur'},
+            {
+              validator: (rule, value, callback) => {
+                if (value > Number(this.dataForm.inspectionQuantity)) {
+                  callback(new Error('检验数量不能大于报检数量'))
+                } else if (value < Number(this.autosamplingQuantity)) {
+                  callback(new Error('检验数量不能小于规定的抽检数量'))
+                } else if (Number(value) == 0) {
+                  callback(new Error('检验数量不能为0'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'blur'
+            }
+          ]
+        },
+        {
+          prop: 'inspectionResults',
+          label: '检验结果',
+          value: undefined,
+          type: 'select',
+          options: [{label: '合格', value: 'qualified'}, {label: '不合格', value: 'unqualified'}],
+          itemDisabled: this.dataForm.inspectionMethod == 'exempt' || this.openMode === '只读',
+          change: this.inspectionResultsChange,
+          itemRules: [{required: true, trigger: 'change'}],
+          sm: 6
+        },
+        {
+          prop: 'treatmentResults',
+          label: '处理结果',
+          value: undefined,
+          type: 'select',
+          options: [{label: '全检', value: 'full_inspection'}, {label: '退货', value: 'back'}],
+          itemRules: [{required: true, trigger: 'change'}],
+          render: this.dataForm.inspectionResults === 'unqualified',
+          sm: 6
+        },
+        {
+          prop: 'unqualifiedQuantity',
+          label: '不合格数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          // itemDisabled: this.dataForm.inspectionResults == 'unqualified' || this.openMode === '只读',
+          itemDisabled: this.openMode === '只读',
+          itemRules: [
+            {required: true, trigger: 'blur'},
+            {
+              validator: (rule, value, callback) => {
+                if (value > Number(this.dataForm.samplingQuantity)) {
+                  callback(new Error('不合格数量不能大于检验数量'))
+                } else if (value == 0 && this.dataForm.inspectionResults == 'unqualified') {
+                  callback(new Error('不合格数量不能为0'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'blur'
+            }
+          ]
+        },
+        // {
+        //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 6, multiple: true,
+        //   render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
+        // },
+        {prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12}
+      ]
+    },
+
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.orderNo = data.number
+        }
+      } catch (error) {
+      }
+    },
+    // 初始化
+    async init(row, readOnly, inspectionType, type, businessCode) {
+      console.log("row ✈️ ", row)
+      await this.getProjectSwitch('system', 'project')
+      this.getBimBusinessDetail(inspectionType)
+
+      this.scope = {...row}
+
+      this.fetchData(businessCode, true)
+      this.dataForm = {
+        ...row,
+        approvalFlag: false,
+        approvalStatus: 'ing',
+        inspectorId: row.inspectorId || this.userInfo.userId,  // 默认使用当前用户 ID
+        inspectionDate: this.jnpf.toDate(new Date(), 'yyyy-MM-dd'),
+        productDrawingNo: row.productDrawingNo,
+        mainUnit: row.mainUnit,
+        inspectionMethod: row.processId ? this.scope.processInspectionMethod : this.scope.productInspectionMethod, // 统一处理 inspectionMethod
+      };
+
+      const inspectionHandlers = {
+        procure: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.receivedQuantity;
+          dataForm.docId = scope.purchaseReceiptReturnGoodsId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        external: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.receivedQuantity;
+          dataForm.docId = scope.purchaseReceiptReturnGoodsId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        sale_back: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.deliveryQuantity;
+          dataForm.docId = scope.returnDeliveryNoticeId;
+          dataForm.inspectionMethod = 'all';
+          dataForm.samplingQuantity = dataForm.inspectionQuantity;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        process: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.productionQuantity;
+          dataForm.docId = scope.productionOrderId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+          dataForm.inspectionMethod = scope.orderNo;
+        },
+        finished: (scope, dataForm) => {
+          dataForm.inspectionQuantity = Number(scope.qualifiedQuantity) + Number(scope.unqualifiedQuantity);
+          dataForm.docId = scope.productionOrderId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        produce: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.num;
+          dataForm.docId = scope.materialCollectId;
+          dataForm.docLineId = scope.id;
+          dataForm.docNo = scope.orderNo;
+        },
+        work_report: (scope, dataForm) => {
+          dataForm.inspectionQuantity = scope.inspectionQuantity;
+          dataForm.inspectionMethod = scope.inspectionMethod;
+        }
+      };
+      const handler = inspectionHandlers[inspectionType];
+      if (handler) {
+        handler(this.scope, this.dataForm);
+      }
+
+      this.ProductListRequestObjs = {
+        code: this.scope.productCode,
+        drawingNo: '',
+        name: this.scope.productName,
+        orderItems: [{asc: false, column: ''}, {asc: false, column: 'create_time'}],
+        pageNum: 1,
+        pageSize: 20
+      }
+      await getbimDrawingData(this.ProductListRequestObjs)
+        .then((res) => {
+          this.productList = res.data.records
+          this.loading = false
+        })
+        .catch((err) => {
+          this.loading = false
+        })
+
+      await getInspectionItem({id: this.scope.productsId, inspectionCategory: inspectionType})
+        .then((res) => {
+          this.inspectionList = res.data
+          this.addOrDelInspectionItem(res.data)
+
+          this.loading = false
+        })
+        .catch((err) => {
+          this.loading = false
+        })
+      let id = row.id
+      this.inspectionType = inspectionType
+      if (inspectionType !== 'work_report') {
+        this.getBusInfo()
+      }
+      this.businessCode = businessCode
+      this.visible = true
+      this.formLoading = true
+      this.readOnly = readOnly
+      let option = this.inspectionTypeList.find((o) => o.value === inspectionType.replace('_batch', ''))
+      option ? (this.title = readOnly ? `查看${ option.label }检验单` : `检验${ option.label }`) : ''
+      this.title.includes('生产巡检') ? (this.title = this.title.replace('检验', '')) : ''
+      this.setDataFormItems()
+      this.updateDataFormItems()
+
       if (inspectionType === 'process') {
         // 生产巡检
 
@@ -603,7 +621,7 @@ export default {
       } else if (typeof id === 'object' && inspectionType === 'finished_batch') {
         // 批量完工检验
         let selectedData = id
-        this.dataForm = { inspectionDate: this.jnpf.getToday(), notificationType: 'finished', submitMethod: 'add' }
+        this.dataForm = {inspectionDate: this.jnpf.getToday(), notificationType: 'finished', submitMethod: 'add'}
         let tempLinesList = selectedData.map((rowData) => {
           return {
             orderNo: rowData.orderNo,
@@ -643,7 +661,7 @@ export default {
 
     // 提交
     async handleConfirm(submitModel) {
-      if (this.nowNum !== 0) return this.$message.error('检验项目不合格数量与总不合格数量不匹配')
+      if (this.nowNum !== 0 && this.inspectionType !== 'work_report') return this.$message.error('检验项目不合格数量与总不合格数量不匹配')
       if (this.nowNumTwo !== 0) return this.$message.error('不良原因不合格数量与总不合格数量不匹配')
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
@@ -653,14 +671,6 @@ export default {
       let valid_1 = await form_1.validate().catch(() => false)
       if (!valid_1 && submitFlag) {
         this.jnpf.focusErrValidItem(form_1.fields)
-        submitFlag = false
-      }
-
-      // 校验表单表格（子数据列表）
-      let form_2 = this.$refs['linesForm'].$refs.main
-      let valid_2 = await form_2.validate().catch((err) => false)
-      if (!valid_2 && submitFlag) {
-        this.jnpf.focusErrValidItem(form_2.fields)
         submitFlag = false
       }
 
@@ -707,20 +717,31 @@ export default {
       // }
 
       // 判断是否有line未完成自动获取的检验项目列表
-      if (submitFlag) {
-        let flag = this.linesList.some((line) => line.loadItemListFlag)
-        if (flag) {
-          submitFlag = false
-          this.$message.error('正在获取产品信息的检验项目，请稍等')
+      if (this.inspectionType !== 'work_report'){
+        // 校验表单表格（子数据列表）
+          let form_2 = this.$refs['linesForm'].$refs.main
+          let valid_2 = await form_2.validate().catch((err) => false)
+          if (!valid_2 && submitFlag) {
+            this.jnpf.focusErrValidItem(form_2.fields)
+            submitFlag = false
+          }
+
+        if (submitFlag) {
+          let flag = this.linesList.some((line) => line.loadItemListFlag)
+          if (flag) {
+            submitFlag = false
+            this.$message.error('正在获取产品信息的检验项目，请稍等')
+          }
         }
       }
+
 
       if (submitFlag) {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
               businessType: 'system_attachment',
-              configKey: `fj_${this.inspectionType}jyd`,
+              configKey: `fj_${ this.inspectionType }jyd`,
               categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
@@ -731,6 +752,9 @@ export default {
         this.dataForm.documentStatus = submitModel
         this.dataForm.businessCode = this.businessCode
         this.dataForm.approvalCompletionDate = ''
+        if (this.inspectionType === 'work_report') {
+          this.dataForm.status = 'confirmed'
+        }
 
         let dataObj = {
           inspection: this.dataForm,
@@ -742,7 +766,10 @@ export default {
         }
 
         let modifyFlag = dataObj.inspection.submitMethod !== 'add'
-        const formMethod = modifyFlag ? updateInspectionData : addInspectionData
+        let formMethod = modifyFlag ? updateInspectionData : addInspectionData
+        if (this.inspectionType === 'work_report'){
+          formMethod = treatmentData
+        }
         // dataObj.documentStatus = submitModel
         // dataObj.businessCode = this.businessCode
         // dataObj.approvalCompletionDate = ''
@@ -795,10 +822,10 @@ export default {
           } else {
             tempList.push(item)
           }
-          if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
+          if (hasItemList.length) this.$message.error(`已经存在的产品：${ hasItemList.join('、') }`)
         }
         this.linesList = tempList.map((item) => {
-          return { ...item, warehouseId: this.dataForm.warehouseId }
+          return {...item, warehouseId: this.dataForm.warehouseId}
         })
         this.$nextTick(() => {
           this.$refs.linesForm.setDefaultValue()
@@ -849,7 +876,7 @@ export default {
             tempList.push(item)
           }
         }
-        if (hasItemList.length) this.$message.error(`已经存在的不良原因：${hasItemList.join('、')}`)
+        if (hasItemList.length) this.$message.error(`已经存在的不良原因：${ hasItemList.join('、') }`)
         this.linesListTwo = JSON.parse(JSON.stringify(tempList))
         this.$nextTick(() => {
           this.$refs.linesFormTwo.setDefaultValue()
@@ -868,7 +895,7 @@ export default {
     openSide(scope) {
       this.wareVisibled = true
       this.$nextTick(() => {
-        this.$refs['wareSide'].init({ ...scope }, this.readOnly)
+        this.$refs['wareSide'].init({...scope}, this.readOnly)
       })
     },
     // 抽屉提交
@@ -880,14 +907,14 @@ export default {
       this.$message.success('配置成功')
     },
     // 检验结果更改
-   async inspectionResultsChange(val, scope) {
+    async inspectionResultsChange(val, scope) {
       this.$refs['dataForm'].$refs['main'].clearValidate('unqualifiedQuantity')
       if (val === 'qualified') {
         this.dataForm.unqualifiedQuantity = '0'
         !this.dataForm.itemList ? (this.dataForm.itemList = []) : ''
         !this.dataForm.causesList ? (this.dataForm.causesList = []) : ''
 
-        this.inspectionInfo.forEach(tc=>{
+        this.inspectionInfo.forEach(tc => {
           if (tc.prop === 'unqualifiedQuantity') {
             console.log(tc)
             tc.itemDisabled = true
@@ -896,15 +923,17 @@ export default {
         this.activeNames = ['basicInfo', 'inspectionInfo', 'adverseCausesInfo']
         this.activeNames = ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo']
       } else {
-        this.dataForm.unqualifiedQuantity = '0'
-        this.inspectionInfo.forEach(tc=>{
+        if (this.inspectionType !== 'work_report'){
+          this.dataForm.unqualifiedQuantity = '0'
+        }
+        this.inspectionInfo.forEach(tc => {
           if (tc.prop === 'unqualifiedQuantity') {
             console.log(tc)
             tc.itemDisabled = false
           }
         })
         this.inspectionItems = [
-          { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
+          {prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120},
           {
             prop: 'unqualifiedQuantity',
             label: '不合格数量',
@@ -912,7 +941,7 @@ export default {
             type: 'input',
             itemDisabled: false,
             itemRules: [
-              { required: true, trigger: 'blur' },
+              {required: true, trigger: 'blur'},
               {
                 validator: this.formValidate({
                   type: 'decimal',
@@ -930,11 +959,12 @@ export default {
             ],
             minWidth: 180
           },
-          { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
+          {prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120}
         ]
       }
 
-      // this.setDataFormItems()
+      this.setDataFormItems()
+      this.updateDataFormItems()
     },
     // 检验方式更改
     async inspectionMethodChange(val, scope) {
@@ -948,12 +978,12 @@ export default {
       } else if (val === 'spot_check') {
 
         if (this.dataForm.processId) {
-          const _data = { processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity }
+          const _data = {processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity}
           let res = await getSamplingQuantityByProcessId(_data).catch(() => false)
           this.$set(this.dataForm, 'samplingQuantity', res.data)
           this.autosamplingQuantity = res.data
         } else {
-          const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
+          const _data = [{productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity}]
           let res = await getSamplingQuantityByProductId(_data).catch(() => false)
           this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
           this.autosamplingQuantity = res.data[0].spotCheckNum
@@ -1013,12 +1043,13 @@ export default {
             this.dataForm.approvalFlag = false
           }
         })
-        .catch(() => { })
+        .catch(() => {
+        })
     }
   },
   beforeCreate() {
     this.initLinesListItems = () => [
-      { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
+      {prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120},
       {
         prop: 'unqualifiedQuantity',
         label: '不合格数量',
@@ -1026,7 +1057,7 @@ export default {
         type: 'input',
         itemDisabled: false,
         itemRules: [
-          { required: true, trigger: 'blur' },
+          {required: true, trigger: 'blur'},
           {
             validator: this.formValidate({
               type: 'decimal',
@@ -1044,7 +1075,7 @@ export default {
         ],
         minWidth: 180
       },
-      { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
+      {prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120}
     ]
   },
   computed: {

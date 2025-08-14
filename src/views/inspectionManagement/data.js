@@ -6,6 +6,7 @@ export const inspectionTypeList = [
   { label: '外协退料', value: 'back_material' },
   { label: '生产巡检', value: 'process' },
   { label: '生产成品', value: 'finished' },
+  { label: '包装报工', value: 'work_report' },
 ]
 export const documentStatusList = [
   { label: "草稿", value: "draft" },

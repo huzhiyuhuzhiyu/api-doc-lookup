@@ -42,12 +42,16 @@ export function getColumns() {
       align: "left",
     },
     {
+      prop: "batchNumber",
+      label: "批次号",
+      minWidth: 160,
+    },
+    {
       prop: "orderNo",
       label: "包装任务单号",
       minWidth: 220,
       sortable: 'custom',
       align: "left",
-      slot: true,
     },
     {
       prop: "productCode",

@@ -44,6 +44,12 @@ export function getBasicFormSchema(dataFormRef, context) {
       disabled: true,
     },
     {
+      prop: 'batchNumber',
+      label: '批次号',
+      value: "",
+      type: 'input',
+    },
+    {
       prop: 'planProductionQuantity',
       label: '计划生产数量',
       value: "",

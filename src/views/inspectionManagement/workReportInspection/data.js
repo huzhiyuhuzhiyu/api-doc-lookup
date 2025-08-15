@@ -26,7 +26,7 @@ export function getColumns() {
     {
       prop: "batchNumber",
       label: "批次",
-      minWidth: 220,
+      minWidth: 160,
       sortable: 'custom',
     },
     {
@@ -36,7 +36,7 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
-      prop: "maxLoad",
+      prop: "supplierCode",
       label: "供应商编号",
       minWidth: 180,
       sortable: 'custom',
@@ -58,7 +58,7 @@ export function getColumns() {
     {
       prop: "processName",
       label: "工序名称",
-      minWidth: 220,
+      minWidth: 160,
       sortable: 'custom',
     },
     {

@@ -2,28 +2,24 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 
 import {buttonList, getColumns} from "./data";
-import Form from '../pendingNotifyOrders/Form.vue'
-import {purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders";
+import {getSalaryDetailList} from "@/api/salaryManagement";
 
 export default {
   name: "index",
   components: {
     SuperQuery,
-    Form
   },
   data() {
     return {
       loading: false,
-      visible: false,
       tableData: [],
       total: 0,
       superQueryVisible: false,
       superQueryJson: [],
       initListQuery: {
         orderNo: '',
-        partnerName: '',
-        notificationType: 'procure',
-        receiptReturnType: 'back',
+        productDrawingNo: '',
+        source: 'package_plan',
         orderItems: [
           {
             asc: false,
@@ -52,10 +48,10 @@ export default {
     async initData() {
       this.loading = true
       try {
-        const res = await purPurchaseReceiptReturnGoodsList(this.listQuery);
-        const {total, records} = res.data
-        this.tableData = records;
-        this.total = total
+        const res = await getSalaryDetailList(this.listQuery);
+        const {page} = res.data
+        this.tableData = page.records;
+        this.total = pages.total
       } finally {
         this.loading = false
       }
@@ -68,25 +64,6 @@ export default {
 
         default:
       }
-    },
-
-    handleColumnClick(row, type) {
-      switch (type) {
-        case 'look':
-          this.visible = true
-          this.$nextTick(() => {
-            this.$refs.Form.init(row.id, type)
-          })
-          break;
-        default:
-      }
-    },
-
-
-    close(isInitData = true) {
-      this.visible = false
-      if (!isInitData) return
-      this.initData()
     },
 
     sortChange({prop, order}) {
@@ -103,17 +80,21 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
+
     getAlign(align) {
       return align || 'center'
     },
+
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
     },
+
     search() {
       this.initData()
     },
+
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
@@ -131,14 +112,14 @@ export default {
           <el-col :span="4">
             <el-form-item>
               <el-input v-model.trim="listQuery.orderNo"
-                placeholder="单号"
+                placeholder="生产计划单号"
                 clearable/>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.partnerName"
-                placeholder="客户名称"
+              <el-input v-model.trim="listQuery.productDrawingNo"
+                placeholder="产品型号"
                 clearable/>
             </el-form-item>
           </el-col>
@@ -161,8 +142,8 @@ export default {
               @click="handleButtonClick"
             />
             <TableDataExportButton :disabled="tableData.length <= 0" tableRef="dataTable"
-              :listQuery="listQuery" exportType="1072"
-              exportName="采购退货单"/>
+              :listQuery="listQuery" exportType="1073"
+              exportName="包装报工单"/>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -179,7 +160,7 @@ export default {
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="returnSalesmemo"
+        <JNPF-table customKey="packagingWorkReports"
           v-loading="loading"
           :data="tableData"
           :row-key="'id'"
@@ -200,13 +181,6 @@ export default {
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
-                <template v-if="column.prop === 'orderNo'">
-                  <el-link type="primary"
-                    @click.native="handleColumnClick(scope.row,'look')">{{
-                      scope.row.orderNo
-                    }}
-                  </el-link>
-                </template>
                 <template v-if="column.dictType">
                    <span>
                 <el-tag
@@ -225,10 +199,9 @@ export default {
       </div>
     </div>
     <!-- 高级查询 -->
-    <SuperQuery partentOrChild="returnSalesmemoSuperQuery" :show="superQueryVisible" ref="SuperQuery"
+    <SuperQuery partentOrChild="packagingWorkReportsSuperQuery" :show="superQueryVisible" ref="SuperQuery"
       table-ref="dataTable"
       :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
-    <Form ref="Form" v-if="visible" @close="close"/>
   </div>
 </template>

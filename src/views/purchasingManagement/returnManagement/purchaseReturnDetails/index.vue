@@ -24,7 +24,6 @@ export default {
         partnerName: '',
         notificationType: 'procure',
         receiptReturnType: 'back',
-        returnDate: [],
         orderItems: [
           {
             asc: false,

@@ -65,7 +65,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange" 
+        <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange"
          :data="tableData" :fixedNO="true" @sort-change="sortChange"
           custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_971998">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">
@@ -162,7 +162,6 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    ]
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
@@ -444,7 +443,7 @@ export default {
     handleBatch() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条检验数据')
 
-    
+
       this.btnLoading = false
       this.analyseDialog = true
     },
@@ -478,7 +477,7 @@ export default {
 						ratio: item.ratio,
 						remark: item.remark,
             approvalStatus:'ok',
-            
+
 						// unqualifiedQuantity: this.inspectionResults === 'qualified' ?
 						// 	0 : item.productionQuantity
 					}

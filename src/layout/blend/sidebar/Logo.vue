@@ -2,7 +2,7 @@
   <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <el-image class="sidebar-logo imagesClass" :style="{ backgroundColor: head }" :src="define.DHK_API + systemVO.iconUrl" v-if="systemVO && systemVO.iconUrl">
+        <el-image class="sidebar-logo imagesClass" :style="{ backgroundColor: head }" :src="apiBaseUrl + systemVO.iconUrl" v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
             <img class="sidebar-logo" :class="headClass" :style="{ backgroundColor: head }" src="@/assets/images/jnpf.png"
               alt="">
@@ -12,7 +12,7 @@
           v-else />
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <!-- <el-image class="imagesClass" :style="{ backgroundColor: head }" :src="define.DHK_API + systemVO.iconUrl"
+        <!-- <el-image class="imagesClass" :style="{ backgroundColor: head }" :src="apiBaseUrl + systemVO.iconUrl"
           v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
             <img :src="$store.state.jx.logo" :class="headClass" :style="{ backgroundColor: head }" class="sidebar-logo" />
@@ -24,7 +24,7 @@
             <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
           </el-tooltip>
           <div class="logo-title">
-            <img v-if="systemVO.iconUrl" :src="define.DHK_API + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
+            <img v-if="systemVO.iconUrl" :src="apiBaseUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
             <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
             <div class="logo-text" :title="systemVO.shortName || '轴管通'">{{systemVO.shortName || '轴管通' }}</div>
           </div>
@@ -37,7 +37,7 @@
 <script>
 import { mapState } from 'vuex'
 import {windowOpen} from "echarts/lib/util/format";
-import {workspacePath} from "@/utils/define";
+import {DHK_API, workspacePath} from "@/utils/define";
 export default {
   name: 'SidebarLogo',
   computed: {
@@ -52,6 +52,9 @@ export default {
     systemVO() {
       return this.$store.state.settings.systemVO
     },
+    apiBaseUrl() {
+      return DHK_API
+    }
   },
   props: {
     collapse: {
@@ -112,7 +115,6 @@ export default {
 .expand {
   display: flex;
   align-items: center;
-  margin-right: 12px;
   padding: 0 6px;
 
   .workspace {

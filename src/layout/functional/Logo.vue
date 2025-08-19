@@ -6,8 +6,8 @@
           <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
         </el-tooltip>
         <div class="logo-title">
-          <img v-if="systemVO.iconUrl" :src="define.DHK_API + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
-          <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
+          <img v-if="systemVO.iconUrl" :src="apiBaseUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
+          <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else/>
           <div  class="logo-text" :title="systemVO.shortName || '轴管通'">{{systemVO.shortName || '轴管通' }}</div>
         </div>
       </div>
@@ -18,7 +18,7 @@
 <script>
 import { mapState } from 'vuex'
 import {windowOpen} from "echarts/lib/util/format";
-import {workspacePath} from "@/utils/define";
+import {workspacePath,DHK_API} from "@/utils/define";
 export default {
   name: 'SidebarLogo',
   computed: {
@@ -28,11 +28,11 @@ export default {
       head: state => state.settings.head,
     }),
     systemVO() {
-      return this.$store.state.settings.sysConfig
-    },
-    systemVO() {
       return this.$store.state.settings.systemVO
     },
+    apiBaseUrl() {
+      return DHK_API
+    }
   },
   methods: {
     goBackWorkspace(){

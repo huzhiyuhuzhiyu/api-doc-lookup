@@ -5,7 +5,7 @@
         <el-tooltip content="返回工作台" placement="bottom">
           <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
         </el-tooltip>
-        <el-image class="sidebar-logo" :src="define.DHK_API+systemVO.iconUrl"
+        <el-image class="sidebar-logo" :src="apiBaseUrl+systemVO.iconUrl"
           v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
             <img class="sidebar-logo" src="@/assets/images/jnpf.png" alt="">
@@ -20,7 +20,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import {windowOpen} from "echarts/lib/util/format";
-import {workspacePath} from "@/utils/define";
+import {DHK_API, workspacePath} from "@/utils/define";
 export default {
   name: 'SidebarLogo',
   computed: {
@@ -34,6 +34,9 @@ export default {
       headClass: state => state.settings.headClass,
       head: state => state.settings.head,
     }),
+    apiBaseUrl() {
+      return DHK_API
+    }
   },
   methods: {
     goBackWorkspace(){

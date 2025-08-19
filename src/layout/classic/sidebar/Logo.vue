@@ -2,7 +2,7 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <el-image class="sidebar-logo 8" :src="define.DHK_API+systemVO.iconUrl" :style="{ backgroundColor: head }" v-if="systemVO && systemVO.iconUrl">
+        <el-image class="sidebar-logo 8" :src="apiBaseUrl+systemVO.iconUrl" :style="{ backgroundColor: head }" v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
             <img class="sidebar-logo 9" :class="headClass" :style="{backgroundColor:head}" src="@/assets/images/jnpf.png" alt="">
           </template>
@@ -10,7 +10,7 @@
         <img src="@/assets/images/jnpf.png" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo 10" v-else />
       </router-link>
       <!-- <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <el-image class="sidebar-logo 11" :src="define.DHK_API+sysConfig.navigationIcon" v-if="sysConfig && sysConfig.navigationIcon">
+        <el-image class="sidebar-logo 11" :src="apiBaseUrl+sysConfig.navigationIcon" v-if="sysConfig && sysConfig.navigationIcon">
           <template slot="error">
             <img class="sidebar-logo 12" :class="headClass" :style="{backgroundColor:head}" :src="$store.state.jx.logo1" alt="">
           </template>
@@ -23,7 +23,7 @@
             <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
           </el-tooltip>
           <div class="logo-title">
-            <img v-if="systemVO.iconUrl" :src="define.DHK_API + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
+            <img v-if="systemVO.iconUrl" :src="apiBaseUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
             <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
             <div class="logo-text" :title="systemVO.shortName || '轴管通'">{{systemVO.shortName || '轴管通' }}</div>
           </div>
@@ -35,7 +35,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import {workspacePath} from "@/utils/define";
+import {DHK_API, workspacePath} from "@/utils/define";
 import {windowOpen} from "echarts/lib/util/format";
 export default {
   name: 'SidebarLogo',
@@ -56,6 +56,9 @@ export default {
       headClass: state => state.settings.headClass,
       head: state => state.settings.head,
     }),
+    apiBaseUrl() {
+      return DHK_API
+    }
   },
   methods: {
     goBackWorkspace(){

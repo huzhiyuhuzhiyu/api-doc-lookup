@@ -513,7 +513,6 @@ export default {
               </el-radio-button>
             </el-badge>
           </template>
-
         </el-radio-group>
       </div>
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-top: 5px !important;">

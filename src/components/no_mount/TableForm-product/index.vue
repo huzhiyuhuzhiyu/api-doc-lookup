@@ -321,7 +321,7 @@ export default {
           tempData.splice(index, 1); // 从tableData中删除选中的行
         }
       }
-      this.selectedList = []  // 清空选中的行的数据
+      this.selectedList = []; // 清空选中的行的数据
       this.$emit('input', [...tempData]);
     },
     handleSelectionChange(data) {
@@ -408,8 +408,8 @@ export default {
 }
 
 .noDataTip {
-  text-align: 'center';
-  padding: '10%';
+  text-align: center;
+  padding: 10%;
   color: #aaa;
 }
 </style>

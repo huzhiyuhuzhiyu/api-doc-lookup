@@ -135,6 +135,7 @@ export function getColumns() {
       label: "供应商",
       minWidth: 180,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "productDrawingNo",
@@ -160,31 +161,37 @@ export function getColumns() {
       prop: "inspectionDate",
       label: "判定日期",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "samplingQuantity",
       label: "来料数",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "unqualifiedQuantity",
       label: "数量",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "returnReason",
       label: "退货原因",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "createTime",
       label: "创建时间",
       minWidth: 180,
+      sortable: 'custom'
     },
     {
       prop: "createByName",
       label: "创建人",
       minWidth: 120,
+      sortable: 'custom'
     }
   ]
 }

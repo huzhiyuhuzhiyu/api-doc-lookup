@@ -80,35 +80,41 @@ export function getColumns() {
     {
       prop: "name",
       label: "公司名称",
-      minWidth: 200
+      minWidth: 200,
+      sortable: 'custom'
     },
     {
       prop: "contacts",
       label: "联系人",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "contactNumber",
       label: "联系电话",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "taxNumber",
       label: "税号",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "address",
       label: "地址",
       minWidth: 200,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "defaultFlag",
       label: "是否默认地址",
       minWidth: 90,
       slot: true,
-      dictType: 'booleanOptions'
+      dictType: 'booleanOptions',
+      sortable: 'custom'
     },
   ]
 }

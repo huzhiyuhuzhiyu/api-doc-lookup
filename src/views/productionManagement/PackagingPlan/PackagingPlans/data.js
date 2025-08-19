@@ -1,7 +1,3 @@
-import {getCooperativeData} from "@/api/basicData";
-import global from "@/utils/global";
-import {deepClone} from "@/utils";
-
 /**
  * @description 按钮权限列表
  */
@@ -27,6 +23,20 @@ export function getColumns() {
     {
       prop: "productionPlanNo",
       label: "包装计划单号",
+      minWidth: 220,
+      sortable: 'custom',
+      align: "left",
+    },
+    {
+      prop: "ordersNo",
+      label: "销售单号",
+      minWidth: 220,
+      sortable: 'custom',
+      align: "left",
+    },
+    {
+      prop: "purchaseOrderNo",
+      label: "采购单号",
       minWidth: 220,
       sortable: 'custom',
       align: "left",
@@ -62,7 +72,8 @@ export function getColumns() {
     {
       prop: "mainUnit",
       label: "单位",
-      minWidth: 80
+      minWidth: 80,
+      sortable: 'custom'
     },
     {
       prop: "planProductionQuantity",
@@ -87,13 +98,15 @@ export function getColumns() {
       label: "是否紧急",
       minWidth: 120,
       slot: true,
-      dictType: 'booleanOptions'
+      dictType: 'booleanOptions',
+      sortable: 'custom'
     },
     {
       prop: "remark",
       label: "备注",
       minWidth: 180,
-      sortable: 'custom'
+      sortable: 'custom',
+      align: "left",
     },
     {
       prop: "createTime",

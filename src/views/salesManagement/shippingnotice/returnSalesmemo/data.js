@@ -33,11 +33,13 @@ export function getColumns() {
       label: "客户名称",
       minWidth: 180,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "deliverDate",
       label: "退货日期",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "exchangeGoodsFlag",
@@ -45,6 +47,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'returnIndication',
+      sortable: 'custom'
     },
     {
       prop: "deliveryStatus",
@@ -52,6 +55,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'shippingStatus',
+      sortable: 'custom'
     },
     {
       prop: "documentStatus",
@@ -59,6 +63,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'documentStatusList',
+      sortable: 'custom'
     },
     {
       prop: "approvalStatus",
@@ -66,16 +71,19 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'approvalStateList',
+      sortable: 'custom'
     },
     {
       prop: "createTime",
       label: "创建时间",
       minWidth: 180,
+      sortable: 'custom'
     },
     {
       prop: "createByName",
       label: "创建人",
       minWidth: 120,
+      sortable: 'custom'
     }
   ]
 }

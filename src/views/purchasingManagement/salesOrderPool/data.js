@@ -71,6 +71,7 @@ export function getColumns() {
       prop: "orderDate",
       label: "订单日期",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "cooperativePartnerCode",
@@ -85,6 +86,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'salesOrderType',
+      sortable: 'custom'
     },
     {
       prop: "orderNo",
@@ -118,26 +120,31 @@ export function getColumns() {
       prop: "vibrationLevel",
       label: "图纸版本号",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "mainUnit",
       label: "单位",
       minWidth: 90,
+      sortable: 'custom'
     },
     {
       prop: "deliveryDate",
       label: "交货日期",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "issuanceNum",
       label: "需求数量",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "feedbackDeliveryDate",
       label: "反馈交期",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "deliveryStatus",
@@ -145,6 +152,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'deliveryStatus',
+      sortable: 'custom'
     }
   ]
 }

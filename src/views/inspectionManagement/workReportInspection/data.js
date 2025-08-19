@@ -2,13 +2,13 @@ export const buttonList = []
 
 export function getColumns() {
   return [
-    // {
-    //   prop: "name",
-    //   label: "来源",
-    //   minWidth: 220,
-    //   sortable: 'custom',
-    //   align: "left",
-    // },
+    {
+      prop: "name",
+      label: "来源",
+      minWidth: 220,
+      sortable: 'custom',
+      align: "left",
+    },
     {
       prop: "saleOrderNo",
       label: "销售单号",

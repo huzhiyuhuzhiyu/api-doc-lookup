@@ -1,15 +1,13 @@
 import router from './router'
 import store from './store'
-import { message as $message } from '@/utils/message'
+import {message as $message} from '@/utils/message'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import {getToken, removeToken, setToken} from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
 import {injectTenantMinix, removeTenantMinix} from "@/mixins/generator/TenantMinix";
-import {windowOpen} from "echarts/lib/util/format";
-import {workspacePath} from "@/utils/define";
 
-NProgress.configure({ showSpinner: false }) // NProgress Configuration
+NProgress.configure({showSpinner: false}) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect', '/jump'] // no redirect whitelist
 
@@ -27,14 +25,20 @@ function getQueryParams() {
 }
 
 // 单点登录
-async function singleSignOn(){
+async function singleSignOn() {
   const urlParams = getQueryParams()
   if (urlParams && urlParams.token) {
     const themePresets = {
       themeClass: urlParams.systemThemeClass || '',
       head: urlParams.backColor || '',
       menuThemeClass: urlParams.menuThemeClass || '',
+      appLogo: urlParams.appLogo || '',
+      name: urlParams.name || '',
     }
+    store.dispatch("settings/changeSetting", {
+      key: "appThemePresets",
+      value: themePresets
+    })
     await synchronousSystemTheme(themePresets)
     store.commit('user/SET_TOKEN', urlParams.token)
     setToken(urlParams.token)
@@ -49,37 +53,21 @@ async function singleSignOn(){
 }
 
 // 同步系统主题
-function synchronousSystemTheme(themes){
+function synchronousSystemTheme(themes) {
   const dispatchPromises = []
-  // 设置 head
-  if (themes.head !== undefined) {
-    dispatchPromises.push(
-      store.dispatch("settings/changeSetting", {
-        key: "head",
-        value: themes.head
-      })
-    )
-  }
+  const themeMappings = [
+    {key: 'head', value: themes.head},
+    {key: 'themeClass', value: themes.themeClass},
+    {key: 'slideClass', value: themes.menuThemeClass}
+  ]
 
-  // 设置 theme
-  if (themes.themeClass !== undefined) {
-    dispatchPromises.push(
-      store.dispatch("settings/changeSetting", {
-        key: "themeClass",
-        value: themes.themeClass
-      })
-    )
-  }
-
-  // 设置 菜单
-  if (themes.menuThemeClass !== undefined) {
-    dispatchPromises.push(
-      store.dispatch("settings/changeSetting", {
-        key: "slideClass",
-        value: themes.menuThemeClass
-      })
-    )
-  }
+  themeMappings.forEach(({key, value}) => {
+    if (value !== undefined) {
+      dispatchPromises.push(
+        store.dispatch('settings/changeSetting', {key, value})
+      )
+    }
+  })
 
   return Promise.all(dispatchPromises)
 }
@@ -94,7 +82,7 @@ router.beforeEach(async (to, from, next) => {
   document.title = getPageTitle(to.meta.title, to.meta.zhTitle)
   if (to.query.clearToken && to.path === '/login') {
     removeToken()
-    let query = { ...to.query }
+    let query = {...to.query}
     delete query.clearToken
     next({
       path: '/login',
@@ -127,11 +115,11 @@ router.beforeEach(async (to, from, next) => {
         try {
           let a = localStorage.getItem('qhxt')
           let type = ''
-          if(a == 'false') type = 'weblogin'
+          if (a == 'false') type = 'weblogin'
           // get user info
-          let res = await store.dispatch('user/getInfo',type)
+          let res = await store.dispatch('user/getInfo', type)
           const accessRoutes = await store.dispatch('permission/generateRoutes', res)
-          let resField = await store.dispatch('base/getDictionaryData',{sort: 'FieldNameSet'})  // 调用数据字典
+          let resField = await store.dispatch('base/getDictionaryData', {sort: 'FieldNameSet'})  // 调用数据字典
           store.commit('base/SET_FIELD_NAME', resField)
           // dynamically add accessible routes
           await store.dispatch('base/refreshConfigData')
@@ -142,7 +130,7 @@ router.beforeEach(async (to, from, next) => {
           // set the replace: true, so the navigation will not leave a history record
           next({
             ...to,
-            query:'',
+            query: '',
             replace: true
           })
         } catch (error) {
@@ -150,7 +138,7 @@ router.beforeEach(async (to, from, next) => {
           await store.dispatch('user/resetToken')
           if (error && typeof (error) == 'string') $message.error(error || 'Has Error')
           windowOpen(workspacePath,'_self')
-          // next(`/login?redirect=${to.path}`)
+          // next(`/login?redirect=${ to.path }`)
           NProgress.done()
         }
       }
@@ -163,7 +151,7 @@ router.beforeEach(async (to, from, next) => {
       next()
     } else {
       // other pages that do not have permissionEle to access are redirected to the login page.
-      // next(`/login?redirect=${to.path}`)
+      // next(`/login?redirect=${ to.path }`)
       windowOpen(workspacePath,'_self')
       NProgress.done()
     }

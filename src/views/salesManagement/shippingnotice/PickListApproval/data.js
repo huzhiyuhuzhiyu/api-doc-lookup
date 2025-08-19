@@ -54,16 +54,19 @@ export function getColumns() {
       label: "客户名称",
       minWidth: 180,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "recipient",
       label: "收件人",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "phone",
       label: "收件人电话",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "logisticsCompany",
@@ -71,31 +74,37 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'logisticsCompany',
+      sortable: 'custom'
     },
     {
       prop: "countryName",
       label: "国家",
       minWidth: 160,
+      sortable: 'custom'
     },
     {
       prop: "provinceName",
       label: "省",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "cityName",
       label: "市",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "areaName",
       label: "区",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "address",
       label: "地址",
       minWidth: 280,
+      sortable: 'custom'
     },
     {
       prop: "deliveryStatus",
@@ -103,6 +112,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'shippingStatus',
+      sortable: 'custom'
     },
     {
       prop: "priority",
@@ -110,6 +120,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'shippingPriority',
+      sortable: 'custom'
     },
     {
       prop: "documentStatus",
@@ -117,16 +128,19 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'documentStatusList',
+      sortable: 'custom'
     },
     {
       prop: "createTime",
       label: "创建时间",
       minWidth: 180,
+      sortable: 'custom'
     },
     {
       prop: "createByName",
       label: "创建人",
       minWidth: 120,
+      sortable: 'custom'
     }
   ]
 }

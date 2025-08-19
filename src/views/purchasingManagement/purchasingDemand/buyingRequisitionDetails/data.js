@@ -43,43 +43,51 @@ export function getColumns() {
       prop: "planQuantity",
       label: "采购数量",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "mainUnit",
       label: "单位",
       minWidth: 90,
+      sortable: 'custom'
     },
     {
       prop: "deliveryDate",
       label: "交货日期",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "num",
       label: "申请人",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "feedbackDeliveryDate",
       label: "申请部门",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "createTime",
       label: "申请时间",
       minWidth: 180,
+      sortable: 'custom'
     },
     {
       prop: "applicationReason",
       label: "申请理由",
       minWidth: 160,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "remark",
       label: "备注",
       minWidth: 160,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "documentStatus",
@@ -87,6 +95,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: "documentStatusList",
+      sortable: 'custom'
     },
     {
       prop: "approvalStatus",
@@ -94,6 +103,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: "approvalStateList",
+      sortable: 'custom'
     }
   ]
 }

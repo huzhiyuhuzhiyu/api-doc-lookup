@@ -42,9 +42,24 @@ export function getColumns() {
       align: "left",
     },
     {
+      prop: "ordersNo",
+      label: "销售单号",
+      minWidth: 220,
+      sortable: 'custom',
+      align: "left",
+    },
+    {
+      prop: "purchaseOrderNo",
+      label: "采购单号",
+      minWidth: 220,
+      sortable: 'custom',
+      align: "left",
+    },
+    {
       prop: "batchNumber",
       label: "批次号",
       minWidth: 160,
+      sortable: 'custom'
     },
     {
       prop: "orderNo",
@@ -84,7 +99,8 @@ export function getColumns() {
     {
       prop: "mainUnit",
       label: "单位",
-      minWidth: 80
+      minWidth: 80,
+      sortable: 'custom'
     },
     {
       prop: "productionQuantity",
@@ -131,7 +147,8 @@ export function getColumns() {
       label: "是否紧急",
       minWidth: 120,
       slot: true,
-      dictType: 'booleanOptions'
+      dictType: 'booleanOptions',
+      sortable: 'custom'
     },
     {
       prop: "planStartDate",
@@ -149,7 +166,8 @@ export function getColumns() {
       prop: "remark",
       label: "备注",
       minWidth: 180,
-      sortable: 'custom'
+      sortable: 'custom',
+      align: "left",
     },
     {
       prop: "createTime",

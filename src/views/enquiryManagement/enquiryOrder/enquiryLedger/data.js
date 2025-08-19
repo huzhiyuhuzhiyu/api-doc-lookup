@@ -1,31 +1,7 @@
-import {getCooperativeData} from "@/api/basicData";
-import global from "@/utils/global";
-import {deepClone} from "@/utils";
-
 /**
  * @description 表单数据
  */
 export function getBasicFormSchema(dataFormRef, context) {
-  function executeCustomerChange(context, data, isClear) {
-    // dom更新后重新校验此元素
-    context.$nextTick(() => {
-      context.$refs.dataForm.$refs.main.validateField(['cooperativePartnerName', 'cooperativePartnerCode']);
-    });
-
-    context.dataForm.cooperativePartnerId = data[0].all.id;
-    context.dataForm.cooperativePartnerCode = data[0].all.code;
-    context.dataForm.cooperativePartnerName = data[0].all.name;
-    context.originalFormData = deepClone(context.dataForm);
-
-    if (isClear) {
-      clearFormOnCustomerChange();
-    }
-  }
-
-  function clearFormOnCustomerChange() {
-    context.linesList = [];
-  }
-
   return [
     {
       prop: "inquiryNo",
@@ -98,17 +74,20 @@ export function getColumns() {
       prop: "bidder",
       label: "制单人",
       minWidth: 120,
+      sortable: 'custom',
     },
     {
       prop: "bidder2",
       label: "采购负责人",
       minWidth: 120,
+      sortable: 'custom',
     },
     {
       prop: "remark",
       label: "备注",
       align: "left",
       minWidth: 150,
+      sortable: 'custom',
     },
     {
       prop: "supplierCode",

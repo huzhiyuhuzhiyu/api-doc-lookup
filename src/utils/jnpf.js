@@ -533,7 +533,6 @@ const jnpf = {
   searchTimeFormat(requestQuery, dateTimeArr, startTime, endTime) {
     const formatQuery = requestQuery
     if (Array.isArray(dateTimeArr)) {
-      console.log(777);
       if (dateTimeArr && dateTimeArr.length > 0) {
         formatQuery[startTime] = dateTimeArr[0].replace(/ 0(?!0)/g, " ")
         formatQuery[endTime] = dateTimeArr[1].replace(/ 0(?!0)/g, " ")

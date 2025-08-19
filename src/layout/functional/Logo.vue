@@ -6,9 +6,9 @@
           <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
         </el-tooltip>
         <div class="logo-title">
-          <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
+          <img v-if="systemVO.iconUrl" :src="define.DHK_API + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
           <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
-          <div  class="logo-text">{{systemVO.shortName || '轴管通' }}</div>
+          <div  class="logo-text" :title="systemVO.shortName || '轴管通'">{{systemVO.shortName || '轴管通' }}</div>
         </div>
       </div>
     </router-link>
@@ -66,6 +66,7 @@ export default {
   width: 50px;
 }
 .logo-text {
+  width: 100px;
   font-size: 24px !important;
   font-weight: bold;
   color: #fff;

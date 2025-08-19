@@ -62,17 +62,21 @@ export function getColumns() {
       label: "包装方式",
       minWidth: 100,
       slot: true,
-      dictType: 'packaging'
+      dictType: 'packaging',
+      sortable: 'custom',
     },
     {
       prop: "reportingTime",
       label: "报工时间",
       minWidth: 120,
+      sortable: 'custom',
     },
     {
       prop: "remark",
       label: "备注",
       minWidth: 220,
+      align: "left",
+      sortable: 'custom',
     }
   ]
 }

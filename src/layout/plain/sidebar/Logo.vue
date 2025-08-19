@@ -5,7 +5,7 @@
         <el-tooltip content="返回工作台" placement="bottom">
           <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
         </el-tooltip>
-        <el-image class="sidebar-logo" :src="define.comUrl+systemVO.iconUrl"
+        <el-image class="sidebar-logo" :src="define.DHK_API+systemVO.iconUrl"
           v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
             <img class="sidebar-logo" src="@/assets/images/jnpf.png" alt="">

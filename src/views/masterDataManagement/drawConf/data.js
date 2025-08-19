@@ -209,13 +209,13 @@ export function getBasicFormSchema(dataFormRef, context) {
 
 export function getColumns() {
   return [
-    {
-      prop: 'purchaseOrderNo',
-      label: '采购单号',
-      minWidth: 120,
-      sortable: 'custom',
-      align: "left",
-    },
+    // {
+    //   prop: 'purchaseOrderNo',
+    //   label: '采购单号',
+    //   minWidth: 120,
+    //   sortable: 'custom',
+    //   align: "left",
+    // },
     {
       prop: 'purchaseOrderNo',
       label: '订单号',

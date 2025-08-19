@@ -25,21 +25,25 @@ export function getColumns() {
       label: "供应商名称",
       minWidth: 180,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "deliverDate",
       label: "退货日期",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "createTime",
       label: "创建时间",
       minWidth: 180,
+      sortable: 'custom'
     },
     {
       prop: "createByName",
       label: "创建人",
       minWidth: 120,
+      sortable: 'custom'
     }
   ]
 }

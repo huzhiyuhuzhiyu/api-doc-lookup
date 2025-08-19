@@ -38,6 +38,7 @@ export function getColumns(type = 'default') {
       label: "创建人",
       minWidth: 140,
       align: "center",
+      sortable: "custom",
     }
   ]
 
@@ -65,39 +66,46 @@ export function getColumns(type = 'default') {
         prop: "productDrawingNo",
         label: "产品型号",
         minWidth: 150,
-        align: "left"
+        align: "left",
+        sortable: "custom",
       },
       {
         prop: "productName",
         label: "产品名称",
         minWidth: 180,
-        align: "left"
+        align: "left",
+        sortable: "custom",
       },
       {
         prop: "batchNumber",
         label: "批次",
         minWidth: 120,
-        align: "left"
+        align: "left",
+        sortable: "custom",
       },
       {
         prop: "productionQuantity",
         label: "计划数",
         minWidth: 100,
+        sortable: "custom",
       },
       {
         prop: "unqualifiedQuantity",
         label: "不合格",
         minWidth: 100,
+        sortable: "custom",
       },
       {
         prop: "packingQuantity",
         label: "已装箱",
         minWidth: 100,
+        sortable: "custom",
       },
       {
         prop: "waitPackingQuantity",
         label: "待装箱",
         minWidth: 100,
+        sortable: "custom",
       },
       // {
       //   prop: "packagingRequirements",
@@ -114,6 +122,7 @@ export function getColumns(type = 'default') {
         prop: "createTime",
         label: "装箱时间",
         minWidth: 160,
+        sortable: "custom",
       },
       // {
       //   prop: "cooperativePartnerName",
@@ -133,39 +142,46 @@ export function getColumns(type = 'default') {
         prop: "productsDrawingNo",
         label: "产品型号",
         minWidth: 150,
-        align: "left"
+        align: "left",
+        sortable: "custom",
       },
       {
         prop: "productsName",
         label: "产品名称",
         minWidth: 180,
-        align: "left"
+        align: "left",
+        sortable: "custom",
       },
       {
         prop: "batchNumber",
         label: "批次",
         minWidth: 120,
-        align: "left"
+        align: "left",
+        sortable: "custom",
       },
       {
         prop: "productionQuantity",
         label: "计划数",
         minWidth: 100,
+        sortable: "custom",
       },
       {
         prop: "unqualifiedQuantity",
         label: "不合格",
         minWidth: 100,
+        sortable: "custom",
       },
       {
         prop: "num",
         label: "已装箱",
         minWidth: 100,
+        sortable: "custom",
       },
       {
         prop: "waitPackingQuantity",
         label: "待装箱",
         minWidth: 100,
+        sortable: "custom",
       },
       // {
       //   prop: "packagingRequirements",

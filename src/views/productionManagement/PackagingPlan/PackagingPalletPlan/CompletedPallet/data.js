@@ -44,7 +44,8 @@ export function getColumns() {
       label: "包装方式",
       minWidth: 100,
       slot: true,
-      dictType: 'packaging'
+      dictType: 'packaging',
+      sortable: 'custom'
     },
     {
       prop: "num",

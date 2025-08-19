@@ -1,0 +1,224 @@
+<script>
+import SuperQuery from '@/components/SuperQuery/index.vue'
+
+import {buttonList, getColumns} from "./data";
+import {ordershengchanList} from "@/api/productOrdes";
+
+export default {
+  name: "index",
+  components: {
+    SuperQuery
+  },
+  data() {
+    return {
+      loading: false,
+      tableData: [],
+      total: 0,
+      superQueryVisible: false,
+      superQueryJson: [],
+      initListQuery: {
+        source: 'package_plan',
+        productionPlanNo: '',
+        orderNo: '',
+        productDrawingNo: '',
+        time: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        superQuery: {},
+        pageNum: 1,
+        pageSize: 20
+      },
+      listQuery: {},
+      btnList: buttonList,
+      columnList: [],
+      columnsConfig: getColumns(),
+    }
+  },
+  created() {
+    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.initData()
+  },
+  methods: {
+    async initData() {
+      this.loading = true
+      try {
+        const res = await ordershengchanList(this.listQuery);
+        const {total, records} = res.data
+        this.tableData = records;
+        this.total = total
+      } finally {
+        this.loading = false
+      }
+    },
+
+    handleButtonClick(type) {
+      switch (type) {
+        case '':
+          break;
+        default:
+      }
+    },
+
+    sortChange({prop, order}) {
+      let newProp = ''
+      if (prop === 'createTime') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      }
+      this.listQuery.orderItems[0].asc = order === 'ascending'
+      this.listQuery.orderItems[0].column = order === null ? '' : newProp
+      this.initData()
+    },
+
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+
+    getAlign(align) {
+      return align || 'center'
+    },
+
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+
+    search() {
+      this.listQuery = this.jnpf.searchTimeFormat(this.listQuery, 'time', 'startTime', 'endTime')
+      this.initData()
+    },
+
+    reset() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.search()
+    },
+  }
+}
+</script>
+
+<template>
+  <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout-center  JNPF-flex-main">
+      <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
+        <el-form @submit.native.prevent @keyup.enter.native="search()">
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productionPlanNo"
+                placeholder="包装计划单号"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.orderNo"
+                placeholder="包装任务单号"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productDrawingNo"
+                placeholder="产品型号"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-date-picker v-model="listQuery.time" type="datetimerange"
+                value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" style="width: 100%;"
+                start-placeholder="开始时间" end-placeholder="结束时间" :picker-options="global.timePickerOptions">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button size="mini" type="primary" icon="el-icon-search"
+                @click="search()">查询
+              </el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-head" style="padding: 8px">
+          <div class="JNPF-common-head-left">
+            <CustomButton
+              :btnList="btnList"
+              :exportListQuery="listQuery"
+              :exportDisabled="tableData.length <= 0"
+              @click="handleButtonClick"
+            />
+          </div>
+          <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true"/>
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()"/>
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                @click="initData()"/>
+            </el-tooltip>
+          </div>
+        </div>
+        <JNPF-table customKey="PackageProgressTracker"
+          v-loading="loading"
+          :data="tableData"
+          :row-key="'id'"
+          fixedNO
+          :setColumnDisplayList="columnList"
+          @sort-change="sortChange"
+          ref="dataTable"
+          custom-column>
+          <template v-for="column in columnsConfig">
+            <el-table-column
+              v-if="typeof column.show === 'function' ? column.show() : true"
+              :key="column.prop"
+              :prop="column.prop"
+              :label="column.label"
+              :min-width="column.minWidth"
+              :sortable="column.sortable"
+              :fixed="column.fixed"
+              :align="getAlign(column.align)"
+            >
+              <template v-if="column.slot" v-slot="scope">
+                <template v-if="column.dictType">
+                     <span>
+                  <el-tag
+                    :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
+                      global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
+                    }}</el-tag>
+                     </span>
+                </template>
+              </template>
+            </el-table-column>
+          </template>
+        </JNPF-table>
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+          @pagination="initData"
+        />
+      </div>
+    </div>
+    <!-- 高级查询 -->
+    <SuperQuery partentOrChild="PackageProgressTracker" :show="superQueryVisible" ref="SuperQuery"
+      table-ref="dataTable"
+      :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
+  </div>
+</template>

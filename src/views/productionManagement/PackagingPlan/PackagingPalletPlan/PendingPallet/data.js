@@ -39,7 +39,8 @@ export function getBatchColumns() {
       label: "包装方式",
       minWidth: 100,
       slot: true,
-      dictType: 'packaging'
+      dictType: 'packaging',
+      sortable: "custom",
     },
     {
       prop: "boxNum",
@@ -70,7 +71,8 @@ export function getBatchColumns() {
       label: "整箱",
       minWidth: 90,
       slot: true,
-      dictType: 'booleanOptions'
+      dictType: 'booleanOptions',
+      sortable: "custom",
     }
   ]
 }
@@ -103,7 +105,8 @@ export function getSingleBoxColumns() {
       label: "包装方式",
       minWidth: 100,
       slot: true,
-      dictType: 'packaging'
+      dictType: 'packaging',
+      sortable: "custom",
     },
     {
       prop: "singleWeight",
@@ -122,7 +125,8 @@ export function getSingleBoxColumns() {
       label: "整箱",
       minWidth: 90,
       slot: true,
-      dictType: 'booleanOptions'
+      dictType: 'booleanOptions',
+      sortable: "custom",
     }
   ]
 }

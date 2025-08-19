@@ -2,7 +2,7 @@
   <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <el-image class="sidebar-logo imagesClass" :style="{ backgroundColor: head }" :src="define.comUrl + systemVO.iconUrl" v-if="systemVO && systemVO.iconUrl">
+        <el-image class="sidebar-logo imagesClass" :style="{ backgroundColor: head }" :src="define.DHK_API + systemVO.iconUrl" v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
             <img class="sidebar-logo" :class="headClass" :style="{ backgroundColor: head }" src="@/assets/images/jnpf.png"
               alt="">
@@ -12,7 +12,7 @@
           v-else />
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <!-- <el-image class="imagesClass" :style="{ backgroundColor: head }" :src="define.comUrl + systemVO.iconUrl"
+        <!-- <el-image class="imagesClass" :style="{ backgroundColor: head }" :src="define.DHK_API + systemVO.iconUrl"
           v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
             <img :src="$store.state.jx.logo" :class="headClass" :style="{ backgroundColor: head }" class="sidebar-logo" />
@@ -24,9 +24,9 @@
             <i class="icon-ym icon-ym-nav-home workspace" @click="goBackWorkspace"></i>
           </el-tooltip>
           <div class="logo-title">
-            <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
+            <img v-if="systemVO.iconUrl" :src="define.DHK_API + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
             <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
-            <div  class="logo-text">{{systemVO.shortName || '轴管通' }}</div>
+            <div class="logo-text" :title="systemVO.shortName || '轴管通'">{{systemVO.shortName || '轴管通' }}</div>
           </div>
         </div>
       </router-link>
@@ -101,6 +101,7 @@ export default {
   width: 50px;
 }
 .logo-text {
+  width: 100px;
   font-size: 24px !important;
   font-weight: bold;
   color: #fff;

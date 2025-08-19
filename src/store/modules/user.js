@@ -112,7 +112,7 @@ const actions = {
     })
   },
   // 获取用户信息
-  getInfo({ commit },type) {
+  getInfo({ commit, rootState },type) {
     return new Promise((resolve, reject) => {
       getInfo(type).then(response => {
         const { data } = response
@@ -137,8 +137,8 @@ const actions = {
             }
             if (e.type == 2) {
               let path = e.urlAddress
-           
-              
+
+
               let reg = /\$\{[^}]+\}/
               let reg2 = /\$\{\{[^}]+\}\}/
               if (path.indexOf("?") > -1) path = path.split("?")[0]
@@ -169,7 +169,7 @@ const actions = {
                   }
                 }
               }
-              
+
               if (reg2.test(e.urlAddress)){
                 newObj = {
                   path: '/' + path,
@@ -247,7 +247,7 @@ const actions = {
                     urlAddress: path
                   }
                 }
-               
+
                 routerList.push(newObj)
               } else {
                 e.path = path
@@ -259,8 +259,13 @@ const actions = {
         commit('SET_MENULIST', menuList)
         commit('SET_USERINFO', userInfo)
         commit('SET_PERMISSION_LIST', permissionList)
+        const appThemePresets = rootState.settings.appThemePresets
         const sysConfigInfo = data.sysConfigInfo || defaultSettings.sysConfig
-        const systemVO = data.systemVO || defaultSettings.systemVO
+        const systemVO = {
+          ...data.systemVO || defaultSettings.systemVO,
+          shortName: appThemePresets.name,
+          iconUrl: appThemePresets.appLogo,
+        }
         commit('settings/CHANGE_SETTING', { key: "sysConfig", value: sysConfigInfo }, { root: true })
         commit('settings/CHANGE_SETTING', { key: "systemVO", value: systemVO }, { root: true })
         resolve(routerList)

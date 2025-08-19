@@ -39,6 +39,7 @@ const state = {
   layoutType: jnpf.storageGet('layoutType') === null ? layoutType : jnpf.storageGet('layoutType'),
   sysConfig: jnpf.storageGet('sysConfig') === null ? sysConfig : jnpf.storageGet('sysConfig'),
   systemVO: jnpf.storageGet('systemVO') === null ? systemVO : jnpf.storageGet('systemVO'),
+  appThemePresets: jnpf.storageGet('appThemePresets') === null ? {} : jnpf.storageGet('appThemePresets'),
 }
 
 const mutations = {

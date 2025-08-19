@@ -97,21 +97,26 @@ export function getColumns() {
       prop: "contactNumber",
       label: "联系电话",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "fax",
       label: "传真",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "taxNumber",
       label: "信用代码",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "remark",
       label: "备注",
       minWidth: 180,
+      align: "left",
+      sortable: 'custom'
     },
   ]
 }

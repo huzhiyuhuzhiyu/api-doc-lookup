@@ -110,11 +110,14 @@ export function getColumns() {
       prop: "cooperativePartnerName",
       label: "客户名称",
       minWidth: 160,
+      sortable: 'custom'
     },
     {
       prop: "remark",
       label: "备注",
       minWidth: 180,
+      align: "left",
+      sortable: 'custom'
     },
   ]
 }

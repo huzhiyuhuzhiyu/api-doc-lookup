@@ -8,7 +8,7 @@ import {getClassAttributeListByCode} from "@/api/masterDataManagement";
 import {getQuotationdatasendlist, purchaseOrderList} from "@/api/orderFollow";
 import {deepClone} from "@/utils";
 
-import {detailpurchaseOrderList, purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders";
+import {purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders";
 import {getStockPickedPage} from "@/api/batchPacking";
 
 
@@ -73,7 +73,7 @@ export default {
       businessTypeData: this.getDictDataSync('warehouseBusinessType'),
       activeProcess: '',
       processes: [],
-
+      operationWidth: '160',
       commonQueryConfig: {
         orderItems: [
           {
@@ -140,6 +140,19 @@ export default {
         },
         // 成品拣货出库
         finished_product_picking_send: {
+          api: getStockPickedPage,
+          initListQuery: {
+            ...this.commonQueryConfig,
+            orderNo: '',
+            cooperativePartnerName: '',
+            notifyType: "sale",
+            returnDeliveryType: 'delivery',
+            deliveryStatus: '',
+            approvalStatus: 'ok',
+          },
+        },
+        // 成品包装入库
+        inbound_finished_package: {
           api: getStockPickedPage,
           initListQuery: {
             ...this.commonQueryConfig,
@@ -244,7 +257,7 @@ export default {
     },
     // 入库
     isInbound() {
-      return ['inbound_purchase', 'inbound_sale_return', 'inbound_external_return', 'inbound_external'].includes(this.activeProcess);
+      return ['inbound_purchase', 'inbound_sale_return', 'inbound_external_return', 'inbound_external', 'inbound_finished_package'].includes(this.activeProcess);
     },
     // 装箱
     isPacking() {
@@ -268,9 +281,6 @@ export default {
     await this.initData()
   },
   methods: {
-    init() {
-    },
-
     async initData() {
       this.loading = true
       try {
@@ -282,6 +292,20 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+
+    calculateOperationWidth() {
+      this.$nextTick(() => {
+        if (this.$refs.operationButtons) {
+          const buttons = this.$refs.operationButtons.querySelectorAll('.el-button');
+          let totalWidth = 0;
+          buttons.forEach(button => {
+            const buttonWidth = button.offsetWidth;
+            totalWidth += buttonWidth;
+          });
+          this.operationWidth = totalWidth + (buttons.length * 10) + 20;
+        }
+      });
     },
 
     validateSelectedRows() {
@@ -379,6 +403,7 @@ export default {
       this.searchList = getSearchList(businessType);
       this.initListQuery = config.initListQuery || {};
       this.listQuery = deepClone(this.initListQuery);
+      this.calculateOperationWidth()
       this.$nextTick(() => {
         this.$refs.dataTable.doLayout()
         this.initData()
@@ -604,27 +629,24 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" width="160" fixed="right">
+          <el-table-column label="操作" :width="operationWidth" fixed="right">
             <template slot-scope="{ row }">
-              <el-button v-if="isOutbound" size="mini" type="text"
-                @click="handleOutbound(row)">
-                出库
-              </el-button>
-              <el-button v-if="isInbound" size="mini" type="text"
-                @click="handleInbound(row)">
-                入库
-              </el-button>
-              <template v-if="isPacking">
-                <el-button size="mini" type="text" :disabled="!row.deliveryStatus === 'arranged'"
-                  @click="handlePacking(row)">
-                  装箱
+              <div ref="operationButtons" class="operation-buttons">
+                <el-button v-if="isOutbound" size="mini" type="text" @click="handleOutbound(row)">
+                  出库
                 </el-button>
-                <el-button size="mini" type="text" :disabled="!isPacked(row)"
-                  @click="handlePackingEdit(row,'packing','edit')">
-                  编辑装箱单
+                <el-button v-if="isInbound" size="mini" type="text" @click="handleInbound(row)">
+                  入库
                 </el-button>
-              </template>
-
+                <template v-if="isPacking">
+                  <el-button size="mini" type="text" :disabled="!row.deliveryStatus === 'arranged'" @click="handlePacking(row)">
+                    装箱
+                  </el-button>
+                  <el-button size="mini" type="text" :disabled="!isPacked(row)" @click="handlePackingEdit(row,'packing','edit')">
+                    编辑装箱单
+                  </el-button>
+                </template>
+              </div>
             </template>
           </el-table-column>
         </JNPF-table>

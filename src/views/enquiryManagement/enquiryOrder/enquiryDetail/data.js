@@ -119,6 +119,7 @@ export function getColumns() {
       prop: "mainUnit",
       label: "单位",
       minWidth: 150,
+      sortable: 'custom',
     },
     {
       prop: "numStr",
@@ -167,6 +168,7 @@ export function getColumns() {
       label: "反馈备注",
       align: "left",
       minWidth: 150,
+      sortable: 'custom',
     },
   ]
 }

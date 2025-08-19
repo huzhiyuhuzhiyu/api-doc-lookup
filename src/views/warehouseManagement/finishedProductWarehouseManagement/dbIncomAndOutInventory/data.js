@@ -175,12 +175,13 @@ export function getColumns(type = 'default') {
       label: "创建人",
       minWidth: 140,
       align: "center",
+      sortable: 'custom',
     }
   ]
 
   // 定义各业务类型的列配置
   const columnsConfig = {
-    // 外协收货入库
+    // 生产领料入库
     outbound_pick_out: [
       {
         prop: "orderNo",
@@ -195,29 +196,34 @@ export function getColumns(type = 'default') {
         label: "供应商编码",
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "partnerName",
         label: "供应商名称",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "salesman",
         label: "操作员",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "deliverDate",
         label: "收货日期",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: 'remark',
         label: '备注',
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       ...createColumns
     ],
@@ -245,59 +251,69 @@ export function getColumns(type = 'default') {
         label: "客户编码",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "partnerName",
         label: "客户名称",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "deliverDate",
         label: "发货日期",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: "recipient",
         label: "收件人",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: "phone",
         label: "收件人电话",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: "deliveryCompletionDate",
         label: "完成日期",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: "hairExchangeGoodsFlag",
         label: "发货标识",
         minWidth: 120,
         slot: true,
+        sortable: 'custom',
       },
       {
         prop: "logisticsCompany",
         label: "发货方式",
         minWidth: 120,
         slot: true,
-        dictType: 'logisticsCompany'
+        dictType: 'logisticsCompany',
+        sortable: 'custom',
       },
       {
         prop: "priority",
         label: "优先级",
         minWidth: 120,
         slot: true,
-        dictType: 'shippingPriority'
+        dictType: 'shippingPriority',
+        sortable: 'custom',
       },
       {
         prop: "deliveryStatus",
         label: "状态",
         minWidth: 120,
         slot: true,
-        dictType: 'shippingStatus'
+        dictType: 'shippingStatus',
+        sortable: 'custom',
       },
       ...createColumns,
     ],
@@ -324,23 +340,27 @@ export function getColumns(type = 'default') {
         label: "客户编码",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "partnerName",
         label: "客户名称",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "deliverDate",
         label: "退货日期",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: "retreatExchangeGoodsFlag",
         label: "退货标识",
         minWidth: 120,
         slot: true,
+        sortable: 'custom',
       },
       ...createColumns,
     ],
@@ -368,27 +388,32 @@ export function getColumns(type = 'default') {
         label: "客户编码",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "cooperativePartnerName",
         label: "客户名称",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "warehouseName",
         label: "仓库",
         minWidth: 160,
+        sortable: 'custom',
       },
       {
         prop: "shelfSpaceName",
         label: "库位",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: "deliverDate",
         label: "预定日期",
         minWidth: 120,
+        sortable: 'custom',
       },
       // {
       //   prop: "abv",
@@ -400,7 +425,8 @@ export function getColumns(type = 'default') {
         label: "优先级",
         minWidth: 120,
         slot: true,
-        dictType: 'shippingPriority'
+        dictType: 'shippingPriority',
+        sortable: 'custom',
       },
       // {
       //   prop: "deliveryStatus",
@@ -409,6 +435,59 @@ export function getColumns(type = 'default') {
       //   slot: true,
       //   dictType: 'shippingStatus'
       // },
+      ...createColumns,
+    ],
+
+    // 成品包装入库
+    inbound_finished_package: [
+      ...defaultColumns,
+      {
+        prop: "orderNo",
+        label: "包装单号",
+        minWidth: 220,
+        align: "left",
+        sortable: 'custom',
+        slot: true
+      },
+      {
+        prop: "sourceOrderNo",
+        label: "来源单号",
+        minWidth: 220,
+        align: "left",
+        sortable: 'custom',
+      },
+      {
+        prop: "cooperativePartnerCode",
+        label: "客户编码",
+        minWidth: 180,
+        align: "left",
+        sortable: 'custom',
+      },
+      {
+        prop: "cooperativePartnerName",
+        label: "客户名称",
+        minWidth: 180,
+        align: "left",
+        sortable: 'custom',
+      },
+      {
+        prop: "warehouseName",
+        label: "仓库",
+        minWidth: 160,
+        sortable: 'custom',
+      },
+      {
+        prop: "shelfSpaceName",
+        label: "库位",
+        minWidth: 120,
+        sortable: 'custom',
+      },
+      {
+        prop: "deliverDate",
+        label: "预定日期",
+        minWidth: 120,
+        sortable: 'custom',
+      },
       ...createColumns,
     ],
 
@@ -427,17 +506,20 @@ export function getColumns(type = 'default') {
         label: "供应商编码",
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "cooperativePartnerName",
         label: "供应商名称",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "deliveryDate",
         label: "交货日期",
         minWidth: 120,
+        sortable: 'custom',
       },
       ...createColumns
     ],
@@ -456,18 +538,21 @@ export function getColumns(type = 'default') {
         label: "供应商编码",
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "partnerName",
         label: "供应商名称",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "salesman",
         label: "操作员",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: 'productName',
@@ -495,6 +580,7 @@ export function getColumns(type = 'default') {
         label: '备注',
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       ...createColumns
     ],
@@ -514,29 +600,34 @@ export function getColumns(type = 'default') {
         label: "供应商编码",
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "partnerName",
         label: "供应商名称",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "recipient",
         label: "收件人",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: "phone",
         label: "收件人电话",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: "logisticsCompany",
         label: "发料方式",
         minWidth: 120,
         slot: true,
-        dictType: 'logisticsCompany'
+        dictType: 'logisticsCompany',
+        sortable: 'custom',
       },
       ...createColumns
     ],
@@ -555,17 +646,20 @@ export function getColumns(type = 'default') {
         label: "供应商编码",
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "partnerName",
         label: "供应商名称",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "deliverDate",
         label: "退料日期",
         minWidth: 120,
+        sortable: 'custom',
       },
       ...createColumns
     ],
@@ -585,29 +679,34 @@ export function getColumns(type = 'default') {
         label: "供应商编码",
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "partnerName",
         label: "供应商名称",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "salesman",
         label: "操作员",
         minWidth: 180,
         align: "left",
+        sortable: 'custom',
       },
       {
         prop: "deliverDate",
         label: "收货日期",
         minWidth: 120,
+        sortable: 'custom',
       },
       {
         prop: 'remark',
         label: '备注',
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       ...createColumns
     ],
@@ -643,6 +742,7 @@ export function getColumns(type = 'default') {
         label: '备注',
         minWidth: 220,
         align: "left",
+        sortable: 'custom',
       },
       ...createColumns
     ],

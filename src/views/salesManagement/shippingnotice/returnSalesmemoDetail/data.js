@@ -25,35 +25,41 @@ export function getColumns() {
       label: "客户名称",
       minWidth: 180,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "productCode",
       label: "产品编码",
       minWidth: 180,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "productName",
       label: "产品名称",
       minWidth: 180,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "productDrawingNo",
       label: "产品型号",
       minWidth: 180,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "productCategoryName",
       label: "产品分类",
       minWidth: 180,
       align: "left",
+      sortable: 'custom'
     },
     {
       prop: "mainUnit",
       label: "单位",
       minWidth: 90,
+      sortable: 'custom'
     },
     {
       prop: "ordersNo",
@@ -66,6 +72,7 @@ export function getColumns() {
       prop: "deliverDate",
       label: "退货日期",
       minWidth: 120,
+      sortable: 'custom'
     },
     {
       prop: "deliveryStatus",
@@ -73,6 +80,7 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'shippingStatus',
+      sortable: 'custom'
     },
     {
       prop: "documentStatus",
@@ -80,16 +88,19 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'documentStatusList',
+      sortable: 'custom'
     },
     {
       prop: "createTime",
       label: "创建时间",
       minWidth: 180,
+      sortable: 'custom'
     },
     {
       prop: "createByName",
       label: "创建人",
       minWidth: 120,
+      sortable: 'custom'
     }
   ]
 }

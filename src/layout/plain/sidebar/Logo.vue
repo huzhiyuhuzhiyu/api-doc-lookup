@@ -7,9 +7,9 @@
         </el-tooltip>
         <el-image class="sidebar-logo" :src="apiBaseUrl+systemVO.iconUrl"
           v-if="systemVO && systemVO.iconUrl">
-          <template slot="error">
-            <img class="sidebar-logo" src="@/assets/images/jnpf.png" alt="">
-          </template>
+<!--          <template slot="error">-->
+<!--            <img class="sidebar-logo" src="@/assets/images/jnpf.png" alt="">-->
+<!--          </template>-->
         </el-image>
         <img src="@/assets/images/jnpf.png" class="sidebar-logo" v-else/>
       </div>
@@ -24,16 +24,16 @@ import {DHK_API, workspacePath} from "@/utils/define";
 export default {
   name: 'SidebarLogo',
   computed: {
+    ...mapState({
+      headClass: state => state.settings.headClass,
+      head: state => state.settings.head,
+    }),
     sysConfig() {
       return this.$store.state.settings.sysConfig
     },
     systemVO() {
       return this.$store.state.settings.systemVO
     },
-    ...mapState({
-      headClass: state => state.settings.headClass,
-      head: state => state.settings.head,
-    }),
     apiBaseUrl() {
       return DHK_API
     }

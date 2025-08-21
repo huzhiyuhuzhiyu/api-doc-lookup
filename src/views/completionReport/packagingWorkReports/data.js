@@ -68,7 +68,7 @@ export function getColumns() {
     {
       prop: "reportingTime",
       label: "报工时间",
-      minWidth: 120,
+      minWidth: 220,
       sortable: 'custom',
     },
     {

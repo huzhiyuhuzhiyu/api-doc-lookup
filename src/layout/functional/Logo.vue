@@ -62,8 +62,8 @@ export default {
   }
 }
 .imagesClass {
-  height: 42px;
-  width: 42px;
+  width: 32px;
+  height: 32px;
 }
 .logo-text {
   width: 100px;
@@ -81,13 +81,14 @@ export default {
 
   .workspace {
     color: white;
-    font-size: 36px;
+    font-size: 32px;
     margin-right: 12px;
   }
 
   .logo-title {
     display: flex;
     align-items: center;
+    gap: 6px;
   }
 }
 </style>

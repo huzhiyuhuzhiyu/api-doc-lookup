@@ -4,6 +4,10 @@
       :underline="false" @click="prevBtn" />
     <el-link icon="icon-ym icon-ym-nav-next" class="el-tabs__nav-next el-tabs__btn"
       :underline="false" @click="nextBtn" />
+    <el-link icon="icon-ym icon-ym-report-icon-arrow-down" class="el-tabs__nav-arrow el-tabs__btn"
+      :underline="false" @click="handleArrowClick"/>
+    <el-link :icon="fullScreen ? 'icon-ym icon-ym-compress-screen' : 'icon-ym icon-ym-full-screen1'" class="el-tabs__nav-screen el-tabs__btn"
+      :underline="false" @click="handleFullScreen"/>
     <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
       <router-link v-for="tag in visitedViews" ref="tag" :key="tag.path"
         :class="isActive(tag)?'active':''"
@@ -24,7 +28,8 @@
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">{{ $t('tagsView.refresh') }}</li>
       <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
-        {{ $t('tagsView.close') }}</li>
+        {{ $t('tagsView.close') }}
+      </li>
       <li @click="closeOthersTags">{{ $t('tagsView.closeOthers') }}</li>
       <li @click="closeAllTags(selectedTag)">{{ $t('tagsView.closeAll') }}</li>
     </ul>
@@ -43,6 +48,7 @@ export default {
   components: { ScrollPane },
   data() {
     return {
+      fullScreen: false,
       visible: false,
       top: 0,
       left: 0,
@@ -80,6 +86,46 @@ export default {
     this.addTags()
   },
   methods: {
+    handleFullScreen() {
+      this.fullScreen = !this.fullScreen
+      this.toggleLayoutElements(this.fullScreen)
+    },
+
+    toggleLayoutElements(show) {
+      const elements = [
+        { selector: '.sidebar-container', style: 'display', value: show => show ? 'none' : '' },
+        { selector: '.navbar', style: 'display', value: show => show ? 'none' : '' },
+        { selector: '.main-container', style: 'marginLeft', value: show => show ? '0' : '210px' },
+        { selector: '.app-main', style: 'height', value: show => show ? 'calc(100vh - 40px)' : 'calc(100vh - 100px)' }
+      ];
+
+      elements.forEach(({ selector, style, value }) => {
+        const element = document.querySelector(selector);
+        if (element) {
+          element.style[style] = value(show);
+        }
+      });
+    },
+
+    handleArrowClick(e) {
+      if (this.visible) return this.closeMenu()
+      e.stopPropagation();
+      if (this.visitedViews.length === 0) return;
+
+      const activeTag = this.visitedViews.find(tag => this.isActive(tag)) ||
+        this.visitedViews[this.visitedViews.length - 1];
+
+      const arrowBtn = document.querySelector('.el-tabs__nav-arrow');
+
+      const rect = arrowBtn.getBoundingClientRect();
+      const containerRect = this.$el.getBoundingClientRect();
+      this.left = rect.left - containerRect.left;
+      this.top = rect.bottom + 5;
+
+      this.visible = true;
+      this.selectedTag = activeTag;
+    },
+
     prevBtn() {
       const tags = this.$refs.tag;
       this.$refs.scrollPane.moveToTarget(tags[0]);
@@ -165,6 +211,7 @@ export default {
       })
     },
     closeSelectedTag(view) {
+      this.selectedTag = view
       this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
           this.toLastView(visitedViews, view)
@@ -197,7 +244,7 @@ export default {
           this.$router.replace({ path: '/redirect' + view.fullPath })
         } else {
           getInfo("").then(response=>{
-            
+
           // this.$router.push('/' + response.data.systemVO.homeAdress)
           location.href = location.origin + '/' + response.data.systemVO.homeAdress
               })
@@ -247,14 +294,34 @@ export default {
     background-color: #fff;
     z-index: 10;
     position: absolute;
-    &:first-of-type {
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    &.el-tabs__nav-prev {
+      left: 0;
       border-right: 1px solid #e8eaec;
     }
-    &:last-of-type {
+
+    &.el-tabs__nav-next {
+      right: 80px;
       border-left: 1px solid #e8eaec;
     }
+
+    &.el-tabs__nav-arrow {
+      right: 40px;
+      border-left: 1px solid #e8eaec;
+    }
+
+    &.el-tabs__nav-screen {
+      right: 0;
+      border-left: 1px solid #e8eaec;
+    }
+
     >>> .icon-ym {
       font-size: 16px;
+      color: #606266;
     }
   }
   .tags-view-wrapper {
@@ -283,7 +350,7 @@ export default {
         margin-left: 40px;
       }
       &:last-of-type {
-        margin-right: 40px;
+        margin-right: 120px;
       }
       &:hover {
         color: #409eff;

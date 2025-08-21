@@ -61,8 +61,8 @@ export default {
     width: 100%;
 
     .sidebar-logo {
-      height: 42px;
-      width: 42px;
+      width: 32px;
+      height: 32px;
     }
   }
 }
@@ -79,6 +79,7 @@ export default {
   .logo-title {
     display: flex;
     align-items: center;
+    gap: 6px;
   }
 }
 </style>

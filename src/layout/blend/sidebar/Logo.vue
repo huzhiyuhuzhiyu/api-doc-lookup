@@ -105,7 +105,7 @@ export default {
 }
 .logo-text {
   width: 100px;
-  font-size: 24px !important;
+  font-size: 20px !important;
   font-weight: bold;
   color: #fff;
   overflow: hidden;

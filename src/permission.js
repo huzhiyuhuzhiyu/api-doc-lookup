@@ -6,6 +6,8 @@ import 'nprogress/nprogress.css' // progress bar style
 import {getToken, removeToken, setToken} from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
 import {injectTenantMinix, removeTenantMinix} from "@/mixins/generator/TenantMinix";
+import {windowOpen} from "echarts/lib/util/format";
+import {workspacePath} from "@/utils/define";
 
 NProgress.configure({showSpinner: false}) // NProgress Configuration
 

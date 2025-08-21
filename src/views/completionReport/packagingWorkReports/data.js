@@ -66,17 +66,17 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
-      prop: "reportingTime",
-      label: "报工时间",
-      minWidth: 220,
-      sortable: 'custom',
-    },
-    {
       prop: "remark",
       label: "备注",
       minWidth: 220,
       align: "left",
       sortable: 'custom',
-    }
+    },
+    {
+      prop: "reportingTime",
+      label: "报工时间",
+      minWidth: 220,
+      sortable: 'custom',
+    },
   ]
 }

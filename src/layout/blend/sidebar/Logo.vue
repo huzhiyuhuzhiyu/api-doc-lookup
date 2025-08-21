@@ -100,8 +100,8 @@ export default {
   }
 }
 .imagesClass {
-  height: 50px;
-  width: 50px;
+  height: 42px;
+  width: 42px;
 }
 .logo-text {
   width: 100px;

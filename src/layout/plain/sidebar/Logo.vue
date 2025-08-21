@@ -61,8 +61,8 @@ export default {
     width: 100%;
 
     .sidebar-logo {
-      height: 50px;
-      width: auto;
+      height: 42px;
+      width: 42px;
     }
   }
 }

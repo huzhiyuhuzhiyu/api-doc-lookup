@@ -84,37 +84,41 @@ export function getColumns() {
       prop: "name",
       label: "公司抬头",
       minWidth: 200,
-      sortable:'custom',
+      align: 'left',
+      sortable: 'custom',
     },
     {
       prop: "address",
       label: "地址",
       minWidth: 200,
       align: "left",
-      sortable:'custom',
+      sortable: 'custom',
     },
     {
       prop: "contactNumber",
       label: "联系电话",
       minWidth: 120,
+      align: 'left',
       sortable: 'custom'
     },
     {
       prop: "fax",
       label: "传真",
       minWidth: 120,
+      align: 'left',
       sortable: 'custom'
     },
     {
       prop: "taxNumber",
       label: "信用代码",
       minWidth: 120,
+      align: 'left',
       sortable: 'custom'
     },
     {
       prop: "remark",
       label: "备注",
-      minWidth: 180,
+      minWidth: 220,
       align: "left",
       sortable: 'custom'
     },

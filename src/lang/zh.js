@@ -168,7 +168,8 @@ export default {
     refresh: '刷新',
     close: '关闭',
     closeOthers: '关闭其它',
-    closeAll: '关闭所有'
+    closeAll: '关闭所有',
+    openInNewWindow: '在新窗口打开',
   },
   settings: {
     mode: '导航模式',

@@ -26,12 +26,26 @@
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)">{{ $t('tagsView.refresh') }}</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
-        {{ $t('tagsView.close') }}
+      <li @click="refreshSelectedTag(selectedTag)">
+        <i class="el-icon-refresh-right"></i>
+        <span class="menu-text">{{ $t('tagsView.refresh') }}</span>
       </li>
-      <li @click="closeOthersTags">{{ $t('tagsView.closeOthers') }}</li>
-      <li @click="closeAllTags(selectedTag)">{{ $t('tagsView.closeAll') }}</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
+        <i class="el-icon-close"></i>
+        <span class="menu-text">{{ $t('tagsView.close') }}</span>
+      </li>
+      <li @click="closeOthersTags">
+        <i class="el-icon-remove-outline"></i>
+        <span class="menu-text">{{ $t('tagsView.closeOthers') }}</span>
+      </li>
+      <li @click="closeAllTags(selectedTag)">
+        <i class="el-icon-circle-close"></i>
+        <span class="menu-text">{{ $t('tagsView.closeAll') }}</span>
+      </li>
+      <li @click="openInNewWindow(selectedTag)">
+        <i class="el-icon-document-add"></i>
+        <span class="menu-text">{{ $t('tagsView.openInNewWindow') }}</span>
+      </li>
     </ul>
   </div>
 </template>
@@ -43,6 +57,8 @@ import ScrollPane from './ScrollPane'
 import { generateTitle } from '@/utils/i18n'
 import path from 'path'
 import { login, logout, getInfo, unlock } from '@/api/user'
+import {windowOpen} from "echarts/lib/util/format";
+import {comUrl} from "@/utils/define";
 
 export default {
   components: { ScrollPane },
@@ -86,6 +102,12 @@ export default {
     this.addTags()
   },
   methods: {
+    openInNewWindow(view){
+      if (!view || !view.fullPath) return
+
+      const fullUrl = `${ comUrl }${ view.fullPath }`
+      windowOpen(fullUrl, '_blank')
+    },
     handleFullScreen() {
       this.fullScreen = !this.fullScreen
       this.toggleLayoutElements(this.fullScreen)
@@ -119,7 +141,7 @@ export default {
 
       const rect = arrowBtn.getBoundingClientRect();
       const containerRect = this.$el.getBoundingClientRect();
-      this.left = rect.left - containerRect.left;
+      this.left = rect.left - containerRect.left - 130 + rect.width;
       this.top = rect.bottom + 5;
 
       this.visible = true;
@@ -392,18 +414,53 @@ export default {
     z-index: 3000;
     position: absolute;
     list-style-type: none;
-    padding: 5px 0;
-    border-radius: 4px;
-    font-size: 12px;
+    padding: 6px 0;
+    border-radius: 6px;
+    font-size: 13px;
     font-weight: 400;
-    color: #333;
-    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+    color: #606266;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
+    border: 1px solid #e6e6e6;
+    min-width: 160px;
+    max-width: 280px;
+
     li {
       margin: 0;
-      padding: 7px 16px;
+      padding: 8px 16px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s;
+
       &:hover {
-        background: #eee;
+        background: #f5f7fa;
+        color: #409eff;
+      }
+
+      i {
+        margin-right: 8px;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+
+      .menu-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+        min-width: 0;
+      }
+    }
+
+    li:not(:last-child) {
+      border-bottom: 1px solid #f0f0f0;
+    }
+    li:nth-child(2),
+    li:nth-child(3),
+    li:nth-child(4) {
+      &:hover {
+        color: #f56c6c;
+        background: #fef0f0;
       }
     }
   }

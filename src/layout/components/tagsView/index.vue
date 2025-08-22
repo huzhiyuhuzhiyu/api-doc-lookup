@@ -58,7 +58,6 @@ import { generateTitle } from '@/utils/i18n'
 import path from 'path'
 import { login, logout, getInfo, unlock } from '@/api/user'
 import {windowOpen} from "echarts/lib/util/format";
-import {comUrl} from "@/utils/define";
 
 export default {
   components: { ScrollPane },
@@ -104,8 +103,8 @@ export default {
   methods: {
     openInNewWindow(view){
       if (!view || !view.fullPath) return
-
-      const fullUrl = `${ comUrl }${ view.fullPath }`
+      const baseUrl = window.location.origin
+      const fullUrl = `${ baseUrl }${ view.fullPath }`
       windowOpen(fullUrl, '_blank')
     },
     handleFullScreen() {

@@ -255,3 +255,20 @@ body::-webkit-scrollbar,
 .el-table__header td{
   border-left: 1px solid red;
 }
+
+/* 全屏模式样式 */
+body.full-screen-mode {
+  .sidebar-container,
+  .navbar {
+    display: none !important;
+  }
+
+  .main-container {
+    margin-left: 0 !important;
+  }
+
+  .app-main {
+    height: calc(100vh - 40px) !important;
+    min-height: calc(100vh - 40px) !important;
+  }
+}

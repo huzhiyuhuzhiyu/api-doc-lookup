@@ -94,6 +94,13 @@ export default {
       } else {
         document.body.removeEventListener('click', this.closeMenu)
       }
+    },
+    fullScreen(value) {
+      if (value) {
+        document.body.classList.add('full-screen-mode');
+      } else {
+        document.body.classList.remove('full-screen-mode');
+      }
     }
   },
   mounted() {
@@ -107,25 +114,9 @@ export default {
       const fullUrl = `${ baseUrl }${ view.fullPath }`
       windowOpen(fullUrl, '_blank')
     },
+
     handleFullScreen() {
       this.fullScreen = !this.fullScreen
-      this.toggleLayoutElements(this.fullScreen)
-    },
-
-    toggleLayoutElements(show) {
-      const elements = [
-        { selector: '.sidebar-container', style: 'display', value: show => show ? 'none' : '' },
-        { selector: '.navbar', style: 'display', value: show => show ? 'none' : '' },
-        { selector: '.main-container', style: 'marginLeft', value: show => show ? '0' : '210px' },
-        { selector: '.app-main', style: 'height', value: show => show ? 'calc(100vh - 40px)' : 'calc(100vh - 100px)' }
-      ];
-
-      elements.forEach(({ selector, style, value }) => {
-        const element = document.querySelector(selector);
-        if (element) {
-          element.style[style] = value(show);
-        }
-      });
     },
 
     handleArrowClick(e) {

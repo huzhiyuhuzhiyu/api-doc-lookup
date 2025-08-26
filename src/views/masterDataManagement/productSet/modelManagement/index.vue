@@ -69,16 +69,16 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           hasC @selection-change="handleSelectionChange" ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_657988">
           <el-table-column prop="model" label="型号" sortable="custom" min-width="110" />
-          <el-table-column prop="innerCircle" label="内圈" min-width="150" />
-          <el-table-column prop="outerCircle" label="外圈" min-width="150" />
-          <el-table-column prop="steelBall" label="钢球型号" min-width="150" />
-          <el-table-column prop="sealingRing" label="密封圈" min-width="150" />
-          <el-table-column prop="steelBallNum" label="钢球用量(粒)" width="120" />
-          <el-table-column prop="oilNum" label="油脂用量(毫克)" width="140" />
-          <el-table-column prop="holderNum" label="保持架用量(个)" width="140" />
-          <el-table-column prop="sealingRingNum" label="密封圈用量(个)" width="140" />
+          <el-table-column prop="innerCircle" label="内圈" min-width="150"  sortable="custom" />
+          <el-table-column prop="outerCircle" label="外圈" min-width="150"  sortable="custom" />
+          <el-table-column prop="steelBall" label="钢球型号" min-width="150"  sortable="custom" />
+          <el-table-column prop="sealingRing" label="密封圈" min-width="150"  sortable="custom" />
+          <el-table-column prop="steelBallNum" label="钢球用量(粒)" min-width="128"  sortable="custom" />
+          <el-table-column prop="oilNum" label="油脂用量(毫克)" min-width="142"  sortable="custom" />
+          <el-table-column prop="holderNum" label="保持架用量(个)" min-width="142"  sortable="custom" />
+          <el-table-column prop="sealingRingNum" label="密封圈用量(个)" min-width="142"  sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
+          <el-table-column prop="createByName" label="创建人" width="100"  sortable="custom" />
 
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">

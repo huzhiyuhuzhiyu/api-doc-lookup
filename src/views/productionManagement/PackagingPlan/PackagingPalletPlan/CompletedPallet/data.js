@@ -42,7 +42,7 @@ export function getColumns() {
     {
       prop: "packagingMethod",
       label: "包装方式",
-      minWidth: 100,
+      minWidth: 120,
       slot: true,
       dictType: 'packaging',
       sortable: 'custom'
@@ -51,6 +51,12 @@ export function getColumns() {
       prop: "num",
       label: "数量/箱",
       minWidth: 160,
+      sortable: 'custom'
+    },
+    {
+      prop: "palletRemark",
+      label: "每批数量合计",
+      minWidth: 220,
       sortable: 'custom'
     }
   ]

@@ -180,6 +180,32 @@ export default {
       }
     },
 
+    processPackageData(data) {
+      const groupedData = {};
+      data.forEach(item => {
+        const drawingNo = item.productsDrawingNo;
+        if (!groupedData[drawingNo]) {
+          groupedData[drawingNo] = [];
+        }
+        groupedData[drawingNo].push(item);
+      });
+
+      const templates = [];
+
+      for (const drawingNo in groupedData) {
+        const groupItems = groupedData[drawingNo];
+
+        const totalNum = groupItems.reduce((sum, item) => {
+          return sum + parseInt(item.num || 0);
+        }, 0);
+
+        const packagingMethod = groupItems[0].packagingMethod;
+        templates.push(`${ totalNum }套${ packagingMethod }包装${ drawingNo }`);
+      }
+
+      return templates.length === 1 ? templates[0] : templates.join(', ');
+    },
+
     async addStockPlanPallet() {
       try {
         if (!this.palletValue) return this.$message.warning('请选择托盘');
@@ -191,11 +217,12 @@ export default {
         const stockPlanPalletLineList = this.selectedSingleBoxList.map(item => ({
           ...item,
           documentId: item.planPackageId,
-          documentLineId: item.id
+          documentLineId: item.id,
         }));
         const params = {
           stockPlanPallet: {
             packagingMaterialId: this.palletValue,
+            remark: this.processPackageData(this.selectedSingleBoxList),
           },
           stockPlanPalletLineList
         }

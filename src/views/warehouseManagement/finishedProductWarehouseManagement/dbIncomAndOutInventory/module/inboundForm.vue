@@ -3,20 +3,22 @@ import * as _ from "highcharts";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
-
-import {deepClone} from "@/utils";
-import {addQuotationsendlist, editQuotationMsendlist, getQuotationsendlist} from "@/api/salesManagement";
+import {getQuotationsendlist} from "@/api/salesManagement";
 import {getLocationList} from "@/api/warehouseManagement/inventory";
-import {getpurPurchaseReceiptReturnGoodsdetail} from "@/api/purchasingManagement/purchaseInquirySheet";
 import {getsaleOrderDetailList} from "@/api/salesManagement/assemblyOrders";
 import {getWarehouseInfo, getWarehouseList} from "@/api/basicData";
 import {dataProcessor} from "./data";
 import {purPurchaseOrderdetail} from "@/api/purchasingAndOutsourcingOrders";
+import {getStockPlanPallet} from "@/api/PackagingPalletPlan";
+import {addWarehouseData, updateWarehouseData} from "@/api/warehouseManagement/inboundAndOutbound";
+import PrintDialog from "@/components/no_mount/printDialog/index.vue";
+import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
+import {getPrintBusInfo} from "@/api/system/printDev";
 
 
 export default {
   name: "inboundForm",
-  components: {TableFormProduct},
+  components: {BatchPrintBrowse, PrintDialog, TableFormProduct},
   mixins: [flowMixin, busFlow],
   data() {
     return {
@@ -25,6 +27,8 @@ export default {
       loading: false,
       btnLoading: false,
       locationEnabled: false,
+      printVisible: false,
+      printQuery: {},
       classAttributeList: [],
       warehouseCode: '',
       businessType: '',
@@ -34,100 +38,20 @@ export default {
         sourceNo: '',
         businessType: '',
         partnerName: '',
+        undeliveredQuantity: '',
+        warehouseId: '',
         warehouseName: '',
+        shelfSpaceId: '',
         shelfSpaceName: '',
         inspectionResults: '',
         orderDate: '',
+        documentStatus: '',
+        documentType: '',
         remark: '',
       },
       basicFormSchema: [],
       linesList: [],
       linesListItems: [
-        {
-          prop: 'productDrawingNo',
-          label: '产品型号',
-          type: 'view',
-          minWidth: 220,
-        },
-        {
-          prop: 'productName',
-          label: '产品名称',
-          type: 'view',
-          minWidth: 220,
-        },
-        {
-          prop: 'productCode',
-          label: '产品编码',
-          type: 'view',
-          minWidth: 220,
-        },
-        {
-          prop: 'mainUnit',
-          label: '单位',
-          type: 'view',
-          minWidth: 80,
-        },
-        {
-          prop: 'shelfSpaceName',
-          label: '库位',
-          value: '',
-          type: 'custom',
-          customComponent: 'ComSelect-page',
-          renderTree: false,
-          searchList: [
-            { prop: 'name', label: '库位名称', type: 'input' },
-            { prop: 'code', label: '库位编码', type: 'input' }
-          ],
-          tableItems: [
-            { prop: 'name', label: '库位名称' },
-            { prop: 'code', label: '库位编码' },
-            { prop: 'remark', label: '备注' }
-          ],
-          beforeSubmit: (data, paramsObj) => {
-            const groupKey = paramsObj.scope.row.noticeLineId || paramsObj.scope.row.ordersLineId
-            if (this.productData.some(item => item.shelfSpaceId === data.id && (item.noticeLineId || item.ordersLineId) === groupKey)) {
-              this.$message.error('同一来源产品的入库库位不能重复！')
-              return false
-            }
-            return true
-          },
-          change: (val, data, paramsObj) => {
-            this.$nextTick(() => {
-              this.$refs['tableForm'].$refs.main.validateField(`data.${paramsObj.scope.$index}.shelfSpaceName`)
-            })
-            if (!val && data.length) return
-            if (data && data.length) {
-              paramsObj.scope.row.shelfSpaceId = data[0].all.id
-              paramsObj.scope.row.shelfSpaceName = data[0].all.name
-              paramsObj.scope.row.warehouseId = data[0].all.warehouseId
-              paramsObj.scope.row.warehouseName = data[0].all.warehouseName
-            } else {
-              paramsObj.scope.row.shelfSpaceId = ''
-              paramsObj.scope.row.shelfSpaceName = ''
-              paramsObj.scope.row.warehouseId = ''
-              paramsObj.scope.row.warehouseName = ''
-            }
-          },
-          listRequestObj: {
-            warehouseId: this.dataForm.warehouseId,
-            pageNum: 1,
-            pageSize: 20,
-            orderItems: [{ asc: false, column: '' }, { asc: false, column: 'createTime' }],
-            state: 'enable'
-          },
-          dialogTitle: '选择库位',
-          listMethod: getLocationList,
-          render: this.allocationFlag && !this.dataForm.totalStockOutboundFlag,
-          width: '180',
-          itemRules: [
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['', (...args) => validErrorMessage('库位', ...args)]
-              }), trigger: 'no'
-            },
-            { required: true, trigger: 'no' }
-          ]
-        },
         {
           prop: 'customerProductDrawingNo',
           label: '客户产品型号',
@@ -255,8 +179,10 @@ export default {
           {prop: 'productCode', label: '产品编码', type: 'input'},
         ]
       },
+
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
+
       actions: {
         edit: async (id) => {
           await this.getDetail(id);
@@ -264,31 +190,23 @@ export default {
         look: async (id) => {
           await this.getDetail(id);
         },
-        copy: async (id) => {
-          await this.getDetail(id);
-          await this.getOrderNoConfig();
-        },
         default: async (data) => {
           this.defaultInit(data);
           await this.getOrderNoConfig();
         },
       },
       apiMethodActions: {
-        edit: {
-          api: editQuotationMsendlist,
-          deliveryStatus: '',
-        },
-        add: {
-          api: addQuotationsendlist,
-          deliveryStatus: 'waiting',
-        },
-        copy: {
-          api: addQuotationsendlist,
-          deliveryStatus: 'waiting',
-        }
+        edit: updateWarehouseData,
+        add: addWarehouseData,
       },
+
       businessTypeConfig: {
-        default: {},
+        default: {
+          api: null,
+          showActions: {selectProduct: true, batchDelete: true},
+          print: {enabled: false, enCode: '', fullName: ''},
+          defaultForm: {}
+        },
         // 采购收货
         inbound_purchase: {
           api: {
@@ -305,6 +223,33 @@ export default {
             })
           },
           print: {},
+          showActions: {selectProduct: true, batchDelete: true}
+        },
+        // 成品包装入库
+        inbound_finished_package: {
+          api: {
+            fetchLines: getStockPlanPallet,
+            dataPath: 'data.stockPlanPalletLineList',
+            filter: {},
+            formatter: (item) => ({
+              ...item,
+              noticeId: item.id,
+              noticeLineId: this.dataForm.id,
+              undeliveredQuantity: item.waitReceivedQuantity,
+              productDrawingNo: item.productsDrawingNo,
+              productName: item.productsName,
+              productCode: item.productsCode,
+            })
+          },
+          print: {
+            enabled: true,
+            enCode: '',
+            fullName: '',
+          },
+          showActions: {selectProduct: false, batchDelete: false},
+          defaultForm: {
+            sourceType: 'notice'
+          }
         },
       },
     }
@@ -312,6 +257,40 @@ export default {
   computed: {
     activeType() {
       return this.btnType !== 'look'
+    },
+    businessConfig() {
+      const defaultConfig = this.businessTypeConfig.default;
+      return {
+        ...defaultConfig,
+        ...this.businessTypeConfig[this.businessType] || {}
+      };
+    },
+    hasC() {
+      const actions = this.businessConfig.showActions || {};
+      return actions.batchDelete;
+    },
+    showPrintButton() {
+      const config = this.businessConfig.print || {};
+      return config.enabled && this.activeType;
+    },
+    inboundLabel() {
+      if (['inbound_purchase', 'inbound_external'].includes(this.businessType)) {
+        return '收货';
+      }
+
+      if (this.businessType === 'inbound_sale_return') {
+        return this.dataForm.exchangeGoodsFlag ? '换货' : '退货';
+      }
+
+      if (['inbound_finished_package']
+        .includes(this.businessType)) {
+        return '入库';
+      }
+
+      if (['inbound_external_return'].includes(this.businessType)) {
+        return '退料';
+      }
+      return '入库';
     }
   },
   mounted() {
@@ -332,6 +311,7 @@ export default {
         await this.actions.default(prefillData);
       }
       this.setBasicFormSchema()
+      this.setLinesListItems()
       this.dataForm.approvalFlag && this.getFlowDetail(id)
       this.$nextTick(() => {
         this.refreshTableHeight()
@@ -477,7 +457,7 @@ export default {
             if (data && data.length) {
               this.dataForm.shelfSpaceId = data[0].all.id
               this.dataForm.shelfSpaceName = data[0].all.name
-              this.productData = this.productData.map(item => ({
+              this.linesList = this.linesList.map(item => ({
                 ...item,
                 shelfSpaceId: data[0].all.id,
                 shelfSpaceName: data[0].all.name,
@@ -487,7 +467,7 @@ export default {
             } else {
               this.dataForm.shelfSpaceId = ''
               this.dataForm.shelfSpaceName = ''
-              this.productData = this.productData.map(item => ({
+              this.linesList = this.linesList.map(item => ({
                 ...item,
                 shelfSpaceId: '',
                 shelfSpaceName: '',
@@ -544,10 +524,73 @@ export default {
       })
     },
 
-    globalChange(val, prop) {
-      this.linesList.forEach(item => {
-        item[prop] = val;
-      });
+    setLinesListItems() {
+      this.linesListItems = [
+        {
+          prop: 'productDrawingNo',
+          label: '产品型号',
+          type: 'view',
+          minWidth: 220,
+        },
+        {
+          prop: 'productName',
+          label: '产品名称',
+          type: 'view',
+          minWidth: 220,
+        },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'view',
+          minWidth: 220,
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'view',
+          minWidth: 80,
+        },
+        {
+          prop: 'batchNumber',
+          label: '批次',
+          type: 'view',
+          minWidth: 120,
+        },
+        // {
+        //   prop: 'waitDeliverNum',
+        //   label: '每箱数量',
+        //   type: 'view',
+        //   minWidth: 140,
+        // },
+        {
+          prop: 'packagingMethod',
+          label: '包装方式',
+          type: 'view',
+          minWidth: 170,
+        },
+        {
+          prop: 'num',
+          label: `${ this.inboundLabel }数量`,
+          type: 'view',
+          minWidth: 140,
+        },
+        {
+          prop: 'receivedQuantity',
+          label: `已${ this.inboundLabel }数量`,
+          type: 'view',
+          minWidth: 140,
+        },
+        {
+          prop: 'undeliveredQuantity',
+          label: `待${ this.inboundLabel }数量`,
+          type: 'view',
+          minWidth: 140,
+        },
+      ]
+      this.$nextTick(() => {
+        this.$refs.tableForm.setDefaultValue()
+        this.$refs.tableForm.$refs.tableRef.doLayout()
+      })
     },
 
     async getOrderNoConfig() {
@@ -589,7 +632,6 @@ export default {
       const newData = data.map(item => ({
         ...this.createdObj(),
         ...item.all,
-        notifyType: 'sale',
         ordersLineId: item.id,
       }));
 
@@ -614,12 +656,8 @@ export default {
         const res = await getQuotationsendlist(id)
         const {msg, data} = res
         if (msg === 'Success') {
-          const {country, countryName, provinceName, cityName, areaName, address} = data.notice
           this.dataForm = data.notice
           this.linesList = data.noticeLineList
-          this.dataForm.defaultAddress = country === 'CN'
-            ? `${ countryName }${ provinceName }${ cityName }${ areaName }${ address }`
-            : `${ countryName }${ address }`
           this.loading = false
         }
       } catch (err) {
@@ -654,33 +692,66 @@ export default {
       return sums
     },
 
-    async handleSubmit(type) {
+    closePrint() {
+      this.printVisible = false
+    },
+
+    printView(row) {
+      this.selectedRow = [row]
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.businessConfig.print.enCode)
+      })
+    },
+
+    async printOrder(enCode) {
+      try {
+        const res = await getPrintBusInfo(enCode)
+        if (!res.data) {
+          return this.$message.warning('未找到相应打印模版')
+        }
+        const id = res.data.id
+        const printData = this.selectedRow.map(item => ({
+          formId: item.id,
+          id: id
+        }))
+        this.$refs.batchPrint.print(printData);
+      } catch (e) {
+      }
+    },
+
+    async handleSubmit(isPrint = false) {
       if (!this.linesList.length) return this.$message.error('无产品信息，请添加产品！')
       // 校验表单
       this.btnLoading = true
       const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
       const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
       if (!valid_1 || !valid_2) return this.btnLoading = false
-      this.dataForm.documentStatus = type
-      const deepParams = deepClone(this.dataForm)
-      deepParams.deliveryStatus = this.apiMethodActions[this.btnType].deliveryStatus || this.dataForm.deliveryStatus
+
+      this.dataForm.documentStatus = 'submit'
+      this.dataForm.documentType = 'inbound'
+
+      const deepParams = _.merge({}, this.dataForm, this.businessConfig.defaultForm);
+      const newLines = this.linesList.map(item => ({
+        ...item,
+        warehouseId: this.dataForm.warehouseId
+      }))
+
       const params = {
-        notice: deepParams,
-        noticeLineList: this.linesList,
-        attachmentList: attachmentList,
+        stockMove: deepParams,
+        lines: newLines,
+        spaceLines: newLines,
         flowData: this.flowData
       }
-      if (this.btnType === 'copy') {
-        params.notice.id = ''
-      }
+
       let MSG = '提交成功'
       try {
-        const apiMethod = this.apiMethodActions[this.btnType].api
+        const apiMethod = this.apiMethodActions[this.btnType]
         const res = await apiMethod(params)
         const {msg} = res
         if (msg === 'Success') {
           this.$message.success(MSG)
-          this.goBack()
+          isPrint ? this.printView(this.dataForm) : this.goBack()
         }
         this.btnLoading = false
       } catch (error) {
@@ -705,8 +776,11 @@ export default {
               <el-page-header @back="$emit('close',false)" :content="title"/>
               <div class="options">
                 <template v-if="activeType">
-                  <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
+                  <el-button type="primary" :loading="btnLoading" @click="handleSubmit(false)">
                     保存并提交
+                  </el-button>
+                  <el-button v-if="showPrintButton" type="primary" :loading="btnLoading" @click="handleSubmit(true)">
+                    提交并打印
                   </el-button>
                 </template>
                 <el-button @click="$emit('close',false)">{{ $t('common.cancelButton') }}</el-button>
@@ -736,7 +810,7 @@ export default {
                         :tableProps="{
                         is: 'JNPF-table',
                         fixedNO: true,
-                        hasC: activeType,
+                        hasC: hasC,
                         height: linesTableHeight,
                         rowKey: 'id',
                         defaultExpandAll: true,
@@ -748,11 +822,11 @@ export default {
                           <div class="tableTopContainer">
                             <div class="left">
                               <template v-if="activeType">
-                                <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog()">
+                                <el-button v-if="businessConfig.showActions.selectProduct" type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog()">
                                   选择产品
                                 </el-button>
-                                <span>|</span>
-                                <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
+                                <span v-if="businessConfig.showActions.selectProduct && businessConfig.showActions.batchDelete">|</span>
+                                <el-button v-if="businessConfig.showActions.batchDelete" type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
                                   @click="$refs.tableForm.batchDelete()">批量删除
                                 </el-button>
                               </template>
@@ -774,6 +848,9 @@ export default {
           </div>
         </div>
       </div>
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
+        :printQuery="printQuery" :enCode="businessConfig.print.enCode" ref="printTemplate"/>
+      <BatchPrintBrowse ref="batchPrint" :fullName="businessConfig.print.fullName"/>
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false"
         @change="submitAllProduct"/>
     </div>

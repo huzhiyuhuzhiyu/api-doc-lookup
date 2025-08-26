@@ -37,7 +37,7 @@ export function getBatchColumns() {
     {
       prop: "packagingMethod",
       label: "包装方式",
-      minWidth: 100,
+      minWidth: 120,
       slot: true,
       dictType: 'packaging',
       sortable: "custom",
@@ -103,7 +103,7 @@ export function getSingleBoxColumns() {
     {
       prop: "packagingMethod",
       label: "包装方式",
-      minWidth: 100,
+      minWidth: 120,
       slot: true,
       dictType: 'packaging',
       sortable: "custom",

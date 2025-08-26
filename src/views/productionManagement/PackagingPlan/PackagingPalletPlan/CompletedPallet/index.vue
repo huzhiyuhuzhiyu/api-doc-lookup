@@ -78,14 +78,39 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
+
+    objectSpanMethod({row, column, rowIndex, columnIndex}) {
+      const mergeColumns = ['palletRemark'];
+
+      if (mergeColumns.includes(column.property)) {
+        const currentPlanPalletId = row.planPalletId;
+
+        const sameGroupRows = this.tableData.filter(item => item.planPalletId === currentPlanPalletId);
+
+        if (rowIndex === this.tableData.findIndex(item => item.planPalletId === currentPlanPalletId)) {
+          return {
+            rowspan: sameGroupRows.length,
+            colspan: 1
+          };
+        } else {
+          return {
+            rowspan: 0,
+            colspan: 0
+          };
+        }
+      }
+    },
+
     getAlign(align) {
       return align || 'center'
     },
+
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.initData()
     },
+
     search() {
       if (this.listQuery.time && this.listQuery.time.length) {
         this.listQuery.orderStartDate = this.listQuery.time[0]
@@ -93,6 +118,7 @@ export default {
       }
       this.initData()
     },
+
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = deepClone(this.initListQuery)
@@ -169,6 +195,7 @@ export default {
           fixedNO
           :setColumnDisplayList="columnList"
           @sort-change="sortChange"
+          :span-method="objectSpanMethod"
           ref="dataTable"
           custom-column>
           <template v-for="column in columnsConfig">

@@ -9,6 +9,23 @@ export function getStockPlanWaitPalletPage(data) {
   })
 }
 
+// 包装计划装托-列表
+export function getStockPlanPalletPage(data) {
+  return request({
+    url: '/api/wms/stock/plan/pallet/list',
+    method: 'post',
+    data: data
+  })
+}
+
+// 包装计划装托-详情
+export function getStockPlanPallet(id) {
+  return request({
+    url: `/api/wms/stock/plan/pallet/detail/${ id }`,
+    method: 'get',
+  })
+}
+
 
 // 包装计划装托-新增
 export function addStockPlanPallet(data) {

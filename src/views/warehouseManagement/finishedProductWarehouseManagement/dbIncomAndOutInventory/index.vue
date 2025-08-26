@@ -20,6 +20,7 @@ import outboundSaleSendForm from "@/views/salesManagement/shippingnotice/saleMet
 import packingForm from './module/packingForm.vue'
 import autoRecBatchPacking from "./module/components/autoRecBatchPacking.vue";
 import InboundForm from "./module/inboundForm.vue";
+import {getStockPlanPalletPage} from "@/api/PackagingPalletPlan";
 
 export default {
   name: "index",
@@ -153,15 +154,10 @@ export default {
         },
         // 成品包装入库
         inbound_finished_package: {
-          api: getStockPickedPage,
+          api: getStockPlanPalletPage,
           initListQuery: {
             ...this.commonQueryConfig,
             orderNo: '',
-            cooperativePartnerName: '',
-            notifyType: "sale",
-            returnDeliveryType: 'delivery',
-            deliveryStatus: '',
-            approvalStatus: 'ok',
           },
         },
         // 采购收货入库
@@ -459,7 +455,6 @@ export default {
       this.autoRecBatchPackingFormVisible = false
       this.inboundFormVisible = false
       if (!isInitData) return
-      await this.getStockMoveList()
       await this.initData()
     },
 

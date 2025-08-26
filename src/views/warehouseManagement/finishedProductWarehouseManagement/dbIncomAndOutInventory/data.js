@@ -113,6 +113,18 @@ export function getSearchList(type = 'default') {
       //   options: global.shippingStatus
       // },
     ],
+    // 成品包装
+    inbound_finished_package: [
+      ...defaultSearch,
+      {
+        fieldValue: '',
+        field: 'orderNo',
+        label: '来源单号',
+        prop: 'orderNo',
+        symbol: 'like',
+        searchType: 'input'
+      },
+    ],
     // 采购收货
     inbound_purchase: [
       ...defaultSearch,
@@ -443,43 +455,31 @@ export function getColumns(type = 'default') {
       ...defaultColumns,
       {
         prop: "orderNo",
-        label: "包装单号",
+        label: "来源单号",
         minWidth: 220,
         align: "left",
         sortable: 'custom',
         slot: true
       },
+      // {
+      //   prop: "cooperativePartnerCode",
+      //   label: "客户编码",
+      //   minWidth: 180,
+      //   align: "left",
+      //   sortable: 'custom',
+      // },
+      // {
+      //   prop: "cooperativePartnerName",
+      //   label: "客户名称",
+      //   minWidth: 180,
+      //   align: "left",
+      //   sortable: 'custom',
+      // },
       {
-        prop: "sourceOrderNo",
-        label: "来源单号",
+        prop: "palletRemark",
+        label: "入库明细",
         minWidth: 220,
-        align: "left",
-        sortable: 'custom',
-      },
-      {
-        prop: "cooperativePartnerCode",
-        label: "客户编码",
-        minWidth: 180,
-        align: "left",
-        sortable: 'custom',
-      },
-      {
-        prop: "cooperativePartnerName",
-        label: "客户名称",
-        minWidth: 180,
-        align: "left",
-        sortable: 'custom',
-      },
-      {
-        prop: "warehouseName",
-        label: "仓库",
-        minWidth: 160,
-        sortable: 'custom',
-      },
-      {
-        prop: "shelfSpaceName",
-        label: "库位",
-        minWidth: 120,
+        align: 'left',
         sortable: 'custom',
       },
       {

@@ -185,7 +185,8 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "select",
       options: [],
-      sm: 12
+      sm: 12,
+      itemRules: [{required: true, trigger: "change"}],
     },
     {
       prop: "sealingCoverTyping",

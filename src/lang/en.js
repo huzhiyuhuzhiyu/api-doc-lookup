@@ -198,7 +198,8 @@ export default {
     tagsViewIcon: 'Show Tags-View Icon',
     language: 'Show Language Select',
     search: 'Show Search',
-    cache: 'Cache Page'
+    cache: 'Cache Page',
+    compactTableRow: 'Compact Table Row'
   },
   common: {
     addBtn: 'Add',
@@ -233,16 +234,16 @@ export default {
   outsourcing_suppliers: {
     addOutsourcing_suppliers: 'Add outsourcing_suppliers',
     editOutsourcing_suppliers: 'Edit outsourcing_suppliers'
-  }, 
+  },
   equipment_supplier: {
     addEquipment_supplier: 'Add equipment_supplier',
     editEquipment_supplier: 'Edit equipment_supplier'
-  }, 
+  },
   customer: {
     addCustomer: 'Add Customer',
     editCustomer: 'Edit Customer'
   },
-  
+
   supplier: {
     addSupplier: 'Add Supplier',
     editSupplier: 'Edit Supplier'

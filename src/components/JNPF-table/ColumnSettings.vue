@@ -11,14 +11,14 @@
         <template v-if="list.length">
           <draggable :list="list" :animation="340" handle=".column-item-icon">
             <div class="column-item" v-for="item in list" :key="item.prop"
-              @click.self="item.columnVisible = !item.columnVisible"
+              @click.self="item.className === 'LineRequired' ? null:item.columnVisible = !item.columnVisible"
             >
               <div class="column-item-left">
                 <i class="icon-ym icon-ym-darg column-item-icon"></i>
                 <el-checkbox class="check-box" v-model="item.columnVisible"
                   :disabled="item.className === 'LineRequired'"
                 />
-                <div class="column-item-label" @click="item.columnVisible = !item.columnVisible">
+                <div class="column-item-label" @click="item.className === 'LineRequired' ? null:item.columnVisible = !item.columnVisible">
                   <span>{{ item.label }}</span>
                 </div>
               </div>

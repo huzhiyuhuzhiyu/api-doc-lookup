@@ -37,7 +37,7 @@ module.exports = {
         navigationIcon: "",
         logoIcon: "",
         loginIcon: "",
-        sysName:"轴管通" 
+        sysName:"轴管通"
     },
     systemVO:{
         shortName: "轴管通",
@@ -50,6 +50,7 @@ module.exports = {
     tagsIcon: false,
     showLanguage: true,
     showSearch: true,
+    compactTableRow: false,
     useCache: true,
     errorLog: "production",
     /**

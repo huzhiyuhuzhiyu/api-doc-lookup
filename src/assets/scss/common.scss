@@ -4,6 +4,14 @@
   max-width: 300px;
 }
 
+.el-select-dropdown {
+  &.popper-500 {
+    .el-select-dropdown__wrap {
+      max-height: 500px;
+    }
+  }
+}
+
 .JNPF-common-head {
   display: flex;
   justify-content: space-between;

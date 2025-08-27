@@ -197,7 +197,8 @@ export default {
     tagsViewIcon: '多頁簽顯示圖標',
     language: '顯示多語言選擇',
     search: '顯示頁面搜索框',
-    cache: '多頁簽緩存頁面'
+    cache: '多頁簽緩存頁面',
+    compactTableRow: '更緊凑表格佈局'
   },
   common: {
     addBtn: '新建',

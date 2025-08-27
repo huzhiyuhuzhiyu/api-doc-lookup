@@ -226,29 +226,36 @@ const global = {
       : item.label;
   },
   timePicker: { // 日期/时间选择器通用选项（禁用未发生的时间）
-    disabledDate(time) {
-      return time.getTime() > Date.now();
-    },
-    // shortcuts: [{
-    //   text: '今天',
-    //   onClick(picker) {
-    //     picker.$emit('pick', new Date());
-    //   }
-    // }, {
-    //   text: '昨天',
-    //   onClick(picker) {
-    //     const date = new Date();
-    //     date.setTime(date.getTime() - 3600 * 1000 * 24);
-    //     picker.$emit('pick', date);
-    //   }
-    // }, {
-    //   text: '一周前',
-    //   onClick(picker) {
-    //     const date = new Date();
-    //     date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-    //     picker.$emit('pick', date);
-    //   }
-    // }]
+    // disabledDate(time) {
+    //   return time.getTime() > Date.now();
+    // },
+    shortcuts: [{
+      text: '今天',
+      onClick(picker) {
+        picker.$emit('pick', new Date());
+      }
+    }, {
+      text: '昨天',
+      onClick(picker) {
+        const date = new Date();
+        date.setTime(date.getTime() - 3600 * 1000 * 24);
+        picker.$emit('pick', date);
+      }
+    }, {
+      text: '三天前',
+      onClick(picker) {
+        const date = new Date();
+        date.setTime(date.getTime() - 3600 * 1000 * 24 * 3);
+        picker.$emit('pick', date);
+      }
+    }, {
+      text: '一周前',
+      onClick(picker) {
+        const date = new Date();
+        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+        picker.$emit('pick', date);
+      }
+    }]
   },
   timePickerOptionsArr: { // 日期/时间区间选择器通用选项）
 
@@ -268,7 +275,7 @@ const global = {
         end.setTime(start.getTime() + 3600 * 1000 * 24 * 7)
         picker.$emit('pick', [start, end])
       }
-    }, {
+    },  {
       text: '近30天',
       onClick(picker) {
         const end = new Date()
@@ -276,14 +283,14 @@ const global = {
         end.setTime(start.getTime() + 3600 * 1000 * 24 * 30)
         picker.$emit('pick', [start, end])
       }
-    },]
+    }, ]
   },
   timePickerOptions: { // 日期/时间区间选择器通用选项（禁用未发生的日期）
-    disabledDate(time) {
-      const currentDate = new Date();
-      const selectedDate = new Date(time.getFullYear(), time.getMonth(), time.getDate());
-      return selectedDate.getTime() > currentDate.getTime()
-    },
+    // disabledDate(time) {
+    //   const currentDate = new Date();
+    //   const selectedDate = new Date(time.getFullYear(), time.getMonth(), time.getDate());
+    //   return selectedDate.getTime() > currentDate.getTime()
+    // },
     shortcuts: [{ // 调用时使用 global.timePickerOptions.shortcuts 不设置日期/时间选择限制
       text: '最近一周',
       onClick(picker) {

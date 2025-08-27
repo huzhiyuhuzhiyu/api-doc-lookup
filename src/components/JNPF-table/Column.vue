@@ -35,15 +35,15 @@ export default {
       vnode => !vnode.componentOptions?.propsData?.prop
     )
       .map((vnode, index) => {
-      const uniqueKey = `no-prop-${index}`
-      if (vnode.componentOptions && vnode.componentOptions.propsData) {
-        if (!vnode.componentOptions.propsData.key) {
-          vnode.componentOptions.propsData.key = uniqueKey
+        const uniqueKey = `no-prop-${index}`
+        if (vnode.componentOptions && vnode.componentOptions.propsData) {
+          if (!vnode.componentOptions.propsData.key) {
+            vnode.componentOptions.propsData.key = uniqueKey
+          }
         }
-      }
-      vnode.key = uniqueKey
-      return vnode
-    })
+        vnode.key = uniqueKey
+        return vnode
+      })
 
     return [...renderVNodes, ...noPropVNodes]
   }

@@ -660,3 +660,54 @@ export function optimizeArrayPush(arr,target,gap=5){
     run()
 }
 
+/**
+ * 格式化列表查询请求
+ * @param { Object } queryConfigData
+ * @returns { Object }
+ */
+export function formatListQuery(queryConfigData) {
+  queryConfigData = structuredClone(queryConfigData)
+
+  // 高级查询处理
+  queryConfigData.superQuery.condition = queryConfigData.superQuery.condition.filter(item => item.symbol === 'empty' || !isEmpty(item.fieldValue))
+  queryConfigData.superQuery.condition = queryConfigData.superQuery.condition.map(item => {
+    if (item.symbol === 'empty') {
+      if (item.fieldValue) {
+        item.symbol = '=='
+        item.fieldValue = ''
+      } else {
+        item.symbol = '<>'
+        item.fieldValue = ''
+      }
+    }
+    if (Array.isArray(item.fieldValue)) item.fieldValue = item.fieldValue.join(',')
+    if (typeof item.fieldValue === 'boolean') item.fieldValue = item.fieldValue ? 1 : 0
+    return { // 只保留有用内容，便于阅读
+      field: item.field,
+      symbol: item.symbol,
+      fieldValue: item.fieldValue,
+      label: item.label
+    }
+  })
+  // if (queryConfigData.superQuery.condition.every(item => item.symbol !== 'between')) {
+  //   throw new Error('webIntercept:请至少使用一个日期/时间范围参与查询！')
+  // }
+  // delete queryConfigData.superQuery.tableQueryFlag
+
+  // 处理 keywordQuery
+  const keywordQuery = queryConfigData.keywordQuery;
+  if (keywordQuery) {
+    const { keywordFlag, keyword, fieldList } = keywordQuery;
+
+    // 如果 keywordQuery 无效，则直接忽略
+    if (!keywordFlag || isEmpty(keyword) || !Array.isArray(fieldList) || fieldList.length === 0) {
+      delete queryConfigData.keywordQuery;
+    } else {
+      delete keywordQuery.keywordFlag;
+      queryConfigData.superQuery.keywordQuery = keywordQuery;
+      delete queryConfigData.keywordQuery;
+    }
+  }
+
+  return queryConfigData
+}

@@ -85,6 +85,16 @@ $map: (purple: $purple, azure: $azure, blackblue: $blackblue, blue: $blue,ocean:
       color: $color;
     }
   }
+  .system-icon,
+  .tags-view-container .tags-view-wrapper .tags-view-item {
+    &.active {
+      color: $color;
+    }
+
+    &:hover {
+      color: $color;
+    }
+  }
   .cardGrobal .box-card .el-card__body .card-item .card-icon {
     background-color: $color;
   }

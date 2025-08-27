@@ -1,11 +1,11 @@
 <template>
   <div class="tableContainer">
-    <el-table :data="data" ref="JNPFTable" class="JNPF-common-table" :height="height"
+    <el-table highlight-current-row :data="data" ref="JNPFTable" class="JNPF-common-table" :height="height"
       :element-loading-text="$t('common.loadingText')" v-bind="{ ...attributes, ...$attrs }" v-on="$listeners" :border="border"
-      :header-cell-style="headerCellStyle" @header-dragend="handleHeaderDragEnd"
-      :key="tableKey"
+      :header-cell-style="headerCellStyle" @header-dragend="handleHeaderDragEnd" :row-class-name="rowClassName"
+      @header-click="handleHeaderClick" :key="tableKey"
     >
-      <el-table-column prop="selection" type="selection" width="45" key="selection" :fixed="fixedSelect"
+      <el-table-column type="selection" width="45" key="selection" :fixed="fixedSelect"
         v-if="_hasC" align="center" :selectable="checkSelectable"
       />
       <el-table-column align="center" label="拖动" width="60" v-if="hasMove">
@@ -15,7 +15,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column prop="index" type="index" key="index" width="60" label="序号" v-if="hasNO" :fixed="fixedNO"
+      <el-table-column type="index" key="index" width="60" label="序号" v-if="hasNO" :fixed="fixedNO"
         align="center"
       />
       <jnpf-table-column :columns="columns" :columnList="columnList" v-if="customColumn"/>
@@ -36,6 +36,10 @@
     <ColumnSettings v-if="drawerVisible" ref="columnSettings" :defaultColumns="defaultColumns"
       :columnList="columnList" :setColumnDisplayList="setColumnDisplayList" @setColumn="setColumn"
     />
+    <PopoverCard v-if="popoverVisible" :popoverColumn="popoverColumn" :style="popoverStyle"
+      @queryChange="queryChange" :listQuery="listQuery" :columnProps="currentColumnProps"
+      :queryJson="queryJson" @close="closePopover" ref="popoverCard"
+    />
   </div>
 </template>
 
@@ -45,10 +49,12 @@ import ColumnSettings from './ColumnSettings'
 import Sortable from 'sortablejs'
 import { deepClone, getPromise } from '@/utils'
 import { saveWebCache } from '@/api/system/system'
+import PopoverCard from './PopoverCard'
+import { getSortProp } from '@/components/JNPF-table/data'
 
 export default {
   name: 'JNPF-table',
-  components: { JnpfTableColumn, ColumnSettings },
+  components: { JnpfTableColumn, ColumnSettings, PopoverCard },
   props: {
     data: {
       type: Array,
@@ -116,7 +122,25 @@ export default {
     // 传入后，自动根据key值，渲染合计行（需要搭配show-summary使用）
     totalData: {
       type: Object
-    }
+    },
+    // 表格数据查询参数，用于同步排序与查询状态
+    listQuery: {
+      type: Object
+    },
+    // 列高级查询补充
+    queryJson: {
+      type: Array,
+      default: () => []
+    },
+    // 设置默认可拖动列 传入控制是否可拖动 且不能拖动到无法拖动的位置
+    rowClassName:{
+      type: [Function, String],
+      default: (row) => {
+        // 默认
+        return row.hasOwnProperty('unDraggable') ? row.unDraggable : 'draggable-header'
+      }
+    },
+
   },
   data() {
     return {
@@ -134,7 +158,12 @@ export default {
       tableRealRefPromise: null,
       tableRealRefResolve: null,
       timeout: null,
-      doLayoutDebounced: null
+      doLayoutDebounced: null,
+
+      popoverColumn: '',
+      popoverVisible: false,
+      popoverStyle: {},
+      currentColumnProps: null,
     }
   },
   watch: {
@@ -300,51 +329,15 @@ export default {
         this.columnList = cacheList
         this.jnpf.storageSet({ [this.menuId + this._customKey]: this.transactionCacheList(cacheList) })
       }
+
+      this.$nextTick(() => {
+        // this.doLayout(false)
+        this.saveTableConfigToSever()
+      })
     },
     // 当列宽拖动结束时调用
     async handleHeaderDragEnd(newWidth, oldWidth, column) {
-      this.columns = this.$slots.default // 代码传入的列
-      let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
-      this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) //
-      let list = JSON.parse(JSON.stringify(this.defaultColumns))
-
-      // 处理列宽
-      list.forEach(item => {
-        if (item.prop === column.property) {
-          // 被调整的列
-          item.width = newWidth
-          item.minWidth = newWidth
-        } else {
-          // 其他列保持原有设置
-          const originalColumn = this.$slots.default.find(col =>
-            col.componentOptions?.propsData?.prop === item.prop
-          )
-          if (originalColumn) {
-            const originalProps = originalColumn.componentOptions.propsData
-            // 保持原有的width或minWidth设置
-            if (originalProps.width) {
-              item.width = originalProps.width
-              delete item.minWidth
-            } else if (originalProps.minWidth) {
-              item.minWidth = originalProps.minWidth
-              delete item.width
-            }
-          }
-        }
-        item.columnVisible = !this.setColumnDisplayList.includes(item.prop)
-      })
-
-      const cacheList = this.jnpf.storageGet(this.menuId + this._customKey)
-      if (!cacheList) {
-        this.changeCacheWidth(list, column, newWidth)
-      } else {
-        this.changeCacheWidth(cacheList, column, newWidth)
-      }
-
-      this.$nextTick(() => {
-        this.doLayout(false)
-        this.saveTableConfigToSever()
-      })
+      this.changeCacheWidth(this.columnList, column, newWidth)
     },
     setShowOverflowTooltip() {
       const children = this.$slots.default || []
@@ -359,6 +352,45 @@ export default {
               child.componentOptions.propsData.minWidth = childPropsData.minWidth ||
                 childPropsData.width || 0
               delete child.componentOptions.propsData.width
+            }
+
+            if (this.listQuery) childPropsData.renderHeader = (h, { column }) => {
+              // 检查当前列是否固定
+              let fixedIcon = null
+              if (this.listQuery.superQuery && Array.isArray(this.listQuery.superQuery.condition)) {
+                const hasFixed = this.listQuery.superQuery.condition.find(filterItem => filterItem.fixed && filterItem.field === childPropsData.prop)
+                if (hasFixed) {
+                  fixedIcon = h('i', { class: "icon-ym icon-ym-search el-button--text", style: { marginLeft: '4px', marginRight: '4px', fontSize: '12px' } })
+                }
+              }
+              // 检查当前列是否排序
+              let sortIcon = null
+              if (this.listQuery.orderItems && Array.isArray(this.listQuery.orderItems)) {
+                // 优先使用 sortProp，如果没有则使用 prop
+                const sortProp = getSortProp(child.data.attrs || {}, childPropsData.prop)
+                const sort = this.listQuery.orderItems.find(sortItem => sortItem.column === sortProp)
+                if (sort) {
+                  sortIcon = h('span', { class: 'el-button--text', style: { marginLeft: '4px', fontSize: '12px' } }, sort.asc ? '▲' : '▼')
+                }
+              }
+              // 检查当前列是否筛选
+              let filterIcon = null
+              if (this.listQuery.superQuery && Array.isArray(this.listQuery.superQuery.condition)) {
+                const filter = this.listQuery.superQuery.condition.find(filterItem => {
+                  let hasFilterField = filterItem.field === childPropsData.prop
+                  let hasFilterValue = (() => {
+                    if (filterItem.symbol === 'empty') return true
+                    if (typeof filterItem.fieldValue === 'object' ? filterItem.fieldValue?.length : !!filterItem.fieldValue) return true
+                    if (filterItem.fieldValue === 0 || filterItem.fieldValue === false) return true
+                    return false
+                  })()
+                  return hasFilterField && hasFilterValue
+                })
+                if (filter) {
+                  filterIcon = h('i', { class: "icon-ym icon-ym-filter el-button--text", style: { marginLeft: '4px', fontSize: '12px' } })
+                }
+              }
+              return h('div', { class: `table-header-content${filterIcon || sortIcon ? ' active' : ''}` }, [fixedIcon, childPropsData.label, filterIcon, sortIcon])
             }
           }
         })
@@ -378,6 +410,8 @@ export default {
     },
     async getColumns() {
       if (!this.customColumn) return
+      if (!this._customKey) console.error('带有custom-column属性的JNPF-table必须指定customKey！')
+      if (this.customKey && this.partentOrChild !== 'partent') console.error('customKey和partentOrChild不要同时设置！')
       this.hasSlotContent = this.checkForSlotContent()
       if (!this.hasSlotContent) return
       await this.$nextTick()
@@ -419,8 +453,14 @@ export default {
           list.forEach(defaultColumnsItem => {
             if (cacheItem.prop === defaultColumnsItem.prop) {
               isShow = true
-              defaultColumnsItem.width = cacheItem.width
-              defaultColumnsItem.minWidth = cacheItem.minWidth
+              cacheItem = {
+                ...defaultColumnsItem,
+                width: cacheItem.width,
+                minWidth: cacheItem.minWidth,
+                columnVisible: cacheItem.columnVisible,
+              }
+              // defaultColumnsItem.width = cacheItem.width
+              // defaultColumnsItem.minWidth = cacheItem.minWidth
             }
           })
           return isShow ? cacheItem : null
@@ -450,7 +490,7 @@ export default {
       if (this.timeout) {
         clearTimeout(this.timeout)
       }
-      this.timeout = setTimeout(async () => {
+      this.timeout = setTimeout(async() => {
         // 确保在doLayout前获取最新的列配置
         await this.getColumns()
         this.$refs.JNPFTable?.doLayout()
@@ -506,17 +546,40 @@ export default {
     // 表格拖动方法
     rowDrop() {
       const el = this.$refs.JNPFTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+      // const el = this.$refs.JNPFTable.$el.querySelectorAll('.el-table__header-wrapper thead tr')
       this.sortable = Sortable.create(el, {
+        filter: '.non-draggable-header',
         ghostClass: 'sortable-ghost',
         setData: function(dataTransfer) {
           dataTransfer.setData('Text', '')
         },
+        // 阻止默认行为
+        onFilter: function(evt) {
+          const item = evt.item;
+          if (Sortable.utils.is(item, '.non-draggable-header')) {
+            evt.preventDefault();
+            // 添加视觉反馈
+            item.classList.add('animate-pulse');
+            setTimeout(() => item.classList.remove('animate-pulse'), 300);
+          }
+        },
+        // 关键：限制拖动范围
+        onMove: (evt) => {
+          const draggedEl = evt.dragged;
+          const relatedEl = evt.related; // 目标位置元素
+
+          // 允许拖动的条件：
+          // 1. 拖动源是可拖动列
+          // 2. 目标位置也是可拖动列
+          return draggedEl.classList.contains('draggable-header') &&
+            relatedEl.classList.contains('draggable-header');
+        },
         onEnd: evt => {
-          const targetRow = this.data.splice(evt.oldIndex, 1)[0]
-          this.data.splice(evt.newIndex, 0, targetRow)
-          console.log(this.data)
+          let _data = deepClone(this.data)
+          const targetRow = _data.splice(evt.oldIndex, 1)[0]
+          _data.splice(evt.newIndex, 0, targetRow)
           let att = []
-          this.data.forEach((item, index) => {
+          _data.forEach((item, index) => {
             let obj = {
               sortCode: index,
               ...item
@@ -572,7 +635,117 @@ export default {
 
         return newItem
       })
-    }
+    },
+
+    async handleHeaderClick(column, event) {
+      if (!this.listQuery) return
+      // console.log(column, event)
+      if (!event.target.className.includes('table-header-content')) event = { target: event.target.parentElement }
+      if (!event.target.className.includes('table-header-content')) return
+      if (this.popoverVisible) {
+        if (this.popoverColumn === column.property) {
+          return
+        } else {
+          this.closePopover()
+          await this.$nextTick()
+        }
+      }
+      if (!column.property) return
+
+
+      // 获取当前列的属性信息
+      const columnProps = this.getColumnProps(column.property)
+
+      // 计算弹窗位置
+      this.popoverStyle = (() => {
+        const rect = event.target.getBoundingClientRect();
+        const parentRect = event.target.parentElement.getBoundingClientRect();
+        const tableRect = this.$refs.JNPFTable.$el.getBoundingClientRect();
+        // 弹窗的宽度
+        const popoverWidth = 220;
+
+        const result = {
+          top: (rect.bottom + window.scrollY) + 'px'
+        };
+
+        // 计算左侧位置
+        let leftPosition = rect.left + window.scrollX;
+        if (leftPosition < tableRect.left + window.scrollX) {
+          leftPosition = tableRect.left + window.scrollX
+        }
+
+        // 检查是否超出父容器右侧边界
+        if (leftPosition + popoverWidth > tableRect.right + window.scrollX) {
+          // 靠右对齐
+          // result.right = (tableRect.right + window.scrollX) + 'px';
+          result.right = '0px';
+        } else {
+          // 靠左对齐
+          result.left = leftPosition + 'px';
+        }
+
+        console.log('Popover style:', result);
+        return result;
+      })()
+
+      this.popoverVisible = true
+      this.popoverColumn = column.property
+      this.currentColumnProps = columnProps // 保存当前列属性
+      setTimeout(() => {
+        // 点击外部关闭
+        document.addEventListener('click', this.closePopover)
+      }, 10)
+    },
+    closePopover() {
+      // console.log('closePopover')
+      if (this.$refs.popoverCard?.closeDisabled) return
+      this.popoverVisible = false
+      document.removeEventListener('click', this.closePopover)
+    },
+    // 获取列的属性信息
+    getColumnProps(prop) {
+      const children = this.$slots.default || []
+      for (const child of children) {
+        const childPropsData = child.componentOptions?.propsData || {}
+        const childAttrs = child.data?.attrs || {}
+        // 兼容 prop 在 propsData 或 attrs
+        if ((childPropsData.prop || childAttrs.prop) === prop) {
+          // 合并 propsData 和 attrs，attrs 优先
+          return { ...childPropsData, ...childAttrs }
+        }
+      }
+      return {}
+    },
+    queryChange(listQuery) {
+      // 过滤掉listQuery里不存在于表格中的排序
+      if (listQuery.orderItems && listQuery.orderItems.length) {
+        listQuery.orderItems = listQuery.orderItems.reduce((result, item) => {
+          if (!item.column) return result
+          if (this.columns.some(child => {
+            let childPropsData = child.componentOptions?.propsData
+            if (!childPropsData || childPropsData.label === '操作') return false
+            const sortProp = getSortProp(child.data.attrs || {}, item.column)
+            return sortProp === item.column
+          })) {
+            result.push(item)
+          } else {
+            console.error(`表格列排序属性 ${item.column} 不存在，请在视图 orderItems 中纠正属性名或移除此属性！`)
+          }
+          return result
+        }, [])
+      }
+      this.$emit('queryChange', listQuery)
+    },
+    // headerRowStyle({ row, rowIndex }) {
+    //   console.log(row, rowIndex)
+    //   // let result = {}
+    //   // if (this.listQuery) {
+    //   //   result.cusorsor = 'pointer'
+    //   //   if (this.listQuery.orderItems?.some(item => item.column === row.property)) result.backgroundColor = '#adceff'
+    //   //   if (this.listQuery.superQuery?.condition?.some(item => item.filed === row.property)) result.backgroundColor = '#adceff'
+    //   // }
+    //   return result
+    // },
   }
 }
 </script>
@@ -587,6 +760,19 @@ export default {
   ::v-deep .el-table__footer-wrapper td div,
   ::v-deep .el-table__fixed-footer-wrapper td div {
     white-space: nowrap;
+  }
+  ::v-deep .table-header-content {
+    transition: 0.2s ease;
+    border-radius: 4px;
+    &.active,
+    &:hover {
+      padding: 0 0 0 4px;
+      cursor: pointer;
+      background-color: #e7e7e7;
+      * {
+        // cursor: default;
+      }
+    }
   }
 }
 </style>

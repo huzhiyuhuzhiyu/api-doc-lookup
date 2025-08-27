@@ -15,12 +15,11 @@ const mathjs = create(all, { number: "BigNumber", precision: 20 });
 
 
 const jnpf = {
-
   replacePre(text, replacement) {
     const safeReplacement = replacement ?? "";
-    return text.replace(/\{pre\}/g, safeReplacement);
+    // 对 { 和 } 转义，匹配字面量 "{}"
+    return text.replace(/\{.*?\}/g, safeReplacement);
   },
-
   getpairingModeListFun() {
     let obj = {
       "pageNum": -1,
@@ -638,21 +637,86 @@ const jnpf = {
         return planTime = time
     }
   },
-    /**
-     * 防抖函数
-     * @param {Function} fn - 需要防抖的函数
-     * @param {number} delay - 防抖时间间隔（毫秒）
-     * @returns {Function} 防抖后的函数
-     */
-    debounce(fn, delay) {
-        let lastCall = 0;
-        return function (...args) {
-            const now = Date.now();
-            if (now - lastCall >= delay) {
-                lastCall = now;
-                fn.apply(this, args);
-            }
-        };
-    },
+  /**
+   * 节流函数
+   * @param {Function} fn - 需要节流的函数
+   * @param {number} delay - 节流时间间隔（毫秒）
+   * @returns {Function} 节流后的函数
+   */
+  throttle(fn, delay) {
+    let lastCall = 0;
+    return function (...args) {
+      const now = Date.now();
+      if (now - lastCall >= delay) {
+        lastCall = now;
+        fn.apply(this, args);
+      }
+    };
+  },
+  /**
+   * 防抖函数
+   * @param {Function} fn - 需要防抖的函数
+   * @param {number} delay - 防抖时间间隔（毫秒）
+   * @returns {Function} 防抖后的函数
+   */
+  debounce(fn, delay) {
+    let lastCall = 0;
+    return function (...args) {
+      const now = Date.now();
+      if (now - lastCall >= delay) {
+        lastCall = now;
+        fn.apply(this, args);
+      }
+    };
+  },
+  /**
+   * 递归查找父组件中指定属性的值
+   * @param {Object} e - 子组件实例
+   * @param {string} property - 要查找的属性名
+   * @param {string} [key] - 可选参数，如果指定，则在父组件的[key]对象中查找property
+   * @returns {*} 查找到的属性值或null（未找到或超出最大查找深度）
+   */
+  deepGetParentValue(e, property, key) {
+    let total = 0
+    let parent = e.$parent
+    if (!key) {
+      while (parent) {
+        if (parent.hasOwnProperty(property)) return parent[property]
+        parent = parent.$parent;
+        total++
+        if (total > 10) return null
+      }
+      return null
+    } else {
+      while (parent && parent[key]) {
+        if (parent[key].hasOwnProperty(property)) return parent[key][property]
+        parent = parent.$parent;
+        total++
+        if (total > 10) return null
+      }
+      return null
+    }
+  },
+  // 默认方案关键词查询内容
+  getKeywordQuery(type) {
+    if (type === 'product') { // 未显示productDrawingNo时的产品信息整合
+      return {
+        keywordFlag: true, // 是否开启关键词查询
+        fieldList: [
+          'productCode',
+          'productsCode',
+          'productName',
+          'productsName',
+          'productDrawingNo',
+          'productsDrawingNo',
+          'drawingNo',
+          'model',
+          'spec',
+          'drawingSheetNo',
+        ] // 默认关键词查询字段，会自动过滤不存在于table的字段（这里不要使用code/name等匹配场景多的字段）
+      }
+    }
+    return null
+  }
 }
 export default jnpf

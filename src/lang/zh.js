@@ -201,7 +201,8 @@ export default {
     tagsViewIcon: '多页签显示图标',
     language: '显示多语言选择',
     search: '显示页面搜索框',
-    cache: '多页签缓存页面'
+    cache: '多页签缓存页面',
+    compactTableRow: '更紧凑表格布局'
   },
   common: {
     addBtn: '新建',

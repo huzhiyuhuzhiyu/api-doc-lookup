@@ -6,7 +6,25 @@ import define, {workspacePath} from '@/utils/define'
 import context from '@/main'
 import {windowOpen} from "echarts/lib/util/format";
 
+import { formatListQuery } from '@/utils'
 
+class CancelControl {
+  constructor () {
+    this.allCancelApi = {}
+  }
+  setAbortAPI(calcelAPI){
+    const CancelToken = axios.CancelToken
+    const source = CancelToken.source()
+    this.allCancelApi[calcelAPI] = source
+    return source.token
+  }
+  abort(calcelAPI){
+    if (this.allCancelApi[calcelAPI]){
+      this.allCancelApi[calcelAPI].cancel('Cancel')
+    }
+  }
+}
+export const cancelControl = new CancelControl()
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -16,6 +34,11 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
+    // 解析带有查询功能的列表筛选条件
+    if (config.data?.superQuery?.tableQueryFlag) {
+      // console.log('接收到列表查询请求：', config.data)
+      config.data = formatListQuery(config.data)
+    }
     if (config.url.indexOf('http') > -1) config.baseURL = ''
     // 部分接口timeout时间单独处理
     if (config.url.indexOf('SynThirdInfo') > -1 || config.url.indexOf('extend/Email/Receive') > -1 ||
@@ -35,6 +58,10 @@ service.interceptors.request.use(
       config.url += `&n=${timestamp}`
     } else {
       config.url += `?n=${timestamp}`
+    }
+    if (config.multipleCancel){
+      cancelControl.abort(config.url)
+      config.cancelToken = cancelControl.setAbortAPI(config.url)
     }
     return config
   },
@@ -79,14 +106,22 @@ service.interceptors.response.use(
     }
   },
   error => {
+    console.log(error);
     if (process.env.NODE_ENV === 'development') {
       console.log(error) // for debug
     }
-    message({
-      message: '请求出错，请重试',
-      type: 'error',
-      duration: 1500
-    })
+    if (axios.isCancel(error)) {
+      console.error('请求取消:', error.message);
+    }else{
+      // webIntercept主动拦截
+      const msg = error.message.indexOf('webIntercept:') > -1 ? error.message.replace('webIntercept:', '') : '请求出错，请重试'
+      message({
+        message: msg,
+        type: 'error',
+        duration: 1500
+      })
+    }
+
     return Promise.reject(error)
   }
 )

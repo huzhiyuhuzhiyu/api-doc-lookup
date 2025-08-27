@@ -51,93 +51,7 @@ export default {
       },
       basicFormSchema: [],
       linesList: [],
-      linesListItems: [
-        {
-          prop: 'customerProductDrawingNo',
-          label: '客户产品型号',
-          type: 'view',
-          minWidth: 200,
-        },
-        {
-          prop: 'ordersNum',
-          label: '订单数量',
-          type: 'view',
-          minWidth: 150,
-        },
-        {
-          prop: 'notifiedQuantity',
-          label: '已通知数',
-          type: 'view',
-          minWidth: 150,
-        },
-        {
-          prop: 'warehouseDelivery',
-          label: '仓库发货数',
-          type: 'view',
-          minWidth: 150,
-        },
-        {
-          prop: 'onlineQuantity',
-          label: '线上数',
-          type: 'view',
-          minWidth: 150,
-        },
-        {
-          prop: 'availableQuantity',
-          label: '当前库存',
-          type: 'view',
-          minWidth: 150,
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: this.getDictDataSync('packaging'),
-          minWidth: 170,
-        },
-        {
-          prop: 'waitDeliverNum',
-          label: '待发货数量',
-          type: 'view',
-          minWidth: 120,
-        },
-        {
-          prop: 'deliveryQuantity',
-          label: '本次发货数',
-          type: 'input',
-          minWidth: 160,
-          itemRules: [
-            {
-              validator: this.formValidate('noZero', '本次发货数不能为0', (errMsg) => {
-                this.$message.error(errMsg)
-              }), trigger: ['blur', 'change']
-            },
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['本次发货数不能为空', (errMsg) => {
-                  this.$message.error(`	本次发货数不能为空`)
-                }]
-              }), trigger: 'blur',
-            },
-            {
-              validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
-                }]
-              }),
-              trigger: ['blur', 'change'],
-            },
-            {required: true, message: '本次发货数不能为空', trigger: ['blur', 'change'],},
-          ]
-        },
-        {
-          prop: "remark",
-          label: "备注",
-          value: "",
-          minWidth: 220,
-          type: "input",
-        }
-      ],
+      linesListItems: [],
       linesTableHeight: 0,
       addProductProps: {
         title: '选择产品',
@@ -230,11 +144,16 @@ export default {
           api: {
             fetchLines: getStockPlanPallet,
             dataPath: 'data.stockPlanPalletLineList',
-            filter: {},
+            filter: {
+              waitReceivedQuantity: val => val > 0
+            },
             formatter: (item) => ({
               ...item,
-              noticeId: item.id,
-              noticeLineId: this.dataForm.id,
+              sourceNo: this.dataForm.sourceNo,
+              noticeId: item.planPalletId,
+              noticeLineId: item.id,
+              ordersId: item.productionOrderId,
+              ordersLineId: item.documentLineId,
               undeliveredQuantity: item.waitReceivedQuantity,
               productDrawingNo: item.productsDrawingNo,
               productName: item.productsName,
@@ -344,7 +263,6 @@ export default {
         }
 
         lines = dataProcessor.applyFilter(lines, config.filter);
-
         this.linesList = lines.map(item => ({
           ...(config.formatter ? config.formatter(item) : item)
         }));
@@ -371,6 +289,7 @@ export default {
         this.dataForm.warehouseType = warehouseDetails.type;
         this.locationEnabled = warehouseDetails.locationStatus !== 'disabled';
         this.setBasicFormSchema()
+        this.setLinesListItems()
       } catch (error) {
       }
     },
@@ -485,7 +404,7 @@ export default {
           },
           dialogTitle: '选择库位',
           listMethod: getLocationList,
-          render: this.locationEnabled && !this.dataForm.totalStockOutboundFlag
+          render: this.locationEnabled
         },
         {
           prop: 'inspectionResults',
@@ -525,6 +444,19 @@ export default {
     },
 
     setLinesListItems() {
+      const getRealRowIndex = (index) => {
+        let result = 0
+        for (let i = 0; i < index[0]; i++) {
+          result++
+          result += this.linesList[i].children.length
+        }
+        return result + index[1]
+      }
+      const validErrorMessage = (...args) => {
+        let [label, errMsg, index] = args
+        if (Array.isArray(index)) index = getRealRowIndex(index)
+        this.$message.error(`产品信息第${ index + 1 }行：${ label }${ errMsg }`)
+      }
       this.linesListItems = [
         {
           prop: 'productDrawingNo',
@@ -554,14 +486,75 @@ export default {
           prop: 'batchNumber',
           label: '批次',
           type: 'view',
-          minWidth: 120,
+          minWidth: 100,
         },
-        // {
-        //   prop: 'waitDeliverNum',
-        //   label: '每箱数量',
-        //   type: 'view',
-        //   minWidth: 140,
-        // },
+        {
+          prop: 'shelfSpaceName',
+          label: '库位',
+          value: '',
+          type: 'custom',
+          customComponent: 'ComSelect-page',
+          renderTree: false,
+          searchList: [
+            {prop: 'name', label: '库位名称', type: 'input'},
+            {prop: 'code', label: '库位编码', type: 'input'}
+          ],
+          tableItems: [
+            {prop: 'name', label: '库位名称'},
+            {prop: 'code', label: '库位编码'},
+            {prop: 'remark', label: '备注'}
+          ],
+          beforeSubmit: (data, paramsObj) => {
+            const groupKey = paramsObj.scope.row.noticeLineId || paramsObj.scope.row.ordersLineId
+            if (this.productData.some(item => item.shelfSpaceId === data.id && (item.noticeLineId || item.ordersLineId) === groupKey)) {
+              this.$message.error('同一来源产品的入库库位不能重复！')
+              return false
+            }
+            return true
+          },
+          change: (val, data, paramsObj) => {
+            this.$nextTick(() => {
+              this.$refs['tableForm'].$refs.main.validateField(`data.${ paramsObj.scope.$index }.shelfSpaceName`)
+            })
+            if (!val && data.length) return
+            if (data && data.length) {
+              paramsObj.scope.row.shelfSpaceId = data[0].all.id
+              paramsObj.scope.row.shelfSpaceName = data[0].all.name
+              paramsObj.scope.row.warehouseId = data[0].all.warehouseId
+              paramsObj.scope.row.warehouseName = data[0].all.warehouseName
+            } else {
+              paramsObj.scope.row.shelfSpaceId = ''
+              paramsObj.scope.row.shelfSpaceName = ''
+              paramsObj.scope.row.warehouseId = ''
+              paramsObj.scope.row.warehouseName = ''
+            }
+          },
+          listRequestObj: {
+            warehouseId: this.dataForm.warehouseId,
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [{asc: false, column: ''}, {asc: false, column: 'createTime'}],
+            state: 'enable'
+          },
+          dialogTitle: '选择库位',
+          listMethod: getLocationList,
+          width: '180',
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry', params: ['', (...args) => validErrorMessage('库位', ...args)]
+              }), trigger: 'no'
+            },
+            {required: true, trigger: 'no'}
+          ],
+          render: this.locationEnabled
+        },
+        {
+          prop: 'singleBoxNum',
+          label: '每箱数量',
+          type: 'view',
+          minWidth: 140,
+        },
         {
           prop: 'packagingMethod',
           label: '包装方式',

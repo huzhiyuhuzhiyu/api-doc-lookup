@@ -476,16 +476,10 @@ export function getColumns(type = 'default') {
       //   sortable: 'custom',
       // },
       {
-        prop: "palletRemark",
+        prop: "remark",
         label: "入库明细",
         minWidth: 220,
         align: 'left',
-        sortable: 'custom',
-      },
-      {
-        prop: "deliverDate",
-        label: "预定日期",
-        minWidth: 120,
         sortable: 'custom',
       },
       ...createColumns,

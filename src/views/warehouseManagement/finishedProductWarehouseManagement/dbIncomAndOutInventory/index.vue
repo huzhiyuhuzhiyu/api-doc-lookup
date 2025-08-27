@@ -158,6 +158,7 @@ export default {
           initListQuery: {
             ...this.commonQueryConfig,
             orderNo: '',
+            waitStock: true,
           },
         },
         // 采购收货入库

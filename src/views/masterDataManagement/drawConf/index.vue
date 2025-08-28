@@ -162,7 +162,6 @@ export default {
               :label="column.label"
               :min-width="column.minWidth"
               :fixed="column.fixed"
-              :sortProp="column.sortProp"
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">

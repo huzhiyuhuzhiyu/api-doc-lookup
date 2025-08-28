@@ -1,39 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <!-- <el-col :span="6">
-            <el-form-item :label="$t('common.keyword')">
-              <el-input v-model="listQuery.keyword" :placeholder="$t('common.enterKeyword')" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="4">
-            <el-form-item label="">
-              <el-input v-model="listQuery.name" placeholder="分类名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" clearable style="width: 100%;" @change="classAttributeChange">
-                <el-option v-for="(item, index) in categoryPropertList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()" class="commonBox">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()" class="commonBox">
-                {{ $t('common.reset') }}
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
           <topOpts @add="addOrUpdateHandle('', '', 'add')" :isJudgePer="true" :addPerCode="'btn_add'" />
@@ -46,10 +14,7 @@
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip>
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
+
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -60,7 +25,7 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" :row-key="'id'" v-if="refreshTable" fixedNO
           :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" ref="dataTable"
-          custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_250656">
+          custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_250656" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
           <el-table-column prop="name" label="分类名称" min-width="200">
             <template slot-scope="scope">
               <i :class="[
@@ -86,7 +51,6 @@
               {{ $getLabel(classTypelist, scope.row.classType, 'value', 'label') }}
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="sort" label="排序" width="100" align="center">
             <template slot-scope="scope">
               <el-input @change="switchShow(scope.row, 'sort')" @blur="sortCodeBlur(scope.row)"
@@ -94,7 +58,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200" />
-
+          <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
@@ -111,9 +75,6 @@
     </div>
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeDepForm" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -130,21 +91,34 @@ export default {
 
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            // {
+            //   prop: 'createTime', // 属性*
+            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
+            //   symbol: 'between', // 比较符*
+            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+            //   fixed: true // 是否在搜索栏显示
+            // },
+            { prop: 'name', symbol: 'like', fixed: true },
+            { prop: 'classAttribute', symbol: '==', fixed: true },
+          ],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
+        },
+      }],
       listQuery: {
-        classAttribute: '',
         type: 'material',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
       },
       classTypelist: [
         { label: '包装物', value: 'packaging' },
@@ -163,71 +137,67 @@ export default {
       treeDataAll: [],
       expands: true,
       refreshTable: true,
-      btnLoading: false,
       listLoading: true,
       depFormVisible: false,
       categoryPropertList: [],
-      columnList: ['classAttribute', 'classType', 'createTime', 'createByName', 'remark'],
+      columnList: [],
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'name',
-          label: '分类名称',
-          type: 'input'
-        },
-        {
-          prop: 'code',
-          label: '分类编码',
-          type: 'input'
-        },
-        {
-          prop: 'partnerName',
-          label: '上级分类',
-          type: 'input'
-        },
-
-        {
-          prop: 'classAttribute',
-          label: '类别属性',
-          type: 'select',
-          options: [
-            { label: '原材料', value: 'raw_material' },
-            { label: '半成品', value: 'semi_finished' },
-            { label: '成品', value: 'finish_product' },
-            { label: '辅料', value: 'accessories' }
-          ]
-        },
-        {
-          prop: 'classType',
-          label: '类型',
-          type: 'select',
-          options: [{ label: '包装物', value: 'packaging' },
-          { label: '内圈毛坯', value: 'inner_ring_blank' },
-          { label: '外圈毛坯', value: 'outer_ring_blank' },
-          { label: '内圈', value: 'inner_ring' },
-          { label: '外圈', value: 'outer_ring' },
-          { label: '磨料', value: 'abrasive' },
-          { label: '油料', value: 'oil' },
-          { label: '配件', value: 'accessory' },
-          { label: '周转箱', value: 'turnover_box' },
-          { label: '保持架', value: 'holder' },
-          { label: '密封盖', value: 'sealing_cap' }]
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        }
-      ]
+      superQueryJson: [{
+        prop: 'classAttribute',
+        label: '类别属性',
+        type: 'select',
+        options: [{
+          label: '原材料',
+          value: 'raw_material'
+        }, {
+          label: '半成品',
+          value: 'semi_finished'
+        }, {
+          label: '成品',
+          value: 'finish_product'
+        }, {
+          label: '辅料',
+          value: 'accessories'
+        }]
+      }, {
+        prop: 'classType',
+        label: '类型',
+        type: 'select',
+        options: [{
+          label: '包装物',
+          value: 'packaging'
+        }, {
+          label: '内圈毛坯',
+          value: 'inner_ring_blank'
+        }, {
+          label: '外圈毛坯',
+          value: 'outer_ring_blank'
+        }, {
+          label: '内圈',
+          value: 'inner_ring'
+        }, {
+          label: '外圈',
+          value: 'outer_ring'
+        }, {
+          label: '磨料',
+          value: 'abrasive'
+        }, {
+          label: '油料',
+          value: 'oil'
+        }, {
+          label: '配件',
+          value: 'accessory'
+        }, {
+          label: '周转箱',
+          value: 'turnover_box'
+        }, {
+          label: '保持架',
+          value: 'holder'
+        }, {
+          label: '密封盖',
+          value: 'sealing_cap'
+        }]
+      }]
     }
   },
   mounted() {
@@ -235,15 +205,12 @@ export default {
     this.getProductClassFun()
   },
   created() {
-    this.initData()
+
   },
   methods: {
-    classAttributeChange(val){
-      this.initData()
-    },
     getclassAttributeList() {
       let obj = {
-        pageNum: 1,
+
         pageSize: -1
       }
       getclassAttributeList(obj).then((res) => {
@@ -255,16 +222,11 @@ export default {
         })
       })
     },
-    superQuerySearch(query) {
-      console.log(query,'qu')
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
+
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       let obj1 = {
-        pageNum: -1,
+
         pageSize: 20,
         typeCode: 'pa007',
         orderItems: [
@@ -296,7 +258,7 @@ export default {
         }
       })
       let obj2 = {
-        pageNum: -1,
+
         pageSize: 20,
         typeCode: 'pa006',
         orderItems: [
@@ -328,7 +290,7 @@ export default {
         }
       })
       let obj3 = {
-        pageNum: -1,
+
         pageSize: 20,
         typeCode: 'pa005',
         orderItems: [
@@ -359,7 +321,7 @@ export default {
         }
       })
       let obj4 = {
-        pageNum: -1,
+
         pageSize: 20,
         typeCode: 'pa002',
         orderItems: [
@@ -390,7 +352,7 @@ export default {
         }
       })
       let obj5 = {
-        pageNum: -1,
+
         pageSize: 20,
         typeCode: 'pa003',
         orderItems: [
@@ -421,7 +383,7 @@ export default {
         }
       })
       let obj6 = {
-        pageNum: -1,
+
         pageSize: 20,
         typeCode: 'pa001',
         orderItems: [
@@ -453,7 +415,7 @@ export default {
         }
       })
       let obj7 = {
-        pageNum: -1,
+
         pageSize: 20,
         typeCode: 'pa015',
         orderItems: [
@@ -507,7 +469,6 @@ export default {
           })
         })
         .catch(() => {
-          this.btnLoading = false
         })
     },
     sortCodeBlur(row) {
@@ -516,28 +477,25 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-    initData() {
-      this.loading = true
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+      this.listLoading = true
       getcategoryTree(this.listQuery)
         .then((res) => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.treeList = res.data
           if (this.treeList.length > 0) this.setTableIndex(this.treeList)
           this.listLoading = false
-          this.btnLoading = false
         })
         .catch(() => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.listLoading = false
-          this.btnLoading = false
         })
     },
-    search() {
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      this.initData()
-    },
+
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
       arr.forEach((item, key) => {
@@ -551,28 +509,7 @@ export default {
         }
       })
     },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = {
-        classAttribute: '',
-        type: 'material',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      }
-      this.$refs.SuperQuery.conditionList = []
 
-      this.initData()
-    },
     addOrUpdateHandle(id, parentId, type) {
       this.addOrUpdateDep(id, parentId, type)
     },

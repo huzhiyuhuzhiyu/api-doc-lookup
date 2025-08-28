@@ -242,7 +242,7 @@ export function getColumns() {
     {
       prop: 'customerProductDrawingNo',
       label: '客户产品型号',
-      minWidth: 150,
+      minWidth: 220,
       align: "left",
     },
     {

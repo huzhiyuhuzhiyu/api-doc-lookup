@@ -1,42 +1,9 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input @keyup.native.enter="search()"  v-model="listQuery.model" placeholder="型号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
-                style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-            </el-form-item>
-          </el-col>
-          <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search" @click="moreQueries()">更多查询</el-button> -->
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box">
-          <!-- <topOpts @add="addOrUpdateHandle('', 'add')" :isJudgePer="true" :addPerCode="'btn_add'"> -->
-          <!-- <el-dropdown>
-           
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="addOrUpdateHandle('', 'add')">单个新建
-              </el-dropdown-item>
-              <el-dropdown-item @click.native="batchAdd()">批量新建</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown> -->
           <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="batchAdd()">
             批量新建
           </el-button>
@@ -54,10 +21,7 @@
           </el-button>
           <!-- </topOpts> -->
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
+
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -66,20 +30,19 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          hasC @selection-change="handleSelectionChange" ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_657988">
-          <el-table-column prop="model" label="型号" sortable="custom" min-width="110" />
-          <el-table-column prop="innerCircle" label="内圈" min-width="150"  sortable="custom" />
-          <el-table-column prop="outerCircle" label="外圈" min-width="150"  sortable="custom" />
-          <el-table-column prop="steelBall" label="钢球型号" min-width="150"  sortable="custom" />
-          <el-table-column prop="sealingRing" label="密封圈" min-width="150"  sortable="custom" />
-          <el-table-column prop="steelBallNum" label="钢球用量(粒)" min-width="128"  sortable="custom" />
-          <el-table-column prop="oilNum" label="油脂用量(毫克)" min-width="142"  sortable="custom" />
-          <el-table-column prop="holderNum" label="保持架用量(个)" min-width="142"  sortable="custom" />
-          <el-table-column prop="sealingRingNum" label="密封圈用量(个)" min-width="142"  sortable="custom" />
-          <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-          <el-table-column prop="createByName" label="创建人" width="100"  sortable="custom" />
-
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column
+          hasC @selection-change="handleSelectionChange" ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_657988" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          <el-table-column prop="model" label="型号" min-width="220" />
+          <el-table-column prop="innerCircle" label="内圈" min-width="220"/>
+          <el-table-column prop="outerCircle" label="外圈" min-width="220"/>
+          <el-table-column prop="steelBall" label="钢球型号" min-width="220"/>
+          <el-table-column prop="sealingRing" label="密封圈" min-width="220" />
+          <el-table-column prop="steelBallNum" label="钢球用量(粒)" min-width="128" />
+          <el-table-column prop="oilNum" label="油脂用量(毫克)" min-width="142" />
+          <el-table-column prop="holderNum" label="保持架用量(个)" min-width="142" />
+          <el-table-column prop="sealingRingNum" label="密封圈用量(个)" min-width="142" />
+          <el-table-column prop="createTime" label="创建时间" width="180" />
+          <el-table-column prop="createByName" label="创建人" width="100" />
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
@@ -87,8 +50,7 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()" />
       </div>
     </div>
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
@@ -117,9 +79,6 @@
         </el-button>
       </span>
     </el-dialog>
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <!-- <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" /> -->
   </div>
 </template>
@@ -147,76 +106,47 @@ export default {
   components: { JNPFForm, ExportForm, TableForm, SuperQuery },
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            { prop: 'model', symbol: 'like', fixed: true },
+            {
+              prop: 'createTime', // 属性*
+              symbol: 'between', // 比较符*
+              timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+              fixed: true // 是否在搜索栏显示
+            },
+          ],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
+        },
+      }],
       btnLoading:false,
       tableFormVisible: false,
       exportFormVisible: false,
-      columnList: ['remark', 'createTime', 'createByName'],
+      columnList: [],
       createTimeArr: [],
       title: '更多查询',
       visible: false,
       tableData: [],
       listLoading: false,
-      listQuery: {
-        startTime: '',
-        endTime: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        model: ''
-      },
+      listQuery: {},
       file:null,
       total: 0,
       formVisible: false,
       selectList: [],
       uploadVisib: false,
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'model',
-          label: '型号',
-          type: 'input'
-        },
-        {
-          prop: 'innerCircle',
-          label: '内圈',
-          type: 'input'
-        },
-
-        {
-          prop: 'outerCircle',
-          label: '外圈',
-          type: 'input'
-        },
-        {
-          prop: 'steelBall',
-          label: '钢球型号',
-          type: 'input'
-        },
-
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        }
-      ]
+      superQueryJson: []
     }
   },
   computed: {
@@ -224,14 +154,10 @@ export default {
     ...mapState('user', ['token'])
   },
   created() {
-    this.initData()
+
   },
   methods: {
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
+
     // 批量新建
     batchAdd() {
       this.tableFormVisible = true
@@ -416,76 +342,33 @@ export default {
       console.log('this.$refs.dataTable', this.$refs.dataTable)
       this.$refs.dataTable.showDrawer()
     },
-    sortChange({ prop, order }) {
-      let newProp = ''
-      if (prop == 'steelBall' || prop == 'outerCircle' || prop == 'innerCircle' || prop == 'createByName') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
-    initData() {
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
       this.listLoading = true
       getbimProductsModelList(this.listQuery)
         .then((res) => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.tableData = res.data.records
-
           this.total = res.data.total
           this.listLoading = false
-          // this.visible = false
         })
         .catch(() => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.listLoading = false
         })
     },
-    search() {
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.listQuery.startTime = this.createTimeArr[0] + ' 00:00:00'
-        this.listQuery.endTime = this.createTimeArr[1] + ' 23:59:59'
-      } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
-      }
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      this.initData()
-    },
+
     refresh(isrRefresh) {
-      console.log(isrRefresh, 'is')
       this.formVisible = false
       this.tableFormVisible = false
-      if (isrRefresh) this.reset()
+      if (isrRefresh) this.initData()
       this.initData()
     },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.createTimeArr = []
-      this.listQuery = {
-        startTime: '',
-        endTime: '',
-        model: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      }
-      this.$refs.SuperQuery.conditionList = []
-      this.initData()
-    },
+
     addOrUpdateHandle(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
@@ -519,7 +402,7 @@ export default {
     margin-right: 0;
     border-right: 1px solid #cacaca;
   }
-  
+
   ::v-deep .el-tabs__content {
     height: calc(100vh - 163px);
   } */

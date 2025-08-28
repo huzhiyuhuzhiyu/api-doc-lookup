@@ -1,26 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.unitCode" placeholder="请输入单位编码" clearable maxlength="20"> </el-input>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="单位名称" clearable maxlength="20" @keyup.enter.native="search()"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">查询</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="listTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
@@ -29,10 +10,6 @@
             </el-button>
           </div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -42,11 +19,11 @@
           </div>
         </div>
         <div class="tableBox">
-          <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" highlight-current-row
-            @current-change="handleCurrentChange" class="dataTable" border ref="listTable" custom-column customKey="JNPFTableKey_223694">
+          <JNPF-table v-loading="listLoading" :data="list" highlight-current-row
+            @current-change="handleCurrentChange" class="dataTable" border ref="listTable" custom-column customKey="JNPFTableKey_223694" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
             <!-- <el-table-column prop="unitCode" label="单位编码" min-width="120" sortable="custom" /> -->
-            <el-table-column prop="name" label="单位名称" min-width="120" sortable="custom" />
-            <el-table-column prop="unitType" label="分类" min-width="120" sortable="custom" >
+            <el-table-column prop="name" label="单位名称" min-width="120" />
+            <el-table-column prop="unitType" label="分类" min-width="120" >
               <template slot-scope="{ row }">
                 <span>
                    {{ global.getDictLabelGlobal('uom', row.unitType) }}
@@ -66,7 +43,7 @@
             </el-table-column>
           </JNPF-table>
           <JNPF-table v-loading="detailLoading" :data="dataDetail" class="dataTable" border :partentOrChild="'child'"
-            custom-column>
+            custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
             <el-table-column prop="sourceName" min-width="120" label="主单位" />
             <el-table-column prop="ratio" min-width="120" label="转换系数" />
             <el-table-column prop="calculationDirection" min-width="120" label="计算方向">
@@ -82,14 +59,10 @@
             <el-table-column prop="targetName" min-width="120" label="副单位" />
           </JNPF-table>
         </div>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" class="pagination" style="text-align: right; padding-right: 60%;" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()" class="pagination" style="text-align: right; padding-right: 60%;" />
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -102,42 +75,39 @@ export default {
   components: { JNPFForm, SuperQuery },
   data() {
     return {
-      superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'name',
-          label: '单位名称',
-          type: 'input'
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            // {
+            //   prop: 'createTime', // 属性*
+            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
+            //   symbol: 'between', // 比较符*
+            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+            //   fixed: true // 是否在搜索栏显示
+            // },
+            {prop: 'name', symbol: 'like', fixed: true},
+          ],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
         },
-
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        }
-      ],
+      }],
+      superQueryVisible: false,
+      superQueryJson: [],
       list: [],
       listLoading: true,
       total: 0,
-      listQuery: {
-        unitCode: '',
-        name: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      },
+      listQuery: {},
       // 右侧列表请求参数
       listQueryTwo: {
-        pageNum: 1,
         pageSize: 50
       },
       formVisible: false,
@@ -148,7 +118,7 @@ export default {
     }
   },
   created() {
-    this.initData()
+
   },
   mounted() {
     document.getElementsByClassName('el-table__body-wrapper')[1].onscroll = (event) => {
@@ -157,7 +127,6 @@ export default {
       if (isBottom && this.lazyLoadFlag) {
         this.lazyLoadFlag = false
         this.listQueryTwo.pageNum++
-        // this.$message.success('滚动到底了')
         detailUnitData({ id: this.selectedUnitId, ...this.listQueryTwo })
           .then((res) => {
             this.dataDetail.push(...(res.data.records || []))
@@ -170,11 +139,6 @@ export default {
     }
   },
   methods: {
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
     columnSetFun() {
       this.$refs.listTable.showDrawer()
     },
@@ -195,8 +159,14 @@ export default {
       this.listQuery.orderItems[0].column = newProp
       this.initData()
     },
-    initData() {
-      this.detailLoading = false
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
+      this.detailLoading = true
+      this.listLoading = true
       this.dataDetail = []
       getUnitData(this.listQuery).then((res) => {
         this.list = res.data.records || []
@@ -245,39 +215,12 @@ export default {
         this.$refs.JNPFForm.init(JSON.stringify(rowData), btntype)
       })
     },
-    search() {
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      this.initData()
-    },
+
     refresh(isrRefresh) {
       this.formVisible = false
-      if (isrRefresh) this.reset()
+      if (isrRefresh) this.initData()
     },
-    reset() {
-      this.$refs['listTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = {
-        unitCode: '',
-        name: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      }
-      this.$refs.SuperQuery.conditionList = []
-      this.search()
-    }
+
   }
 }
 </script>

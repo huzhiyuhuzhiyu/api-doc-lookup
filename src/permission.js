@@ -139,8 +139,11 @@ router.beforeEach(async (to, from, next) => {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           if (error && typeof (error) == 'string') $message.error(error || 'Has Error')
-          windowOpen(workspacePath,'_self')
-          // next(`/login?redirect=${ to.path }`)
+          if (process.env.NODE_ENV === 'development'){
+            next(`/login?redirect=${ to.path }`)
+          }else {
+            windowOpen(workspacePath,'_self')
+          }
           NProgress.done()
         }
       }
@@ -153,8 +156,11 @@ router.beforeEach(async (to, from, next) => {
       next()
     } else {
       // other pages that do not have permissionEle to access are redirected to the login page.
-      // next(`/login?redirect=${ to.path }`)
-      windowOpen(workspacePath,'_self')
+      if (process.env.NODE_ENV === 'development'){
+        next(`/login?redirect=${ to.path }`)
+      }else {
+        windowOpen(workspacePath,'_self')
+      }
       NProgress.done()
     }
   }

@@ -8,84 +8,77 @@ export function getColumns() {
     {
       prop: 'purchaseOrderNo',
       label: '采购单号',
-      minWidth: 120,
-      sortable: 'custom',
+      minWidth: 220,
       align: "left",
     },
     {
       prop: 'purchaseOrderNo',
       label: '订单号',
-      minWidth: 120,
-      sortable: 'custom',
+      minWidth: 220,
       align: "left",
     },
     {
       prop: 'productName',
       label: '产品名称',
       minWidth: 220,
-      sortable: 'custom',
       align: "left",
     },
     {
       prop: 'productCode',
       label: '产品编码',
       minWidth: 220,
-      sortable: 'custom',
       align: "left",
     },
     {
       prop: 'drawingNo',
       label: '产品型号',
       minWidth: 220,
-      sortable: 'custom',
       align: "left",
     },
     {
       prop: 'customerProductDrawingNo',
-      label: '客户型号',
-      minWidth: 120,
-      sortable: 'custom',
+      label: '客户产品型号',
+      minWidth: 220,
       align: "left",
     },
     {
       prop: 'purchaseQuantity',
       label: '数量',
       minWidth: 120,
-      sortable: 'custom'
     },
     {
       prop: 'cooperativePartnerCode',
       label: '客户编码',
       minWidth: 120,
-      sortable: 'custom',
       align: "left",
     },
     {
       prop: 'cooperativePartnerName',
       label: '客户名称',
       minWidth: 120,
-      sortable: 'custom',
       align: "left",
     },
     {
       prop: 'orderDate',
       label: '下单日期',
       minWidth: 120,
-      sortable: 'custom'
     },
     {
       prop: 'deliveryDate',
       label: '确认日期',
       minWidth: 120,
-      sortable: 'custom'
     },
     {
       prop: 'status',
       label: '状态',
       minWidth: 180,
-      sortable: 'custom',
       slot: true,
       dictType: "drawConfStatus"
+    },
+    {
+      prop: 'createTime',
+      label: '创建时间',
+      minWidth: 180
     },
   ]
 }

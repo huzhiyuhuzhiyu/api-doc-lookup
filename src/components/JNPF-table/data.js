@@ -131,9 +131,10 @@ export const getQueryProps = (column, queryJson = []) => {
  * @returns {string} 返回排序字段
  */
 export const getSortProp = (column, popoverColumn) => {
-  if (column.hasOwnProperty('sortProp') && column.sortProp !== undefined) return column.sortProp
   if (['国家', '省', '市', '区'].includes(column.label)) return null // 通配
   if (popoverColumn === 'createByName') return 'create_by' // 通配
+  return popoverColumn
+  if (column.hasOwnProperty('sortProp') && column.sortProp !== undefined) return column.sortProp
   return popoverColumn.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase()) // 进行驼峰转下划线转换
 }
 

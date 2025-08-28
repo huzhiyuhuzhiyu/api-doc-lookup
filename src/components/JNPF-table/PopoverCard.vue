@@ -192,7 +192,7 @@ export default {
         listQuery.orderItems = []
       }
 
-      const sortField = this.columnProps.sortProp ? this.currentSortField : this.currentSortField.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      const sortField = getSortProp(this.columnProps, this.popoverColumn)
 
       const existingSortIndex = listQuery.orderItems.findIndex(item => item.column === sortField)
 

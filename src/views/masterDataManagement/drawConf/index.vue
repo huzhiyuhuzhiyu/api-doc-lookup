@@ -12,30 +12,39 @@ export default {
   },
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            { prop: 'cooperativePartnerName', symbol: 'like', fixed: true },
+            { prop: 'customerProductDrawingNo', symbol: 'like', fixed: true },
+            { prop: 'drawingNo', symbol: 'like', fixed: true },
+            // 这里放置系统原顶栏显示的查询元素，如：
+            // {
+            //   prop: 'createTime', // 属性*
+            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
+            //   symbol: 'between', // 比较符*
+            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+            //   fixed: true // 是否在搜索栏显示
+            // },
+            // { prop: 'orderNo', symbol: 'like', fixed: true },
+          ],
+          keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
+        },
+      }],
       loading: false,
       visible: false,
       btnList: buttonList,
       superQueryVisible: false,
       superQueryJson: [],
-      initListQuery: {
-        orderNo: '',
-        cooperativePartnerName: '',
-        customerProductDrawingNo: '',
-        drawingNo: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 't1.create_time'
-          }
-        ],
-        superQuery: {},
-        pageNum: 1,
-        pageSize: 20
-      },
       listQuery: {},
       tableData: [],
       total: 0,
@@ -45,11 +54,14 @@ export default {
     }
   },
   created() {
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.initData()
   },
   methods: {
-    async initData() {
+    async initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
       this.loading = true
       try {
         const res = await getPurPurchaseDrawingPage(this.listQuery);
@@ -93,35 +105,12 @@ export default {
       this.initData()
     },
 
-    sortChange({prop, order}) {
-      let newProp = ''
-      if (prop === 't.create_time') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
+
     getAlign(align) {
       return align || 'center'
-    },
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
-    search() {
-      this.initData()
-    },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.search()
     },
   }
 }
@@ -130,47 +119,7 @@ export default {
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center  JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
-        <el-form @submit.native.prevent @keyup.enter.native="search()">
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo"
-                placeholder="采购单号"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerName"
-                placeholder="客户名称"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.customerProductDrawingNo"
-                placeholder="客户产品型号"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.drawingNo"
-                placeholder="型号"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search"
-                @click="search()">查询
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
           <div class="JNPF-common-head-left">
@@ -178,15 +127,12 @@ export default {
               :btnList="btnList"
               @click="handleButtonClick"
             />
-<!--            <TableDataExportButton :disabled="tableData.length <= 0" tableRef="dataTable"-->
-<!--              :listQuery="listQuery" exportType="1018"-->
-<!--              exportName="图纸确认"/>-->
+            <!--            <TableDataExportButton :disabled="tableData.length <= 0" tableRef="dataTable"-->
+            <!--              :listQuery="listQuery" exportType="1018"-->
+            <!--              exportName="图纸确认"/>-->
           </div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true"/>
-            </el-tooltip>
+
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 @click="columnSetFun()"/>
@@ -205,9 +151,8 @@ export default {
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"
-          @sort-change="sortChange"
           ref="dataTable"
-          custom-column>
+          custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
           <template v-for="column in columnsConfig">
             <el-table-column
               v-if="typeof column.show === 'function' ? column.show() : true"
@@ -215,33 +160,27 @@ export default {
               :prop="column.prop"
               :label="column.label"
               :min-width="column.minWidth"
-              :sortable="column.sortable"
               :fixed="column.fixed"
+              :sortProp="column.sortProp"
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
                 <template v-if="column.dictType">
                    <span>
-                <el-tag
-                  :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
-                    global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
-                  }}</el-tag>
+                    <el-tag
+                      :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
+                        global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
+                      }}</el-tag>
                    </span>
                 </template>
               </template>
             </el-table-column>
           </template>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData"
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
         />
       </div>
     </div>
-    <!-- 高级查询 -->
-    <SuperQuery partentOrChild="TransitionApplicationRecordQuery" :show="superQueryVisible" ref="SuperQuery"
-      table-ref="dataTable"
-      :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <Form ref="Form" v-if="visible" @close="close"/>
   </div>
 </template>

@@ -3,6 +3,7 @@ import topOperation from '@/components/JNPF-topOperation/index'
 import tableOperation from '@/components/JNPF-tableOperation'
 import Pagination from '@/components/Pagination'
 import JNPFTable from '@/components/JNPF-table'
+import JNPFTableQuery from '@/components/JNPF-tableQuery'
 import JNPFCol from '@/components/JNPF-col'
 import SuperCol from '@/components/Super-col'
 import JNPFColTable from '@/components/JNPF-col-table'
@@ -68,6 +69,7 @@ export default {
     Vue.component('tableOpts', tableOperation)
     Vue.component('Pagination', Pagination)
     Vue.component('JNPFTable', JNPFTable)
+    Vue.component('JNPFTableQuery', JNPFTableQuery)
     Vue.component('JNPFCol', JNPFCol)
     Vue.component('SuperCol', SuperCol)
     Vue.component('JNPFColTable', JNPFColTable)

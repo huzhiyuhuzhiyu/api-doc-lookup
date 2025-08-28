@@ -163,7 +163,7 @@ export default {
   methods: {
     updateStatus() {
       if (this.listQuery && Array.isArray(this.listQuery.orderItems)) {
-        const searchField = this.columnProps.sortProp ? this.currentSortField : this.currentSortField.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+        const searchField = getSortProp(this.columnProps, this.popoverColumn)
         const sort = this.listQuery.orderItems.find(item => item.column === searchField)
         if (sort) {
           this.popoverColumnAsc = sort.asc

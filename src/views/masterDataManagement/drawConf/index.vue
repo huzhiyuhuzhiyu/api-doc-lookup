@@ -64,6 +64,7 @@ export default {
 
       this.loading = true
       try {
+        if (listLoadKey !== this.listLoadKey) return; // 请求过期
         const res = await getPurPurchaseDrawingPage(this.listQuery);
         const {total, records} = res.data
         this.tableData = records;

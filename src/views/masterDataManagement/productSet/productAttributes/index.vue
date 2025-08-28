@@ -11,7 +11,7 @@
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="getbimProductAttributesFun()">刷新数据</el-dropdown-item>
+                <el-dropdown-item @click.native="getbimProductAttributesFun(true)">刷新数据</el-dropdown-item>
                 <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
                 <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
@@ -43,29 +43,7 @@
       </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent :rules="rules">
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="form.code" placeholder="请输入编码" clearable />
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="4">
-            <el-form-item>
-              <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="名称" clearable />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="form" :systemSearchView="systemSearchView" tableRef="dataTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
           <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'">
@@ -73,10 +51,7 @@
           </topOpts>
 
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
+
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -85,9 +60,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column customKey="JNPFTableKey_267317">
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column customKey="JNPFTableKey_267317" :listQuery="form" @queryChange="initData" :queryJson="superQueryJson">
           <el-table-column prop="name" label="名称" />
-          <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
+           <el-table-column prop="code" label="编码"> </el-table-column>
           <el-table-column prop="sortCode" label="排序" />
           <el-table-column prop="remark" label="备注" />
           <el-table-column label="操作" width="100" fixed="right">
@@ -101,14 +76,12 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize" @pagination="initData()" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData()" @close="closeForm" />
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+
     <!-- 导入产品 -->
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
@@ -138,16 +111,12 @@
 
 <script>
 import {
-  getBimProductAttributesInfo,
-  updataBimProductAttributes,
   delBimProductAttributes,
-  addBimProductAttributes,
   getbimProductAttributesList,
   getbimProductAttributes,
   uploadbimProductsModelList
 } from '@/api/masterDataManagement/index'
 import Form from './Form'
-import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import store from '@/store'
 
@@ -156,20 +125,35 @@ export default {
   components: { Form, SuperQuery },
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            // {
+            //   prop: 'createTime', // 属性*
+            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
+            //   symbol: 'between', // 比较符*
+            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+            //   fixed: true // 是否在搜索栏显示
+            // },
+            { prop: 'name', symbol: 'like', fixed: true },
+            { prop: 'code', symbol: 'like', fixed: true },
+          ],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+          {
+            asc: true,
+            column: 'sortCode'
+          }
+        ]
+        },
+      }],
       uploadVisib: false,
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'name',
-          label: '名称',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        }
-      ],
+      superQueryJson: [],
       title: '更多查询',
       background: true, //分页器背景颜色
       activeName: 'supplierPage',
@@ -182,19 +166,7 @@ export default {
       authorizeFormVisible: false,
       userRelationListVisible: false,
       organizeIdTree: [],
-      form: {
-        code: '',
-        name: '',
-        pageNum: 1,
-        pageSize: 20,
-        typeCode: '',
-        orderItems: [
-          {
-            asc: true,
-            column: 'sort_code'
-          }
-        ]
-      },
+      form: {},
 
       gradeList: [],
       defaultProps: {
@@ -219,7 +191,6 @@ export default {
   },
   created() {
     this.getbimProductAttributesFun()
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
     // 导入
@@ -336,12 +307,7 @@ export default {
       })
       return
     },
-    superQuerySearch(query) {
-      console.log(query,'ooo')
-      this.form.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
+
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },
@@ -350,14 +316,13 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
     // 获取左侧属性分类
-    getbimProductAttributesFun() {
+    getbimProductAttributesFun(refreshFlag) {
       getbimProductAttributes('575966014227880773').then((res) => {
-        console.log(res, 'iii')
         this.treeData = res.data.list
         this.$nextTick(() => {
           this.$refs.treeBox.setCurrentKey(this.treeData[0].enCode) // 默认选中节点第一个
           this.form.typeCode = this.treeData[0].enCode
-          this.initData()
+          if(refreshFlag) this.initData()
         })
       })
     },
@@ -376,51 +341,31 @@ export default {
       return data.fullName.indexOf(value) !== -1
     },
 
-    async initData() {
-      console.log(this.form)
+    async initData(listQuery) {
+      if (listQuery) this.form = listQuery;
+      if (!this.form?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
       this.listLoading = true
       await store.dispatch('base/getAttribute')
       getbimProductAttributesList(this.form)
         .then((res) => {
-          console.log('res++', res)
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
           this.visible = false
         })
         .catch(() => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.listLoading = false
         })
     },
-    search() {
-      this.form.pageNum = 1
-      this.initData()
-    },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
-      this.form = {
-        code: '',
-        name: '',
-        typeCode: this.treeData[0].enCode,
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: true,
-            column: 'sort_code'
-          }
-        ]
-      }
-      this.$refs.SuperQuery.conditionList = []
-      this.filterText = ''
 
-      this.search()
-    },
     handleNodeClick(data, node) {
-      console.log('请选择节点', node)
       this.form.typeCode = node.data.enCode
-      this.search()
+      this.initData()
     },
 
     addSupplier() {

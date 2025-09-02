@@ -5,8 +5,8 @@ import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
 import {getQuotationsendlist} from "@/api/salesManagement";
 import {getLocationList} from "@/api/warehouseManagement/inventory";
-import {getsaleOrderDetailList} from "@/api/salesManagement/assemblyOrders";
-import {getWarehouseInfo, getWarehouseList} from "@/api/basicData";
+import {getcategoryTrees, getsaleOrderDetailList} from "@/api/salesManagement/assemblyOrders";
+import {getCooperativeData, getWarehouseInfo, getWarehouseList} from "@/api/basicData";
 import {dataProcessor} from "./data";
 import {purPurchaseOrderdetail} from "@/api/purchasingAndOutsourcingOrders";
 import {getStockPlanPallet} from "@/api/PackagingPalletPlan";
@@ -43,6 +43,9 @@ export default {
         warehouseName: '',
         shelfSpaceId: '',
         shelfSpaceName: '',
+        cooperativePartnerName: '',
+        cooperativePartnerCode: '',
+        cooperativePartnerId: '',
         inspectionResults: '',
         orderDate: '',
         documentStatus: '',
@@ -113,8 +116,14 @@ export default {
         edit: updateWarehouseData,
         add: addWarehouseData,
       },
-
-      businessTypeConfig: {
+    }
+  },
+  computed: {
+    activeType() {
+      return this.btnType !== 'look'
+    },
+    businessTypeConfig() {
+      return {
         default: {
           api: null,
           showActions: {selectProduct: true, batchDelete: true},
@@ -125,7 +134,7 @@ export default {
         inbound_purchase: {
           api: {
             fetchLines: purPurchaseOrderdetail,
-            dataPath: 'purchaseOrderLineVOList',
+            dataPath: 'data.purchaseOrderLineVOList',
             filter: {
               classAttribute: this.classAttributeList
             },
@@ -170,12 +179,7 @@ export default {
             sourceType: 'notice'
           }
         },
-      },
-    }
-  },
-  computed: {
-    activeType() {
-      return this.btnType !== 'look'
+      }
     },
     businessConfig() {
       const defaultConfig = this.businessTypeConfig.default;
@@ -261,7 +265,6 @@ export default {
         if (!Array.isArray(lines)) {
           lines = [lines].filter(Boolean);
         }
-
         lines = dataProcessor.applyFilter(lines, config.filter);
         this.linesList = lines.map(item => ({
           ...(config.formatter ? config.formatter(item) : item)
@@ -327,6 +330,65 @@ export default {
           value: "",
           type: "input",
           render: ['inbound_purchase'].includes(this.businessType)
+        },
+        {
+          prop: "cooperativePartnerName",
+          label: "供应商名称",
+          value: "",
+          type: "custom",
+          customComponent: "ComSelect-page",
+          itemRules: [{required: true, trigger: "change"}],
+          title: '选择供应商',
+          treeTitle: '供应商分类',
+          renderTree: true,
+          multiple: false,
+          clearable: true,
+          methodArr: {method: getcategoryTrees, requestObj: {type: 'supplier'}},
+          listMethod: getCooperativeData,
+          tableItems: [
+            {prop: 'code', label: '供应商编码'},
+            {prop: 'name', label: '供应商名称'},
+            {prop: 'nameEn', label: '英文名称'},
+            {prop: 'taxId', label: '税号'}
+          ],
+          listRequestObj: {
+            code: '',
+            name: '',
+            type: 'supplier',
+            partnerCategoryId: '',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 'create_time'
+              }
+            ]
+          },
+          searchList: [
+            {prop: 'code', label: '供应商编码', type: 'input'},
+            {prop: 'name', label: '供应商名称', type: 'input'}
+          ],
+          change: (id, data) => {
+            // dom更新后重新校验此元素
+            this.$nextTick(() => {
+              this.$refs.dataForm.$refs.main.validateField('cooperativePartnerName');
+            });
+            this.dataForm.cooperativePartnerId = data[0].all.id;
+            this.dataForm.cooperativePartnerCode = data[0].all.code;
+            this.dataForm.cooperativePartnerName = data[0].all.name;
+          },
+          treeNodeClick: (data, node, listQuery) => {
+            if (listQuery.partnerCategoryId === data.id) return listQuery
+            listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+            listQuery.classAttribute = data.classAttribute
+            return listQuery
+          },
+          render: ['inbound_finished_package'].includes(this.businessType)
         },
         {
           prop: 'warehouseName',
@@ -506,7 +568,7 @@ export default {
           ],
           beforeSubmit: (data, paramsObj) => {
             const groupKey = paramsObj.scope.row.noticeLineId || paramsObj.scope.row.ordersLineId
-            if (this.productData.some(item => item.shelfSpaceId === data.id && (item.noticeLineId || item.ordersLineId) === groupKey)) {
+            if (this.linesList.some(item => item.shelfSpaceId === data.id && (item.noticeLineId || item.ordersLineId) === groupKey)) {
               this.$message.error('同一来源产品的入库库位不能重复！')
               return false
             }
@@ -554,12 +616,14 @@ export default {
           label: '每箱数量',
           type: 'view',
           minWidth: 140,
+          render: ['inbound_finished_package'].includes(this.businessType)
         },
         {
           prop: 'packagingMethod',
           label: '包装方式',
           type: 'view',
           minWidth: 170,
+          render: ['inbound_finished_package'].includes(this.businessType)
         },
         {
           prop: 'num',

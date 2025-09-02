@@ -328,7 +328,7 @@ export default {
           label: '创建人',
           minWidth: 100,
         },
-        { prop: 'procurePeople', label: '请购人', minWidth: 140 ,show: () => this.isQH },
+        { prop: 'procurePeople', label: '请购人', minWidth: 140 },
         {
           prop: 'documentStatus',
           label: '单据状态',

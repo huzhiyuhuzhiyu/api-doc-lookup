@@ -682,6 +682,7 @@ export function formatListQuery(queryConfigData) {
     }
     if (Array.isArray(item.fieldValue)) item.fieldValue = item.fieldValue.join(',')
     if (typeof item.fieldValue === 'boolean') item.fieldValue = item.fieldValue ? 1 : 0
+    if (['in', 'notIn'].includes(item.symbol)) item.fieldValue = item.fieldValue.replace('，', ',')
     return { // 只保留有用内容，便于阅读
       field: item.field,
       symbol: item.symbol,

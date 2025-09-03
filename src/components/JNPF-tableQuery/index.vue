@@ -75,17 +75,17 @@
               <!-- 输入框 -->
               <template v-if="queryProps.type === 'input'">
                 <el-input v-model="queryProps.tempFieldValue" @keyup.enter.native="search"
-                  v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, maxlength: 50, clearable: true, ...fieldCache[queryProps.field] }" />
+                  v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, maxlength: 100, clearable: true, ...fieldCache[queryProps.field] }" />
               </template>
               <!-- 输入框-数值 -->
               <template v-else-if="queryProps.type === 'number'">
                 <el-input v-model.number="queryProps.tempFieldValue" @keyup.enter.native="search"
-                  v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, maxlength: 50, clearable: true, ...fieldCache[queryProps.field] }" />
+                  v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, maxlength: 100, clearable: true, ...fieldCache[queryProps.field] }" />
               </template>
               <!-- 下拉选择器 -->
               <template v-else-if="queryProps.type === 'select'">
                 <el-select v-model="queryProps.tempFieldValue" @change="search"
-                  v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, clearable: true, multiple: queryProps.symbol === 'in',
+                  v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, clearable: true, multiple: ['in', 'notIn'].includes(queryProps.symbol),
                     collapseTags: true, ...fieldCache[queryProps.field]}">
                   <el-option v-for="(o, i) in queryProps.options" :key="i" v-bind="o"></el-option>
                 </el-select>
@@ -111,7 +111,7 @@
                   })()
                 }">
                   <template slot="sidebar">
-                    <el-tooltip placement="top">
+                    <el-tooltip placement="top" v-if="fieldCache[queryProps.field].valueFormat.includes('yyyy')">
                       <el-switch v-model="queryProps.timeOffset" active-text="动态" inactive-text=""></el-switch>
                       <div slot="content" v-html="genTooltip(queryProps)"></div>
                     </el-tooltip>
@@ -170,7 +170,7 @@
  */
 import { getAdvancedQueryList, Delete, Create, Update } from '@/api/system/advancedQuery'
 import HandleViewDialog from './HandleViewDialog.vue'
-import { symbolOptions, getQueryProps, getDateDiff, genTooltip, symbolToText } from '@/components/JNPF-table/data'
+import { getQueryProps, genTooltip, symbolToText } from '@/components/JNPF-table/data'
 import ContextMenu from './ContextMenu.vue'
 import ElDatePickerPro from '@/components/element-ui-pro/date-picker.js'
 import HandleKeywordSetting from './HandleKeywordSetting.vue'
@@ -202,6 +202,7 @@ export default {
     return {
       genTooltip,
       symbolToText,
+      initTimeouter: null,
       selectValue: null,
       lastSelectValue: null, // 最后一次选择的视图
       oldSelectValue: null, // 最后一次的上一次选择的视图
@@ -263,6 +264,7 @@ export default {
     this.getParentTableRef()
   },
   beforeDestroy() {
+    clearTimeout(this.initTimeouter)
     if (this.parentTableRef.$refs) {
       this.parentTableRef.$off('columnChange', this.getParentTableRef)
     }
@@ -320,7 +322,7 @@ export default {
       if (this.parentTableRef.$refs) {
         this.parentTableRef.$off('columnChange', this.getParentTableRef)
       }
-      setTimeout(async () => {
+      this.initTimeouter = setTimeout(async () => {
         this.parentTableRef = this.jnpf.deepGetParentValue(this, this.tableRef, '$refs') || {}
         if (this.parentTableRef.$refs) {
           this.parentTableRef.$on('columnChange', this.getParentTableRef) // 表格列改变时重新获取表格信息
@@ -454,7 +456,6 @@ export default {
       this.superQuery.condition = condition || []
       this.orderItems = orderItems || []
       this.keywordQuery = keywordQuery || { keywordFlag: false, keyword: '', fieldList: [] }
-      this.keywordQuery.fieldList = this.filterKeywordQueryFieldList(this.keywordQuery.fieldList)
       this.pageSize = pageSize
       // console.log('selectPlan', this.superQuery.condition);
       this.query()
@@ -711,14 +712,6 @@ export default {
           this.$message.warning('请先设置关键词关联属性！')
         })
       }
-    },
-    // 过滤掉关联属性中不存在于table的字段
-    filterKeywordQueryFieldList(fieldList) {
-      if (!this.parentTableRef.$refs || !fieldList.length) return []
-      return fieldList.filter(item => {
-        const target = this.parentTableRef.columnList.find(column => column.prop === item)
-        return !!target
-      })
     },
     checkValueEffect(queryProps) {
       // console.log('checkValueEffect', structuredClone(queryProps), !!queryProps.tempFieldValue)

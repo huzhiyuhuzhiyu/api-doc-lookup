@@ -20,11 +20,11 @@
         </div>
         <div class="filter-row">
           <el-select v-model="filterSymbol" size="small" style="width: 100%;" placeholder="请选择比较符" @change="filterSymbolChange">
-            <el-option v-for="item in symbolOptions" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="item in effectSymbolOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
-        <div>
+        <div :key="filterSymbol">
           <!-- 未选择比较符 -->
           <template v-if="!filterSymbol">
             <el-input value="" placeholder="" disabled />
@@ -36,17 +36,19 @@
           </template>
           <!-- 输入框 -->
           <template v-else-if="queryProps.type === 'input'">
-            <el-input v-model="filterValue" v-bind="{ placeholder: `请输入`, maxlength: 50, clearable: true }" />
+            <el-input v-model="filterValue" v-bind="{ placeholder: `请输入${['in', 'notIn'].includes(filterSymbol)?'（多条内容用逗号分隔）' : ''}`, maxlength: 100, clearable: true }"
+              @keyup.enter.native="confirmFilter"
+            />
           </template>
           <!-- 输入框-数值 -->
           <template v-else-if="queryProps.type === 'number'">
             <el-input v-model.number="filterValue"
-              v-bind="{ placeholder: `请输入`, maxlength: 50, clearable: true, ...fieldCache }" />
+              v-bind="{ placeholder: `请输入`, maxlength: 100, clearable: true, ...fieldCache }" @keyup.enter.native="confirmFilter" />
           </template>
           <!-- 下拉选择器 -->
           <template v-else-if="queryProps.type === 'select'">
             <el-select v-model="filterValue"
-              v-bind="{ placeholder: `请选择`, clearable: true, multiple: filterSymbol === 'in', ...fieldCache }">
+              v-bind="{ placeholder: `请选择`, clearable: true, multiple: ['in', 'notIn'].includes(filterSymbol), ...fieldCache }">
               <el-option v-for="(o, i) in queryProps.options" :key="i" v-bind="o"></el-option>
             </el-select>
           </template>
@@ -71,7 +73,7 @@
               })()
             }">
               <template slot="sidebar">
-                <el-tooltip placement="top">
+                <el-tooltip placement="top" v-if="fieldCache.valueFormat.includes('yyyy')">
                   <el-switch v-model="timeOffset" active-text="动态" inactive-text=""></el-switch>
                   <div slot="content" v-html="genTooltip({ ...queryProps, tempFieldValue: filterValue, symbol: filterSymbol })"></div>
                 </el-tooltip>
@@ -136,12 +138,13 @@ export default {
   },
   computed: {
     currentSortField() {
-      return getSortProp(this.columnProps, this.popoverColumn)
+      return getSortProp(this.columnProps, this.popoverColumn, { tranToUnderline: this.$parent.tranToUnderline })
     },
-    symbolOptions() {
+    effectSymbolOptions() {
       // 寄存属性
       this.fieldCache = this.queryProps
-      const result = symbolOptions.filter(item => item.effectType.includes(this.queryProps.type))
+      let result = symbolOptions.filter(item => item.effectType.includes(this.queryProps.type))
+      if (this.queryProps.customEffectType && Array.isArray(this.queryProps.customEffectType)) result = result.filter(option => this.queryProps.customEffectType.includes(option.value))
       if (result.length === 1) this.filterSymbol = result[0].value
       return result
     },
@@ -163,7 +166,7 @@ export default {
   methods: {
     updateStatus() {
       if (this.listQuery && Array.isArray(this.listQuery.orderItems)) {
-        const searchField = getSortProp(this.columnProps, this.popoverColumn)
+        const searchField = getSortProp(this.columnProps, this.popoverColumn, { tranToUnderline: this.$parent.tranToUnderline })
         const sort = this.listQuery.orderItems.find(item => item.column === searchField)
         if (sort) {
           this.popoverColumnAsc = sort.asc
@@ -192,7 +195,7 @@ export default {
         listQuery.orderItems = []
       }
 
-      const sortField = getSortProp(this.columnProps, this.popoverColumn)
+      const sortField = getSortProp(this.columnProps, this.popoverColumn, { tranToUnderline: this.$parent.tranToUnderline })
 
       const existingSortIndex = listQuery.orderItems.findIndex(item => item.column === sortField)
 
@@ -268,8 +271,15 @@ export default {
       }
     },
     filterSymbolChange(val) {
-      if (['in', 'between'].includes(val) && !this.filterValue) this.filterValue = []
-      else if (typeof this.filterValue === 'object') this.filterValue = ''
+      if (['in', 'notIn'].includes(val) && this.queryProps.type === 'select') {
+        if (!this.filterValue || !Array.isArray(this.filterValue)) this.filterValue = []
+      } else if (['between'].includes(val)) {
+        if (!this.filterValue || !Array.isArray(this.filterValue)) this.filterValue = []
+      } else if (['empty'].includes(val)) {
+        if (typeof this.filterValue !== 'boolean') this.filterValue = null
+      } else {
+        if (Array.isArray(this.filterValue)) this.filterValue = ''
+      }
     }
   }
 }

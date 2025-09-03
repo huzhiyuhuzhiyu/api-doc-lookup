@@ -6,22 +6,6 @@ export const symbolOptions = Object.freeze([{
   value: '==',
   effectType: ['input', 'number', 'select', 'date', 'datetime']
 }, {
-  label: '大于等于',
-  value: '>=',
-  effectType: ['number', 'date', 'datetime']
-}, {
-  label: '大于',
-  value: '>',
-  effectType: ['number', 'date', 'datetime']
-}, {
-  label: '小于等于',
-  value: '<=',
-  effectType: ['number', 'date', 'datetime']
-}, {
-  label: '小于',
-  value: '<',
-  effectType: ['number', 'date', 'datetime']
-}, {
   label: '不等于',
   value: '<>',
   effectType: ['input', 'number', 'select', 'date', 'datetime']
@@ -34,13 +18,33 @@ export const symbolOptions = Object.freeze([{
   value: 'notLike',
   effectType: ['input']
 }, {
+  label: '存在于',
+  value: 'in',
+  effectType: ['input', 'select']
+}, {
+  label: '不存在于',
+  value: 'notIn',
+  effectType: ['input', 'select']
+}, {
+  label: '大于',
+  value: '>',
+  effectType: ['number', 'date', 'datetime']
+}, {
+  label: '小于',
+  value: '<',
+  effectType: ['number', 'date', 'datetime']
+}, {
+  label: '大于等于',
+  value: '>=',
+  effectType: ['number', 'date', 'datetime']
+}, {
+  label: '小于等于',
+  value: '<=',
+  effectType: ['number', 'date', 'datetime']
+}, {
   label: '介于',
   value: 'between',
   effectType: ['date', 'datetime']
-}, {
-  label: '存在于',
-  value: 'in',
-  effectType: ['select']
 }, {
   label: '是否为空',
   value: 'empty',
@@ -90,11 +94,6 @@ export const getQueryProps = (column, queryJson = []) => {
         value: Number(item.enCode)
       }))
     }
-  } else if (column.label === '所属项目') {
-    props = {
-      type: 'select',
-      options: store.getters.abProjectData.abProjectList
-    }
   } else if (column.label.includes('是否')) {
     props = {
       type: 'select',
@@ -107,7 +106,14 @@ export const getQueryProps = (column, queryJson = []) => {
   } else if ([
     '创建人',
     '修改人',
+  ].some(str => column.label.includes(str))) {
+    props = {
+      type: 'input',
+      customEffectType: true // 指定可以使用的symbol(如['like'])；true代表允许全部symbol；设定后不允许列入关键词搜索。
+    }
+  } else if ([
     '请购人',
+    '撤回人',
     '国家',
     '省',
     '市',
@@ -130,12 +136,14 @@ export const getQueryProps = (column, queryJson = []) => {
  * @param {string} popoverColumn - 列名
  * @returns {string} 返回排序字段
  */
-export const getSortProp = (column, popoverColumn) => {
-  if (['国家', '省', '市', '区'].includes(column.label)) return null // 通配
-  if (popoverColumn === 'createByName') return 'create_by' // 通配
-  return popoverColumn
+export const getSortProp = (column, popoverColumn, options = {}) => {
   if (column.hasOwnProperty('sortProp') && column.sortProp !== undefined) return column.sortProp
-  return popoverColumn.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase()) // 进行驼峰转下划线转换
+  if (['国家', '省', '市', '区'].includes(column.label)) return null // 通配
+  if (['createByName', 'revokeByName'].includes(popoverColumn)) return popoverColumn.replace('ByName', 'By') // 通配
+  if (options.tranToUnderline) {
+    return popoverColumn.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase()) // 进行驼峰转下划线转换
+  }
+  return popoverColumn
 }
 
 /**
@@ -207,7 +215,7 @@ export const genTooltip = (queryProps) => {
   const { type, tempFieldValue } = queryProps;
 
   // 处理空值或无效值
-  if (!tempFieldValue) {
+  if (Array.isArray(tempFieldValue) ? !tempFieldValue.length : !tempFieldValue) {
     return '根据方案更新时间随实际查询时刻偏移';
   }
 

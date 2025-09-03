@@ -60,10 +60,15 @@ export default {
     options() {
       let result = this.columnList.map(column => {
         const queryProps = getQueryProps(column, this.queryJson)
+        const disabled = (() => {
+          if (queryProps.customEffectType) return true
+          // if (queryProps.customEffectType) return !queryProps.customEffectType.includes('like')
+          return queryProps.type !== 'input'
+        })()
         return {
           label: column.label,
           value: column.prop,
-          disabled: queryProps.type !== 'input'
+          disabled
         }
       });
       // return result;

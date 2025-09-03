@@ -40,12 +40,16 @@
       @queryChange="queryChange" :listQuery="listQuery" :columnProps="currentColumnProps"
       :queryJson="queryJson" @close="closePopover" ref="popoverCard"
     />
+    <SortSettings v-if="sortDrawerVisible" ref="sortSettings" @queryChange="queryChange"
+      :columns="columns" :listQuery="listQuery"
+    />
   </div>
 </template>
 
 <script>
 import JnpfTableColumn from './Column'
 import ColumnSettings from './ColumnSettings'
+import SortSettings from './SortSettings'
 import Sortable from 'sortablejs'
 import { deepClone, getPromise } from '@/utils'
 import { saveWebCache } from '@/api/system/system'
@@ -54,7 +58,7 @@ import { getSortProp } from '@/components/JNPF-table/data'
 
 export default {
   name: 'JNPF-table',
-  components: { JnpfTableColumn, ColumnSettings, PopoverCard },
+  components: { JnpfTableColumn, ColumnSettings, PopoverCard, SortSettings },
   props: {
     data: {
       type: Array,
@@ -140,7 +144,11 @@ export default {
         return row.hasOwnProperty('unDraggable') ? row.unDraggable : 'draggable-header'
       }
     },
-
+    // 是否给未指定sortProp的列排序时将驼峰转换为下划线
+    tranToUnderline: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -149,6 +157,7 @@ export default {
       columns: [],
       defaultColumns: [],
       drawerVisible: false,
+      sortDrawerVisible: false,
       tableKey: 0,
       headerCellStyle: {
         backgroundColor: '#f5f7fa',
@@ -367,7 +376,7 @@ export default {
               let sortIcon = null
               if (this.listQuery.orderItems && Array.isArray(this.listQuery.orderItems)) {
                 // 优先使用 sortProp，如果没有则使用 prop
-                const sortProp = getSortProp(child.data.attrs || {}, childPropsData.prop)
+                const sortProp = getSortProp(child.data.attrs || {}, childPropsData.prop, { tranToUnderline: this.tranToUnderline })
                 const sort = this.listQuery.orderItems.find(sortItem => sortItem.column === sortProp)
                 if (sort) {
                   sortIcon = h('span', { class: 'el-button--text', style: { marginLeft: '4px', fontSize: '12px' } }, sort.asc ? '▲' : '▼')
@@ -684,7 +693,7 @@ export default {
           result.left = leftPosition + 'px';
         }
 
-        console.log('Popover style:', result);
+        // console.log('Popover style:', result);
         return result;
       })()
 
@@ -724,7 +733,7 @@ export default {
           if (this.columns.some(child => {
             let childPropsData = child.componentOptions?.propsData
             if (!childPropsData || childPropsData.label === '操作') return false
-            const sortProp = getSortProp(child.data.attrs || {}, item.column)
+            const sortProp = getSortProp(child.data.attrs || {}, item.column, { tranToUnderline: this.tranToUnderline })
             return sortProp === item.column
           })) {
             result.push(item)
@@ -734,7 +743,17 @@ export default {
           return result
         }, [])
       }
+      // 过滤掉keywordQuery关联属性中不存在于table的字段
+      if (listQuery.keywordQuery && listQuery.keywordQuery.fieldList?.length) {
+        listQuery.keywordQuery.fieldList = listQuery.keywordQuery.fieldList.filter(item => this.columnList.find(column => column.prop === item))
+      }
       this.$emit('queryChange', listQuery)
+    },
+    showSortDrawer() {
+      this.sortDrawerVisible = true
+      this.$nextTick(() => {
+        this.$refs.sortSettings.init(this.columnList, this.columns)
+      })
     },
     // headerRowStyle({ row, rowIndex }) {
     //   console.log(row, rowIndex)

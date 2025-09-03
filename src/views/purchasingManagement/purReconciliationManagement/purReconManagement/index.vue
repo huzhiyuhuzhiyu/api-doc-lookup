@@ -1,48 +1,9 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-
-          <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 5 : 3">
-              <el-form-item>
-                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                  @keyup.enter.native="search('basic')" />
-
-                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                  clearable>
-                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                    :value="item2.value"></el-option>
-                </el-select>
-                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                  :type="item.dateType"
-                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </template>
-          <el-col :span="5">
-            <el-form-item>
-
-                <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="单据开始日期" end-placeholder="单据结束日期"></el-date-picker>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="tableForm" />
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
-          <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购对账</el-button>
             <el-button size="mini" type="primary" @click="updateCheckStatusFun()">更新核对状态</el-button>
@@ -52,10 +13,6 @@
             </el-button>
           </div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -64,41 +21,36 @@
             </el-tooltip>
           </div>
         </div>
-
-        <JNPF-table v-if="tableFlag" @selection-change="handeleProductInfoData" hasC highlight-current-row
-          :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
-          :setColumnDisplayList="columnList" :checkSelectable="checkSelectable" customKey="JNPFTableKey_472519">
-          <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
-          <el-table-column prop="purchaseOrderNo" label="采购订单号" min-width="240" sortable="custom" >
+        <JNPF-table @selection-change="handeleProductInfoData" hasC highlight-current-row
+          :fixedNO="true" ref="tableForm" :data="tableDataList" custom-column
+          :setColumnDisplayList="columnList" :checkSelectable="checkSelectable" customKey="JNPFTableKey_472519" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          <el-table-column prop="orderNo" label="出入库单号" min-width="240" />
+          <el-table-column prop="purchaseOrderNo" label="采购订单号" min-width="240" >
              <template slot-scope="scope">
               <el-link type="primary" @click.native="orderDetailFun(scope.row.ordersId, 'look')">
                 {{ scope.row.purchaseOrderNo }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="purchaseNoticeNo" label="采购通知单号" min-width="240" sortable="custom" >
+          <el-table-column prop="purchaseNoticeNo" label="采购通知单号" min-width="240" >
              <template slot-scope="scope">
               <el-link type="primary" @click.native="deliveryNoteDetailFun(scope.row,'look')">
                 {{ scope.row.purchaseNoticeNo }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="供应商名称" min-width="180" sortable="custom" />
-          <el-table-column prop="partnerCode" label="供应商编码" min-width="180" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-            show-overflow-tooltip></el-table-column>
-          <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="businessType" label="收/退货类型" width="140" sortable="custom">
+          <el-table-column prop="partnerName" label="供应商名称" min-width="180" />
+          <el-table-column prop="partnerCode" label="供应商编码" min-width="180"/>
+          <el-table-column prop="productCode" label="产品编码" min-width="180"/>
+          <el-table-column prop="productName" label="产品名称" width="160" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="drawingNo" label="品名规格" min-width="180" />
+          <el-table-column prop="businessType" label="收/退货类型" width="140">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'outbound_purchase'">退货</div>
               <div v-else-if="scope.row.businessType == 'inbound_purchase'">收货</div>
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-            :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-          <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+          <el-table-column prop="mainUnit" label="单位" />
           <el-table-column prop="num" label="出入库数量" width="120" >
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'inbound_purchase'" style="color: #67C23A">
@@ -125,15 +77,15 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="checkStatus" label="核对状态" min-width="140" sortable="custom"
+          <el-table-column prop="checkStatus" label="核对状态" min-width="140"
               :showOverflowTooltip="false" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.checkStatus == 'unchecked'"><el-tag type="warning">未核对</el-tag> </div>
                 <div v-if="scope.row.checkStatus == 'checked'"><el-tag type="success">已核对</el-tag></div>
               </template>
             </el-table-column>
-          <el-table-column prop="stockMoveOrderDate" label="单据日期" min-width="180" sortable="custom" />
-          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column prop="stockMoveOrderDate" label="单据日期" min-width="180" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" />
           <!-- <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
               <el-table-column label="操作" width="240" fixed="right">
               <template slot-scope="scope">
@@ -143,7 +95,7 @@
               </el-table-column> -->
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-          :limit.sync="listQuery.pageSize" @pagination="initData" >
+          :limit.sync="listQuery.pageSize" @pagination="initData()" >
           <div class="text">
             <span>合计：</span>
             <span style="margin-left: 10px">入库数量：{{ InTotalNum }}</span>
@@ -154,15 +106,11 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <orderDetailForm v-if="orderVisible" ref="orderRef" @close="closeFun"></orderDetailForm>
     <deliveryNoteDetailForm v-if="deliveryNoteVisible" ref="deliveryNoteRef" @close="closeFun"></deliveryNoteDetailForm>
     <purchaseTH v-if="purchaseTHVisible" ref="purchaseTHRef" @close="closeFun"></purchaseTH>
-    
+
   </div>
 </template>
 
@@ -173,7 +121,6 @@ import {updateCheckStatusApi} from '@/api/purchasingManagement/purchaseInquirySh
 
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
-import moment from 'moment'
 import { excelExport } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -187,57 +134,64 @@ export default {
   name: 'purReconManagement',
   components: { JNPFForm, ExportForm, SuperQuery,orderDetailForm,deliveryNoteDetailForm,purchaseTH },
   mixins: [getProjectList],
+  props: {
+    source: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
-      purchaseTHVisible:false,
-      orderVisible:false,
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [
+            {
+              prop: 'orderNo',
+              symbol: 'like',
+              fixed: true
+            },
+            {
+              prop: 'partnerName',
+              symbol: 'like',
+              fixed: true
+            },
+            {
+              prop: 'checkStatus',
+              symbol: '==',
+              fixed: true
+            },
+            {
+              prop: 'stockMoveOrderDate', // 属性*
+              symbol: 'between', // 比较符*
+              timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+              fixed: true // 是否在搜索栏显示
+            },
+          ],
+          keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
+        },
+      }],
+      purchaseTHVisible: false,
+      orderVisible: false,
       deliveryNoteVisible:false,
-      isProjectSwitch: '',
-      isProductNameSwitch: '',
-      tableDataFlag: false,
-      isDeputyUnitSwitch: '',
-      tableFlag: false,
-      basicQuery: {},
-      superQuery: {},
-      searchList: [
-        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: '==', searchType: 4, width: 120,options: [
-            { label: "未核对", value: "unchecked" },
-            { label: "已核对", value: "checked" }, 
-          ] },
-         
-      ],
-      superForm: {},
-      columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
-      superQueryVisible: false,
+      columnList: [],
       title: '更多查询',
       exportFormVisible: false,
       background: true, //分页器背景颜色
-      visible: false,
       tableDataList: [],
       formVisible: false,
       listLoading: false,
       listQuery: {
-        checkStatus:"",
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'createTime'
-          }
-        ],
-        endTime: '',
-        orderNo: '',
-        pageNum: 1,
-        pageSize: 20,
-        partnerName: '',
-        startTime: '',
+        source: this.source,
         businessType: 'purchase_delivery_return',
-        superQuery: {}
       },
       receiptReturnTypeList: [
         {
@@ -249,7 +203,6 @@ export default {
           value: 'inbound_purchase'
         }
       ],
-      createRequirementDate: [],
       deliveryDate: [],
       selectData: [], // 选中的数据 带到form页
       total: 0,
@@ -257,134 +210,21 @@ export default {
       InTotalNum:0,
       outTotalNum:0,
       totalTotalAmount: 0,
-      formVisible: false,
-      superQueryJson: [
-        {
-          prop: 'orderNo',
-          label: '出入库单号',
-          type: 'input'
-        },
-        {
-          prop: 'partnerName',
-          label: '供应商名称',
-          type: 'input'
-        },
-        {
-          prop: 'partnerCode',
-          label: '供应商编码',
-          type: 'input'
-        },
-        {
-          prop: 'productCode',
-          label: '产品编码',
-          type: 'input'
-        },
-        {
-          prop: 'productDrawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
-          prop: 'mainUnit',
-          label: '单位',
-          type: 'input'
-        },
-        {
-          prop: 'num',
-          label: '出入库数量',
-          type: 'input'
-        },
-        {
-          prop: 'price',
-          label: '单价(含税)',
-          type: 'input'
-        },
-        {
-          prop: 'taxRate',
-          label: '税率(%)',
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: '金额',
-          type: 'input'
-        },
-        
-        {
-          prop: 'stockMoveOrderDate',
-          label: '单据日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-         {
-          prop: 'checkStatus',
-          label: "核对状态",
-          type: 'select',
-
-          options: [
-            { label: "未核对", value: "unchecked" },
-            { label: "已核对", value: "checked" }, 
-          ]
-
-        },
-          
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'datetimerange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '创建开始时间',
-          endPlaceholder: '创建结束时间',
-          pickerOptions: this.global.timePickerOptions
-        },
-
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        }
-      ]
+      superQueryJson: [{
+        prop: 'checkStatus',
+        label: "核对状态",
+        type: 'select',
+        options: [{
+          label: "未核对",
+          value: "unchecked"
+        }, {
+          label: "已核对",
+          value: "checked"
+        }]
+      }]
     }
   },
-  async created() {
-    await this.getDeputyUnit()
-    await this.getProjectSwitch('system', 'project')
-    await this.getProductNameSwitch('product', 'enable_productName')
-    if (this.isDeputyUnitSwitch === '1') {
-      this.superQueryJson.forEach(item => {
-        if (item.prop === 'mainUnit') {
-          item.label = '单位(主)'
-        }
-      })
-      this.superQueryJson.splice(6, 0, {
-        prop: 'deputyUnit',
-        label: '单位(副)',
-        type: 'input'
-      })
-
-    }
-
-    if (this.isProductNameSwitch === '1') {
-      this.searchList.splice(2,0,{
-        field: 'productName',
-        fieldValue: '',
-        label: '产品名称',
-        symbol: 'like',
-        searchType: 1,
-        width: 120
-      })
-      this.superQueryJson.splice(3, 0, {
-        prop: 'productName',
-        label: '产品名称',
-        type: 'input'
-      })
-    }
-
-    this.initData()
-  },
+  async created() {},
   methods: {
     updateCheckStatusFun(){
       if(!this.selectData.length) return this.$message.error("请选择您要更新的数据！")
@@ -420,7 +260,7 @@ export default {
     },
     deliveryNoteDetailFun(row,type){
       if(row.documentType=='inbound'){
-        
+
         this.deliveryNoteVisible=true
          this.$nextTick(() => {
             this.$refs.deliveryNoteRef.init(row.noticeId, type, false, [])
@@ -429,28 +269,10 @@ export default {
         this.purchaseTHVisible=true
         this.$nextTick(() => {
             this.$refs.purchaseTHRef.init(row.noticeId, type, false, 'outInboundWarehouse')
-        })  
+        })
       }
     },
-    async getProductNameSwitch(code, type) {
-      try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
-    },
-    getDeputyUnit() {
-      let obj = {
-        businessCode: 'deputyUnit',
-        configKey: `procureDeputyUnit`
-      }
-      getBimBusinessDetail(obj).then((res) => {
-        this.isDeputyUnitSwitch = res.data.configValue1
-      })
-    },
-    superQuerySearch(query) {
-      this.superQuery = query
-      this.superQueryVisible = false
-      this.search('super')
-    },
+
     exportType(data, ref) {
       if (data.length) {
         this.exportFormVisible = true
@@ -512,13 +334,13 @@ export default {
       this.selectData = val
       function calculateTotalValue(arr) {
         return arr.reduce((sum, item) => {
-          const value = Number(item.totalAmount); // 将 value 转换为数字  
+          const value = Number(item.totalAmount); // 将 value 转换为数字
           if (item.businessType === 'inbound_purchase') {
-            return sum + value;  // 对于 '正', 加上 value  
+            return sum + value;  // 对于 '正', 加上 value
           } else if (item.businessType === 'outbound_purchase') {
-            return sum - value;   // 对于 '负', 减去 value  
+            return sum - value;   // 对于 '负', 减去 value
           }
-          return sum;  // 默认情况，无需改变 sum  
+          return sum;  // 默认情况，无需改变 sum
         }, 0);
       }
       function calculateSum(data, type) {
@@ -528,28 +350,7 @@ export default {
       }
       this.InTotalNum = calculateSum(this.selectData, 'inbound_purchase')
       this.outTotalNum = calculateSum(this.selectData, 'outbound_purchase')
-      // this.totalNum = this.selectData.reduce((sum, e) => sum + Number(e.num || 0), 0)
       this.totalTotalAmount = calculateTotalValue(this.selectData)
-    },
-    moreQueries() {
-      this.visible = true
-    },
-    sortChange({ prop, order }) {
-      let newProp
-      if (
-        prop === 'partnerName' ||
-        prop === 'partnerCode' ||
-        prop === 'productCode' ||
-        prop === 'createTime' ||
-        prop === 'createByName'
-      ) {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order !== 'descending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
     },
 
     // 关闭新建、编辑页面
@@ -561,127 +362,30 @@ export default {
     },
     refresh() {
       this.formVisible = false
-      this.reset()
+      this.initData()
     },
 
-    initData() {
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
       this.listLoading = true
-      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] 
-        this.listQuery.endTime = this.createRequirementDate[1]
-      } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
-      }
-      this.superForm = this.listQuery
-      getsalefinAccountList(this.superForm)
+      getsalefinAccountList(this.listQuery)
         .then((res) => {
-          console.log(res, '采购发/退货列表')
           res.data.records.forEach((item) => {
-            // if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
-            //   item.disabled = true
-            // } else {
-            //   item.disabled = fals
-            // }
             item.excludingTaxAmount = this.jnpf.numberFormat(item.actualQuantity * item.price)
           })
 
           this.tableDataList = res.data.records
-          this.tableFlag = true
-          console.log('this.tableDataList ', this.tableDataList)
           this.total = res.data.total
           this.listLoading = false
-          this.visible = false
         })
         .catch(() => {
           this.listLoading = false
         })
     },
-    search(type) {
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
-      if (type === 'basic') {
-        this.basicQuery = {
-          matchLogic: 'AND',
-          condition: this.searchList
-            .filter((item) => item.fieldValue)
-            .map((item) => {
-              return {
-                ...item,
-                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-              }
-            })
-        }
-        this.superForm.superQuery = this.basicQuery
-      }
-      if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
-      }
-      this.initData()
-    },
-    reset() {
-      this.$refs['tableForm'].$refs.JNPFTable.clearSort()
-
-      this.listQuery = {
-        checkStatus:"",
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'createTime'
-          }
-        ],
-        endTime: '',
-        orderNo: '',
-        pageNum: 1,
-        pageSize: 20,
-        partnerName: '',
-        startTime: '',
-        businessType: 'purchase_delivery_return',
-        superQuery: {}
-      }
-      this.createRequirementDate = []
-      this.deliveryDate = []
-      this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-           { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: '==', searchType: 4, width: 120,options: [
-            { label: "未核对", value: "unchecked" },
-            { label: "已核对", value: "checked" }, 
-          ] },
-      ]
-         if (this.isProductNameSwitch === '1') {
-      this.searchList.splice(2,0,{
-        field: 'productName',
-        fieldValue: '',
-        label: '产品名称',
-        symbol: 'like',
-        searchType: 1,
-        width: 120
-      })
-      this.superQueryJson.splice(3, 0, {
-        prop: 'productName',
-        label: '产品名称',
-        type: 'input'
-      })
-    }
-      this.superForm = JSON.parse(JSON.stringify(this.listQuery))
-      this.$refs.SuperQuery.conditionList = []
-      this.search('basic')
-    },
-    // addSupplier(id, type) {
-    //   this.formVisible = true
-    //   this.$nextTick(() => {
-    //     this.$refs.JNPFForm.init(id, type)
-    //   })
-    // },
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle() {
       if (this.selectData.length === 0) {
@@ -691,14 +395,12 @@ export default {
           duration: 1500
         })
       } else {
-        // console.log(this.$refs);
-        console.log(this.selectData, 'this.selectData')
         let firstCode = this.selectData[0].partnerCode
         let allCode = this.selectData.every((obj) => obj.partnerCode === firstCode)
         if (allCode) {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.procureForm.init(this.selectData)
+            this.$refs.procureForm.init(this.selectData, this.source)
           })
         } else {
           this.$message.error('请选择供应商相同的通知单!')

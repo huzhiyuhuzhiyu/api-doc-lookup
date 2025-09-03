@@ -1,50 +1,15 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4">
-              <el-form-item>
-                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                  @keyup.enter.native="search('basic')" />
-
-                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                  clearable>
-                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                    :value="item2.value"></el-option>
-                </el-select>
-                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                  :type="item.dateType"
-                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </template>
-          <el-col :span="4">
-            <el-form-item>
-              <el-date-picker v-model="reconciliationDate" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="对账开始日期" end-placeholder="对账结束日期"></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="tableForm" />
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div></div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                  @click="$refs.tableForm.showSortDrawer()" />
+              </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -54,19 +19,16 @@
           </div>
         </div>
 
-        <JNPF-table v-loading="listLoading" highlight-current-row ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_289243">
-          <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
+        <JNPF-table v-loading="listLoading" highlight-current-row ref="tableForm" :data="tableDataList" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_289243" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          <el-table-column prop="orderNo" label="对账单号" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
                 {{ scope.row.orderNo }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="reconciliationDate" label="对账日期" width="120" sortable="custom" />
-
-          <!-- <el-table-column prop="orderNo" label="对账单号" width="180" sortable="custom" /> -->
-          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="200" sortable="custom" />
+          <el-table-column prop="reconciliationDate" label="对账日期" width="120" />
+          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="200" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="200" />
           <el-table-column prop="excludingTaxAmount" label="不含税总金额" width="140">
             <template slot-scope="scope">
@@ -124,7 +86,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" min-width="120"
+          <el-table-column prop="approvalStatus" label="审批状态" align="center" min-width="120"
             v-if="showAppCodeFlag">
             <template slot-scope="scope">
               <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag></div>
@@ -136,10 +98,8 @@
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="180" />
-          <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
+          <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="createByName" label="创建人" width="80" />
-
-
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <!-- <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
@@ -174,37 +134,15 @@
               <el-button v-else type="text" size="mini" @click.native="handleUserRelation(scope.row.id, 'look')">
                 查看详情
               </el-button>
-              <!-- </tableOpts> -->
-
-              <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
-              <el-button type="text" @click="handleDel(scope.row.id, scope.row.parentId)"
-                style=" color: #ff3a3a">删除</el-button> -->
-              <!-- <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id, scope.row.parentId)" />
-              <el-dropdown hide-on-click>
-                <span class="el-dropdown-link">
-                  <el-button type="text" size="mini">
-                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                  </el-button>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                    查看详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown> -->
             </template>
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+          :limit.sync="listQuery.pageSize" @pagination="initData()" />
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
-
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -219,145 +157,61 @@ import withdrawnForm from './withranForm'
 export default {
   name: 'purchaseInquirySheet',
   components: { JNPFForm, SuperQuery, withdrawnForm },
+  props: {
+    source: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
-      basicQuery: {},
-      superQuery: {},
-      searchList: [
-        { field: 'orderNo', fieldValue: '', label: '对账单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-      ],
-      superForm: {},
-      columnList: ['cooperativePartnerCode', 'createByName'],
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [
+            {
+              prop: 'orderNo',
+              symbol: 'like',
+              fixed: true
+            },
+            {
+              prop: 'cooperativePartnerName',
+              symbol: 'like',
+              fixed: true
+            },
+            {
+              prop: 'reconciliationDate', // 属性*
+              symbol: 'between', // 比较符*
+              timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+              fixed: true // 是否在搜索栏显示
+            },
+          ],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
+        },
+      }],
+      columnList: [],
       withdrawnVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色
-      visible: false,
       tableDataList: [],
       formVisible: false,
       listLoading: false,
-      reconciliationDate: [],
-      createRequirementDate: [],
       listQuery: {
+        source: this.source,
         active: true,
-        approvalStatus: '',
-        cooperativePartnerName: '',
-        createByName: '',
-        createEndTime: '',
-        createStartTime: '',
-        documentStatus: '',
-        endTime: '',
-        keyword: '',
-        orderNo: '',
-        pageNum: 1,
-        pageSize: 20,
-        reconciliationEndDate: '',
-        reconciliationStartDate: '',
         reconciliationType: 'payable',
-        startTime: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        superQuery: {}
       },
       total: 0,
-      formVisible: false,
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'orderNo',
-          label: '对账单号',
-          type: 'input'
-        },
-        {
-          prop: 'reconciliationDate',
-          label: '对账日期',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'cooperativePartnerName',
-          label: '供应商名称',
-          type: 'input'
-        },
-        {
-          prop: 'cooperativePartnerCode',
-          label: '供应商编码',
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: '不含税总金额',
-          type: 'input'
-        },
-        {
-          prop: 'taxAmount',
-          label: '总税额',
-          type: 'input'
-        },
-        {
-          prop: 'totalReconciliationAmount',
-          label: '对账金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalPaymentAmount',
-          label: '已收款金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalInvoicingAmount',
-          label: '已开票金额',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-
-        {
-          prop: 'approvalStatus',
-          label: '审批状态',
-          type: 'select',
-
-          options: [
-            { label: '审批中', value: 'ing' },
-            { label: '审批通过', value: 'ok' },
-            { label: '审批拒绝', value: 'rebut' },
-            { label: 'withdrawn', value: 'withdrawn' }
-          ]
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'datetimerange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '创建开始时间',
-          endPlaceholder: '创建结束时间',
-          pickerOptions: this.global.timePickerOptions
-        }
-      ],
+      superQueryJson: [],
       showAppCodeFlag: true
     }
   },
@@ -368,27 +222,10 @@ export default {
     } else {
       this.showAppCodeFlag = false
     }
-    this.initData()
   },
   methods: {
-    superQuerySearch(query) {
-      this.superQuery = query
-      this.superQueryVisible = false
-      this.search('super')
-    },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
-    },
-    sortChange({ prop, order }) {
-      let newProp
-      if (prop === 'cooperativePartnerName') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order !== 'descending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
     },
 
     // 关闭新建、编辑页面
@@ -402,110 +239,27 @@ export default {
     refresh() {
       this.formVisible = false
       this.withdrawnVisible = false
-      this.reset()
-    },
-    moreQueries() {
-      this.visible = true
+      this.initData()
     },
 
-    initData() {
-      if (this.reconciliationDate && this.reconciliationDate.length > 0) {
-        this.listQuery.reconciliationStartDate = this.reconciliationDate[0]
-        this.listQuery.reconciliationEndDate = this.reconciliationDate[1]
-      } else {
-        this.listQuery.reconciliationStartDate = ''
-        this.listQuery.reconciliationEndDate = ''
-      }
-      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.createStartTime = this.createRequirementDate[0] + ' 00:00:00'
-        this.listQuery.createEndTime = this.createRequirementDate[1] + ' 23:59:59'
-      } else {
-        this.listQuery.createStartTime = ''
-        this.listQuery.createEndTime = ''
-      }
-      this.superForm = this.listQuery
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
       this.listLoading = true
-      getfinAccountList(this.superForm)
+      getfinAccountList(this.listQuery)
         .then((res) => {
-          console.log(res, '对账单列表')
-          // res.data.records.forEach((item) => {
-          //   item.excludingTaxAmount = this.jnpf.numberFormat(item.excludingTaxAmount - item.adjustExcludingTaxAmount)
-          //   item.taxAmount = this.jnpf.numberFormat(item.taxAmount - item.adjustTaxAmount)
-          // })
           this.tableDataList = res.data.records
           this.total = res.data.total
           this.listLoading = false
-          this.visible = false
         })
         .catch(() => {
           this.listLoading = false
         })
     },
-    search(type) {
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
-      if (type === 'basic') {
-        this.basicQuery = {
-          matchLogic: 'AND',
-          condition: this.searchList
-            .filter((item) => item.fieldValue)
-            .map((item) => {
-              return {
-                ...item,
-                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-              }
-            })
-        }
-        this.superForm.superQuery = this.basicQuery
-      }
-      if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
-      }
-      this.initData()
-    },
-    reset() {
-      this.$refs['tableForm'].$refs.JNPFTable.clearSort()
-      this.listQuery = {
-        approvalStatus: '',
-        cooperativePartnerName: '',
-        createByName: '',
-        createEndTime: '',
-        createStartTime: '',
-        documentStatus: '',
-        endTime: '',
-        keyword: '',
-        orderNo: '',
-        pageNum: 1,
-        pageSize: 20,
-        reconciliationEndDate: '',
-        reconciliationStartDate: '',
-        reconciliationType: 'payable',
-        startTime: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ]
-      }
-      this.reconciliationDate = []
-      this.createRequirementDate = []
-      this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-      ]
-      this.superForm = JSON.parse(JSON.stringify(this.listQuery))
-      this.$refs.SuperQuery.conditionList = []
-      this.search('basic')
-    },
+
+
     addSupplier(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
@@ -547,7 +301,6 @@ export default {
       let row = {}
       let dataFormTwo = []
       getfinAccountDetail(id).then((res) => {
-        console.log(res, '详情')
         row = {
           projectName: res.data.projectName,
           productName: res.data.productName,

@@ -347,6 +347,15 @@
                           </el-select>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="packagingMethod" label="包装方式" width="170">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in getDictDataSync('packaging')" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" key="128">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.remark"

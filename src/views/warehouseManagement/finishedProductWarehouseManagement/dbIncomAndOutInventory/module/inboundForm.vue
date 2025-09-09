@@ -43,6 +43,9 @@ export default {
         warehouseName: '',
         shelfSpaceId: '',
         shelfSpaceName: '',
+        supplierPartnerName: '',
+        supplierPartnerCode: '',
+        supplierPartnerId: '',
         cooperativePartnerName: '',
         cooperativePartnerCode: '',
         cooperativePartnerId: '',
@@ -332,7 +335,7 @@ export default {
           render: ['inbound_purchase'].includes(this.businessType)
         },
         {
-          prop: "cooperativePartnerName",
+          prop: "supplierPartnerName",
           label: "供应商名称",
           value: "",
           type: "custom",
@@ -355,6 +358,65 @@ export default {
             code: '',
             name: '',
             type: 'supplier',
+            partnerCategoryId: '',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 'create_time'
+              }
+            ]
+          },
+          searchList: [
+            {prop: 'code', label: '供应商编码', type: 'input'},
+            {prop: 'name', label: '供应商名称', type: 'input'}
+          ],
+          change: (id, data) => {
+            // dom更新后重新校验此元素
+            this.$nextTick(() => {
+              this.$refs.dataForm.$refs.main.validateField('supplierPartnerName');
+            });
+            this.dataForm.supplierPartnerId = data[0].all.id;
+            this.dataForm.supplierPartnerCode = data[0].all.code;
+            this.dataForm.supplierPartnerName = data[0].all.name;
+          },
+          treeNodeClick: (data, node, listQuery) => {
+            if (listQuery.partnerCategoryId === data.id) return listQuery
+            listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+            listQuery.classAttribute = data.classAttribute
+            return listQuery
+          },
+          render: ['inbound_finished_package'].includes(this.businessType)
+        },
+        {
+          prop: "cooperativePartnerName",
+          label: "客户名称",
+          value: "",
+          type: "custom",
+          customComponent: "ComSelect-page",
+          itemRules: [{required: true, trigger: "change"}],
+          title: '选择客户',
+          treeTitle: '客户分类',
+          renderTree: true,
+          multiple: false,
+          clearable: true,
+          methodArr: {method: getcategoryTrees, requestObj: {type: 'customer'}},
+          listMethod: getCooperativeData,
+          tableItems: [
+            {prop: 'code', label: '供应商编码'},
+            {prop: 'name', label: '供应商名称'},
+            {prop: 'nameEn', label: '英文名称'},
+            {prop: 'taxId', label: '税号'}
+          ],
+          listRequestObj: {
+            code: '',
+            name: '',
+            type: 'customer',
             partnerCategoryId: '',
             pageNum: 1,
             pageSize: 20,

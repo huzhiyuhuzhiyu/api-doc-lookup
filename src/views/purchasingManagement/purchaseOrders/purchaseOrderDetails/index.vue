@@ -28,7 +28,7 @@
           </div>
           <JNPF-table @selection-change="handeleFinshData" highlight-current-row :fixedNO="true"
             ref="detailTableData" :data="detailTableData" custom-column
-            :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList" :listQuery="form" @queryChange="initData" :queryJson="superQueryJson">
+            :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
             <el-table-column prop="orderNo" label="单号" min-width="200">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
@@ -113,7 +113,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-            :limit.sync="listQuery.pageSize" @pagination="initData" />
+            :limit.sync="listQuery.pageSize" @pagination="initData()" />
         </div>
       </div>
     </div>
@@ -519,10 +519,14 @@ export default {
       this.initData()
     },
 
-    initData() {
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
       this.listLoading = true
       detailpurchaseOrderList(this.listQuery)
         .then((res) => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.detailTableData = res.data.records
           this.detailTableData.forEach((item) => {
             this.$set(item,'taxRates',item.taxRate* 1)
@@ -532,6 +536,7 @@ export default {
           this.listLoading = false
         })
         .catch(() => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.listLoading = false
         })
     },

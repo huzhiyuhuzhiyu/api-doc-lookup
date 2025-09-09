@@ -115,25 +115,19 @@
 </template>
 
 <script>
-import { getsalefinAccountList } from '@/api/ReconciliaRePayments/index'
+import { getsalefinAccountList } from '@/api/ReconciliaRePayments'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {updateCheckStatusApi} from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
-import { excelExport } from '@/api/basicData/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
-import getProjectList from '@/mixins/generator/getProjectList'
+import { excelExport } from '@/api/basicData'
 import orderDetailForm from '../../purchaseOrders/purchaseOrder/Form.vue'
 import deliveryNoteDetailForm from '@/views/receivingManagement/procurementReceiving/receivingAdvice/Form.vue'
 import purchaseTH from '@/views/purchasingManagement/returnManagement/purchaseReturnNote/Form.vue'
 
-
-
 export default {
   name: 'purReconManagement',
   components: { JNPFForm, ExportForm, SuperQuery,orderDetailForm,deliveryNoteDetailForm,purchaseTH },
-  mixins: [getProjectList],
   props: {
     source: {
       type: String,

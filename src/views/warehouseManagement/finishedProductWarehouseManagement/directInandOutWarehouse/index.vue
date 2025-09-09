@@ -647,24 +647,7 @@ export default {
         { label: "直接出库", value: "outbound", },
         { label: "直接入库", value: "inbound", },
       ],
-      businessType2Title: Object.freeze(new Map([
-        ["outbound_sale_send", "销售发货"],
-        ["inbound_sale_return", "销售退货"],
-        ["inbound_purchase", "采购收货"],
-        ["outbound_purchase", "采购退货"],
-        ["outbound_external_send", "外协发料"],
-        ["inbound_external", "外协收货"],
-        ["inbound_order_production", "生产产品入库"],
-        ["inbound_production", "生产工单入库"],
-        ["outbound_pick_out", "生产领料"],
-        ["inbound_return_materials", "生产退料"],
-        ["inbound_mock_production", "生产入库"],
-        ["outbound_use", "资产领用"],
-        ["inbound_return", "资产归还"],
-        ["inbound_receive_material", "直接领料入库"],
-        ["outbound_receive_material", "直接领料出库"],
-
-      ])),
+      businessType2Title: null,
       list: [],
       batchNumVisible: false,
       wareHouseVisible: false,
@@ -982,13 +965,14 @@ export default {
     async getpairingModeListFun() {
       try {
         this.pairingModeList = await this.jnpf.getpairingModeListFun()
-        console.log("this.par", this.pairingModeList);
       } catch (error) { }
     },
     async getBusinessTypeList() {
       const res = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId)
       const list = [{ label: "直接入库", value: "inbound_other" }, { label: "直接出库", value: "outbound_other" },]
       let resList = list
+      const dictData = this.getDictDataSync('warehouseBusinessType');
+      this.businessType2Title = new Map(dictData.map(item => [item.value, item.label]));
       if (res.data.records.length) {
         const temp = res.data.records.map(item => {
           return {
@@ -999,18 +983,6 @@ export default {
         resList = temp.filter(item => item.value !== 'inbound_flip').concat(list)
       }
       this.list = resList
-      if(this.btnType=='look'){
-        this.list=[...this.list,...[{ label: "组装入库", value: "inbound_merge", },
-            { label: "拆卸入库", value: "inbound_split", },
-            { label: "形态转换入库", value: "inbound_shift", },
-            { label: "组装出库", value: "outbound_merge", },
-            { label: "拆卸出库", value: "outbound_split", },
-            { label: "形态转换出库", value: "outbound_shift", },
-            { label: "调拨出库", value: "outbound_transfer", },
-            { label: "调拨入库", value: "inbound_transfer", },
-            { label: "直接领料入库", value: "inbound_receive_material", },
-            { label: "直接领料出库", value: "outbound_receive_material", }],]
-      }
     },
     getBimBusinessDetail() {
       let obj = {
@@ -1798,7 +1770,7 @@ export default {
           type: "customer",
         } // 意向客户列表入参
         this.dataRule.cooperativePartnerIdText[0].message = '客户不能为空'
-      } else if (val == 'inbound_purchase' || val == 'outbound_purchase') {
+      } else if (val == 'inbound_purchase' || val == 'outbound_purchase' || val === 'inbound_other') {
         this.partnerFlag = true
         this.partnerTitle = '采购供应商'
         this.partnerDialogTitle = '选择采购供应商'
@@ -1930,7 +1902,6 @@ export default {
       })
     },
     async init(id, btnType) {
-      console.log(777, id, btnType);
       this.formLoading = true
       this.getclassAttributeList()
       this.btnType = btnType
@@ -1939,13 +1910,9 @@ export default {
         // 获取详情
         await detailWarehouseData(id).then(res => {
           this.$set(res.data.stockMove, 'cooperativePartnerIdText', res.data.stockMove.partnerName)
-          console.log("直接详情",res);
           this.dataForm = res.data.stockMove
-          console.log("this.datafo",this.dataForm);
            this.selectDocutementType(this.dataForm.businessType,'detail')
             this.totalStockOutboundFlag=res.data.totalStockOutboundFlag
-          setTimeout(() => {
-          }, 800);
           res.data.lines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
           });

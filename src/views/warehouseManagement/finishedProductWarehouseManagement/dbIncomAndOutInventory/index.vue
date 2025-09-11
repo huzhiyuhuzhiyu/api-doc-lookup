@@ -634,7 +634,7 @@ export default {
                   入库
                 </el-button>
                 <template v-if="isPacking">
-                  <el-button size="mini" type="text" :disabled="!row.deliveryStatus === 'arranged'" @click="handlePacking(row)">
+                  <el-button size="mini" type="text" :disabled="!(row.deliveryStatus === 'arranged')" @click="handlePacking(row)">
                     装箱
                   </el-button>
                   <el-button size="mini" type="text" :disabled="!isPacked(row)" @click="handlePackingEdit(row,'packing','edit')">

@@ -18,61 +18,52 @@ export function getBatchColumns() {
       prop: "productsDrawingNo",
       label: "型号",
       minWidth: 220,
-      sortable: 'custom',
       align: "left",
     },
     // {
     //   prop: "customer",
     //   label: "客户",
     //   minWidth: 150,
-    //   sortable: 'custom',
     //   align: "left"
     // },
     {
       prop: "batchNumber",
       label: "批次",
-      minWidth: 100,
-      sortable: 'custom'
+      minWidth: 100
     },
     {
       prop: "packagingMethod",
       label: "包装方式",
       minWidth: 120,
       slot: true,
-      dictType: 'packaging',
-      sortable: "custom",
+      dictType: 'packaging'
     },
     {
       prop: "boxNum",
       label: "箱数",
-      minWidth: 90,
-      sortable: 'custom'
+      minWidth: 90
     },
     {
       prop: "num",
       label: "数量/箱",
-      minWidth: 160,
-      sortable: 'custom'
+      minWidth: 160
     },
     {
       prop: "totalNum",
       label: "总数量",
-      minWidth: 90,
-      sortable: 'custom'
+      minWidth: 90
     },
     {
       prop: "totalGrossWeight",
       label: "总毛重",
       minWidth: 90,
-      sortable: 'custom',
     },
     {
       prop: "full",
       label: "整箱",
       minWidth: 90,
       slot: true,
-      dictType: 'booleanOptions',
-      sortable: "custom",
+      dictType: 'booleanOptions'
     }
   ]
 }
@@ -84,49 +75,42 @@ export function getSingleBoxColumns() {
       prop: "productsDrawingNo",
       label: "型号",
       minWidth: 220,
-      sortable: 'custom',
       align: "left",
     },
     // {
     //   prop: "customer",
     //   label: "客户",
     //   minWidth: 150,
-    //   sortable: 'custom',
     //   align: "left"
     // },
     {
       prop: "batchNumber",
       label: "批次",
       minWidth: 100,
-      sortable: 'custom',
     },
     {
       prop: "packagingMethod",
       label: "包装方式",
       minWidth: 120,
       slot: true,
-      dictType: 'packaging',
-      sortable: "custom",
+      dictType: 'packaging'
     },
     {
       prop: "singleWeight",
       label: "重量(KG)",
       minWidth: 120,
-      sortable: 'custom',
     },
     {
       prop: "num",
       label: "数量",
       minWidth: 90,
-      sortable: 'custom',
     },
     {
       prop: "full",
       label: "整箱",
       minWidth: 90,
       slot: true,
-      dictType: 'booleanOptions',
-      sortable: "custom",
+      dictType: 'booleanOptions'
     }
   ]
 }

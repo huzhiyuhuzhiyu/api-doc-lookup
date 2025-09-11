@@ -1,38 +1,46 @@
 <script>
-import SuperQuery from '@/components/SuperQuery/index.vue'
 import {buttonList, getBatchColumns, getSingleBoxColumns} from "./data";
 import {addStockPlanPallet, getStockPlanWaitPalletPage} from "@/api/PackagingPalletPlan";
 import {getBimPackagingMaterialsPage} from "@/api/packagingMaterials";
 
 export default {
   name: "index",
-  components: {
-    SuperQuery,
-  },
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            // {
+            //   prop: 'createTime', // 属性*
+            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
+            //   symbol: 'between', // 比较符*
+            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+            //   fixed: true // 是否在搜索栏显示
+            // },
+            {prop: 'batchNumber', symbol: 'like', fixed: true},
+            {prop: 'packagingMethod', symbol: '==', fixed: true},
+          ],
+          keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: []
+        },
+      }],
       loading: false,
       visible: false,
       batchData: [],
       singleBoxData: [],
       superQueryVisible: false,
-      superQueryJson: [],
-      initListQuery: {
-        batchNumber: '',
-        productsDrawingNo: '',
-        packagingMethod: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        superQuery: {},
-      },
+      superQueryJson: [
+        {
+          prop: 'packagingMethod',
+          label: '包装方式',
+          type: 'select',
+          options: this.getDictDataSync('packaging')
+        },
+      ],
       listQuery: {},
       btnList: buttonList,
       columnList: [],
@@ -63,12 +71,15 @@ export default {
     }
   },
   created() {
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getPackagingMaterial()
-    this.initData()
   },
   methods: {
-    async initData() {
+    async initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
       this.loading = true
       try {
         const res = await getStockPlanWaitPalletPage(this.listQuery);
@@ -88,17 +99,6 @@ export default {
     async getPackagingMaterial() {
       const params = {
         packagingType: 'warehouse_manage',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
         pageSize: 9999
       }
       const res = await getBimPackagingMaterialsPage(params)
@@ -234,35 +234,6 @@ export default {
       }
     },
 
-    onBatchSortChange({prop, order}) {
-      let newProp = ''
-      if (prop === 'createTime') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
-
-    onSingleBoxSortChange({prop, order}) {
-      let newProp = ''
-      if (prop === 'createTime') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
-
-    openSuperQuery(ref) {
-      this.superQueryVisible = true
-      this.superQueryTableRef = ref
-    },
-
     showBatchColumnSettings() {
       this.$refs.batchTable.showDrawer()
     },
@@ -274,23 +245,6 @@ export default {
     getAlign(align) {
       return align || 'center'
     },
-
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
-
-    search() {
-      this.initData()
-    },
-
-    reset() {
-      this.$refs.batchTable.$refs.JNPFTable.clearSort()
-      this.$refs.singleBoxTable.$refs.JNPFTable.clearSort()
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.search()
-    },
   }
 }
 </script>
@@ -298,52 +252,12 @@ export default {
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main" style="display: flex; flex-direction: column; height: 100%;">
-      <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
-        <el-form @submit.native.prevent @keyup.enter.native="search()">
-          <el-col :span="6">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.productsDrawingNo"
-                placeholder="产品型号"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.batchNumber"
-                placeholder="批次"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-select v-model="listQuery.packagingMethod" placeholder="包装方式">
-                <el-option
-                  v-for="item in getDictDataSync('packaging')"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search"
-                @click="search()">查询
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="batchTable"/>
       <div class="table-container" style="flex: 1; display: flex; flex-direction: column;">
         <div class="table-section" style="flex: 1; display: flex; flex-direction: column;">
           <div class="JNPF-common-head" style="padding: 8px; position: relative;">
             <div class="JNPF-common-head-left">
               <el-row :gutter="10" type="flex" align="middle">
-                <!-- 下拉选择组件 -->
                 <el-col :span="12">
                   <el-select v-model="palletValue" placeholder="托盘">
                     <el-option
@@ -363,9 +277,9 @@ export default {
               </el-row>
             </div>
             <div class="JNPF-common-head-right">
-              <el-tooltip content="高级查询" placement="top">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="openSuperQuery('batchTable')"/>
+              <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                  @click="$refs.batchTable.showSortDrawer()"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -387,9 +301,8 @@ export default {
               :row-key="'id'"
               fixedNO
               :setColumnDisplayList="columnList"
-              @sort-change="onBatchSortChange"
               ref="batchTable"
-              custom-column>
+              custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
               <template v-for="column in batchColumns">
                 <el-table-column
                   v-if="typeof column.show === 'function' ? column.show() : true"
@@ -435,9 +348,9 @@ export default {
               </el-row>
             </div>
             <div class="JNPF-common-head-right">
-              <el-tooltip content="高级查询" placement="top">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="openSuperQuery('singleBoxTable')"/>
+              <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                  @click="$refs.batchTable.showSortDrawer()"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -459,9 +372,8 @@ export default {
               :row-key="'id'"
               fixedNO
               :setColumnDisplayList="columnList"
-              @sort-change="onSingleBoxSortChange"
               ref="singleBoxTable"
-              custom-column>
+              custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
               <template v-for="column in singleBoxColumns">
                 <el-table-column
                   v-if="typeof column.show === 'function' ? column.show() : true"
@@ -490,17 +402,12 @@ export default {
         </div>
       </div>
     </div>
-    <!-- 高级查询 -->
-    <SuperQuery :partentOrChild="superQueryTableRef" :show="superQueryVisible" ref="SuperQuery"
-      :tableRef="superQueryTableRef"
-      :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
   </div>
 </template>
 
 <style scoped>
 .table-container {
-  height: calc(100% - 50px); /* 减去搜索栏高度 */
+  height: calc(100% - 50px);
 }
 
 .table-section {

@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -196,7 +196,7 @@ export default {
           label: "品名规格",
           type: 'input'
         },
-        
+
 
         {
           prop: 'classAttribute',
@@ -323,14 +323,14 @@ export default {
       this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
-        this.tableData = res.data.whPage.records 
+        this.tableData = res.data.whPage.records
 
           this.totalData = res.data.stockSts||{
         totalInventory:0,
         totalAvailable:0,
         totalOccupancy:0,
       }
-     
+
         this.total = res.data.whPage.total
         this.listLoading = false
       }).catch(() => {

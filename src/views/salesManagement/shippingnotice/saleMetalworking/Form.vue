@@ -288,19 +288,19 @@ export default {
 
     async getAddressInfo(id) {
       const {data} = await getAddressInfo(id)
-      const defaultAddress = data.find(item => item.defaultFlag);
+      const defaultAddress = data.find(item => item.defaultFlag) || {};
       const {
-        recipient,
-        phone,
-        country,
-        province,
-        city,
-        area,
-        address,
-        countryText,
-        provinceText,
-        cityText,
-        areaText
+        recipient = '',
+        phone = '',
+        country = '',
+        province = '',
+        city = '',
+        area = '',
+        address = '',
+        countryText = '',
+        provinceText = '',
+        cityText = '',
+        areaText = ''
       } = defaultAddress;
 
       this.dataForm = {

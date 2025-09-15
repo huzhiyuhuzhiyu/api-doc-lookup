@@ -53,7 +53,7 @@ export default {
           minWidth: 180,
         },
         {
-          prop: 'drawingNo',
+          prop: 'productDrawingNo',
           label: '型号',
           type: 'view',
           minWidth: 220,
@@ -271,6 +271,7 @@ export default {
     },
 
     async defaultInit(prefillData) {
+      if (prefillData.length === 0) return
       const firstData = prefillData[0]
       this.dataForm = _.merge({}, this.dataForm, firstData)
       this.dataForm.partnerName = firstData.cooperativePartnerName
@@ -278,6 +279,7 @@ export default {
       await this.getAddressInfo(firstData.cooperativePartnerId)
       this.linesList = prefillData.map(item => ({
         ...item,
+        ordersNo: item.orderNo,
         notifyType: 'sale',
         ordersLineId: item.id,
         ordersNum: item.num,

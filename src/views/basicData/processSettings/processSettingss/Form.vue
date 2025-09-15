@@ -804,51 +804,16 @@ export default {
       }
     },
     changeMove(data) {
-      data.forEach((item) => {
-        console.log(item, 'ooooo')
-        item.sort = item.sortCode
-
+      this.dataFormTwo = data.map((item, ind) => {
+        return {
+          ...item,
+          sort: ind,
+          index: String(ind),
+          firstFlag: ind === 0,
+          lastFlag: ind === this.dataFormTwo.length - 1,
+          stockFlag: ind === this.dataFormTwo.length - 1 ? true : item.stockFlag
+        }
       })
-      this.dataFormTwo = this.dataFormTwo.map((item, index) => {
-        console.log(index, 'in')
-        // 复制当前的item
-        let newItem = {...item}
-        newItem.sort = index
-        // 如果存在下一个元素，则添加 nextId
-        if (index === 0) {
-
-          newItem.firstFlag = true
-          newItem.lastFlag = false
-          newItem.reportFlag = false
-          newItem.stockFlag = false
-        }
-        if (index === this.dataFormTwo.length - 1) {
-
-          newItem.firstFlag = false
-          newItem.lastFlag = true
-          newItem.reportFlag = true
-          newItem.stockFlag = true
-        }
-        if (index < this.dataFormTwo.length - 1 && index !== 0) {
-
-          newItem.firstFlag = false
-          newItem.lastFlag = false
-          // newItem.reportFlag = false
-          // newItem.stockFlag = false
-        }
-
-        // 如果存在上一个元素，则添加 previousId
-        if (index > 0 && index !== this.dataFormTwo.length - 1) {
-
-          newItem.firstFlag = false
-          newItem.lastFlag = false
-          // newItem.reportFlag = false
-          // newItem.stockFlag = false
-        }
-
-        return newItem // 返回修改后的对象
-      })
-      console.log(this.dataFormTwo)
     },
     async fetchData(code, flag) {
       try {

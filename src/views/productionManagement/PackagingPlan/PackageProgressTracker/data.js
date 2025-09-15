@@ -18,14 +18,15 @@ export function getColumns() {
     {
       prop: "orderNo",
       label: "订单号",
-      minWidth: 160,
+      minWidth: 220,
       align: "left"
     },
     {
-      prop: "type",
+      prop: "orderType",
       label: "类型",
       minWidth: 120,
-      align: "left"
+      slot: true,
+      dictType: "orderType"
     },
     {
       prop: "arrivalDate",
@@ -35,7 +36,7 @@ export function getColumns() {
     {
       prop: "productDrawingNo",
       label: "产品型号",
-      minWidth: 150,
+      minWidth: 220,
       align: "left",
     },
     {

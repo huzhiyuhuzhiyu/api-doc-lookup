@@ -10,6 +10,7 @@ const global = {
     {label: '撤回', value: 'back', type: "danger"},
     {label: '关单', value: 'close', type: "danger"},
   ],
+
   // 审批状态
   approvalStateList: [
     {label: "审批中", value: "ing", type: "processing"},
@@ -17,11 +18,13 @@ const global = {
     {label: "审批拒绝", value: "rebut", type: "danger"},
     {label: "审批撤回", value: "withdrawn", type: "warning"}
   ],
+
   // 布尔值选项
   booleanOptions: [
     {label: "是", value: true},
     {label: "否", value: false},
   ],
+
   currencyType: [
     {label: "美元", value: "USD"},
     {label: "欧元", value: "EUR"},
@@ -44,6 +47,7 @@ const global = {
     {label: "新西兰元", value: "NZD"},
     {label: "新加坡元", value: "SGD"},
   ],
+
   // 公共状态 示例：未完成 已完成 已取消
   publicState: [
     {label: "确认", value: "confirm", type: "success"},
@@ -53,6 +57,7 @@ const global = {
     {label: "已停止", value: "stopped", type: "danger"},
     {label: "已撤回", value: "back", type: "warning"},
   ],
+
   // 产品来源
   productSource: [
     {label: "组装", value: "assemble", type: "processing"},
@@ -61,16 +66,11 @@ const global = {
     {label: "外协", value: "out", type: "danger"},
     {label: "虚拟组装", value: "virtual_assemble", type: "processing"},
   ],
+
   // 工艺类型
   craftType: [
-    {
-      label: '生产',
-      value: 'production',
-    },
-    {
-      label: '包装',
-      value: 'packaging',
-    }
+    {label: '生产', value: 'production',},
+    {label: '包装', value: 'packaging',}
   ],
 
   // 销售订单状态
@@ -102,6 +102,7 @@ const global = {
     {label: '中', value: 2, type: 'warning'},
     {label: '低', value: 3, type: 'success'}
   ],
+
   // 销售订单行确认状态
   orderConfirmedStatus: [
     {label: '已有库存', value: 'existing_inventory'},
@@ -109,12 +110,14 @@ const global = {
     {label: '需要采购', value: 'need_purchase'},
     {label: '待生产', value: 'need_production'},
   ],
+
   // 交期状态
   deliveryStatus: [
     {label: '待回复', value: 'pending_reply', type: 'warning'},
     {label: '已回复', value: 'replied', type: 'info'},
     {label: '已完成', value: 'finished', type: 'success'},
   ],
+
   // 状态
   shippingStatus: [
     {label: '等待', value: 'waiting', type: 'warning'},
@@ -179,6 +182,12 @@ const global = {
     {label: '不合格', value: 'unqualified', type: 'danger'},
     {label: '全检', value: 'full_inspection', type: 'info'},
     {label: '退货', value: 'unqualified', type: 'warning'},
+  ],
+
+  // 任务类型
+  orderType: [
+    {label: '正常任务', value: 'normal', type: 'warning'},
+    {label: '返工任务', value: 'rework', type: 'info'},
   ],
 
   // 字典数据映射方法

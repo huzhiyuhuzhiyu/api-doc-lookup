@@ -294,8 +294,8 @@ export default {
         look: async (id) => {
           await this.getDetail(id);
         },
-        default: async (data) => {
-          this.defaultInit(data);
+        default: async (prefillData, pageSource) => {
+          this.defaultInit(prefillData, pageSource);
           await this.getOrderNoConfig('PROD', 'dataForm');
           await this.getOrderNoConfig('PODH', 'pickForm');
         },
@@ -303,6 +303,13 @@ export default {
       apiMethodActions: {
         arrange: addProdPlanArrange,
         add: addProdOrder
+      },
+
+      productFieldMap: {
+        productsName: ['productsName', 'productName'],
+        productsCode: ['productsCode', 'productCode'],
+        drawingNo: ['productsDrawingNo', 'productDrawingNo', 'drawingNo'],
+        productsId: ['productsId', 'productId']
       },
     }
   },
@@ -314,7 +321,7 @@ export default {
       return this.btnType === 'arrange' ? '编排数量' : '生产数量';
     },
     isShowMaterialList() {
-      return this.dataForm.productSource === 'assemble'
+      return this.dataForm.productSource === 'assemble' && this.dataForm.orderType === 'packaging'
     }
   },
   mounted() {
@@ -322,15 +329,15 @@ export default {
     this.basicPickFormSchema = getBasicPickFormSchema(this.$refs.dataForm, this)
   },
   methods: {
-    async init(id = '', type, prefillData = {}) {
+    async init(id = '', type, prefillData = {}, pageSource = '') {
       this.loading = true
       this.btnType = type
-      this.title = this.getTitle(type)
+      this.title = this.getTitle(type, pageSource)
 
       if (id && this.actions[type]) {
         await this.actions[type](id);
       } else {
-        await this.actions.default(prefillData);
+        await this.actions.default(prefillData, pageSource);
       }
       this.updateBasicFormSchema()
       this.updateLinesListItems()
@@ -342,91 +349,110 @@ export default {
       })
     },
 
+    async defaultInit(prefillData, pageSource) {
+      const unifiedData = this.jnpf.unifyFields(prefillData, this.productFieldMap);
+      this.dataForm = _.merge({}, this.dataForm, unifiedData)
+      if (unifiedData.planStartDate && unifiedData.planEndDate) {
+        this.dataForm.planDate[0] = unifiedData.planStartDate
+        this.dataForm.planDate[1] = unifiedData.planEndDate
+      }
+      this.dataForm.productionQuantity = unifiedData.availableArrangeQuantity
+      this.dataForm.productionPlanId = unifiedData.id
+      this.dataForm.taskMethod = 'not_appoint'
+      this.dataForm.orderType = pageSource
+
+      if (unifiedData.routingId) await this.getRoutingDetail(unifiedData.routingId)
+      if (unifiedData.productionLineId) await this.selectLine(unifiedData.productionLineId)
+
+      await this.getBOMLineList()
+    },
+
     updateBasicFormSchema() {
       this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this).map(item => {
-        if (this.btnType === 'arrange') {
-          if (this.basicFormSchemaProps.has(item.prop)) {
-            return item;
-          }
-          return item;
-        }
-
         if (this.btnType === 'add') {
-          if (item.prop === 'drawingNo') {
-            return {
-              ...item,
-              label: '产品型号',
-              type: "custom",
-              customComponent: "ComSelect-page",
-              itemRules: [{required: true, trigger: "change"}],
-              title: '选择产品',
-              activeType: '',
-              renderTree: false,
-              multiple: false,
-              treeTitle: '产品分类',
-              methodArr: {
-                method: getcategoryTree,
-                requestObj: {
-                  classAttribute: 'finished_product',
-                },
-              },
-              listMethod: getProducts,
-              tableItems: [
-                {prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-                {prop: 'code', label: '产品编码', sortable: 'custom'},
-                {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-                {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-                {prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom'}
-              ],
-              listRequestObj: {
-                productCode: "",
-                productName: "",
-                productStatus: 'enable',
-                classAttribute: 'finish_product',
-                pageNum: 1,
-                pageSize: 20,
-                orderItems: [
-                  {
-                    asc: false,
-                    column: ''
-                  },
-                  {
-                    asc: false,
-                    column: 'create_time'
-                  }
-                ]
-              },
-              searchList: [
-                {prop: 'productName', label: '产品名称', type: 'input'},
-                {prop: 'productCode', label: '产品编码', type: 'input'},
-              ],
-              change: async (id, data) => {
-                this.$nextTick(() => {
-                  this.$refs.dataForm.$refs.main.validateField('drawingNo');
-                })
-                const _data = data[0].all
-                this.dataForm.bomId = _data.bomId
-                this.dataForm.orderType = 'manually'
-                this.dataForm.productSource = _data.productSource
-                this.dataForm.drawingNo = _data.drawingNo
-                this.dataForm.productsDrawingNo = _data.drawingNo
-                this.dataForm.productsId = _data.id
-                this.dataForm.productsName = _data.name
-                this.dataForm.productsCode = _data.code
-                this.dataForm.mainUnit = _data.mainUnit
-                await this.getBOMLineList()
-              }
-            };
+          if (item.prop === 'drawingNo' && this.dataForm.orderType !== 'flipping') {
+            return this.getDrawingNoFieldConfig(item);
           }
 
-          return {
-            ...item,
-            render: !this.basicFormSchemaProps.has(item.prop)
-          };
+          return this.getCommonFieldConfig(item);
         }
 
         return item;
       });
+    },
+
+    getDrawingNoFieldConfig(item) {
+      return {
+        ...item,
+        label: '产品型号',
+        type: "custom",
+        customComponent: "ComSelect-page",
+        itemRules: [{required: true, trigger: "change"}],
+        title: '选择产品',
+        activeType: '',
+        renderTree: false,
+        multiple: false,
+        treeTitle: '产品分类',
+        methodArr: {
+          method: getcategoryTree,
+          requestObj: {
+            classAttribute: 'finished_product',
+          },
+        },
+        listMethod: getProducts,
+        tableItems: [
+          {prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom'},
+          {prop: 'code', label: '产品编码', sortable: 'custom'},
+          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
+          {prop: 'mainUnit', label: '单位', sortable: 'custom'},
+          {prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom'}
+        ],
+        listRequestObj: {
+          productCode: "",
+          productName: "",
+          productStatus: 'enable',
+          classAttribute: 'finish_product',
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [
+            {
+              asc: false,
+              column: ''
+            },
+            {
+              asc: false,
+              column: 'create_time'
+            }
+          ]
+        },
+        searchList: [
+          {prop: 'productName', label: '产品名称', type: 'input'},
+          {prop: 'productCode', label: '产品编码', type: 'input'},
+        ],
+        change: async (id, data) => {
+          this.$nextTick(() => {
+            this.$refs.dataForm.$refs.main.validateField('drawingNo');
+          });
+          const _data = data[0].all;
+          this.dataForm.bomId = _data.bomId;
+          this.dataForm.orderType = 'manually';
+          this.dataForm.productSource = _data.productSource;
+          this.dataForm.drawingNo = _data.drawingNo;
+          this.dataForm.productsDrawingNo = _data.drawingNo;
+          this.dataForm.productsId = _data.id;
+          this.dataForm.productsName = _data.name;
+          this.dataForm.productsCode = _data.code;
+          this.dataForm.mainUnit = _data.mainUnit;
+          await this.getBOMLineList();
+        }
+      };
+    },
+
+    getCommonFieldConfig(item) {
+      return {
+        ...item,
+        render: !this.basicFormSchemaProps.has(item.prop)
+      };
     },
 
     updateLinesListItems() {
@@ -441,27 +467,8 @@ export default {
       })
     },
 
-    async defaultInit(prefillData) {
-      const firstData = prefillData
-      this.dataForm = _.merge({}, this.dataForm, firstData)
-      if (firstData.planStartDate && firstData.planEndDate) {
-        this.dataForm.planDate[0] = firstData.planStartDate
-        this.dataForm.planDate[1] = firstData.planEndDate
-      }
-      this.dataForm.drawingNo = firstData.productsDrawingNo
-      this.dataForm.productionQuantity = firstData.availableArrangeQuantity
-      this.dataForm.productCode = firstData.productsCode
-      this.dataForm.productionPlanId = firstData.id
-      this.dataForm.taskMethod = 'not_appoint'
-
-      if (firstData.routingId) await this.getRoutingDetail(firstData.routingId)
-      if (firstData.productionLineId) await this.selectLine(firstData.productionLineId)
-
-      await this.getBOMLineList()
-    },
-
     async getBOMLineList() {
-      if (this.dataForm.productSource !== 'assemble') return
+      if (!this.isShowMaterialList) return
       if (!this.dataForm.bomId) return this.$message.error('该产品没有BOM，请配置BOM后再试！')
       const res = await BOMLineList(this.dataForm.bomId)
       this.materialList = res.data.map(item => {
@@ -486,7 +493,7 @@ export default {
     },
 
     watchProductionQuantity() {
-      if (this.dataForm.productSource !== 'assemble') return;
+      if (!this.isShowMaterialList) return
 
       this.materialList = this.materialList.map(item => {
         return this.calculateMaterialItem(item);
@@ -588,7 +595,8 @@ export default {
       this.linesTableHeight = maxHeight
     },
 
-    getTitle(type) {
+    getTitle(type, pageSource) {
+      this.title = pageSource === 'flipping' ? '重检单' : '包装计划'
       switch (type) {
         case 'arrange':
           return `${ this.title }编排`

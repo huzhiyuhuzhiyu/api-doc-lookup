@@ -31,19 +31,19 @@ export default {
           prop: 'productsDrawingNo',
           label: '产品型号',
           type: 'view',
-          minWidth: 160,
+          minWidth: 220,
         },
         {
           prop: 'productsName',
           label: '产品名称',
           type: 'view',
-          minWidth: 120,
+          minWidth: 220,
         },
         {
           prop: 'batchNumber',
-          label: '批次',
+          label: '批次号',
           type: 'view',
-          minWidth: 160,
+          minWidth: 180,
         },
         {
           prop: 'mainUnit',

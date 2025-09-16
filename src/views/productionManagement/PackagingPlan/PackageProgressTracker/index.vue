@@ -136,7 +136,6 @@ export default {
         this.tableData = records;
         this.total = total
       } finally {
-        if (listLoadKey !== this.listLoadKey) return; // 请求过期
         this.loading = false
       }
     },

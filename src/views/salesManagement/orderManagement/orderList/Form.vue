@@ -12,10 +12,12 @@ import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
 import {addOrders, editOrders, getcooperativeProduct, getOrderDetail, uploadProduct} from "@/api/salesManagement/assemblyOrders";
 import {getProducts} from "@/api/masterDataManagement";
+import RecordList from "@/views/workFlow/components/RecordList.vue";
+import Process from "@/components/Process/index.vue";
 
 export default {
   name: "Form",
-  components: {TableFormProduct, TypingEditorDialog},
+  components: {Process, RecordList, TableFormProduct, TypingEditorDialog},
   mixins: [flowMixin, busFlow],
   props: {
     fromPage: {
@@ -1037,6 +1039,14 @@ export default {
                       </div>
                     </el-collapse-item>
                   </el-collapse>
+                </el-tab-pane>
+                <el-tab-pane label="流程信息" name="approvalFlow">
+                  <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId"
+                    style="margin-top: 5px;"/>
+                </el-tab-pane>
+                <el-tab-pane v-if="!activeType && dataForm.approvalFlag" label="流转记录"
+                  name="transferList">
+                  <recordList :list='flowTaskOperatorRecordList' :endTime='endTime'/>
                 </el-tab-pane>
                 <el-tab-pane label="附件" name="annex">
                   <UploadWj v-model="fileList" :disabled="!activeType" :detailed="!activeType"></UploadWj>

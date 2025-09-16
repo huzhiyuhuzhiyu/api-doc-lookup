@@ -59,9 +59,9 @@ export default {
         },
         {
           prop: 'batchNumber',
-          label: '批次',
+          label: '批次号',
           type: 'view',
-          minWidth: 120,
+          minWidth: 180,
         },
         {
           prop: 'unqualifiedQuantity',

@@ -4,14 +4,15 @@ import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue'
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
 import {getLocationList} from "@/api/warehouseManagement/inventory";
-import {getcategoryTrees, getsaleOrderDetailList} from "@/api/salesManagement/assemblyOrders";
-import {getCooperativeData, getWarehouseInfo, getWarehouseList} from "@/api/basicData";
+import {getcategoryTrees} from "@/api/salesManagement/assemblyOrders";
+import {getBatchNumber, getCooperativeData, getWarehouseInfo, getWarehouseList} from "@/api/basicData";
 import {addWarehouseData, detailWarehouseData, stockWarehouseBusinessTypeList, updateWarehouseData} from "@/api/warehouseManagement/inboundAndOutbound";
 import PrintDialog from "@/components/no_mount/printDialog/index.vue";
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 import {getPrintBusInfo} from "@/api/system/printDev";
 import {getClassAttributeListByCode} from "@/api/masterDataManagement";
 import {getBimProcessList} from "@/api/bimProcess";
+import {getProductList} from "@/api/basicData/materialFiles";
 
 
 export default {
@@ -29,6 +30,8 @@ export default {
       btnLoading: false,
       locationEnabled: false,
       printVisible: false,
+      showScanDialog: false,
+      scanLoading: false,
       printQuery: {},
       classAttributeList: [],
       businessTypeList: [],
@@ -60,46 +63,7 @@ export default {
       linesList: [],
       linesListItems: [],
       linesTableHeight: 0,
-      addProductProps: {
-        title: '选择产品',
-        activeType: '',
-        renderTree: false,
-        multiple: true,
-        treeTitle: '产品分类',
-        methodArr: {},
-        listMethod: getsaleOrderDetailList,
-        tableItems: [
-          {prop: 'orderNo', label: '订单号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-          {prop: 'productCode', label: '产品编码', sortable: 'custom'},
-          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-          {prop: 'waitDeliverNum', label: '待发货数量', minWidth: '160px', sortable: 'custom'},
-          {prop: 'deliveryDate', label: '交货日期', minWidth: '160px', sortable: 'custom'},
-          {prop: 'remark', label: '备注', minWidth: '160px'},
-          {prop: 'createTime', label: '创建时间', sortable: 'custom'}
-        ],
-        listRequestObj: {
-          cooperativePartnerId: '',
-          deliverQueryFlag: 1,
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 't1.create_time'
-            }
-          ]
-        },
-        searchList: [
-          {prop: 'productName', label: '产品名称', type: 'input'},
-          {prop: 'productCode', label: '产品编码', type: 'input'},
-        ]
-      },
+      addProductProps: {},
 
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
@@ -280,7 +244,10 @@ export default {
         pageSize: -1,
       }
       const {data} = await getBimProcessList(params);
-      this.processList = data.records
+      this.processList = data.records.map(item => ({
+        label: item.name,
+        value: item.id
+      }))
     },
 
     async fetchAndSetWarehouseInfo() {
@@ -365,7 +332,9 @@ export default {
           itemRules: [{required: true, trigger: "blur"}],
           change: async () => {
             await this.setBusinessTypeDefaults();
+            this.setAddProductProps()
             this.setBasicFormSchema()
+            this.setLinesListItems()
           }
         },
         {
@@ -636,6 +605,113 @@ export default {
       })
     },
 
+    setAddProductProps() {
+      const baseConfig = {
+        title: '选择产品',
+        activeType: '',
+        treeTitle: '产品分类',
+        multiple: true,
+        renderTree: false,
+        searchList: [
+          {prop: 'productCode', label: '产品编码', type: 'input'},
+          {prop: 'productName', label: '产品名称', type: 'input'},
+          {prop: 'productDrawingNo', label: '产品型号', type: 'input'}
+        ],
+        listRequestObj: {
+          productName: '',
+          productCode: '',
+          productDrawingNo: '',
+          pageNum: 1,
+          pageSize: 20,
+          classAttributeList: this.classAttributeList,
+          orderItems: [
+            {asc: false, column: ''},
+            {asc: false, column: 't1.create_time'}
+          ]
+        },
+      };
+
+      const commonTableItems = [
+        {prop: 'productCode', label: '产品编码', minWidth: 120},
+        {prop: 'productName', label: '产品名称', minWidth: 160},
+        {prop: 'productDrawingNo', label: '产品型号', minWidth: 300},
+        {prop: 'mainUnit', label: '单位', width: 120, sortable: 'custom'},
+      ];
+
+      const outboundConfig = {
+        listMethod: getBatchNumber,
+        tableItems: [
+          ...commonTableItems,
+          {
+            prop: 'partnerName', label: '供应商名称', minWidth: 160,
+            render: this.dataForm.businessType === 'outbound_pick_out'
+          },
+          {prop: 'inventoryQuantity', label: '库存数量', width: 160},
+          {prop: 'availableQuantity', label: '可用库存数量', width: 160},
+          {prop: 'occupancyQuantity', label: '占用库存数量', width: 160},
+          {prop: 'shelfSpaceName', label: '库位', width: 120},
+          {prop: 'batchNumber', label: '批次号', width: 180},
+          {prop: 'remark', label: '备注', width: 100}
+        ],
+        listRequestObj: {
+          productName: '',
+          productCode: '',
+          productDrawingNo: '',
+          pageNum: 1,
+          pageSize: 20,
+          classAttributeList: this.classAttributeList,
+          warehouseId: this.dataForm.warehouseId,
+          availableBatch: true,
+          inventoryFlag: 'stock_gt_zero',
+          scrapFlag: false,
+          virtuallyFlag: false,
+          excludeProcessFlag: ['outbound_sale_send'].includes(this.dataForm.businessType) ? true : null,
+          orderItems: [
+            {asc: false, column: ''},
+            {asc: false, column: 't1.create_time'}
+          ]
+        }
+      };
+
+      const inboundConfig = {
+        listMethod: getProductList,
+        tableItems: commonTableItems,
+        listRequestObj: {
+          productName: '',
+          productCode: '',
+          productDrawingNo: '',
+          pageNum: 1,
+          pageSize: 20,
+          classAttributeList: this.classAttributeList,
+          orderItems: [
+            {asc: false, column: ''},
+            {asc: false, column: 't1.create_time'}
+          ]
+        },
+        listDataFormatting: (res) => {
+          return res.data.records.map(item => ({
+            ...item,
+            productCode: item.code,
+            productName: item.name,
+            productDrawingNo: item.drawingNo,
+            num: ''
+          }));
+        }
+      };
+
+      const defaultConfig = {
+        listMethod: getProductList,
+        tableItems: commonTableItems
+      };
+
+      const dynamicConfig =
+        this.dataForm.documentType === 'outbound' ? outboundConfig :
+          this.dataForm.documentType === 'inbound' ? inboundConfig :
+            defaultConfig;
+
+      this.addProductProps = {...baseConfig, ...dynamicConfig};
+    },
+
     setLinesListItems() {
       const getRealRowIndex = (index) => {
         let result = 0
@@ -650,6 +726,7 @@ export default {
         if (Array.isArray(index)) index = getRealRowIndex(index)
         this.$message.error(`产品信息第${ index + 1 }行：${ label }${ errMsg }`)
       }
+
       this.linesListItems = [
         {
           prop: 'productDrawingNo',
@@ -677,9 +754,9 @@ export default {
         },
         {
           prop: 'batchNumber',
-          label: '批次',
+          label: '批次号',
           type: 'view',
-          minWidth: 100,
+          minWidth: 180,
         },
         {
           prop: 'shelfSpaceName',
@@ -706,21 +783,16 @@ export default {
             return true
           },
           change: (val, data, paramsObj) => {
+            const {scope} = paramsObj;
+            const {row} = scope;
+            const fieldPath = `data.${ scope.$index }.shelfSpaceName`;
             this.$nextTick(() => {
-              this.$refs['tableForm'].$refs.main.validateField(`data.${ paramsObj.scope.$index }.shelfSpaceName`)
-            })
-            if (!val && data.length) return
-            if (data && data.length) {
-              paramsObj.scope.row.shelfSpaceId = data[0].all.id
-              paramsObj.scope.row.shelfSpaceName = data[0].all.name
-              paramsObj.scope.row.warehouseId = data[0].all.warehouseId
-              paramsObj.scope.row.warehouseName = data[0].all.warehouseName
-            } else {
-              paramsObj.scope.row.shelfSpaceId = ''
-              paramsObj.scope.row.shelfSpaceName = ''
-              paramsObj.scope.row.warehouseId = ''
-              paramsObj.scope.row.warehouseName = ''
-            }
+              this.$refs.tableForm?.$refs.main?.validateField(fieldPath);
+            });
+            const selectedShelfSpace = data[0].all;
+            row.shelfSpaceName = selectedShelfSpace.name
+            row.shelfSpaceId = selectedShelfSpace.id
+            row.warehouseId = selectedShelfSpace.warehouseId
           },
           listRequestObj: {
             warehouseId: this.dataForm.warehouseId,
@@ -873,26 +945,55 @@ export default {
       }, {});
     },
 
+    async handleScanSubmit(scanCode) {
+      this.scanLoading = true
+      try {
+        const params = {
+          productCode: scanCode,
+          classAttributeList: this.classAttributeList,
+          orderItems: [
+            {
+              asc: false,
+              column: 'create_time'
+            }
+          ],
+          pageNum: 1,
+          pageSize: 20,
+        }
+        const res = await getProductList(params)
+        const product = res.data.records[0]
+        if (!product) return this.$message.warning('未找到匹配的产品信息')
+        this.submitAllProduct([product.id], [{
+          id: product.id,
+          name: product.name,
+          all: product
+        }])
+      } catch (error) {
+        console.error('扫码处理失败:', error)
+        this.$message.error('扫码处理失败')
+      } finally {
+        this.scanLoading = false
+      }
+    },
+
     selectProductRefOpenDialog() {
-      this.addProductProps.listRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
       this.$refs.ComSelectProductRef.openDialog()
     },
 
     contentChanges(dataOrIndex, prop, value) {
       if (Array.isArray(dataOrIndex)) {
-        this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
+        this.computedLinesList = JSON.parse(JSON.stringify(dataOrIndex))
       } else if (prop) {
-        this.linesList[dataOrIndex][prop] = value
+        this.computedLinesList[dataOrIndex][prop] = value
       }
     },
 
-    async submitAllProduct(id, data) {
+    submitAllProduct(id, data) {
+      const createdObj = this.createdObj()
       const newData = data.map(item => ({
-        ...this.createdObj(),
+        ...createdObj,
         ...item.all,
-        ordersLineId: item.id,
       }));
-
       this.linesList = [...this.linesList, ...newData]
     },
 
@@ -1015,7 +1116,7 @@ export default {
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-preview-main transitionForm org-form">
             <div class="JNPF-common-page-header">
-              <el-page-header @back="$emit('close',false)" :content="title"/>
+              <el-page-header :class="btnType === 'add' ? 'el-page-header_left_none' : '' " @back="$emit('close',false)" :content="title"/>
               <div class="options">
                 <template v-if="activeType">
                   <el-button type="success" :loading="btnLoading" @click="handleSubmit(false,'draft')">
@@ -1028,7 +1129,7 @@ export default {
                     提交并打印
                   </el-button>
                 </template>
-                <el-button @click="$emit('close',false)">{{ $t('common.cancelButton') }}</el-button>
+                <el-button v-if="btnType !== 'add'" @click="$emit('close',false)">{{ $t('common.cancelButton') }}</el-button>
               </div>
             </div>
             <div class="main" v-loading="loading" ref="main">
@@ -1067,11 +1168,15 @@ export default {
                           <div class="tableTopContainer">
                             <div class="left">
                               <template v-if="activeType">
-                                <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog()">
+                                <el-button :disabled="!dataForm.businessType" type="text" icon="icon-ym icon-ym-scanCode1" @click="showScanDialog = true">
+                                  扫码录入
+                                </el-button>
+                                <span>|</span>
+                                <el-button :disabled="!dataForm.businessType" type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog()">
                                   选择产品
                                 </el-button>
                                 <span>|</span>
-                                <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
+                                <el-button :disabled="!dataForm.businessType" type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
                                   @click="$refs.tableForm.batchDelete()">批量删除
                                 </el-button>
                               </template>
@@ -1098,6 +1203,20 @@ export default {
       <BatchPrintBrowse ref="batchPrint" :fullName="businessConfig.print.fullName"/>
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false"
         @change="submitAllProduct"/>
+      <scanInputDialog
+        :visible.sync="showScanDialog"
+        :loading="scanLoading"
+        @close="showScanDialog  = false"
+        @submit="handleScanSubmit"
+      />
     </div>
   </transition>
 </template>
+
+<style scoped lang="scss">
+::v-deep .el-page-header_left_none {
+  .el-page-header__left {
+    display: none;
+  }
+}
+</style>

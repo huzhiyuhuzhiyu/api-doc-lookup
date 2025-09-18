@@ -712,3 +712,37 @@ export function formatListQuery(queryConfigData) {
 
   return queryConfigData
 }
+
+/**
+ * 统一产品信息字段（支持对象和数组）
+ * @param {Object|Array} data - 要处理的数据，可以是单个对象或对象数组
+ * @param {Object} [fieldMap] - 字段映射配置，格式为 {标准字段名: [可能的字段名1, 可能的字段名2]}
+ *                             默认使用常见产品字段映射
+ * @returns {Object|Array} - 处理后的数据，保持原始数据结构（对象或数组）
+ * @example
+ * // 基本用法
+ * const unified = unifyFields(rawData);
+ *
+ * // 自定义字段映射
+ * const customMap = {
+ *   productName: ['name', 'product_name'],
+ *   productCode: ['code', 'sku']
+ * };
+ * const unified = unifyFields(rawData, customMap);
+ */
+export function unifyFields(data, fieldMap) {
+  if (Array.isArray(data)) {
+    return data.map(item => unifyFields(item, fieldMap));
+  }
+
+  const result = {};
+  Object.keys(fieldMap).forEach(internalField => {
+    const possibleFields = fieldMap[internalField];
+    const foundField = possibleFields.find(field => data[field] !== undefined);
+    if (foundField) {
+      result[internalField] = data[foundField];
+    }
+  });
+
+  return {...data, ...result};
+}

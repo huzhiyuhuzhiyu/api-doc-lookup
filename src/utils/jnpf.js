@@ -15,19 +15,6 @@ const mathjs = create(all, { number: "BigNumber", precision: 20 });
 
 
 const jnpf = {
-  unifyFields(data, fieldMap) {
-    const result = {};
-    Object.keys(fieldMap).forEach(internalField => {
-      const possibleFields = fieldMap[internalField];
-      const foundField = possibleFields.find(field => data[field] !== undefined);
-      if (foundField) {
-        result[internalField] = data[foundField];
-      }
-    });
-
-    return {...data, ...result};
-  },
-
   replacePre(text, replacement) {
     const safeReplacement = replacement ?? "";
     // 对 { 和 } 转义，匹配字面量 "{}"

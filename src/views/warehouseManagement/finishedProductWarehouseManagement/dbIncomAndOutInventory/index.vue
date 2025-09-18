@@ -10,23 +10,28 @@ import {deepClone} from "@/utils";
 
 import {purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders";
 import {getStockPickedPage} from "@/api/batchPacking";
+import {getStockPlanPalletPage} from "@/api/PackagingPalletPlan";
 
-
+// 打印
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 
+// 详情
 import outboundSaleSendForm from "@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue";
 
+// 装箱&批次
 import packingForm from './module/packingForm.vue'
 import autoRecBatchPacking from "./module/components/autoRecBatchPacking.vue";
+
+// 入库
 import InboundForm from "./module/inboundForm.vue";
-import {getStockPlanPalletPage} from "@/api/PackagingPalletPlan";
+
 
 export default {
   name: "index",
   components: {
-    InboundForm,
     outboundSaleSendForm,
+    InboundForm,
     autoRecBatchPacking,
     packingForm,
     BatchPrintBrowse,
@@ -119,9 +124,11 @@ export default {
             deliveryStatus: '',
             approvalStatus: 'ok',
           },
-          viewForm: 'outboundSaleSendForm',
-          rowId: 'id',
-          visible: false
+          detailConfig: {
+            component: 'outboundSaleSendForm',
+            rowId: 'id',
+            visible: false
+          }
         },
         // 销售退货入库
         inbound_sale_return: {
@@ -335,6 +342,7 @@ export default {
     handlePacking(row) {
       this.onPackingForm(row, 'packing')
     },
+
     // 装箱&批次编辑
     handlePackingEdit(row, actionType, btnType) {
       this.autoRecBatchPackingFormVisible = true;
@@ -366,16 +374,15 @@ export default {
     },
 
     handleView(row) {
-      if (!this.currentTypeConfig ||
-        !this.currentTypeConfig.viewForm ||
-        !this.currentTypeConfig.rowId) {
-        this.$message.warning('当前业务类型不支持查看详情')
-        return
+      const detailConfig = this.currentTypeConfig.detailConfig;
+      if (!detailConfig) {
+        this.$message.warning('当前业务类型不支持查看详情');
+        return;
       }
-      this.currentTypeConfig.visible = true
+      detailConfig.visible = true;
       this.$nextTick(() => {
-        this.$refs[this.currentTypeConfig.viewForm].init(row[this.currentTypeConfig.rowId], 'look')
-      })
+        this.$refs.detailComponent.init(row[detailConfig.rowId], 'look');
+      });
     },
 
     onPackingForm(row, btnType) {
@@ -470,23 +477,28 @@ export default {
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
+
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
+
     getAlign(align) {
       return align || 'center'
     },
+
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.initData()
     },
+
     search() {
       this.searchList.forEach(item => {
         this.listQuery[item.prop] = item.fieldValue;
       });
       this.initData()
     },
+
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
@@ -573,7 +585,7 @@ export default {
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="hsCodes"
+        <JNPF-table customKey="dbIncomAndOutInventoryIndex"
           v-loading="loading"
           :data="tableData"
           :row-key="'id'"
@@ -664,7 +676,12 @@ export default {
     <!--  入库  -->
     <inboundForm ref="inboundForm" v-if="inboundFormVisible" @close="close"/>
     <!--  详情  -->
-    <outboundSaleSendForm ref="outboundSaleSendForm" v-if="currentTypeConfig.visible" @close="currentTypeConfig.visible = false"/>
+    <component
+      :is="currentTypeConfig.detailConfig.component"
+      ref="detailComponent"
+      v-if="currentTypeConfig.detailConfig.visible"
+      @close="currentTypeConfig.detailConfig.visible = false"
+    />
   </div>
 </template>
 <style lang="scss" scoped>

@@ -7,7 +7,7 @@
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="getcategoryTree(true)">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
               <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
@@ -37,48 +37,12 @@
     </div>
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" @change="classAttributeChange">
-                <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4" v-if="isProductNameSwitch === '1'">
-            <el-form-item>
-              <el-input v-model="listQuery.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:10px">
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
+            <el-button size="mini" type="primary" @click="handleBuyingRequisition">生成请购单</el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
@@ -86,10 +50,10 @@
           </div>
 
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                  @click="$refs.dataTable.showSortDrawer()" />
+              </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -98,39 +62,34 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange" custom-column
-          ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData" customKey="JNPFTableKey_195052">
-          <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="code" label="产品编码" width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="name" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"></el-table-column>
-          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
-          <el-table-column prop="classAttribute" label="类别属性" width="120" sortable="custom">
+        <JNPF-table :data="tableData" :fixedNO="true" hasC custom-column
+          ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData" customKey="JNPFTableKey_195052" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          <el-table-column prop="code" label="产品编码" width="220"></el-table-column>
+          <el-table-column prop="name" label="产品名称" width="220"></el-table-column>
+          <el-table-column prop="drawingNo" label="产品型号" min-width="220" />
+          <el-table-column prop="productCategoryName" label="产品分类" width="120" />
+          <el-table-column prop="classAttribute" label="类别属性" width="120">
             <template slot-scope="scope">
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" :label="$store.getters.configData.deputyUnit.procureDeputyUnit ? '单位(主)' : '单位'"
-            :width="$store.getters.configData.deputyUnit.procureDeputyUnit ? 85 : 60" />
-          <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="$store.getters.configData.deputyUnit.procureDeputyUnit" />
-          <el-table-column prop="availableQuantity" label="可用库存" min-width="130" sortable="custom" />
-          <el-table-column prop="safeInventory" label="安全库存" min-width="130" sortable="custom" />
-          <el-table-column prop="maxInventory" label="最高库存" min-width="130" sortable="custom" />
+          <el-table-column prop="mainUnit" label="单位" min-width="90"/>
+          <el-table-column prop="availableQuantity" label="可用库存" min-width="130" />
+          <el-table-column prop="safeInventory" label="安全库存" min-width="130" />
+          <el-table-column prop="maxInventory" label="最高库存" min-width="130" />
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+          :limit.sync="listQuery.pageSize" @pagination="initData()" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <aiForm v-if="aiformVisible" ref="aiForm" @close="closeForm" />
-
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData()" @close="closeForm" />
+    <createdBuyingRequisitionForm ref="createdBuyingRequisitionForm" v-if="createdBuyingVisible" :autoInit="false" @close="closeForm"/>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 导入产品 -->
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
@@ -157,84 +116,59 @@
 
 <script>
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { excelExport } from '@/api/basicData/index'
-import { getProductList, deleteProduct, uploadCpProductData } from '@/api/masterDataManagement/productManage'
-import { getcategoryTree } from '@/api/basicData/materialSettings'
+import {excelExport} from '@/api/basicData'
+import {getProductList, deleteProduct, uploadCpProductData} from '@/api/masterDataManagement/productManage'
+import {getcategoryTree} from '@/api/basicData/materialSettings'
 import Form from '@/views/purchasingManagement/purchasingDemand/purchasingDemandPool/Form.vue'
-import { mapState } from 'vuex'
+import createdBuyingRequisitionForm from '@/views/purchasingManagement/purchasingDemand/createdBuyingRequisition/index.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getclassAttributeList } from '@/api/masterDataManagement/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import {getclassAttributeList} from '@/api/masterDataManagement'
 import getProjectList from '@/mixins/generator/getProjectList'
-import { getLabel } from '@/utils/index'
+import {getLabel} from '@/utils'
+
 Vue.prototype.$getLabel = getLabel
 export default {
-  components: { Form, ExportForm, SuperQuery },
+  components: {createdBuyingRequisitionForm, Form, ExportForm, SuperQuery},
   name: 'safetyInventoryWarning',
   mixins: [getProjectList],
   data() {
     return {
-      isProjectSwitch: '',
-      isProductNameSwitch: '',
-      tableDataFlag: false,
-      tableFlag: '',
-      columnList: [
-        // 'code',
-        // 'productCategoryName'
-        // 'deputyUnit',
-        // 'deputyAvailableQuantity',
-        // 'deputyInventoryQuantity',
-        // 'deputyOccupancyQuantity'
-      ],
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            {
+              prop: 'createTime', // 属性*
+              symbol: 'between', // 比较符*
+              timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+              fixed: true // 是否在搜索栏显示
+            },
+            {prop: 'classAttribute', symbol: '==', fixed: true,},
+          ],
+          keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: []
+        },
+      }],
+      columnList: [],
       exportFormVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色
       visible: false,
-      aiformVisible: false,
       treeData: [],
       tableData: [],
       treeLoading: false,
       listLoading: false,
       loadingText: false,
       leftFlag: false,
-      selectData: [], // 选中的数据 带到form页
-      classAttributeOptions: [
-        {
-          label: '成品',
-          value: 'finish_product'
-        },
-        {
-          label: '非成品',
-          value: 'other'
-        }
-      ],
+      selectData: [],
       classAttributeList: [],
-      initListQuery: {
-        code: '',
-        name: '',
+      listQuery: {
         safeInventoryWarnFlag: 1,
-        classAttribute: 'other',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
         pageSize: 20,
-        drawingNo: '', // 图号
         productSource: 'purchase', // 产品来源
-        startAndEndTime: [], // 创建时间
-        productCategoryId: '', // 类型id
-        productStatus: '', // 产品状态
-        customerQueryFields: [],
-        createTimeArr: []
       },
-      listQuery: {},
       productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
       productSourceList: [
         { label: '自制', value: 'produce' },
@@ -243,6 +177,7 @@ export default {
       ], // 产品来源
       total: 0,
       formVisible: false,
+      createdBuyingVisible: false,
       expands: true,
       refreshTree: true,
       defaultProps: {
@@ -251,44 +186,12 @@ export default {
       },
 
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'code',
-          label: '产品编码',
-          type: 'input'
-        },
-        {
-          prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
-          prop: 'classAttribute',
-          label: '类别属性',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'productCategoryName',
-          label: '产品分类',
-          type: 'input'
-        },
-        {
-          prop: 'mainUnit',
-          label: '单位',
-          type: 'input'
-        }
-        // {
-        //   prop: 'safeInventory',
-        //   label: '安全库存',
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'availableQuantity',
-        //   label: '可用库存',
-        //   type: 'input'
-        // }
-      ],
+      superQueryJson: [{
+        prop: 'classAttribute',
+        label: '类别属性',
+        type: 'select',
+        options: []
+      }],
       uploadVisib: false
     }
   },
@@ -296,45 +199,24 @@ export default {
     this.getProductClassFun()
   },
   async created() {
-    await this.getProjectSwitch('system', 'project')
-    await this.getProjectList()
-    if (this.$store.getters.configData.deputyUnit.procureDeputyUnit) {
-      this.superQueryJson.forEach(item => {
-        if (item.prop === 'mainUnit') {
-          item.label = '单位(主)'
-        }
-      })
-      this.superQueryJson.splice(7, 0, {
-        prop: 'deputyUnit',
-        label: '单位(副)',
-        type: 'input'
-      })
-
-    }
-    if (this.$store.getters.configData.product.enable_productName) {
-      this.superQueryJson.splice(2, 0, {
-        prop: 'name',
-        label: '产品名称',
-        type: 'input'
-      })
-    }
     if (localStorage.getItem('safetyInventoryWarningFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('safetyInventoryWarningFlag'))
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
 
-    this.getcategoryTree()
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.getcategoryTree(false)
 
-    this.initData()
-  },
-  computed: {
-    ...mapState('user', ['token'])
   },
   methods: {
-    classAttributeChange(){
-      this.initData()
+    handleBuyingRequisition(){
+      if (this.selectData.length === 0) {
+        return this.$message.warning('请选择你要生成的请购单')
+      }
+      this.createdBuyingVisible = true
+      this.$nextTick(() => {
+        this.$refs.createdBuyingRequisitionForm.init('', 'add', false, this.selectData)
+      })
     },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleProductInfoData(val) {
@@ -406,7 +288,7 @@ export default {
     },
 
     // 获取指定树状列表
-    getcategoryTree() {
+    getcategoryTree(flag) {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
@@ -415,7 +297,7 @@ export default {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {
             this.treeLoading = false
-            this.initData()
+            flag && this.initData()
           })
         })
         .catch(() => {
@@ -427,58 +309,42 @@ export default {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.id
       this.listQuery.productCategoryCode = data.code
-      this.search()
+      this.initData()
     },
     moreQueries() {
       this.visible = true
     },
-    sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'product_category_name') {
-        newProp = 'productCategoryName'
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
+
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      this.aiformVisible = false
+      this.createdBuyingVisible = false
       if (isRefresh) {
         this.initData()
       }
     },
 
-    initData() {
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+
       this.listLoading = true
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      // this.listQuery.pageNum = 1
-      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getProductList(this.listQuery)
         .then((res) => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.tableData = res.data.records
-          this.tableFlag = true
           this.total = res.data.total
           this.listLoading = false
           this.visible = false
         })
         .catch(() => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
           this.listLoading = false
         })
     },
-    search() {
-      this.initData()
-    },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.$refs.SuperQuery.conditionList = []
-      this.initData()
-    },
+
+
 
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle() {
@@ -524,16 +390,6 @@ export default {
               )
             }
           })
-          // var maxDate = null; // 最大日期初始值设为null
-          // // 遍历列表中的数据 找到最大交期
-          // for (var i = 0; i < this.selectData.length; i++) {
-          //   var currentDate = new Date(this.selectData[i].deliveryDate);
-          //   if (maxDate === null || currentDate > maxDate) {
-          //     maxDate = currentDate;
-          //   }
-          // }
-          // let demandDelivery = null
-          // demandDelivery = maxDate.toISOString().split('T')[0];
           this.formVisible = true
           this.$nextTick(() => {
             this.$refs.Form.init(this.selectData, this.listQuery.classAttribute, 'safe')
@@ -562,7 +418,6 @@ export default {
       if (!this.listQuery.productCategoryId) {
         this.$message.warning('请先选择产品分类')
       } else {
-        // this.$refs.UploadProduct.$el.querySelector('input').click()
         this.uploadVisib = true
       }
     },
@@ -573,10 +428,8 @@ export default {
       console.log(file)
     },
     handleFileChange(file) {
-      console.log('所选文件:', file)
       this.file = file.raw
     },
-    // 下载模板
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
@@ -660,24 +513,11 @@ export default {
           ]
         )
       })
-      return
-    },
-    // 智能新建
-    aiAdd() {
-      this.aiformVisible = true
-      this.$nextTick(() => {
-        this.$refs.aiForm.init()
-      })
-    },
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
 
+    },
     getProductClassFun() {
       let obj = {
-        pageNum: 1,
+
         pageSize: -1
       }
       getclassAttributeList(obj).then((res) => {
@@ -700,4 +540,3 @@ export default {
   }
 }
 </script>
-<!-- <style src="@/assets/scss/index-list.scss" lang="scss" scoped /> -->

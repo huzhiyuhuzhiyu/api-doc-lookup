@@ -17,6 +17,12 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "date",
       itemRules: [{required: true, trigger: "blur"}],
+      change: (val) => {
+        if (!context.linesList.length) return
+        context.linesList.forEach(item => {
+          item.deliveryDate = val;
+        });
+      }
     },
     {
       prop: "organizeIdTrees",

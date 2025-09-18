@@ -1,7 +1,6 @@
 <script>
-import {deepClone} from "@/utils";
+import {deepClone, unifyFields} from "@/utils";
 import TableFormProduct from "@/components/no_mount/TableForm-product/index.vue";
-import moment from "moment";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
 import {getBasicFormSchema} from "./data";
@@ -31,6 +30,7 @@ export default {
       loading: false,
       btnLoading: false,
       userList: [],
+      prefillData: [],
       dataForm: {
         orderNo: '',
         deliveryDate: '',
@@ -191,7 +191,7 @@ export default {
         },
         default: async () => {
           await this.getOrderNoConfig();
-          await this.initOrganizeAndUser()
+          await this.initOrganizeAndUser();
         },
       },
       apiMethodActions: {
@@ -205,6 +205,9 @@ export default {
     activeType() {
       return this.btnType !== 'look'
     },
+    showBackAndCancel() {
+      return this.btnType !== 'add' || this.prefillData.length > 0
+    }
   },
   // 菜单进入 走activated
   activated() {
@@ -212,15 +215,18 @@ export default {
     this.title = '请购单'
     this.init('', 'add')
   },
+
   // 列表操作进入 走created
   created() {
     this.autoInit && this.init('', 'add')
   },
+
   mounted() {
     this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
   },
+
   methods: {
-    async init(id = '', type, approvalFlag = false) {
+    async init(id = '', type, approvalFlag = false, prefillData = []) {
       this.btnType = type
       this.approvalFlag = approvalFlag
       this.title = this.getTitle(type)
@@ -230,9 +236,30 @@ export default {
         await this.actions[type](id);
       } else {
         await this.actions.default();
+        this.handlePrefillData(prefillData);
       }
       this.dataForm.approvalFlag && this.getFlowDetail(id)
       this.$nextTick(() => this.refreshTableHeight())
+    },
+
+    handlePrefillData(prefillData) {
+      this.prefillData = prefillData
+      if (!prefillData || !prefillData.length) return;
+      const productFieldMap = {
+        productName: ['code'],
+        productCode: ['name'],
+        productDrawingNo: ['drawingNo'],
+        productsId: ['id'],
+      };
+
+      const unifiedData = unifyFields(prefillData, productFieldMap);
+
+      this.linesList = unifiedData.map(item => ({
+        ...this.createdObj(),
+        ...item,
+        planQuantity: item.planQuantity || '',
+        deliveryDate: item.deliveryDate || ''
+      }));
     },
 
     async initOrganizeAndUser() {
@@ -254,7 +281,6 @@ export default {
         return item
       })
       this.dataForm.orderNo = number
-      this.dataForm.deliveryDate = moment(new Date()).format('YYYY-MM-DD')
     },
 
     async fetchDepartment() {
@@ -430,11 +456,11 @@ export default {
 
 <template>
   <transition name="el-zoom-in-center">
-    <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout JNPF-preview-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="JNPF-preview-main transitionForm org-form">
           <div class="JNPF-common-page-header">
-            <el-page-header :class="btnType === 'add' ? 'el-page-header_left_none' : '' " @back="$emit('close',false)"
+            <el-page-header :class="!showBackAndCancel ? 'el-page-header_left_none' : '' " @back="$emit('close',false)"
               :content="title"/>
             <div class="options">
               <template v-if="activeType">
@@ -445,7 +471,7 @@ export default {
                   保存并提交
                 </el-button>
               </template>
-              <el-button v-if="btnType !== 'add'" @click="$emit('close',false)">{{
+              <el-button v-if="showBackAndCancel" @click="$emit('close',false)">{{
                   $t('common.cancelButton')
                 }}
               </el-button>
@@ -498,6 +524,9 @@ export default {
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
+              <el-tab-pane label="附件" name="annex">
+                <UploadWj v-model="fileList" :disabled="!activeType" :detailed="!activeType"></UploadWj>
+              </el-tab-pane>
               <el-tab-pane label="流程信息" name="approvalFlow">
                 <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId"
                   style="margin-top: 5px;"/>
@@ -505,9 +534,6 @@ export default {
               <el-tab-pane v-if="!activeType && dataForm.approvalFlag" label="流转记录"
                 name="transferList">
                 <recordList :list='flowTaskOperatorRecordList' :endTime='endTime'/>
-              </el-tab-pane>
-              <el-tab-pane label="附件" name="annex">
-                <UploadWj v-model="fileList" :disabled="!activeType" :detailed="!activeType"></UploadWj>
               </el-tab-pane>
             </el-tabs>
           </div>

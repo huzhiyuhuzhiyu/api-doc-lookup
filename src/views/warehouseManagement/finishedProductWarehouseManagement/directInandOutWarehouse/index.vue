@@ -20,7 +20,10 @@ export default {
   components: {BatchPrintBrowse, PrintDialog, TableFormProduct},
   mixins: [flowMixin, busFlow],
   props: {
-    warehouseCode: "",
+    warehouseCode: {
+      type: String,
+      default: ''
+    }
   },
   data() {
     return {
@@ -222,14 +225,10 @@ export default {
       const {data} = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId);
       const dictData = this.getDictDataSync('warehouseBusinessType');
       const businessTypeLabelMap = new Map(dictData.map(item => [item.value, item.label]));
-      this.businessTypeList = [
-        {label: "直接入库", value: "inbound_other"},
-        {label: "直接出库", value: "outbound_other"},
-        ...data.records.map(item => ({
-          label: businessTypeLabelMap.get(item.businessType) || item.businessType,
-          value: item.businessType
-        }))
-      ];
+      this.businessTypeList = data.records.map(item => ({
+        label: businessTypeLabelMap.get(item.businessType) || item.businessType,
+        value: item.businessType
+      }))
     },
 
     async fetchClassAttributeList() {
@@ -279,6 +278,10 @@ export default {
         if (msg === 'Success') {
           this.dataForm = data.stockMove
           this.linesList = data.lines
+          await this.fetchClassAttributeList();
+          await this.fetchProcessList();
+          await this.fetchAndSetWarehouseInfo();
+          await this.fetchBusinessTypeList();
           this.loading = false
         }
       } catch (err) {
@@ -784,15 +787,15 @@ export default {
           },
           change: (val, data, paramsObj) => {
             const {scope} = paramsObj;
-            const {row} = scope;
             const fieldPath = `data.${ scope.$index }.shelfSpaceName`;
             this.$nextTick(() => {
               this.$refs.tableForm?.$refs.main?.validateField(fieldPath);
             });
+            const index = scope.$index;
             const selectedShelfSpace = data[0].all;
-            row.shelfSpaceName = selectedShelfSpace.name
-            row.shelfSpaceId = selectedShelfSpace.id
-            row.warehouseId = selectedShelfSpace.warehouseId
+            this.linesList[index].shelfSpaceName = selectedShelfSpace.name
+            this.linesList[index].shelfSpaceId = selectedShelfSpace.id
+            this.linesList[index].warehouseId = selectedShelfSpace.warehouseId
           },
           listRequestObj: {
             warehouseId: this.dataForm.warehouseId,
@@ -982,9 +985,9 @@ export default {
 
     contentChanges(dataOrIndex, prop, value) {
       if (Array.isArray(dataOrIndex)) {
-        this.computedLinesList = JSON.parse(JSON.stringify(dataOrIndex))
+        this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
       } else if (prop) {
-        this.computedLinesList[dataOrIndex][prop] = value
+        this.linesList[dataOrIndex][prop] = value
       }
     },
 
@@ -1075,10 +1078,7 @@ export default {
       this.dataForm.documentStatus = type
 
       const deepParams = _.merge({}, this.dataForm, this.businessConfig.defaultForm);
-      const newLines = this.computedLinesList.map(item => ({
-        ...item,
-        warehouseId: this.dataForm.warehouseId
-      }))
+      const newLines = this.computedLinesList
 
       const params = {
         stockMove: deepParams,

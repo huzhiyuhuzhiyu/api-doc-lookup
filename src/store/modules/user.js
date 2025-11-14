@@ -1,5 +1,5 @@
 import { login, logout, getInfo, unlock } from '@/api/user'
-import { setLock, getLock, removeLock, getToken, setToken, removeToken } from '@/utils/auth'
+import { setLock, getLock, removeLock, getToken, setToken, removeToken, getAccessToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import defaultSettings from '@/settings'
 import qs from 'qs'
@@ -8,6 +8,7 @@ const define = require('@/utils/define')
 
 const state = {
   token: getToken(),
+  accessToken: getAccessToken(),
   isLock: getLock() || 0,
   isLeaveToast: true,
   menuList: [],

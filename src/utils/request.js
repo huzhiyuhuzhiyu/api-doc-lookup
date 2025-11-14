@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { message } from '@/utils/message'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import { getAccessToken, getToken } from '@/utils/auth'
 import define, {workspacePath} from '@/utils/define'
 import context from '@/main'
 import {windowOpen} from "echarts/lib/util/format";
@@ -49,6 +49,9 @@ service.interceptors.request.use(
     config.headers['jnpf-origin'] = 'pc'
     if (store.getters.token) {
       config.headers['Authorization'] = getToken()
+    }
+    if (store.getters.accessToken) {
+      config.headers['Pt-Authorization'] = getAccessToken()
     }
     if (config.method == 'get') {
       config.params = config.data

@@ -44,9 +44,11 @@ async function singleSignOn() {
     await synchronousSystemTheme(themePresets)
     store.commit('user/SET_TOKEN', urlParams.token)
     setToken(urlParams.token)
+    setToken(urlParams.accessToken)
     // 清除地址栏中的 token 参数
     const url = new URL(window.location.href)
     url.searchParams.delete('token')
+    url.searchParams.delete('accessToken')
     url.searchParams.delete('systemThemeColor')
     url.searchParams.delete('backColor')
     url.searchParams.delete('menuThemeColor')

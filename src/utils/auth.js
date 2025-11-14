@@ -12,6 +12,14 @@ export function removeToken() {
   return jnpf.storageRemove('token')
 }
 
+export function getAccessToken() {
+  return jnpf.storageGet('AccessToken')
+}
+
+export function setAccessToken(token) {
+  return jnpf.storageSet({ AccessToken })
+}
+
 export function getLock() {
   return jnpf.storageGet('lock')
 }

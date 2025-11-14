@@ -1,5 +1,6 @@
 const getters = {
     token: state => state.user.token,
+    accessToken: state => state.user.accessToken,
     theme: state => state.user.theme,
     isLock: state => state.user.isLock,
     menuList: state => state.user.menuList,

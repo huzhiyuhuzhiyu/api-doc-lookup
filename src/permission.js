@@ -3,7 +3,7 @@ import store from './store'
 import {message as $message} from '@/utils/message'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import {getToken, removeToken, setToken} from '@/utils/auth'
+import { getToken, removeToken, setAccessToken, setToken } from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
 import {injectTenantMinix, removeTenantMinix} from "@/mixins/generator/TenantMinix";
 import {windowOpen} from "echarts/lib/util/format";
@@ -44,7 +44,7 @@ async function singleSignOn() {
     await synchronousSystemTheme(themePresets)
     store.commit('user/SET_TOKEN', urlParams.token)
     setToken(urlParams.token)
-    setToken(urlParams.accessToken)
+    setAccessToken(urlParams.accessToken)
     // 清除地址栏中的 token 参数
     const url = new URL(window.location.href)
     url.searchParams.delete('token')

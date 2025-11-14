@@ -16,7 +16,7 @@ export function getAccessToken() {
   return jnpf.storageGet('AccessToken')
 }
 
-export function setAccessToken(token) {
+export function setAccessToken(AccessToken) {
   return jnpf.storageSet({ AccessToken })
 }
 

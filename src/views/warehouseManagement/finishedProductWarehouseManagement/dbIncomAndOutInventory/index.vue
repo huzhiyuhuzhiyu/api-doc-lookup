@@ -255,6 +255,12 @@ export default {
     currentTypeConfig() {
       return this.businessTypeConfig[this.activeProcess] || {};
     },
+    hasDetailConfig() {
+      return !!this.currentTypeConfig.detailConfig;
+    },
+    isDetailVisible() {
+      return this.currentTypeConfig.detailConfig?.visible || false;
+    },
     // 出库
     isOutbound() {
       return ['outbound_purchase', 'outbound_external_send', 'outbound_external', 'finished_product_picking_send'].includes(this.activeProcess);
@@ -677,9 +683,9 @@ export default {
     <inboundForm ref="inboundForm" v-if="inboundFormVisible" @close="close"/>
     <!--  详情  -->
     <component
+      v-if="hasDetailConfig && isDetailVisible"
       :is="currentTypeConfig.detailConfig.component"
       ref="detailComponent"
-      v-if="currentTypeConfig.detailConfig.visible"
       @close="currentTypeConfig.detailConfig.visible = false"
     />
   </div>

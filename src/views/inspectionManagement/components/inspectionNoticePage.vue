@@ -178,7 +178,6 @@ export default {
     queryParams: {
       // 页面查询参数
       type: Object,
-      required: true,
       default: {}
     }
   },

@@ -1,93 +1,186 @@
-<!--
-config: {
-  // 合计行
-    summaryConfig: {
-      showSummary: true, // 控制是否显示汇总行
-      summaryColumns: {
-        'qualified': 'qualifiedQuantity',
-        'defect': 'unqualifiedQuantity'
-      },
+<script>
+import dynamicHeaderUtils from '@/views/smartReport/core/dynamicHeaderUtils';
+import { deepClone } from "@/utils";
+
+const RecursiveColumn = {
+  name: 'RecursiveColumn',
+  functional: true,
+  props: {
+    column: {
+      type: Object,
+      required: true
     },
-  // 动态表头配置
-  dynamicHeaders: {
-    enable: true, 是否启用动态表头
-    config: {
-      // 左侧固定列配置
-      leftFields: [
-        {
-          prop: 'workshopName',
-          label: '车间名称',
-          sortable: 'custom'
-        }
-      ],
-
-      // 动态列配置
-      dynamicColumns: [
-        {
-          type: 'chinese',  // chinese模式：中文关键词匹配  exact模式：精确字段名匹配
-          minWidth: 120,
-          children: [  // 可选子列配置 children为空则匹配 " 测试A：0 " 类型
-              { prop: 'qualifiedQuantity', label: '合格数' },
-              { prop: 'unqualifiedQuantity', label: '不良数' }
-            ]
-          },
-      ],
-
-      // 日期列特殊配置
-        dateColumns: {
-           mergeParent: true, // 是否合并日期父列
-           children: [ // 子列配置
-              {prop: 'qualifiedQuantity', label: '合格数', minWidth: 100},
-              {prop: 'unqualifiedQuantity', label: '不合格数', minWidth: 100}
-            ],
-           datePattern: /^\d{4}-\d{2}-\d{2}$/, // 周 匹配 YYYY-MM-dd 格式  -  月 匹配 YYYY-MM 格式
-           dateFormatter: date => date.replace(/-/g, '/') // 可选
-          }
-        }
+    handleTableAlign: {
+      type: Function,
+      default: (align) => align || 'center'
+    }
   },
+  render(h, { props }) {
+    const column = props.column;
+    const children = column.children || [];
 
-  // 数据获取配置
-  fetchApi: getProductionData,
-
-  // 初始化查询参数
-  initQuery: {
-    reporting: '',
-    input: '',
-    pageNum: 1,
-    pageSize: 20,
-  },
-
-  // 搜索栏配置
-  searchConfig: [
-    {
-      label: '选择周',
-      prop: 'reporting',
-      searchType: 'date',
-      type: 'week',
-      format: "yyyy 第 WW 周",
-    },
-     {
-        label: '输入',
-        prop: 'input',
-        searchType: 'input',
+    return column.show !== false ? h('el-table-column', {
+      props: {
+        prop: column.prop,
+        label: column.label,
+        minWidth: column.minWidth,
+        align: props.handleTableAlign(column.align),
+        sortable: column.sortable || false,
+        fixed: column.fixed
       }
-  ],
+    }, [
+      children.length > 0 ? children.map((child, index) => {
+        return h('recursive-column', {
+          props: {
+            column: child,
+            key: index
+          }
+        });
+      }) : null
+    ]) : null
+  }
+};
 
-  // 导出配置
-  exportConfig: {
-    enable: true,
-    type: 'PROD_REPORT',
-    name: '生产报表_' + moment().format('YYYYMMDD'),
-    exportHidden: true,
-    fetchApi: null,
+export default {
+  name: 'CommonReport',
+  components: { RecursiveColumn },
+  props: {
+    // 基础配置
+    config: {
+      type: Object,
+      required: true,
+      default: () => ({
+        // 数据接口
+        fetchApi: {
+          type: Function,
+          required: true
+        },
+        // 初始查询参数
+        initQuery: {
+          type: Object,
+          default: () => ({})
+        },
+        // 动态表头配置
+        dynamicHeaders: {
+          type: Object,
+          default: () => ({
+            enable: false,
+          })
+        },
+        // 表头配置
+        columnsConfig: {
+          type: Array,
+          default: () => []
+        },
+        // 高级查询配置
+        superQueryConfig: {
+          type: Object,
+          default: () => ({
+            systemSearchView: [],
+            superQueryJson: []
+          }),
+          required: true
+        },
+        // 汇总行配置
+        summaryConfig: {
+          type: Object,
+          default: () => ({
+            showSummary: false
+          })
+        },
+        // 导出配置
+        exportConfig: {
+          type: Object,
+          default: () => ({
+            enable: false,
+            type: '',
+            name: ''
+          })
+        },
+        // 行key字段名
+        rowKey: {
+          type: String,
+          default: 'id'
+        }
+      })
+    },
   },
-}
--->
+  data() {
+    return {
+      listQuery: deepClone(this.config.initQuery),
+      total: 0,
+      listLoading: true,
+      tableData: [],
+      apiTotalData: null,
+      generatedHeaders: [], // 存储动态表头数据
+      cachedHeaders: null // 用于缓存上一次生成的表头
+    };
+  },
+  computed: {
+    rowKey() {
+      return this.config.rowKey || 'id';
+    },
+    dynamicHeaders() {
+      return this.config.dynamicHeaders || {};
+    },
+    columnsConfig() {
+      return this.config.columnsConfig || [];
+    },
+    summaryConfig() {
+      return this.config.summaryConfig || {};
+    },
+    exportConfig() {
+      return this.config.exportConfig || { enable: false };
+    },
+    superQueryConfig() {
+      return this.config.superQueryConfig || {
+        systemSearchView: [],
+        superQueryJson: []
+      };
+    },
+  },
+  watch: {
+    config: {
+      handler(newVal) {
+        if (newVal) {
+          this.listQuery = deepClone(newVal.initQuery || {});
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  methods: {
+    async initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery.pageSize) {
+        this.$message.error('请先等待视图加载完成！');
+        return;
+      }
+
+      try {
+        await dynamicHeaderUtils.initData(this, this.dynamicHeaders);
+      } catch ( error ) {
+        this.$message.error('数据加载失败');
+      }
+    },
+
+    getSummaries(param) {
+      return dynamicHeaderUtils.getSummaries(param, this);
+    },
+
+    handleTableAlign(align) {
+      return align || 'left';
+    },
+  }
+};
+</script>
+
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <!-- 搜索区域 -->
-      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="superQueryConfig.systemSearchView" tableRef="dataTable"/>
       <!-- 表格区域 -->
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
@@ -97,10 +190,9 @@ config: {
               tableRef="dataTable"
               :listQuery="listQuery"
               :exportMethod="exportConfig.fetchApi"
-              :exportType="exportConfig.type"
-              :exportName="exportConfig.name"
+              :exportType="exportConfig.exportType"
+              :exportName="exportConfig.exportName"
               :exportHidden="exportConfig.exportHidden"
-              :exportLabelShow="exportConfig.exportLabelShow"
             />
           </div>
           <div class="JNPF-common-head-right">
@@ -127,7 +219,7 @@ config: {
           :show-summary="summaryConfig.showSummary"
           :summary-method="summaryConfig.showSummary ? getSummaries : null"
           @queryChange="initData"
-          :queryJson="superQueryJson"
+          :queryJson="superQueryConfig.superQueryJson"
           :listQuery="listQuery"
           fixedNO
           custom-column
@@ -185,167 +277,3 @@ config: {
     </div>
   </div>
 </template>
-
-<script>
-import dynamicHeaderUtils from '@/views/smartReport/core/dynamicHeaderUtils';
-import { deepClone } from "@/utils";
-
-const RecursiveColumn = {
-  name: 'RecursiveColumn',
-  functional: true,
-  props: {
-    column: {
-      type: Object,
-      required: true
-    },
-    handleTableAlign: {
-      type: Function,
-      default: (align) => align || 'center'
-    }
-  },
-  render(h, { props }) {
-    const column = props.column;
-    const children = column.children || [];
-
-    return column.show !== false ? h('el-table-column', {
-      props: {
-        prop: column.prop,
-        label: column.label,
-        minWidth: column.minWidth,
-        align: props.handleTableAlign(column.align),
-        sortable: column.sortable || false,
-        fixed: column.fixed
-      }
-    }, [
-      children.length > 0 ? children.map((child, index) => {
-        return h('recursive-column', {
-          props: {
-            column: child,
-            key: index
-          }
-        });
-      }) : null
-    ]) : null
-  }
-};
-
-export default {
-  name: 'CommonReport',
-  components: { RecursiveColumn },
-  props: {
-    // 基础配置
-    config: {
-      type: Object,
-      required: true,
-      default: () => ({
-        // 行key字段名
-        rowKey: {
-          type: String,
-          default: 'id'
-        },
-        // 是否使用动态表头
-        dynamicHeaders: {
-          // datePattern: /^\d{4}-\d{2}$/, // 匹配 YYYY-MM 格式 /^\d{4}-\d{2}-\d{2}$/ 匹配 YYYY-MM-dd 格式
-          type: Object,
-          default: () => ({
-            enable: false,
-          })
-        },
-        // 初始查询参数
-        initQuery: {
-          type: Object,
-          default: () => ({
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              }
-            ],
-            pageNum: 1,
-            pageSize: 20
-          })
-        },
-        // 搜索条件配置
-        searchConfig: {
-          type: Array,
-          default: () => []
-        },
-        // 表头配置
-        columnsConfig: {
-          type: Array,
-          default: () => []
-        },
-        // 导出配置
-        exportConfig: {
-          type: Object,
-          default: () => ({
-            enable: false,
-            type: '',
-            name: ''
-          })
-        },
-        // 数据接口
-        fetchApi: {
-          type: Function,
-          required: true
-        }
-      })
-    },
-    systemSearchView: {
-      type: Array,
-      default: []
-    },
-    superQueryJson: {
-      type: Array,
-      default: []
-    },
-  },
-  data() {
-    return {
-      listQuery: deepClone(this.config.initQuery),
-      searchList: deepClone(this.config.searchConfig),
-      total: 0,
-      listLoading: true,
-      tableData: [],
-      apiTotalData: null,
-      generatedHeaders: [], // 存储动态表头数据
-      cachedHeaders: null // 用于缓存上一次生成的表头
-    };
-  },
-  computed: {
-    rowKey() {
-      return this.config.rowKey || 'id';
-    },
-    columnsConfig() {
-      return this.config.columnsConfig || [];
-    },
-    exportConfig() {
-      return this.config.exportConfig || { enable: false };
-    },
-    superQueryConfig() {
-      return this.config.superQueryConfig || { enable: false };
-    },
-    dynamicHeaders() {
-      return this.config.dynamicHeaders || {};
-    },
-    summaryConfig() {
-      return this.config.summaryConfig || {};
-    },
-  },
-  methods: {
-    async initData(listQuery) {
-      if (listQuery) this.listQuery = listQuery
-      if (!this.listQuery.pageSize) return this.$message.error('请先等待视图加载完成！');
-      await dynamicHeaderUtils.initData(this, this.dynamicHeaders);
-    },
-
-    getSummaries(param) {
-      return dynamicHeaderUtils.getSummaries(param, this);
-    },
-
-    handleTableAlign(align) {
-      return align || 'left';
-    },
-  }
-};
-</script>

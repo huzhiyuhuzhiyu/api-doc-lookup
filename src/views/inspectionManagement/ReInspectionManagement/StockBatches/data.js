@@ -58,12 +58,12 @@ export function getColumns() {
       minWidth: 160
     },
     {
-      prop: "num",
+      prop: "inventoryQuantity",
       label: "数量",
       minWidth: 160
     },
     {
-      prop: "num1",
+      prop: "stockDay",
       label: "在库天数",
       minWidth: 160
     }

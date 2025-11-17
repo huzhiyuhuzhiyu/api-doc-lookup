@@ -174,12 +174,17 @@ export default {
         showRouting: false, // 是否显示工艺路线
         showProcess: false // 是否显示工序
       }
+    },
+    queryParams: {
+      // 页面查询参数
+      type: Object,
+      required: true,
+      default: {}
     }
   },
   data() {
     return {
       isProjectSwitch: '',
-      isProductNameSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
       superQueryVisible: false,
@@ -213,7 +218,7 @@ export default {
           label: '品名规格',
           type: 'input'
         },
-      
+
         {
           prop: 'mainUnit',
           label: '单位',
@@ -348,7 +353,10 @@ export default {
       })
     }
     this.tableDataFlag = true
-
+    this.initListQuery = {
+      ...this.initListQuery,
+      ...this.queryParams
+    }
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
@@ -465,22 +473,24 @@ export default {
       this.initData()
     },
     addOrUpdateHandle(row, btnType) {
-      if (btnType == 'look') {
-        console.log(row,'对对对')
-        if (row.notificationType === 'work_report') {
-          this.detailReportWorkFormVisible = true
-          this.$nextTick(() => {
-            this.$refs.DetailReportWorkForm.init(row.id, btnType, false, this.pageData.type)
-          })
-        } else {
-          this.detailFormVisible = true
-          this.$nextTick(() => {
-            this.$refs.DetailForm.init(row.id, btnType, false, this.pageData.type)
-          })
-        }
-        
-      } else {
+      if (btnType === 'look') {
+        this.detailFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.DetailForm.init(row.id, btnType, false, this.pageData.type)
+        })
+        // if (row.notificationType === 'work_report') {
+        //   this.detailReportWorkFormVisible = true
+        //   this.$nextTick(() => {
+        //     this.$refs.DetailReportWorkForm.init(row.id, btnType, false, this.pageData.type)
+        //   })
+        // } else {
+        //   this.detailFormVisible = true
+        //   this.$nextTick(() => {
+        //     this.$refs.DetailForm.init(row.id, btnType, false, this.pageData.type)
+        //   })
+        // }
 
+      } else {
         this.formVisible = true
         this.$nextTick(() => {
           this.$refs.Form.init(row.id, btnType, false, this.pageData.type)

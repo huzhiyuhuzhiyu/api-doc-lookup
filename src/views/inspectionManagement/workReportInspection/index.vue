@@ -120,7 +120,7 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
     getAlign(align) {
-      return align || 'center'
+      return align || 'left'
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query

@@ -312,7 +312,7 @@ export default {
 
   methods: {
     getAlign(align) {
-      return align || 'center'
+      return align || 'left'
     },
     superQuerySearch(query) {
       this.superQuery = query

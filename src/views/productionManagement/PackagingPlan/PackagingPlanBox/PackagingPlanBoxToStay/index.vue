@@ -117,7 +117,7 @@ export default {
     },
 
     getAlign(align) {
-      return align || 'center'
+      return align || 'left'
     },
   }
 }

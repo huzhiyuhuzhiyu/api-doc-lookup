@@ -271,7 +271,7 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
     getAlign(align) {
-      return align || 'center'
+      return align || 'left'
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
@@ -409,7 +409,7 @@ export default {
                     打印
                   </el-dropdown-item>
                   <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
-                    详情
+                    查看详情
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>

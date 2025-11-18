@@ -50,7 +50,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table customKey="hsCodes" v-loading="listLoading" :data="tableDataList" 
+          <JNPF-table customKey="hsCodes" v-loading="listLoading" :data="tableDataList"
             @selection-change="(val) => selectedRow = val" :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
             @sort-change="sortChange" ref="dataTable" custom-column>
             <template v-for="column in columnsConfig">
@@ -206,7 +206,7 @@ export default {
       this.search()
     },
     getAlign(align) {
-      return align || 'center'
+      return align || 'left'
     },
     sortChange({ prop, order }) {
       let newProp

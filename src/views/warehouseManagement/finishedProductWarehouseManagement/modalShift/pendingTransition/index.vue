@@ -12,6 +12,12 @@ export default {
     Form,
   },
   mixins: [approvalMixin],
+  props: {
+    warehouseCode: {
+      type: String,
+      default: 'finish_product'
+    }
+  },
   data() {
     return {
       systemSearchView: [{
@@ -244,6 +250,6 @@ export default {
                     @pagination="initData()"/>
       </div>
     </div>
-    <Form ref="Form" v-if="visible" @close="close"/>
+    <Form ref="Form" v-if="visible" :warehouseCode="warehouseCode" @close="close"/>
   </div>
 </template>

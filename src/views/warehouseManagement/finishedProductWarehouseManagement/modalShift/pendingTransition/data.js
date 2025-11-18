@@ -1,3 +1,5 @@
+import { getWarehouseList } from "@/api/basicData";
+
 /**
  * @description 按钮权限列表
  */
@@ -25,6 +27,33 @@ export function getBasicFormSchema(dataFormRef, context) {
       get disabled() {
         return context.isOrderNoEditable
       }
+    },
+    {
+      prop: 'warehouseName',
+      label: '仓库',
+      value: '',
+      type: 'custom',
+      customComponent: 'ComSelect-list',
+      change: (val, data, paramsObj) => {
+        this.$nextTick(() => {
+          this.$refs['dataForm'].$refs.main.validateField('warehouseName')
+        })
+        if (!val && data.length) return
+        if (data && data.length) {
+          this.dataForm.warehouseId = data[0].id
+          this.dataForm.warehouseName = data[0].name
+          this.dataForm.warehouseType = data[0].all.type
+          this.locationEnabled = data[0].all.locationStatus !== 'disabled'
+        } else {
+          this.dataForm.warehouseId = ''
+          this.dataForm.warehouseName = ''
+          this.dataForm.warehouseType = ''
+        }
+      },
+      requestObj: {type: 'normal', state: 'enable'},
+      dialogTitle: '选择仓库',
+      method: getWarehouseList,
+      itemDisabled: true
     },
     {
       prop: "partnerName",

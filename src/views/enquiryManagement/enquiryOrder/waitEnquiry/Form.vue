@@ -538,7 +538,9 @@ export default {
           this.originalFormData = deepClone(this.dataForm)
           this.linesList = data.lines.map(item => ({
             ...item,
-            cooperativePartnerId: ''
+            cooperativePartnerId: '',
+            quotationId: data.sale.id,
+            quotationLineId: item.id,
           }))
           await this.fetchDepartment()
           await this.fetchOrganization()

@@ -24,14 +24,14 @@
         <el-autocomplete style="width: 100%" v-else v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder"
           :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event) : ''"
-          @change="item.hasOwnProperty('change') ? item.change($event) : ''" :disabled="readOnly"
+          @change="item.hasOwnProperty('change') ? item.change($event) : ''" :disabled="item.disabled||readOnly"
           :fetch-suggestions="item.remoteMethod || (() => { })" :trigger-on-focus="item.onFocus || false"
           @select="item.hasOwnProperty('select') ? item.select($event) : ''" />
       </template>
 
       <!-- 下拉框 -->
       <el-select v-else-if="item.type === 'select'" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder"
-        style="width:100%" :disabled="readOnly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+        style="width:100%" :disabled="item.disabled||readOnly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
         :filterable="item.filterable || false" reserve-keyword :remote-method="item.remoteMethod || (() => { })"
         :remote="item.remote || false" @input="item.hasOwnProperty('input') ? item.input($event) : ''"
         @change="item.hasOwnProperty('change') ? item.change($event) : ''">
@@ -42,7 +42,7 @@
 
       <!-- 文本域 -->
       <el-input type="textarea" v-else-if="item.type === 'textarea' || item.jnpfKey === 'textarea'" v-bind="$attrs" v-on="$listeners"
-        :placeholder="Placeholder" style="width:100%" :maxlength="item.maxlength || 200" :disabled="readOnly"
+        :placeholder="Placeholder" style="width:100%" :maxlength="item.maxlength || 200" :disabled="item.disabled||readOnly"
         :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
         @click.native="item.hasOwnProperty('click') ? item.click($event) : ''"
         @input="item.hasOwnProperty('input') ? item.input($event) : ''"

@@ -17,7 +17,7 @@ export const buttonList = [
 export function getBasicFormSchema(dataFormRef, context) {
   return [
     {
-      prop: "moldName",
+      prop: "orderNo",
       label: "转换单号",
       value: "",
       type: "input",
@@ -27,25 +27,56 @@ export function getBasicFormSchema(dataFormRef, context) {
       }
     },
     {
-      prop: "applicationDate",
-      label: "申请日期",
+      prop: "partnerName",
+      label: "客户名称",
       value: "",
-      type: "date",
-      itemRules: [{ required: true, trigger: "blur" }],
+      type: "input",
+      disabled: true,
     },
     {
-      prop: "requestCompletionDate",
-      label: "需求完成日期",
+      prop: "partnerCode",
+      label: "客户编码",
       value: "",
-      type: "date",
-      itemRules: [{ required: true, trigger: "blur" }],
+      type: "input",
+      disabled: true,
     },
     {
-      prop: "repairReason",
-      label: "维修原因及维修内容",
+      prop: "recipient",
+      label: "收件人",
+      value: "",
+      type: "input",
+      render: context.dataForm.delivery !== 'self_pickup',
+      disabled: true,
+    },
+    {
+      prop: "phone",
+      label: "收件人电话",
+      value: "",
+      type: "input",
+      render: context.dataForm.delivery !== 'self_pickup',
+      disabled: true,
+    },
+    {
+      prop: "logisticsCompany",
+      label: "发货方式",
+      value: "",
+      type: "select",
+      options: context.getDictDataSync('logisticsCompany'),
+      disabled: true,
+    },
+    {
+      prop: "defaultAddress",
+      label: "地址",
       value: "",
       type: "textarea",
+      disabled: true,
     },
+    {
+      prop: "remark",
+      label: "备注",
+      value: "",
+      type: "textarea",
+    }
   ]
 }
 

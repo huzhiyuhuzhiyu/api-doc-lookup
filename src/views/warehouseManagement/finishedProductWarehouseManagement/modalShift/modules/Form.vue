@@ -6,6 +6,7 @@ import RecordList from "@/views/workFlow/components/RecordList.vue";
 import Process from "@/components/Process/Preview";
 import { detaInventorymodalShiftData, InventorymodalShiftdata, updateInventorymodalShift } from "@/api/warehouseManagement/modalShift";
 import TableFormProduct from "@/components/no_mount/TableForm-product/index.vue";
+import { getQuotationsendlist } from "@/api/salesManagement";
 
 
 export default {
@@ -19,6 +20,7 @@ export default {
       loading: false,
       btnLoading: false,
       isOrderNoEditable: false,
+      sourceDataId: '',
       dataForm: {
         approvalFlag: false,
       },
@@ -27,155 +29,33 @@ export default {
       linesListItems: [
         {
           prop: 'productName',
-          label: '产品名称',
+          label: '原产品名称',
           type: 'view',
           minWidth: 180,
         },
         {
           prop: 'productCode',
-          label: '产品编码',
+          label: '原产品编码',
           type: 'view',
           minWidth: 150,
         },
         {
           prop: 'drawingNo',
-          label: '型号',
+          label: '原品名规格',
           type: 'view',
           minWidth: 160,
         },
         {
-          prop: 'productCategoryName',
-          label: '产品分类',
+          prop: 'shelfSpaceName',
+          label: '原库位',
           type: 'view',
-          minWidth: 120,
-        },
-        {
-          prop: 'customerProductDrawingNo',
-          label: '客户型号',
-          type: 'view',
-          minWidth: 200,
-        },
-        {
-          prop: 'demandDate',
-          label: '订单交期',
-          type: 'date',
-          minWidth: 180,
-          itemRules: [
-            { required: true, message: '订单交期不能为空', trigger: 'change', },
-          ]
-        },
-        {
-          prop: 'mainUnit',
-          label: '单位',
-          type: 'view',
-          minWidth: 80,
-        },
-        {
-          prop: 'purchaseQuantity',
-          label: '采购数',
-          type: 'input',
           minWidth: 160,
-          itemRules: [
-            {
-              validator: this.formValidate('noZero', '采购数不能为0', (errMsg) => {
-                this.$message.error(errMsg)
-              }), trigger: ['blur', 'change']
-            },
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['采购数不能为空', (errMsg) => {
-                  this.$message.error(`	采购数不能为空`)
-                }]
-              }), trigger: 'blur',
-            },
-            {
-              validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
-                }]
-              }),
-              trigger: ['blur', 'change'],
-            },
-            { required: true, message: '采购数不能为空', trigger: ['blur', 'change'], },
-          ]
         },
         {
-          prop: 'price',
-          label: '单价(含税)',
-          type: 'input',
-          minWidth: 180,
-          itemRules: [
-            {
-              validator: this.formValidate('noZero', '单价(含税)不能为0', (errMsg) => {
-                this.$message.error(errMsg)
-              }), trigger: ['blur', 'change']
-            },
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['单价(含税)不能为空', (errMsg) => {
-                  this.$message.error(`	单价(含税)不能为空`)
-                }]
-              }), trigger: 'blur',
-            },
-            {
-              validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg) => {
-                  this.$message.error(errMsg)
-                }]
-              }),
-              trigger: ['blur', 'change'],
-            },
-            { required: true, message: '单价(含税)不能为空', trigger: ['blur', 'change'], },
-          ]
-        },
-        {
-          prop: 'taxRate',
-          label: '税率',
-          type: 'select',
-          options: this.getDictDataSync('taxrate'),
+          prop: 'originBatchNumber',
+          label: '原批次号',
+          type: 'view',
           minWidth: 160,
-          itemRules: [
-            { required: true, message: '税率不能为空', trigger: 'change', },
-          ]
-        },
-        {
-          prop: 'excludingTaxPrice',
-          label: '单价(不含税)',
-          type: 'view',
-          minWidth: 120,
-        },
-        {
-          prop: 'taxAmount',
-          label: '税额',
-          type: 'view',
-          minWidth: 120,
-        },
-        {
-          prop: 'totalAmount',
-          label: '金额(含税)',
-          type: 'view',
-          minWidth: 150,
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: '金额(不含税)',
-          type: 'view',
-          minWidth: 150,
-        },
-        {
-          prop: 'discount',
-          label: '加点',
-          type: 'input',
-          minWidth: 180,
-        },
-        {
-          prop: 'deliveryDate',
-          label: '确认交期',
-          type: 'date',
-          minWidth: 180,
-          itemRules: [
-            { required: true, message: '订单交期不能为空', trigger: 'change', },
-          ]
         },
       ],
       linesTableHeight: 0,
@@ -194,7 +74,8 @@ export default {
           await this.getDetail(id);
         },
         default: async () => {
-          await this.getOrderNoConfig()
+          await this.getOrderNoConfig();
+          await this.loadSourceData();
         },
       },
       apiMethodActions: {
@@ -212,8 +93,9 @@ export default {
     this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
   },
   methods: {
-    async init(id = '', type, approvalFlag = false) {
+    async init(id = '', type, approvalFlag = false, sourceDataId = '') {
       this.btnType = type
+      this.sourceDataId = sourceDataId;
       this.approvalFlag = approvalFlag
       this.title = this.getTitle(type)
       this.getBusInfo('b064')
@@ -243,6 +125,27 @@ export default {
           return `编辑${ this.title }`
         case 'look':
           return `查看${ this.title }`
+      }
+    },
+    async loadSourceData() {
+      this.loading = true
+      try {
+        const res = await getQuotationsendlist(this.sourceDataId)
+        const { msg, data } = res
+        if (msg === 'Success') {
+          const { country, countryName, provinceName, cityName, areaName, address } = data.notice
+          this.dataForm = data.notice
+          this.linesList = data.noticeLineList.map(item => ({
+            ...item,
+            urgentNumber: item.urgentNumber || 0,
+          }))
+          this.dataForm.defaultAddress = country === 'CN'
+            ? `${ countryName }${ provinceName }${ cityName }${ areaName }${ address }`
+            : `${ countryName }${ address }`
+          this.loading = false
+        }
+      } catch ( err ) {
+        this.loading = false
       }
     },
     async getDetail(id) {

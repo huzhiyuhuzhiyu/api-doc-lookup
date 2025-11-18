@@ -74,7 +74,7 @@ export default {
 
       this.name = meta.zhTitle
       this.code = meta.title
-      this.warehouseCode = new URLSearchParams(fullPath.split('?')[1] || '').get('warehouseCode') || ''
+      this.warehouseCode = fullPath.split('?')[1] || ''
 
       const pathSegments = path.split('/').filter(segment => segment)
       this.businessType = pathSegments[pathSegments.length - 1]

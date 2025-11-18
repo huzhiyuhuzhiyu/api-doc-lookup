@@ -4,6 +4,7 @@ import Form from '../modules/Form.vue'
 import { getStockPickedPage } from "@/api/batchPacking";
 import { deleteOrders } from "@/api/salesManagement/assemblyOrders";
 import { approvalMixin } from "@/mixins/generator/approvalMixin.js";
+import { getQuotationdatasendlist } from "@/api/orderFollow";
 
 export default {
   name: "index",
@@ -49,7 +50,7 @@ export default {
       this.loading = true;
       try {
         if (listLoadKey !== this.listLoadKey) return;
-        const res = await getStockPickedPage(this.listQuery);
+        const res = await getQuotationdatasendlist(this.listQuery);
         const { total, records } = res.data;
         this.tableData = records;
         this.total = total;
@@ -76,7 +77,7 @@ export default {
           if (!this.validateSelectedRows()) return;
           this.visible = true;
           this.$nextTick(() => {
-            this.$refs.Form.init('', 'add');
+            this.$refs.Form.init('', 'add', false, this.selectedRow[0].id);
           });
           break;
         default:

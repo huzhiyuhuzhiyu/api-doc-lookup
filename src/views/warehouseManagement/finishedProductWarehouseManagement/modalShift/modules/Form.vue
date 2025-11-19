@@ -127,6 +127,76 @@ export default {
       }
       this.linesListItems = [
         {
+          prop: "targetProductCode",
+          label: "目标产品编码",
+          type: 'view',
+          minWidth: 160,
+        },
+        {
+          prop: "targetProductName",
+          label: "目标产品名称",
+          type: 'view',
+          minWidth: 160,
+        },
+        {
+          prop: "targetProductDrawingNo",
+          label: "目标品名规格",
+          type: 'view',
+          minWidth: 350,
+        },
+        {
+          prop: 'targetProductsMainUnit',
+          label: '目标单位',
+          type: 'view',
+          minWidth: 80,
+        },
+        {
+          prop: 'targetPackagingMethod',
+          label: '目标包装方式',
+          type: 'view',
+          minWidth: 180,
+        },
+        {
+          prop: 'num',
+          label: '出库数量',
+          type: 'input',
+          minWidth: 180,
+          sortable: true,
+          itemRules: [
+            {
+              validator: this.formValidate({ type: 'noEmtry', params: [null, (...args) => validErrorMessage(`出库数量`, ...args)] }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (...args) => validErrorMessage(`出库数量`, ...args)] }),
+              trigger: 'blur'
+            },
+          ]
+        },
+        {
+          prop: 'unitConversionRatio',
+          label: '单位换算比例',
+          type: 'input',
+          minWidth: 180,
+          itemRules: [
+            {
+              validator: this.formValidate({ type: 'noEmtry', params: [null, (...args) => validErrorMessage(`单位换算比例`, ...args)] }),
+              trigger: 'blur'
+            },
+            {
+              validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (...args) => validErrorMessage(`单位换算比例`, ...args)] }),
+              trigger: 'blur'
+            },
+          ]
+        },
+        {
+          prop: 'targetNum',
+          label: '入库数量',
+          type: 'view',
+          minWidth: 160,
+        },
+        {
           prop: 'productName',
           label: '源产品名称',
           type: 'view',
@@ -215,103 +285,6 @@ export default {
           label: '当前库存',
           type: 'view',
           minWidth: 120,
-        },
-        {
-          prop: "targetProductCode",
-          label: "目标产品编码",
-          type: 'view',
-          minWidth: 160,
-        },
-        {
-          prop: "targetProductName",
-          label: "目标产品名称",
-          type: 'view',
-          minWidth: 160,
-        },
-        {
-          prop: "targetProductDrawingNo",
-          label: "目标品名规格",
-          type: 'view',
-          minWidth: 350,
-        },
-        {
-          prop: 'targetProductsMainUnit',
-          label: '目标单位',
-          type: 'view',
-          minWidth: 80,
-        },
-        {
-          prop: 'targetPackagingMethod',
-          label: '目标包装方式',
-          type: 'view',
-          minWidth: 180,
-        },
-        {
-          prop: 'targetShelfSpaceName',
-          label: '目标库位',
-          type: 'view',
-          render: this.locationEnabled
-        },
-        {
-          prop: 'targetBatchNumber',
-          label: '目标批次号',
-          type: 'input',
-          minWidth: 160,
-          itemRules: [
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['', (...args) => validErrorMessage('目标批次号', ...args)]
-              }), trigger: 'no'
-            },
-            { required: true, trigger: 'no' }
-          ],
-        },
-        {
-          prop: 'targetInventoryQuantity',
-          label: '目标库存数量',
-          type: 'view',
-          minWidth: 160,
-        },
-        {
-          prop: 'num',
-          label: '出库数量',
-          type: 'input',
-          minWidth: 160,
-          sortable: true,
-          itemRules: [
-            {
-              validator: this.formValidate({ type: 'noEmtry', params: [null, (...args) => validErrorMessage(`出库数量`, ...args)] }),
-              trigger: 'blur'
-            },
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (...args) => validErrorMessage(`出库数量`, ...args)] }),
-              trigger: 'blur'
-            },
-          ]
-        },
-        {
-          prop: 'unitConversionRatio',
-          label: '单位换算比例',
-          type: 'input',
-          minWidth: 160,
-          itemRules: [
-            {
-              validator: this.formValidate({ type: 'noEmtry', params: [null, (...args) => validErrorMessage(`出库数量`, ...args)] }),
-              trigger: 'blur'
-            },
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (...args) => validErrorMessage(`出库数量`, ...args)] }),
-              trigger: 'blur'
-            },
-          ]
-        },
-        {
-          prop: 'targetNum',
-          label: '入库数量',
-          type: 'view',
-          minWidth: 160,
         }
       ];
     },
@@ -332,6 +305,12 @@ export default {
           return `查看${ this.title }`
       }
     },
+    createdObj() {
+      return this.linesListItems.reduce((acc, item) => {
+        acc[item.prop] = '';
+        return acc;
+      }, {});
+    },
     async loadSourceData() {
       try {
         const res = await getQuotationsendlist(this.sourceDataId)
@@ -340,8 +319,23 @@ export default {
           const { country, countryName, provinceName, cityName, areaName, address } = data.notice
           this.dataForm = { ...this.dataForm, ...data.notice };
           this.linesList = data.noticeLineList.map(item => ({
+            ...this.createdObj(),
             ...item,
-            urgentNumber: item.urgentNumber || 0,
+            targetProductCode: item.productCode,
+            targetProductName: item.productName,
+            targetProductDrawingNo: item.productDrawingNo,
+            targetProductsMainUnit: item.mainUnit,
+            targetPackagingMethod: item.packagingMethod,
+            targetShelfSpaceName: item.shelfSpaceName,
+            targetBatchNumber: item.batchNumber,
+            unitConversionRatio: '1',
+            productName: '',
+            productCode: '',
+            productDrawingNo: '',
+            mainUnit: '',
+            shelfSpaceName: '',
+            originBatchNumber: '',
+            originPackagingMethod: '',
           }))
           this.dataForm.defaultAddress = country === 'CN'
             ? `${ countryName }${ provinceName }${ cityName }${ areaName }${ address }`

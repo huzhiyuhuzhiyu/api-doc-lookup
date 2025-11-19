@@ -1,4 +1,5 @@
 import { withdrawn } from "@/api/basicData/approvalAdministrator";
+import { getQueryConfirm } from "@/utils";
 
 export const approvalMixin = {
   data() {
@@ -56,9 +57,7 @@ export const approvalMixin = {
      */
     async handleWithdraw(formId, callback = null) {
       try {
-        await this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
-          type: 'warning'
-        });
+        await getQueryConfirm(this,'此操作将撤回审批单，是否继续？')
 
         await withdrawn({ formId });
         this.$message.success('撤回成功');

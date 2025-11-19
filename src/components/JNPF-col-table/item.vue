@@ -13,7 +13,7 @@
             :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
             @input="item.hasOwnProperty('input') ? item.input($event) : ''"
             @click.native="item.hasOwnProperty('click') ? item.click($event) : ''"
-            @change="item.hasOwnProperty('change') ? item.change($event) : ''" :key="1">
+            @change="item.hasOwnProperty('change') ? item.change($event,scope) : ''" :key="1">
             <template v-if="item.itemSlot" :slot="item.itemSlot.position">
               <div v-if="!item.itemSlot.click" v-bind="item.itemSlot"> {{ item.itemSlot.content }} </div>
               <el-button v-else @click="item.itemSlot.click($event, item)" v-bind="item.itemSlot" :disabled="item.disabled||readOnly">

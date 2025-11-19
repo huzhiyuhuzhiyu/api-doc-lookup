@@ -7,7 +7,8 @@ import Process from "@/components/Process/Preview";
 import { detaInventorymodalShiftData, InventorymodalShiftdata, updateInventorymodalShift } from "@/api/warehouseManagement/modalShift";
 import TableFormProduct from "@/components/no_mount/TableForm-product/index.vue";
 import { getQuotationsendlist } from "@/api/salesManagement";
-import { getWarehouseInfo, getWarehouseList } from "@/api/basicData";
+import { getBatchNumber, getWarehouseInfo, getWarehouseList } from "@/api/basicData";
+import { createEmptyObject } from "@/utils";
 
 export default {
   name: "Form",
@@ -50,9 +51,9 @@ export default {
           await this.getDetail(id);
         },
         default: async () => {
+          await this.loadSourceData();
           await this.getOrderNoConfig();
           await this.fetchAndSetWarehouseInfo();
-          await this.loadSourceData();
         },
       },
       apiMethodActions: {
@@ -65,20 +66,20 @@ export default {
     activeType() {
       return this.btnType !== 'look'
     },
-    totalNum() {
+    totalTargetNum() {
       return this.linesList.reduce((total, item) =>
-        this.jnpf.math('add', [total, Number(item.num) || 0]), 0);
+        this.jnpf.math('add', [total, Number(item.targetNum) || 0]), 0);
     }
   },
-  mounted() {
-    this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
-  },
+  mounted() {},
   methods: {
     async init(id = '', type, approvalFlag = false, sourceDataId = '') {
       this.loading = true
       this.btnType = type
       this.sourceDataId = sourceDataId;
       this.approvalFlag = approvalFlag
+      this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
+      this.setLinesListItems()
       this.title = this.getTitle(type)
       this.getBusInfo('b064')
       if (id && this.actions[type]) {
@@ -86,12 +87,17 @@ export default {
       } else {
         await this.actions.default();
       }
-      this.setLinesListItems()
+
       this.dataForm.approvalFlag && this.getFlowDetail(id)
       this.$nextTick(() => {
         this.$refs.dataForm.$refs.main.clearValidate()
         this.refreshTableHeight()
       })
+    },
+    calculateTargetNum(row) {
+      row.targetNum = row.num && row.unitConversionRatio
+        ? this.jnpf.math('multiply', [row.num, row.unitConversionRatio])
+        : '';
     },
     async fetchAndSetWarehouseInfo() {
       try {
@@ -125,15 +131,16 @@ export default {
         if (Array.isArray(index)) index = getRealRowIndex(index)
         this.$message.error(`产品信息第${ index + 1 }行：${ label }${ errMsg }`)
       }
+
       this.linesListItems = [
         {
-          prop: "targetProductCode",
+          prop: "targetProductsCode",
           label: "目标产品编码",
           type: 'view',
           minWidth: 160,
         },
         {
-          prop: "targetProductName",
+          prop: "targetProductsName",
           label: "目标产品名称",
           type: 'view',
           minWidth: 160,
@@ -160,19 +167,23 @@ export default {
           prop: 'num',
           label: '出库数量',
           type: 'input',
+          value: '',
           minWidth: 180,
-          sortable: true,
           itemRules: [
             {
               validator: this.formValidate({ type: 'noEmtry', params: [null, (...args) => validErrorMessage(`出库数量`, ...args)] }),
               trigger: 'blur'
             },
-            { required: true, trigger: 'blur' },
             {
               validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (...args) => validErrorMessage(`出库数量`, ...args)] }),
               trigger: 'blur'
             },
-          ]
+            { required: true, trigger: "blur" },
+          ],
+          change: (val, scope) => {
+            const row = scope.row;
+            this.calculateTargetNum(row);
+          }
         },
         {
           prop: 'unitConversionRatio',
@@ -188,7 +199,12 @@ export default {
               validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (...args) => validErrorMessage(`单位换算比例`, ...args)] }),
               trigger: 'blur'
             },
-          ]
+            { required: true, trigger: "blur" },
+          ],
+          change: (val, scope) => {
+            const row = scope.row;
+            this.calculateTargetNum(row);
+          }
         },
         {
           prop: 'targetNum',
@@ -221,6 +237,12 @@ export default {
           minWidth: 80,
         },
         {
+          prop: 'storageDate',
+          label: '入库日期',
+          type: 'view',
+          minWidth: 160,
+        },
+        {
           prop: 'shelfSpaceName',
           label: '源库位',
           type: 'view',
@@ -229,8 +251,51 @@ export default {
         {
           prop: 'originBatchNumber',
           label: '源批次号',
-          type: 'view',
-          minWidth: 160,
+          type: 'custom',
+          customComponent: 'ComSelect-page',
+          minWidth: 220,
+          renderTree: false,
+          listRequestObj: () => {
+            return {
+              warehouseId: this.dataForm.warehouseId,
+              pageNum: 1,
+              pageSize: 20,
+              orderItems: [
+                { asc: false, column: '' }
+              ]
+            }
+          },
+          dialogTitle: '选择批次',
+          listMethod: getBatchNumber,
+          searchList: [
+            { prop: 'batchNumber', label: '批次号', type: 'input' },
+            { prop: 'shelfSpaceName', label: '库位', type: 'input' }
+          ],
+          tableItems: [
+            { prop: 'storageDate', label: '入库日期', minWidth: 160 },
+            { prop: 'batchNumber', label: '批次号', minWidth: 180 },
+            { prop: 'shelfSpaceName', label: '库位', minWidth: 120 },
+            { prop: 'packagingMethod', label: '包装方式', minWidth: 160 },
+            { prop: 'inventoryQuantity', label: '库存数量', minWidth: 160 },
+            { prop: 'availableQuantity', label: '可用库存数量', minWidth: 160 },
+            { prop: 'occupancyQuantity', label: '占用库存数量', minWidth: 160 },
+            { prop: 'remark', label: '备注', minWidth: 100 }
+          ],
+          change: (val, data, paramsObj) => {
+            const _data = data[0].all
+            Object.assign(paramsObj.scope.row, _data, {
+              originProductsId: _data.productsId,
+              originBatchNumber: _data.batchNumber,
+              originPackagingMethod: _data.packagingMethod,
+            });
+          },
+          itemRules: [
+            {
+              validator: this.formValidate({ type: 'noEmtry', params: [null, (...args) => validErrorMessage(`批次`, ...args)] }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: "blur" },
+          ]
         },
         {
           prop: 'originPackagingMethod',
@@ -305,24 +370,26 @@ export default {
           return `查看${ this.title }`
       }
     },
-    createdObj() {
-      return this.linesListItems.reduce((acc, item) => {
-        acc[item.prop] = '';
-        return acc;
-      }, {});
-    },
     async loadSourceData() {
       try {
         const res = await getQuotationsendlist(this.sourceDataId)
         const { msg, data } = res
         if (msg === 'Success') {
           const { country, countryName, provinceName, cityName, areaName, address } = data.notice
-          this.dataForm = { ...this.dataForm, ...data.notice };
+          this.dataForm = {
+            ...this.dataForm,
+            ...data.notice,
+            ...{
+              approvalStatus: '',
+              orderNo: '',
+            }
+          };
           this.linesList = data.noticeLineList.map(item => ({
-            ...this.createdObj(),
+            ...createEmptyObject(this.linesListItems),
             ...item,
-            targetProductCode: item.productCode,
-            targetProductName: item.productName,
+            targetProductsId: item.productsId,
+            targetProductsCode: item.productCode,
+            targetProductsName: item.productName,
             targetProductDrawingNo: item.productDrawingNo,
             targetProductsMainUnit: item.mainUnit,
             targetPackagingMethod: item.packagingMethod,
@@ -336,6 +403,7 @@ export default {
             shelfSpaceName: '',
             originBatchNumber: '',
             originPackagingMethod: '',
+            targetNum: this.jnpf.math('multiply', [item.num || 0, 1])
           }))
           this.dataForm.defaultAddress = country === 'CN'
             ? `${ countryName }${ provinceName }${ cityName }${ areaName }${ address }`
@@ -381,12 +449,20 @@ export default {
     async handleSubmit(type) {
       this.btnLoading = true
       try {
-        await this.$refs['dataForm'].$refs.main.validate()
+        await Promise.all([
+          this.$refs.dataForm.$refs.main.validate(),
+          this.$refs.tableForm.$refs.main.validate()
+        ]);
 
         this.dataForm.documentStatus = type
+        const submitLinesList = this.btnType === 'add' ? this.linesList.map(item => ({
+          ...item,
+          sourceId: this.dataForm.id,
+          sourceLineId: item.id
+        })) : this.linesList
         const params = {
           shift: this.dataForm,
-          shiftLineList: this.linesList,
+          shiftLineList: submitLinesList,
           flowData: this.flowData
         }
 
@@ -483,7 +559,7 @@ export default {
                         </template>
                       </TableForm-product>
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
-                        <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
+                        <span style="font-weight:500;margin-right:10px">总入库数量：{{ totalTargetNum }}</span>
                       </div>
                     </el-collapse-item>
                   </el-collapse>

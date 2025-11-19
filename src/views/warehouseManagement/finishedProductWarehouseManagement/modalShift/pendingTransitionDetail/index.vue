@@ -1,7 +1,7 @@
 <script>
 import { buttonList, getColumns } from "./data";
 import Form from '../modules/Form.vue'
-import { getQuotationdatasendlist } from "@/api/orderFollow";
+import { InventorymodalShiftmxlist } from "@/api/warehouseManagement/modalShift";
 
 export default {
   name: "index",
@@ -32,15 +32,10 @@ export default {
       tableData: [],
       total: 0,
       superQueryJson: [],
-      listQuery: {
-        notifyType: "sale",
-        returnDeliveryType: 'delivery',
-        approvalStatus: 'ok',
-      },
+      listQuery: {},
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
-      selectedRow: [],
     }
   },
   methods: {
@@ -52,7 +47,7 @@ export default {
       this.loading = true;
       try {
         if (listLoadKey !== this.listLoadKey) return;
-        const res = await getQuotationdatasendlist(this.listQuery);
+        const res = await InventorymodalShiftmxlist(this.listQuery);
         const { total, records } = res.data;
         this.tableData = records;
         this.total = total;
@@ -61,25 +56,21 @@ export default {
       }
     },
 
-    validateSelectedRows() {
-      if (!this.selectedRow.length) {
-        this.$message.warning('请至少选择一条数据');
-        return false;
-      }
-      if (this.selectedRow.length > 1) {
-        this.$message.warning('只能选择一条数据');
-        return false;
-      }
-      return true;
-    },
-
     handleButtonClick(type) {
       switch ( type ) {
-        case 'add':
-          if (!this.validateSelectedRows()) return;
+        case '':
+
+          break;
+        default:
+      }
+    },
+
+    handleColumnClick(row, type) {
+      switch ( type ) {
+        case 'look':
           this.visible = true;
           this.$nextTick(() => {
-            this.$refs.Form.init('', 'add', false, this.selectedRow[0].id);
+            this.$refs.Form.init(row.modalShiftId, type);
           });
           break;
         default:
@@ -131,11 +122,9 @@ export default {
           </div>
         </div>
         <JNPF-table
-          customKey="pendingTransition"
+          customKey="pendingTransitionDetail"
           v-loading="loading"
           :data="tableData"
-          :has-c="true"
-          @selection-change="(val) => selectedRow = val"
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"
@@ -157,10 +146,13 @@ export default {
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
-                <template v-if="column.prop === 'hairExchangeGoodsFlag'">
-                  <span>
-                    {{ scope.row.exchangeGoodsFlag ? '换货发货' : '正常发货' }}
-                  </span>
+                <template v-if="column.prop === 'orderNo'">
+                  <el-link
+                    type="primary"
+                    @click.native="handleColumnClick(scope.row, 'look')"
+                  >
+                    {{ scope.row.orderNo }}
+                  </el-link>
                 </template>
                 <template v-if="column.dictType">
                   <span>
@@ -173,6 +165,14 @@ export default {
               </template>
             </el-table-column>
           </template>
+
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="{ row }">
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'look')">
+                查看详情
+              </el-button>
+            </template>
+          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
                     @pagination="initData()"/>

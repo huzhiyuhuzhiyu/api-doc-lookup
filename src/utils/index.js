@@ -746,3 +746,21 @@ export function unifyFields(data, fieldMap) {
 
   return {...data, ...result};
 }
+
+/**
+ * 根据字段列表创建空对象
+ * @param {Array} propList - 字段列表，可以是字符串数组或对象数组
+ * @param {any} defaultValue - 默认值，默认为空字符串
+ * @returns {Object} 包含所有字段的空对象
+ */
+export function createEmptyObject(propList, defaultValue = '') {
+  if (!Array.isArray(propList)) return {};
+
+  return propList.reduce((acc, item) => {
+    const prop = typeof item === 'string' ? item : item.prop;
+    if (prop) {
+      acc[prop] = defaultValue;
+    }
+    return acc;
+  }, {});
+}

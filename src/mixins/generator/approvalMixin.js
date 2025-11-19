@@ -8,7 +8,7 @@ export const approvalMixin = {
     }
   },
   async created() {
-    await this.loadApprovalConfig();
+    // await this.loadApprovalConfig();
   },
   methods: {
     /**
@@ -18,6 +18,7 @@ export const approvalMixin = {
     async loadApprovalConfig(businessCode = '') {
       try {
         const res = await this.jnpf.getBusInfo(businessCode);
+        console.log("res ✈️ ", res)
         this.isApprovalEnabled = res?.enabledMark || false;
       } catch ( error ) {
         this.isApprovalEnabled = false;

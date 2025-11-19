@@ -1,61 +1,46 @@
 <script>
 import { buttonList, getColumns } from "./data";
-import Form from '../pendingNotifyOrders/Form.vue'
-import refreshForm from "./modules/refreshForm.vue"
-import { purPurchaseReceiptReturnGoodsDetailList } from "@/api/purchasingManagement/purchaseInquirySheet";
+import Form from '@/views/purchasingManagement/returnManagement/purchaseReturnDetails/modules/refreshForm.vue'
+import { getQueryConfirm } from "@/utils";
+import { approvalMixin } from "@/mixins/generator/approvalMixin";
+import { deletePurPurchaseOrder, purchaseOrderList } from "@/api/purchasingAndOutsourcingOrders";
 
 export default {
   name: "index",
   components: {
-    refreshForm,
-    Form
+    Form,
   },
+  mixins: [approvalMixin],
   data() {
     return {
       systemSearchView: [{
-        matchLogic: "AND", // 条件逻辑（固定）*
-        fullName: "默认视图", // 视图名称*
-        conditionJson: { // 视图内容配置*
-          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
-            // 这里放置系统原顶栏显示的查询元素，如：
-            // {
-            //   prop: 'createTime', // 属性*
-            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
-            //   symbol: 'between', // 比较符*
-            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
-            //   fixed: true // 是否在搜索栏显示
-            // },
+        matchLogic: "AND",
+        fullName: "默认视图",
+        conditionJson: {
+          condition: [
             { prop: 'orderNo', symbol: 'like', fixed: true },
-            { prop: 'partnerName', symbol: 'like', fixed: true },
           ],
-          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
-          pageSize: 20, // 每页条数*
+          pageSize: 20,
           orderItems: [
             {
               asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'createTime'
+              column: 'create_time'
             }
           ]
         },
       }],
       loading: false,
       visible: false,
-      refreshFormVisible: false,
       tableData: [],
       total: 0,
       superQueryJson: [],
       listQuery: {
-        notificationType: 'procure',
-        receiptReturnType: 'back',
+        orderType: 'procure',
+        source: 'return_receipt'
       },
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
-      selectedRow: []
     }
   },
   methods: {
@@ -64,45 +49,22 @@ export default {
       if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
       const listLoadKey = this.listLoadKey = +new Date();
 
-
-      this.loading = true
+      this.loading = true;
       try {
-        if (listLoadKey !== this.listLoadKey) return; // 请求过期
-        const res = await purPurchaseReceiptReturnGoodsDetailList(this.listQuery);
-        const { total, records } = res.data
+        if (listLoadKey !== this.listLoadKey) return;
+        const res = await purchaseOrderList(this.listQuery);
+        const { total, records } = res.data;
         this.tableData = records;
-        this.total = total
+        this.total = total;
       } finally {
-        this.loading = false
+        this.loading = false;
       }
-    },
-
-    validateSelectedRows() {
-      if (!this.selectedRow.length) {
-        this.$message.warning('请至少选择一条数据');
-        return false;
-      }
-
-      const orderNos = this.selectedRow.map(row => row.orderNo);
-
-      const uniqueOrderNos = [...new Set(orderNos)];
-
-      if (uniqueOrderNos.length > 1) {
-        this.$message.warning('请选择相同单号来源的订单');
-        return false;
-      }
-
-      return true;
     },
 
     handleButtonClick(type) {
       switch ( type ) {
-        case 'resubmit':
-          if (!this.validateSelectedRows()) return;
-          this.refreshFormVisible = true
-          this.$nextTick(() => {
-            this.$refs.refreshForm.init('', type, this.selectedRow)
-          })
+        case '':
+
           break;
         default:
       }
@@ -111,27 +73,47 @@ export default {
     handleColumnClick(row, type) {
       switch ( type ) {
         case 'look':
-          this.visible = true
+        case 'edit':
+          this.visible = true;
           this.$nextTick(() => {
-            this.$refs.Form.init(row.purchaseReceiptReturnGoodsId, type)
-          })
+            this.$refs.Form.init(row.id, type);
+          });
+          break;
+        case 'delete':
+          this.handleRemove(row.id);
           break;
         default:
       }
     },
 
+    async handleRemove(id) {
+      try {
+        await getQueryConfirm(this, '您确定要删除这些数据吗, 是否继续？')
+
+        const res = await deletePurPurchaseOrder(id);
+        if (res.msg === 'Success') {
+          this.$message.success('删除成功');
+          await this.initData();
+        }
+      } catch ( error ) {
+        if (error !== 'cancel') {
+          console.error('删除失败:', error);
+        }
+      }
+    },
+
     close(isInitData = true) {
-      this.visible = false
-      this.refreshFormVisible = false
-      if (!isInitData) return
-      this.initData()
+      this.visible = false;
+      if (!isInitData) return;
+      this.initData();
     },
 
     columnSetFun() {
-      this.$refs.dataTable.showDrawer()
+      this.$refs.dataTable.showDrawer();
     },
+
     getAlign(align) {
-      return align || 'left'
+      return align || 'left';
     },
   }
 }
@@ -145,8 +127,6 @@ export default {
         <div class="JNPF-common-head" style="padding: 8px">
           <div class="JNPF-common-head-left">
             <CustomButton
-              :export-disabled="tableData.length <= 0"
-              :export-list-query="listQuery"
               :btnList="btnList"
               @click="handleButtonClick"
             />
@@ -167,14 +147,12 @@ export default {
           </div>
         </div>
         <JNPF-table
-          customKey="returnSalesmemo"
+          customKey="pendingTransitionList"
           v-loading="loading"
           :data="tableData"
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"
-          :has-c="['btn_resubmit']"
-          @selection-change="(val) => selectedRow = val"
           ref="dataTable"
           custom-column
           :listQuery="listQuery"
@@ -194,29 +172,54 @@ export default {
             >
               <template v-if="column.slot" v-slot="scope">
                 <template v-if="column.prop === 'orderNo'">
-                  <el-link type="primary"
-                           @click.native="handleColumnClick(scope.row,'look')">{{
-                      scope.row.orderNo
-                    }}
+                  <el-link
+                    type="primary"
+                    @click.native="handleColumnClick(scope.row, 'look')"
+                  >
+                    {{ scope.row.orderNo }}
                   </el-link>
                 </template>
                 <template v-if="column.dictType">
-                   <span>
-                <el-tag
-                  :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
-                    global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
-                  }}</el-tag>
-                   </span>
+                  <span>
+                    <el-tag
+                      :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">
+                      {{ global.getDictLabelGlobal(column.dictType, scope.row[column.prop]) }}
+                    </el-tag>
+                  </span>
                 </template>
               </template>
             </el-table-column>
           </template>
+
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="{ row }">
+              <el-button size="mini" type="text" :disabled="!canEdit(row)"
+                         @click="handleColumnClick(row, 'edit')">
+                编辑
+              </el-button>
+              <el-button class="JNPF-table-delBtn" size="mini" type="text" :disabled="!canEdit(row)"
+                         @click="handleColumnClick(row, 'delete')">
+                删除
+              </el-button>
+              <el-dropdown hide-on-click>
+                <span class="el-dropdown-link">
+                  <el-button type="text" size="mini">
+                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                  </el-button>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
+                    查看详情
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
-        />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+                    @pagination="initData()"/>
       </div>
     </div>
     <Form ref="Form" v-if="visible" @close="close"/>
-    <refreshForm ref="refreshForm" v-if="refreshFormVisible" @close="close"/>
   </div>
 </template>

@@ -35,19 +35,19 @@ export function getBasicFormSchema(dataFormRef, context) {
       type: 'custom',
       customComponent: 'ComSelect-list',
       change: (val, data, paramsObj) => {
-        this.$nextTick(() => {
-          this.$refs['dataForm'].$refs.main.validateField('warehouseName')
+        context.$nextTick(() => {
+          context.$refs['dataForm'].$refs.main.validateField('warehouseName')
         })
         if (!val && data.length) return
         if (data && data.length) {
-          this.dataForm.warehouseId = data[0].id
-          this.dataForm.warehouseName = data[0].name
-          this.dataForm.warehouseType = data[0].all.type
-          this.locationEnabled = data[0].all.locationStatus !== 'disabled'
+          context.dataForm.warehouseId = data[0].id
+          context.dataForm.warehouseName = data[0].name
+          context.dataForm.warehouseType = data[0].all.type
+          context.locationEnabled = data[0].all.locationStatus !== 'disabled'
         } else {
-          this.dataForm.warehouseId = ''
-          this.dataForm.warehouseName = ''
-          this.dataForm.warehouseType = ''
+          context.dataForm.warehouseId = ''
+          context.dataForm.warehouseName = ''
+          context.dataForm.warehouseType = ''
         }
       },
       requestObj: {type: 'normal', state: 'enable'},
@@ -61,6 +61,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       disabled: true,
+      render: context.activeType
     },
     {
       prop: "partnerCode",
@@ -68,13 +69,14 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       disabled: true,
+      render: context.activeType
     },
     {
       prop: "recipient",
       label: "收件人",
       value: "",
       type: "input",
-      render: context.dataForm.delivery !== 'self_pickup',
+      render: context.dataForm.delivery !== 'self_pickup' && context.activeType,
       disabled: true,
     },
     {
@@ -82,7 +84,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "收件人电话",
       value: "",
       type: "input",
-      render: context.dataForm.delivery !== 'self_pickup',
+      render: context.dataForm.delivery !== 'self_pickup' && context.activeType,
       disabled: true,
     },
     {
@@ -92,6 +94,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       type: "select",
       options: context.getDictDataSync('logisticsCompany'),
       disabled: true,
+      render: context.activeType
     },
     {
       prop: "defaultAddress",
@@ -99,6 +102,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "textarea",
       disabled: true,
+      render: context.activeType
     },
     {
       prop: "remark",
@@ -117,14 +121,61 @@ export function getColumns() {
       minWidth: 220,
     },
     {
-      prop: "warehouseName",
-      label: "仓库名称",
+      prop: "partnerCode",
+      label: "客户编码",
       minWidth: 180,
     },
     {
-      prop: "shelfSpaceName",
-      label: "库位",
+      prop: "partnerName",
+      label: "客户名称",
+      minWidth: 180,
+    },
+    {
+      prop: "deliverDate",
+      label: "发货日期",
       minWidth: 120,
+    },
+    {
+      prop: "recipient",
+      label: "收件人",
+      minWidth: 120,
+    },
+    {
+      prop: "phone",
+      label: "收件人电话",
+      minWidth: 120,
+    },
+    {
+      prop: "deliveryCompletionDate",
+      label: "完成日期",
+      minWidth: 160,
+    },
+    {
+      prop: "hairExchangeGoodsFlag",
+      label: "发货标识",
+      minWidth: 120,
+      slot: true,
+    },
+    {
+      prop: "logisticsCompany",
+      label: "发货方式",
+      minWidth: 120,
+      slot: true,
+      dictType: 'logisticsCompany',
+    },
+    {
+      prop: "priority",
+      label: "优先级",
+      minWidth: 120,
+      slot: true,
+      dictType: 'shippingPriority',
+    },
+    {
+      prop: "deliveryStatus",
+      label: "状态",
+      minWidth: 120,
+      slot: true,
+      dictType: 'shippingStatus',
     },
     {
       prop: "priority",

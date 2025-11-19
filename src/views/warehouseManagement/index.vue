@@ -1,18 +1,4 @@
-<template>
-  <div class="JNPF-common-layout">
-    <keep-alive>
-      <component
-        :is="listPageComponent"
-        :warehouse-code="warehouseCode"
-        ref="depForm"
-        @close="close"
-      />
-    </keep-alive>
-  </div>
-</template>
-
 <script>
-// 统一导入组件
 import DbIncomAndOutInventory from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory'
 import DirectInandOutWarehouse from '@/views/warehouseManagement/finishedProductWarehouseManagement/directInandOutWarehouse'
 import Inventory from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory'
@@ -22,12 +8,11 @@ import TransferManagement from '@/views/warehouseManagement/finishedProductWareh
 import ProductionWaitMaterial from '@/views/warehouseManagement/finishedProductWarehouseManagement/productionWaitMaterial'
 import DirectMaterialRequisition from '@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition'
 import AwaitInspectionInventory from '@/views/warehouseManagement/finishedProductWarehouseManagement/awaitInspectionInventory'
-import PendingTransition from '@/views/warehouseManagement/finishedProductWarehouseManagement/modalShift/pendingTransition'
+import ModalShift from '@/views/warehouseManagement/finishedProductWarehouseManagement/modalShift'
 import InventoryAssembly from '@/views/warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly'
 import LnventoryDisassembly from '@/views/warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly'
 
-// 组件映射配置
-const COMPONENT_MAP = {
+const BASE_COMPONENT_MAP = {
   dbIncomAndOutInventory: DbIncomAndOutInventory,
   directInandOutWarehouse: DirectInandOutWarehouse,
   inventory: Inventory,
@@ -37,14 +22,39 @@ const COMPONENT_MAP = {
   productionWaitMaterial: ProductionWaitMaterial,
   directMaterialRequisition: DirectMaterialRequisition,
   awaitInspectionInventory: AwaitInspectionInventory,
-  pendingTransition: PendingTransition,
+  modalShift: ModalShift,
   InventoryAssembly: InventoryAssembly,
   lnventoryDisassembly: LnventoryDisassembly
 }
 
+// 特殊路由映射配置 - 支持一对多映射
+const SPECIAL_ROUTE_MAPPING = {
+  // 形态转换相关路由组
+  modalShiftGroup: {
+    routes: ['pendingTransition', 'pendingTransitionList', 'pendingTransitionDetail'],
+    component: 'modalShift'
+  },
+  // exampleGroup: {
+  //   routes: ['route1', 'route2', 'route3'],
+  //   component: 'targetComponent'
+  // }
+}
+
+const buildRouteMap = () => {
+  const routeMap = {}
+  Object.values(SPECIAL_ROUTE_MAPPING).forEach(group => {
+    group.routes.forEach(route => {
+      routeMap[route] = group.component
+    })
+  })
+  return routeMap
+}
+
+const SPECIAL_ROUTE_MAP = buildRouteMap()
+
 export default {
   name: 'DynamicWarehouseComponent',
-  components: COMPONENT_MAP,
+  components: BASE_COMPONENT_MAP,
   data() {
     return {
       businessType: '',
@@ -69,9 +79,16 @@ export default {
     this.initializeComponent()
   },
   methods: {
-    initializeComponent() {
-      const { path, meta, fullPath } = this.$route
+    getComponentKey(routeName, businessType) {
+      if (SPECIAL_ROUTE_MAP[routeName]) {
+        return SPECIAL_ROUTE_MAP[routeName]
+      }
 
+      return businessType
+    },
+
+    initializeComponent() {
+      const { path, meta, fullPath, name: routeName } = this.$route
       this.name = meta.zhTitle
       this.code = meta.title
       this.warehouseCode = fullPath.split('?')[1] || ''
@@ -79,17 +96,27 @@ export default {
       const pathSegments = path.split('/').filter(segment => segment)
       this.businessType = pathSegments[pathSegments.length - 1]
 
-      this.listPageComponent = COMPONENT_MAP[this.businessType] || null
+      const componentKey = this.getComponentKey(routeName, this.businessType)
+
+      this.listPageComponent = BASE_COMPONENT_MAP[componentKey] || null
 
       if (!this.listPageComponent) {
-        console.warn(`未找到对应的组件: ${ this.businessType }`)
+        console.warn(`未找到对应的组件: ${ componentKey } (路由: ${ routeName }, 业务类型: ${ this.businessType })`)
+      } else {
+        console.log(`路由映射: ${ routeName } -> ${ componentKey }`)
       }
     },
-
-    close() {
-    }
   }
 }
 </script>
 
-<style src="@/assets/scss/index-list.scss" lang="scss" scoped/>
+<template>
+  <div class="JNPF-common-layout">
+    <keep-alive>
+      <component
+        :is="listPageComponent"
+        :warehouse-code="warehouseCode"
+      />
+    </keep-alive>
+  </div>
+</template>

@@ -89,20 +89,11 @@
                             <div v-if="scope.row.processingType == 'external_production'">外协</div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="processType" label="工序类型" width="120" sortable="custom">
-                        <template slot-scope="scope">
-                          <div v-if="scope.row.processType == 'normal'">正常工序</div>
-                <div v-if="scope.row.processType == 'vibrate'">测振工序</div>
-                <div v-if="scope.row.processType == 'heat_treatment'">热工工序</div>
-                <div v-if="scope.row.processType == 'packing'">包装工序</div>
-                <div v-if="scope.row.processType == 'pairs'">配对工序</div>
-                <div v-if="scope.row.processType == 'typing'">打字工序</div>
-                <div v-if="scope.row.processType == 'fatInjection'">注脂工序</div>
-                <div v-if="scope.row.processType == 'grinding'">磨孔工序</div>
-                <div v-if="scope.row.processType == 'accuracy'">精度工序</div>
-                <div v-if="scope.row.processType == 'boxing'">装盒工序</div>
-                        </template>
-                    </el-table-column>
+                  <el-table-column prop="processType" label="工序类型" min-width="120">
+                    <template slot-scope="scope">
+                      <el-tag>{{ global.getDictLabelGlobal('processType', scope.row['processType']) }}</el-tag>
+                    </template>
+                  </el-table-column>
                     <el-table-column prop="createByName" label="创建人" width="180" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                     <el-table-column prop="remark" label="备注" width="130" />

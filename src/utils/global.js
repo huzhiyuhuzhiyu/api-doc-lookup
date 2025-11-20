@@ -73,6 +73,13 @@ const global = {
     { label: '包装', value: 'packaging', }
   ],
 
+  // 工艺类型
+  processType: [
+    { label: '正常工序', value: 'normal' },
+    { label: '抽检工序', value: 'random' },
+    { label: '全检工序', value: 'full' },
+  ],
+
   // 销售订单状态
   salesOrderState: [
     { label: '草稿', value: 'draft', type: 'warning' },

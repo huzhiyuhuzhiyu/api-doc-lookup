@@ -46,6 +46,7 @@ export default {
       superQueryJson: [],
       listQuery: {
         source: 'package_plan',
+        packingFlag: true
       },
       btnList: getButtonList('toBePacked'),
       columnList: [],

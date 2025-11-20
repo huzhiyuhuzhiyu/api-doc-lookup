@@ -1,14 +1,14 @@
 <script>
-import {deepClone} from "@/utils";
-import {getBasicFormSchema} from "./data";
+import { deepClone } from "@/utils";
+import { getBasicFormSchema } from "./data";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import {addPackagingPlanBox} from "@/api/PackagingPlanBox";
+import { addPackagingPlanBox } from "@/api/PackagingPlanBox";
 import * as _ from "highcharts";
-import {getBimPackagingMaterialsPage} from "@/api/packagingMaterials";
+import { getBimPackagingMaterialsPage } from "@/api/packagingMaterials";
 
 export default {
   name: "Form",
-  components: {TableFormProduct},
+  components: { TableFormProduct },
   data() {
     return {
       title: '单物料包裹',
@@ -78,7 +78,7 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
-            {required: true, message: '数量不能为空', trigger: ['blur', 'change'],},
+            { required: true, message: '数量不能为空', trigger: ['blur', 'change'], },
           ]
         },
         {
@@ -180,6 +180,7 @@ export default {
     },
 
     async calculateBoxes() {
+      await this.$refs.dataForm.$refs.main.validate();
       const totalNum = parseFloat(this.dataForm.num);
       const singleBoxNum = parseFloat(this.dataForm.singleBoxNum);
 
@@ -201,6 +202,7 @@ export default {
           productsName: this.dataForm.productName,
           batchNumber: this.dataForm.batchNumber,
           mainUnit: this.dataForm.mainUnit,
+          classAttribute: this.dataForm.classAttribute,
           num: boxNum,
           full: this.checkIfFull(boxNum)
         });
@@ -242,7 +244,7 @@ export default {
         pageSize: 9999
       }
       const res = await getBimPackagingMaterialsPage(params)
-      const {records} = res.data
+      const { records } = res.data
       this.packagingMaterialList = records.map(item => {
         return {
           ...item,
@@ -282,7 +284,7 @@ export default {
     },
 
     getTitle(type) {
-      switch (type) {
+      switch ( type ) {
         case 'add':
           return `创建${ this.title }`
         case 'edit':
@@ -316,13 +318,13 @@ export default {
       let MSG = '提交成功'
       try {
         const res = await addPackagingPlanBox(params)
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success(MSG)
           this.goBack()
         }
         this.btnLoading = false
-      } catch (error) {
+      } catch ( error ) {
         this.btnLoading = false
       }
     },
@@ -360,11 +362,11 @@ export default {
                   <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
                     <el-collapse-item title="本次计划" name="basicInfo" class="orderInfo" ref="dataFormRegion">
                       <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                        :btnType="btnType"/>
+                                :btnType="btnType"/>
                     </el-collapse-item>
                     <el-collapse-item class="productInfo"
-                      title="装箱信息"
-                      name="productInfo">
+                                      title="装箱信息"
+                                      name="productInfo">
                       <div class="TableForm_title">
                       </div>
                       <TableForm-product
@@ -397,7 +399,7 @@ export default {
                             <div class="right">
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                                  @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
+                                         @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
                               </el-tooltip>
                             </div>
                           </div>
@@ -406,7 +408,7 @@ export default {
                           <el-table-column label="操作" width="100" fixed="right">
                             <template slot-scope="scope">
                               <el-button type="text" class="JNPF-table-delBtn"
-                                @click="linesDelete(scope)">
+                                         @click="linesDelete(scope)">
                                 {{ $t(`common.delBtn`) }}
                               </el-button>
                             </template>

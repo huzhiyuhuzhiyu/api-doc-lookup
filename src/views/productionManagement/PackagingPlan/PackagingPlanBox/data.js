@@ -210,6 +210,9 @@ export function getBasicFormSchema(dataFormRef, context) {
       get options() {
         return context.packagingMaterialList
       },
+      itemRules: [
+        {required: true, message: '打包物料不能为空', trigger: ['blur', 'change'],},
+      ]
     },
     {
       prop: 'packagingMethod',

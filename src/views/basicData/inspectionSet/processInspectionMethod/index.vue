@@ -121,18 +121,9 @@
               <div v-if="scope.row.processingType == 'external_production'">外协</div>
             </template>
           </el-table-column>
-          <el-table-column prop="processType" label="工序类型" width="120" sortable="custom">
+          <el-table-column prop="processType" label="工序类型" min-width="120">
             <template slot-scope="scope">
-              <div v-if="scope.row.processType == 'normal'">正常工序</div>
-                <div v-if="scope.row.processType == 'vibrate'">测振工序</div>
-                <div v-if="scope.row.processType == 'heat_treatment'">热工工序</div>
-                <div v-if="scope.row.processType == 'packing'">包装工序</div>
-                <div v-if="scope.row.processType == 'pairs'">配对工序</div>
-                <div v-if="scope.row.processType == 'typing'">打字工序</div>
-                <div v-if="scope.row.processType == 'fatInjection'">注脂工序</div>
-                <div v-if="scope.row.processType == 'grinding'">磨孔工序</div>
-                <div v-if="scope.row.processType == 'accuracy'">精度工序</div>
-                <div v-if="scope.row.processType == 'boxing'">装盒工序</div>
+              <el-tag>{{ global.getDictLabelGlobal('processType', scope.row['processType']) }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="inspectionMethod" label="检验方式" width="110" sortable="custom" align="center">
@@ -513,7 +504,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -546,7 +537,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -578,7 +569,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -612,7 +603,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -643,7 +634,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -675,7 +666,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -706,7 +697,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })

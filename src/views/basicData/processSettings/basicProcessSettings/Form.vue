@@ -60,7 +60,7 @@
                       <el-form-item label="工序类型" prop="processType">
                         <el-select v-model="dataForm.processType" placeholder="请选择工序类型" :disabled="disabled"
                           style="width:100%">
-                          <el-option v-for="item in process_typeList" :key="item.value" :label="item.label"
+                          <el-option v-for="item in global.processType" :key="item.value" :label="item.label"
                             :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
@@ -79,7 +79,7 @@
                     </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="是否领料" prop="pickingFlag">
-                        <el-select v-model="dataForm.pickingFlag" placeholder="请选择是否领料" 
+                        <el-select v-model="dataForm.pickingFlag" placeholder="请选择是否领料"
                         :disabled="disabled ? true : dataForm.processingType === 'external_production'" style="width:100%">
                           <el-option v-for="item in trueFalseList" :key="item.value" :label="item.label"
                             :value="item.value"></el-option>
@@ -88,7 +88,7 @@
                     </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="是否检验" prop="checkFlag">
-                        <el-select v-model="dataForm.checkFlag" placeholder="请选择是否检验" 
+                        <el-select v-model="dataForm.checkFlag" placeholder="请选择是否检验"
                         :disabled="disabled ? true : dataForm.processingType === 'external_production'"
                           style="width:100%">
                           <el-option v-for="item in trueFalseList" :key="item.value" :label="item.label"
@@ -98,7 +98,7 @@
                     </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="是否报工" prop="reportFlag">
-                        <el-select v-model="dataForm.reportFlag" placeholder="请选择是否报工" 
+                        <el-select v-model="dataForm.reportFlag" placeholder="请选择是否报工"
                         :disabled="disabled ? true : dataForm.processingType === 'external_production'"
                           style="width:100%">
                           <el-option v-for="item in trueFalseList" :key="item.value" :label="item.label"
@@ -117,7 +117,7 @@
                     </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="是否生成工单" prop="workOrderFlag">
-                        <el-select v-model="dataForm.workOrderFlag" placeholder="请选择是否生成工单" 
+                        <el-select v-model="dataForm.workOrderFlag" placeholder="请选择是否生成工单"
                         :disabled="disabled ? true : dataForm.processingType === 'self_produced'"
                           style="width:100%">
                           <el-option v-for="item in trueFalseList" :key="item.value" :label="item.label"
@@ -363,8 +363,8 @@ export default {
         { label: '注脂工序', value: 'fatInjection' },
         { label: '装盒工序', value: 'boxing' },
         { label: '修磨工序', value: 'regrinding' },
-        { label: '清洗工序', value: 'clean' }, 
-      ], 
+        { label: '清洗工序', value: 'clean' },
+      ],
       trueFalseList: [
         { label: '是', value: true },
         { label: '否', value: false },

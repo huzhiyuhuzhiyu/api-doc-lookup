@@ -1976,20 +1976,15 @@ export default {
             weight: item.weight,
             proportion: item.proportion,
             discount: item.discount,
-            ordersLineId: item.ordersLineId,
             packagingMethod: item.packagingMethod,
             packingQuantity: item.packingQuantity,
             processId: item.processId,
             productsId: item.productsId ? item.productsId : '',
             purchaseOrderId: item.purchaseOrderId,
             purchaseQuantity: item.purchaseQuantity,
-            purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
             qualifiedQuantity: item.qualifiedQuantity,
-            ratio: item.ratio,
             waitReceiptNum: item.waitReceiptNum,
-            receivedQuantity: item.receivedQuantity,
             receivingStatus: item.receivingStatus,
-            remark: item.remark,
             sealingCoverTyping: item.sealingCoverTyping,
             standardValue: item.standardValue,
             unqualifiedQuantity: item.unqualifiedQuantity,
@@ -1999,7 +1994,7 @@ export default {
             classAttribute: item.classAttribute,
             id: item.id ? item.id : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            ordersLineId: item.id,
             // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -2018,7 +2013,6 @@ export default {
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',
             ordersId: item.ordersId,
@@ -2044,8 +2038,8 @@ export default {
             weight: item.weight,
             proportion: item.proportion,
             discount: item.discount,
-            saleOrdersId: item.ordersId,
-            saleOrdersLineId: item.ordersLineId
+            saleOrdersId: item.saleOrdersId,
+            saleOrdersLineId: item.saleOrdersLineId
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)

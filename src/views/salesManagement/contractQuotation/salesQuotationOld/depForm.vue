@@ -27,11 +27,8 @@
                     icon="el-icon-plus" @click="addProduct">选择产品</el-button>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
-                    v-if="tableFlag" v-bind="customStyleData">
-                    <el-table-column type="selection" width="60" fixed='left' align="center"
-                      v-if="this.btnType !== 'look'" key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
+                  <JNPF-table customKey="salesQuotationOld" ref="product" :has-c="this.btnType !== 'look'" fixedNO :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
+                    v-if="tableFlag" v-bind="customStyleData" custom-column>
                     <el-table-column prop="productCode" label="产品型号" width="180"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="180"
@@ -43,9 +40,9 @@
                         <span class="required">*</span>数量
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
-                          <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="数量" :disabled="status"
-                            maxlength="11">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'numStr'" :rules='productRules.numStr'>
+                          <el-input v-model="scope.row.numStr" placeholder="数量" :disabled="status"
+                            maxlength="20">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -58,7 +55,7 @@
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'sampleNumStr'"
                           :rules='productRules.sampleNumStr'>
                           <el-input :title="scope.row.sampleNumStr" v-model="scope.row.sampleNumStr"
-                            placeholder="请输入样品数" :disabled="status" maxlength="11">
+                            placeholder="请输入样品数" :disabled="status" maxlength="20">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -86,7 +83,7 @@
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'minNumStr'"
                           :rules='productRules.minNumStr'>
                           <el-input :title="scope.row.minNumStr" v-model="scope.row.minNumStr" placeholder="请输入起订量"
-                            :disabled="status" maxlength="11">
+                            :disabled="status" maxlength="20">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -100,7 +97,7 @@
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'procurementAmounts'"
                           :rules='productRules.procurementAmounts'>
                           <el-input :title="scope.row.procurementAmounts" v-model="scope.row.procurementAmounts"
-                            placeholder="请输入采购价" :disabled="status" maxlength="11">
+                            placeholder="请输入采购价" :disabled="status" maxlength="20">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -112,7 +109,7 @@
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'amounts'" :rules='productRules.amounts'>
                           <el-input :title="scope.row.amounts" v-model="scope.row.amounts" placeholder="请输入报价"
-                            :disabled="status" maxlength="11">
+                            :disabled="status" maxlength="20">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -164,6 +161,11 @@
                         <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="status" maxlength="200" />
                       </template>
                     </el-table-column>
+                    <el-table-column prop="remark2" label="反馈备注" min-width="180" v-if="dataForm.quotationStatus === 'feedback_received'">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.remark2" disabled maxlength="200" />
+                      </template>
+                    </el-table-column>
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'add' || btnType == 'edit'">
                       <template slot-scope="scope">
                         <el-button type="text" @click="deltable(scope)" class="JNPF-table-delBtn">删除</el-button>
@@ -171,7 +173,7 @@
                           @click="historyPriceFun(scope)">历史价格</el-button>
                       </template>
                     </el-table-column>
-                  </el-table>
+                  </JNPF-table>
                 </el-form>
               </el-collapse-item>
             </el-collapse>
@@ -454,7 +456,7 @@ export default {
       },
       productRules: {
         // 数量
-        num: [
+        numStr: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
         ],

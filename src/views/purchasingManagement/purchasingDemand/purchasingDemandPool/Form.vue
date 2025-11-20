@@ -35,6 +35,21 @@
                             :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="币种" prop="currency">
+                          <el-select v-model="dataForm.currency" placeholder="币种" style="width: 100%;"
+                                     :disabled="btnType === 'look'">
+                            <el-option v-for="(item, index) in global.currencyType" :key="index" :label="item.label"
+                                       :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="6">
+                        <el-form-item label="订单日期" prop="orderDate">
+                          <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
+                                          style="width: 100%;" placeholder="请选择订单日期"></el-date-picker>
+                        </el-form-item>
+                      </el-col>
                       <el-col :span="6">
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
@@ -433,6 +448,7 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import tenantMinix from "@/mixins/generator/TenantMinix";
 import ProductSymbolForm from '@/views/salesManagement/orderManagement/orderList/productSymbol.vue'
 import ProductSymbolMixin from '@/mixins/generator/ProductSymbolMixin'
+import global from "@/utils/global";
 
 export default {
     components: {
@@ -568,7 +584,9 @@ export default {
                 noticeFlag: false,
                 outConsigneeFlag: false,
                 approvalFlag: false, //
-                demandDate: ''
+                demandDate: '',
+                currency: 'CNY',
+                orderDate: '',
             },
             dataPickerOptions2: {
                 // 日期区间选择器通用选项
@@ -585,6 +603,8 @@ export default {
                 // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
                 cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
                 deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+                currency: [{ required: true, message: '请选择币种', trigger: ['change'] }],
+                orderDate: [{ required: true, message: '请选择订单日期', trigger: ['change'] }]
             },
             productRules: {
 
@@ -779,6 +799,9 @@ export default {
         this.getBimBusinessDetail()
     },
     computed: {
+      global() {
+        return global
+      },
         ...mapGetters(['userInfo']),
         computedValue() {
             // 在这里计算第三个输入框的值
@@ -1258,6 +1281,7 @@ export default {
 
             this.dataForm.source = source
             this.dataForm.classAttribute = classAttributeFlag
+            this.dataForm.currency = 'CNY'
             this.ProductListRequestObj = {
                 classAttribute: this.dataForm.classAttribute,
                 productSource: 'purchase', // 产品来源
@@ -1297,7 +1321,6 @@ export default {
             // if (!demandDelivery) { // 没有日期，代表从重新提交中进来的
             // this.dataForm = data
             this.$set(this.dataFormTwo, 'data', JSON.parse(JSON.stringify(data)))
-
             // }
             // else {
             //   // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个

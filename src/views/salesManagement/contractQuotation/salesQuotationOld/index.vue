@@ -261,7 +261,7 @@ export default {
           sortable: 'custom',
         },
         {
-          prop: "bidder1",
+          prop: "createByName",
           label: "制单人",
           minWidth: 100,
           sortable: 'custom',
@@ -421,6 +421,9 @@ export default {
       this.depFormVisible = true
       const { id, quotationType = '' } = row
       this.quoteType = quotationType
+      if (type === 'look') {
+        this.quoteType = 'directly_quotation'
+      }
       this.$nextTick(() => {
         this.$refs.depForm.init(id, type)
       })

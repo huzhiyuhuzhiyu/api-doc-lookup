@@ -162,7 +162,7 @@ export default {
     },
 
     handlePackagingChange(val) {
-      this.dataForm.singleBoxNum = this.packagingActives[val] || 0;
+      this.dataForm.singleBoxNum = this.dataForm[this.packagingActives[val]] || 0;
     },
 
     checkIfFull(num) {

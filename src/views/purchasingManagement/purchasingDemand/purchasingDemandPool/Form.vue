@@ -602,7 +602,7 @@ export default {
             rules: {
                 // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
                 cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
-                deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+                deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }],
                 currency: [{ required: true, message: '请选择币种', trigger: ['change'] }],
                 orderDate: [{ required: true, message: '请选择订单日期', trigger: ['change'] }]
             },

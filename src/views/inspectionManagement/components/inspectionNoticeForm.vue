@@ -910,7 +910,7 @@ export default {
     async inspectionResultsChange(val, scope) {
       this.$refs['dataForm'].$refs['main'].clearValidate('unqualifiedQuantity')
       if (val === 'qualified') {
-        this.dataForm.unqualifiedQuantity = '0'
+        // this.dataForm.unqualifiedQuantity = '0'
         !this.dataForm.itemList ? (this.dataForm.itemList = []) : ''
         !this.dataForm.causesList ? (this.dataForm.causesList = []) : ''
 

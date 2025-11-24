@@ -4,25 +4,25 @@
       <el-form @submit.native.prevent>
         <el-col :span="4">
           <el-select v-model="selectValue" filterable remote reserve-keyword placeholder="选择视图"
-            :remote-method="jnpf.throttle(remoteMethod, 500)" :loading="searchLoading" loading-text="正在查找..."
-            no-data-text="未找到视图，请先添加" @change="selectChange" style="width: 100%;" default-first-option
-            :clearable="false" @visible-change="handleVisibleChange" :key="selectKey" ref="SelectRef"
-            popper-class="popper-500">
+                     :remote-method="jnpf.throttle(remoteMethod, 500)" :loading="searchLoading" loading-text="正在查找..."
+                     no-data-text="未找到视图，请先添加" @change="selectChange" style="width: 100%;" default-first-option
+                     :clearable="false" @visible-change="handleVisibleChange" :key="selectKey" ref="SelectRef"
+                     popper-class="popper-500">
             <el-option-group label="视图">
               <el-option v-for="(item, index) in planList" :key="item.id" :label="item.fullName" :value="item.id"
-                @contextmenu.prevent.native="showContextMenu($event, item, index)">
+                         @contextmenu.prevent.native="showContextMenu($event, item, index)">
                 <span style="float: left">{{ item.fullName }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">个人</span>
               </el-option>
               <el-option v-for="item in showSystemSearchView" :key="item.fullName" :label="item.fullName"
-                :value="item.fullName">
+                         :value="item.fullName">
                 <span style="float: left">{{ item.fullName }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">系统</span>
               </el-option>
             </el-option-group>
             <el-option-group label="操作">
               <el-option label="更新当前视图" value="update"
-                :disabled="!selectValue || planList.every(item => item.id !== selectValue) || updateLoading">
+                         :disabled="!selectValue || planList.every(item => item.id !== selectValue) || updateLoading">
                 <span v-if="updateLoading">
                   <i class="el-icon-loading"></i>
                   更新中...
@@ -56,44 +56,82 @@
         </el-col>
         <el-col :span="4" v-if="keywordQuery.keywordFlag">
           <el-input v-model="keywordQuery.keyword"
-            :placeholder="keywordQuery.fieldList.length ? '关键词 包含' : '请先设置关键词关联属性'" clearable
-            prefix-icon="el-icon-search" @keyup.enter.native="search" :readonly="!keywordQuery.fieldList.length"
-            @focus="handleKeywordFocus()" ref="keywordInputRef">
+                    :placeholder="keywordQuery.fieldList.length ? '关键词 包含' : '请先设置关键词关联属性'" clearable
+                    prefix-icon="el-icon-search" @keyup.enter.native="search" :readonly="!keywordQuery.fieldList.length"
+                    @focus="handleKeywordFocus()" ref="keywordInputRef">
           </el-input>
         </el-col>
+        <!--				<slot />-->
+        <template v-for="(item, index) in effectSearchList">
+          <el-col :span="4" :key="item.prop">
+            <el-form-item>
+              <el-tooltip effect="dark" :content="item.label" placement="top" :disabled="isEmpty(customSearchQuery[item.prop])">
+                <el-input v-if="item.type === 'input'" v-model="customSearchQuery[item.prop]"
+                          :placeholder="'请输入' + item.label" :clearable="item.clearable !== false" @keyup.enter.native="search()" prefix-icon="el-icon-lock" />
+                <el-select v-else-if="item.type === 'select'" v-model="customSearchQuery[item.prop]"
+                           :placeholder="'请选择' + item.label" :clearable="item.clearable !== false" @change="search()">
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                             :value="item2.value"></el-option>
+                  <template slot="prefix">
+                    <div
+                      style="display: flex; justify-content: space-between; align-items: center; height: 100%; font-size: 16px;">
+                      <i class="el-icon-lock"></i>
+                    </div>
+                  </template>
+                </el-select>
+                <!--							<el-date-picker v-else-if="item.type === 'date'" v-model="listQuery[item.prop]"-->
+                <!--								:start-placeholder="'请选择' + item.label + '开始日期'" :end-placeholder="'请选择' + item.label + '结束日期'"-->
+                <!--								clearable type="daterange" value-format="yyyy-MM-dd">-->
+                <!--							</el-date-picker>-->
+                <!--							<el-date-picker v-else-if="item.type === 'dateTime'" v-model="listQuery[item.prop]"-->
+                <!--								:start-placeholder="'请选择' + item.label + '开始时间'" :end-placeholder="'请选择' + item.label + '结束时间'"-->
+                <!--								clearable type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"-->
+                <!--								:default-time="['00:00:00', '23:59:59']">-->
+                <!--							</el-date-picker>-->
+
+                <el-date-picker v-else-if="['year', 'month', 'date', 'dates', 'months', 'years', 'week', 'datetime', 'daterange'].includes(item.type)"
+                                v-model="customSearchQuery[item.prop]" @change="search" :placeholder="'请选择' + item.label" prefix-icon="el-icon-lock"
+                                style="width:100%;" :clearable="item.clearable !== false" v-bind="item"
+                />
+                <span v-else>搜索条件缺少type</span>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+        </template>
         <template v-for="queryProps in fixedSearchList">
           <el-col v-if="queryProps.render !== false" :span="['datetimerange'].includes(queryProps.type) ? 8 : 4"
-            :key="queryProps.field">
-            <el-form-item @contextmenu.prevent.native="showSearchItemMenu()">
+                  :key="queryProps.field">
+            <!--            <el-form-item @contextmenu.prevent.native="showSearchItemMenu()">-->
+            <el-form-item>
               <el-tooltip effect="dark" :content="`${queryProps.label} ${symbolToText(queryProps.symbol)}`" placement="top" :disabled="!checkValueEffect(queryProps)">
-              <!-- 比较符empty时 -->
-              <template v-if="queryProps.symbol === 'empty'">
-                <el-select v-model="queryProps.tempFieldValue" v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, clearable: true }">
-                  <el-option v-for="(o, i) in global.booleanOptions" :key="i" v-bind="o"></el-option>
-                </el-select>
-              </template>
-              <!-- 输入框 -->
-              <template v-if="queryProps.type === 'input'">
-                <el-input v-model="queryProps.tempFieldValue" @keyup.enter.native="search"
-                  v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, maxlength: 100, clearable: true, ...fieldCache[queryProps.field] }" />
-              </template>
-              <!-- 输入框-数值 -->
-              <template v-else-if="queryProps.type === 'number'">
-                <el-input v-model.number="queryProps.tempFieldValue" @keyup.enter.native="search"
-                  v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, maxlength: 100, clearable: true, ...fieldCache[queryProps.field] }" />
-              </template>
-              <!-- 下拉选择器 -->
-              <template v-else-if="queryProps.type === 'select'">
-                <el-select v-model="queryProps.tempFieldValue" @change="search"
-                  v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, clearable: true, multiple: ['in', 'notIn'].includes(queryProps.symbol),
+                <!-- 比较符empty时 -->
+                <template v-if="queryProps.symbol === 'empty'">
+                  <el-select v-model="queryProps.tempFieldValue" v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, clearable: true }">
+                    <el-option v-for="(o, i) in global.booleanOptions" :key="i" v-bind="o"></el-option>
+                  </el-select>
+                </template>
+                <!-- 输入框 -->
+                <template v-if="queryProps.type === 'input'">
+                  <el-input v-model="queryProps.tempFieldValue" @keyup.enter.native="search"
+                            v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, maxlength: 100, clearable: true, ...fieldCache[queryProps.field] }" />
+                </template>
+                <!-- 输入框-数值 -->
+                <template v-else-if="queryProps.type === 'number'">
+                  <el-input v-model.number="queryProps.tempFieldValue" @keyup.enter.native="search"
+                            v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, maxlength: 100, clearable: true, ...fieldCache[queryProps.field] }" />
+                </template>
+                <!-- 下拉选择器 -->
+                <template v-else-if="queryProps.type === 'select'">
+                  <el-select v-model="queryProps.tempFieldValue" @change="search"
+                             v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, clearable: true, multiple: ['in', 'notIn'].includes(queryProps.symbol),
                     collapseTags: true, ...fieldCache[queryProps.field]}">
-                  <el-option v-for="(o, i) in queryProps.options" :key="i" v-bind="o"></el-option>
-                </el-select>
-              </template>
-              <!-- 日期时间选择器 -->
-              <template
-                v-else-if="['year', 'month', 'date', 'dates', 'months', 'years', 'week', 'datetime'].includes(queryProps.type)">
-                <el-date-picker-pro v-model="queryProps.tempFieldValue" @change="search" v-bind="{
+                    <el-option v-for="(o, i) in queryProps.options" :key="i" v-bind="o"></el-option>
+                  </el-select>
+                </template>
+                <!-- 日期时间选择器 -->
+                <template
+                  v-else-if="['year', 'month', 'date', 'dates', 'months', 'years', 'week', 'datetime'].includes(queryProps.type)">
+                  <el-date-picker-pro v-model="queryProps.tempFieldValue" @change="search" v-bind="{
                   placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, style: 'width:100%', clearable: true,
                   ...fieldCache[queryProps.field],
                   ...(() => {
@@ -110,27 +148,27 @@
                     return result
                   })()
                 }">
-                  <template slot="sidebar">
-                    <el-tooltip placement="top" v-if="fieldCache[queryProps.field].valueFormat.includes('yyyy')">
-                      <el-switch v-model="queryProps.timeOffset" active-text="动态" inactive-text=""></el-switch>
-                      <div slot="content" v-html="genTooltip(queryProps)"></div>
-                    </el-tooltip>
-                  </template>
-                </el-date-picker-pro>
-              </template>
-              <!-- 自定义组件 -->
-              <!-- <template v-else-if="queryProps.type === 'custom'">
-                <component :is="queryProps.component" v-model="queryProps.tempFieldValue"
-                  v-on="fieldCache[queryProps.field].events" v-bind="{
-                    placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, style: 'width:100%',
-                    ...queryProps,
-                    ...fieldCache[queryProps.field]
-                  }" />
-              </template> -->
-              <!-- 默认显示输入框 -->
-              <template v-else>
-                <el-input :value="'未识别的类型：' + queryProps.type" disabled />
-              </template>
+                    <template slot="sidebar">
+                      <el-tooltip placement="top" v-if="fieldCache[queryProps.field].valueFormat.includes('yyyy-MM-dd')">
+                        <el-switch v-model="queryProps.timeOffset" active-text="动态" inactive-text=""></el-switch>
+                        <div slot="content" v-html="genTooltip(queryProps)"></div>
+                      </el-tooltip>
+                    </template>
+                  </el-date-picker-pro>
+                </template>
+                <!-- 自定义组件 -->
+                <!-- <template v-else-if="queryProps.type === 'custom'">
+                  <component :is="queryProps.component" v-model="queryProps.tempFieldValue"
+                    v-on="fieldCache[queryProps.field].events" v-bind="{
+                      placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, style: 'width:100%',
+                      ...queryProps,
+                      ...fieldCache[queryProps.field]
+                    }" />
+                </template> -->
+                <!-- 默认显示输入框 -->
+                <template v-else>
+                  <el-input :value="'未识别的类型：' + queryProps.type" disabled />
+                </template>
               </el-tooltip>
             </el-form-item>
           </el-col>
@@ -141,22 +179,22 @@
             <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
               {{ $t('common.search') }}
             </el-button>
-            <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+            <el-button size="mini" icon="el-icon-refresh-right" @click="reset(true)">{{ $t('common.reset') }}
             </el-button>
           </el-form-item>
         </el-col>
       </el-form>
     </el-row>
     <HandleViewDialog v-if="saveDialogVisible" @cancel="saveDialogVisible = false" @confirm="onSaveConfirm"
-      :currMenuId="currMenuId" :listQuery="listQuery" />
+                      :currMenuId="currMenuId" :listQuery="listQuery" />
 
     <!-- 右键菜单组件 -->
     <ContextMenu :visible="contextMenuVisible" :menu-style="contextMenuStyle" :selected-item="selectedItem"
-      :selected-index="selectedIndex" :curr-menu-id="currMenuId" :list-query="listQuery"
-      @delete-success="handleDeleteSuccess" @rename-success="handleRenameSuccess" />
+                 :selected-index="selectedIndex" :curr-menu-id="currMenuId" :list-query="listQuery"
+                 @delete-success="handleDeleteSuccess" @rename-success="handleRenameSuccess" />
     <HandleKeywordSetting v-if="keywordSettingVisible && parentTableRef.$refs" @cancel="keywordSettingVisible = false"
-      @confirm="onKeywordSettingConfirm" :keywordQuery="keywordQuery" :columnList="parentTableRef.columnList"
-      :queryJson="parentTableRef.queryJson" />
+                          @confirm="onKeywordSettingConfirm" :keywordQuery="keywordQuery" :columnList="parentTableRef.columnList"
+                          :queryJson="parentTableRef.queryJson" />
   </div>
 </template>
 
@@ -196,12 +234,18 @@ export default {
     tableRef: {
       type: String,
       required: true
+    },
+    // 如果某些搜索条件是必要的，但是接口无法返回对应prop，将这些条件放在此列表中
+    searchList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
     return {
       genTooltip,
       symbolToText,
+      isEmpty,
       initTimeouter: null,
       selectValue: null,
       lastSelectValue: null, // 最后一次选择的视图
@@ -233,7 +277,8 @@ export default {
       orderItems: [],
       pageSize: 0,
       showSystemSearchView: [],
-      getParentTableRefTotal: 0
+      getParentTableRefTotal: 0,
+      customSearchQuery: {} // 自定义searchList的查询参数
     }
   },
   computed: {
@@ -259,6 +304,9 @@ export default {
       result = result.sort((a, b) => a.sort - b.sort)
       return result
     },
+    effectSearchList() {
+      return this.searchList.filter(item => item.render !== false)
+    },
   },
   async mounted() {
     this.getParentTableRef()
@@ -275,7 +323,7 @@ export default {
     },
     listQuery: {
       handler(val) {
-        // console.log('listQuery', val, oldVal);
+        // console.log('listQuery', val);
         // 在偏移开关或固定顶栏发生变化，提示是否更新/保存视图
         if (val.superQuery?.condition) {
           let updatedFlag = false
@@ -297,9 +345,7 @@ export default {
             }
           }
           this.oldSelectValue = this.selectValue // 第一次记录oldSelectValue
-        }
 
-        if (val.superQuery?.condition) {
           this.fixedSearchList.forEach(fixedItem => {
             const fieldValue = val.superQuery.condition.find(item => item.field === fixedItem.field)?.fieldValue
             fixedItem.tempFieldValue = fieldValue
@@ -315,7 +361,7 @@ export default {
         this.lastListQuery = structuredClone(val)
       },
       deep: false
-    }
+    },
   },
   methods: {
     getParentTableRef() {
@@ -326,6 +372,7 @@ export default {
         this.parentTableRef = this.jnpf.deepGetParentValue(this, this.tableRef, '$refs') || {}
         if (this.parentTableRef.$refs) {
           this.parentTableRef.$on('columnChange', this.getParentTableRef) // 表格列改变时重新获取表格信息
+          this.parentTableRef.doLayout()
 
           this.currMenuId = 'TQ_' + this.parentTableRef.menuId + this.parentTableRef._customKey
           if (!this.lastSelectValue) {
@@ -355,6 +402,7 @@ export default {
       this.searchLoading = false
     },
     selectChange(val) {
+      this.initCustomSearchQuery()
       this.$nextTick(() => this.$refs.SelectRef?.blur())
       if (val === 'update' || val === 'save') {
         this.selectValue = this.lastSelectValue;
@@ -487,6 +535,7 @@ export default {
       })
     },
     search() {
+      if (!this.lastSelectValue) return
       let listQuery = structuredClone(this.listQuery)
       listQuery.superQuery.condition.forEach(item => {
         if (item.fixed) {
@@ -497,7 +546,8 @@ export default {
       this.queryChange(listQuery)
     },
     // 重置筛选条件
-    reset() {
+    reset(flag = false) {
+      this.resetCustomSearchQueryFlag = flag
       const lastSelectValue = this.jnpf.storageGet(this.currMenuId)
       if (lastSelectValue) {
         this.selectValue = lastSelectValue
@@ -690,7 +740,11 @@ export default {
             })(),
           }))
         },
-        keywordQuery: this.keywordQuery
+        keywordQuery: {
+          ...this.keywordQuery,
+          keyword: this.keywordQuery.keyword?.trim()
+        },
+        customSearchQuery: this.formatCustomSearchQuery(this.customSearchQuery)
       }
       // this.$emit('queryChange', listQuery)
       this.parentTableRef.queryChange(listQuery)
@@ -729,7 +783,38 @@ export default {
         if (flag) this.saveDialogVisible = true
       }
     },
-
+    initCustomSearchQuery(autoSearchFlag = false) {
+      if (!this.effectSearchList) return
+      const {
+        superQuery,
+        condition,
+        keywordQuery,
+        pageNum,
+        pageSize,
+        orderItems,
+        customSearchQuery,
+        ...other
+      } = structuredClone(this.listQuery)
+      this.customSearchQuery = {
+        ...other,
+        ...this.customSearchQuery
+      }
+      if (this.resetCustomSearchQueryFlag) {
+        this.resetCustomSearchQueryFlag = false
+        this.customSearchQuery = other
+      }
+      // console.log(this.customSearchQuery)
+      if (autoSearchFlag) this.search()
+    },
+    formatCustomSearchQuery(customSearchQuery) {
+      if (!customSearchQuery) return {}
+      return Object.keys(customSearchQuery).reduce((prev, key) => {
+        if (this.effectSearchList.some(item => item.prop === key)) {
+          prev[key] = customSearchQuery[key]
+        }
+        return prev
+      }, {})
+    },
   }
 }
 </script>

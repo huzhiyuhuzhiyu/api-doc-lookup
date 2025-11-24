@@ -216,6 +216,15 @@ const global = {
     { label: '返工任务', value: 'rework', type: 'info' },
   ],
 
+  // 任务类型
+  bankMaintenanceType: [
+    { label: '银行存款', value: 'bank_deposit' },
+    { label: '应收票据', value: 'notes_receivable' },
+    { label: '应付票据', value: 'notes_payable' },
+    { label: '库存现金', value: 'cash_on_hand' },
+    { label: '保证金', value: 'cash_deposit' },
+  ],
+
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {
     // 先从本地获取字典

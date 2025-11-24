@@ -103,7 +103,7 @@ export default {
       if (!this.listPageComponent) {
         console.warn(`未找到对应的组件: ${ componentKey } (路由: ${ routeName }, 业务类型: ${ this.businessType })`)
       } else {
-        console.log(`路由映射: ${ routeName } -> ${ componentKey }`)
+        // console.log(`路由映射: ${ routeName } -> ${ componentKey }`)
       }
     },
   }

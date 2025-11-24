@@ -1,6 +1,6 @@
 <template>
   <el-drawer title="数据排序优先级设置" :visible.sync="drawerVisible" :wrapperClosable="false" size="320px" append-to-body
-    class="JNPF-common-drawer columnSettings-drawer">
+             class="JNPF-common-drawer columnSettings-drawer">
     <div class="JNPF-flex-main" :class="classObj">
       <!-- <div class="columnSetting-head">
         <div></div>
@@ -10,7 +10,7 @@
         <template v-if="list.length">
           <draggable :list="list" :animation="340" handle=".column-item-icon">
             <div class="column-item" v-for="item in list" :key="item.prop"
-              @click.self="item.columnVisible = !item.columnVisible">
+                 @click.self="item.columnVisible = !item.columnVisible">
               <div class="column-item-left">
                 <i class="icon-ym icon-ym-darg column-item-icon"></i>
                 <!-- <el-checkbox class="check-box" v-model="item.columnVisible"
@@ -19,24 +19,25 @@
                   <span>{{ item.label }}</span>
                 </div>
               </div>
-              <!-- <div class="column-item-right">
-                <el-tooltip content="固定到左侧" placement="top"
-                  :class="['system-icon', item.fixed === '' || item.fixed === 'left' ? 'active' : '']"
-                  :enterable="false"
-                >
-                  <i class="ym-custom ym-custom-format-horizontal-align-left"
-                    @click.stop="handleFixed(item, 'left')"
-                  ></i>
-                </el-tooltip>
-                <span class="line"></span>
-                <el-tooltip content="固定到右侧" placement="top"
-                  :class="['system-icon', item.fixed === 'right' ? 'active' : '']" :enterable="false"
-                >
-                  <i class="ym-custom ym-custom-format-horizontal-align-right"
-                    @click.stop="handleFixed(item, 'right')"
-                  ></i>
-                </el-tooltip>
-              </div> -->
+              <div class="column-item-right">
+                <i class="el-icon-close" title="删除" @click="handleRemove(item)" style="padding-right: 10px;cursor: pointer;"></i>
+                <!--                <el-tooltip content="固定到左侧" placement="top"-->
+                <!--                  :class="['system-icon', item.fixed === '' || item.fixed === 'left' ? 'active' : '']"-->
+                <!--                  :enterable="false"-->
+                <!--                >-->
+                <!--                  <i class="ym-custom ym-custom-format-horizontal-align-left"-->
+                <!--                    @click.stop="handleFixed(item, 'left')"-->
+                <!--                  ></i>-->
+                <!--                </el-tooltip>-->
+                <!--                <span class="line"></span>-->
+                <!--                <el-tooltip content="固定到右侧" placement="top"-->
+                <!--                  :class="['system-icon', item.fixed === 'right' ? 'active' : '']" :enterable="false"-->
+                <!--                >-->
+                <!--                  <i class="ym-custom ym-custom-format-horizontal-align-right"-->
+                <!--                    @click.stop="handleFixed(item, 'right')"-->
+                <!--                  ></i>-->
+                <!--                </el-tooltip>-->
+              </div>
             </div>
           </draggable>
         </template>
@@ -141,14 +142,15 @@ export default {
       if (!flag) {
         this.$message.error('请至少拥有一个展示字段')
       } else {
-        const tempOrderItems = JSON.parse(JSON.stringify(this.listQuery.orderItems))
+        let tempOrderItems = JSON.parse(JSON.stringify(this.listQuery.orderItems))
         tempOrderItems.forEach(item => {
           const targetIndex = this.list.findIndex(column => {
             const sortProp = getSortProp(column.$attrs, column.prop, { tranToUnderline: this.$parent.tranToUnderline })
             return item.column === sortProp
           })
-          item.sort = targetIndex > -1 ? targetIndex : 999
+          item.sort = targetIndex > -1 ? targetIndex : null
         })
+        tempOrderItems = tempOrderItems.filter(item => item.sort !== null)
         const listQuery = {
           ...this.listQuery,
           orderItems: tempOrderItems.sort((a, b) => a.sort - b.sort).map(item => {
@@ -156,9 +158,9 @@ export default {
             return all
           })
         }
-        // console.log(listQuery.orderItems)
+        console.log(listQuery.orderItems)
         this.$emit('queryChange', listQuery)
-        this.$message.success('排序优先级设置成功！如需维持当前优先级，请保存视图。')
+        // this.$message.success('排序优先级设置成功！如需维持当前优先级，请保存视图。')
         this.drawerVisible = false
       }
     },
@@ -172,6 +174,9 @@ export default {
       } else {
         this.$set(item, 'fixed', type)
       }
+    },
+    handleRemove(item) {
+      this.list = this.list.filter(column => column.prop !== item.prop)
     }
   }
 }
@@ -206,7 +211,7 @@ $lighterBlue: #1890ff;
       padding: 0;
       font-size: 12px;
       color: #303133;
-      cursor: pointer;
+      //cursor: pointer;
       border-bottom: 1px solid #e3e6eb;
 
       &:hover {
@@ -238,6 +243,12 @@ $lighterBlue: #1890ff;
         margin: auto 8px auto 10px;
         color: #909399;
         cursor: move;
+        font-size: 14px;
+      }
+
+      .column-item-icon-fixed {
+        margin: auto 8px auto 10px;
+        color: #909399;
         font-size: 14px;
       }
 

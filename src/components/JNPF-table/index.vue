@@ -1,22 +1,22 @@
 <template>
   <div class="tableContainer">
     <el-table highlight-current-row :data="data" ref="JNPFTable" class="JNPF-common-table" :height="height"
-      :element-loading-text="$t('common.loadingText')" v-bind="{ ...attributes, ...$attrs }" v-on="$listeners" :border="border"
-      :header-cell-style="headerCellStyle" @header-dragend="handleHeaderDragEnd" :row-class-name="rowClassName"
-      @header-click="handleHeaderClick" :key="tableKey"
+              :element-loading-text="$t('common.loadingText')" v-bind="{ ...attributes, ...$attrs }" v-on="$listeners" :border="border"
+              :header-cell-style="headerCellStyle" @header-dragend="handleHeaderDragEnd" :row-class-name="rowClassName"
+              @header-click="handleHeaderClick" :key="tableKey"
     >
       <el-table-column type="selection" width="45" key="selection" :fixed="fixedSelect"
-        v-if="_hasC" align="center" :selectable="checkSelectable"
+                       v-if="_hasC" align="center" :selectable="checkSelectable"
       />
-      <el-table-column align="center" label="拖动" width="60" v-if="hasMove">
+      <el-table-column align="center" label="拖动" class-name="handler-column" width="60" v-if="_hasMove">
         <template>
           <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" disabled
-            title="点击拖动"
+             title="点击拖动"
           />
         </template>
       </el-table-column>
       <el-table-column type="index" key="index" width="60" label="序号" v-if="hasNO" :fixed="fixedNO"
-        align="center"
+                       align="center"
       />
       <jnpf-table-column :columns="columns" :columnList="columnList" v-if="customColumn"/>
       <template v-else>
@@ -34,14 +34,14 @@
       </template>
     </el-table>
     <ColumnSettings v-if="drawerVisible" ref="columnSettings" :defaultColumns="defaultColumns"
-      :columnList="columnList" :setColumnDisplayList="setColumnDisplayList" @setColumn="setColumn"
+                    :columnList="columnList" :setColumnDisplayList="setColumnDisplayList" @setColumn="setColumn"
     />
     <PopoverCard v-if="popoverVisible" :popoverColumn="popoverColumn" :style="popoverStyle"
-      @queryChange="queryChange" :listQuery="listQuery" :columnProps="currentColumnProps"
-      :queryJson="queryJson" @close="closePopover" ref="popoverCard"
+                 @queryChange="queryChange" :listQuery="listQuery" :columnProps="currentColumnProps"
+                 :queryJson="queryJson" @close="closePopover" ref="popoverCard"
     />
     <SortSettings v-if="sortDrawerVisible" ref="sortSettings" @queryChange="queryChange"
-      :columns="columns" :listQuery="listQuery"
+                  :columns="columns" :listQuery="listQuery"
     />
   </div>
 </template>
@@ -75,7 +75,7 @@ export default {
     },
     // 是否有拖动 默认无
     hasMove: {
-      type: Boolean,
+      type: Boolean | Array,
       default: false
     },
     // 序号 是否固定
@@ -144,6 +144,11 @@ export default {
         return row.hasOwnProperty('unDraggable') ? row.unDraggable : 'draggable-header'
       }
     },
+    // 是否拖动列拖动  默认为false 一行都能拖动
+    isHandlerColumn: {
+      type: Boolean,
+      default: false
+    },
     // 是否给未指定sortProp的列排序时将驼峰转换为下划线
     tranToUnderline: {
       type: Boolean,
@@ -211,6 +216,14 @@ export default {
         return this.hasC.some(item => menuPermissionList.some(o => o.button.some(o2 => o2.enCode === item)))
       }
       return this.hasC
+    },
+    _hasMove(){
+      if (this.hasMove === '') return true
+      if (Array.isArray(this.hasMove)) {
+        const menuPermissionList = this.$store.getters.permissionList.filter(o => o.modelId === this.$route.meta.modelId)
+        return this.hasMove.some(item => menuPermissionList.some(o => o.button.some(o2 => o2.enCode === item)))
+      }
+      return this.hasMove
     },
     // 属性语法糖
     attributes() {
@@ -355,13 +368,13 @@ export default {
           let childPropsData = child.componentOptions ? child.componentOptions.propsData : ''
           if (childPropsData !== '' && childPropsData.label !== '操作') {
             // 添加show-overflow-tooltip属性，并设置为接收的showOverflowTooltip
-            childPropsData.showOverflowTooltip = childPropsData.hasOwnProperty('showOverflowTooltip') ? childPropsData.showOverflowTooltip : this.showOverflowTooltip
             if (childPropsData.fixed === 'left' || childPropsData.fixed === '') {
               // 防止左吸附列的内容没有在占满格子的情况下展示不全
               child.componentOptions.propsData.minWidth = childPropsData.minWidth ||
                 childPropsData.width || 0
               delete child.componentOptions.propsData.width
             }
+            // childPropsData.showOverflowTooltip = childPropsData.hasOwnProperty('showOverflowTooltip') ? childPropsData.showOverflowTooltip : this.showOverflowTooltip
 
             if (this.listQuery) childPropsData.renderHeader = (h, { column }) => {
               // 检查当前列是否固定
@@ -467,6 +480,7 @@ export default {
                 width: cacheItem.width,
                 minWidth: cacheItem.minWidth,
                 columnVisible: cacheItem.columnVisible,
+                fixed: cacheItem.fixed,
               }
               // defaultColumnsItem.width = cacheItem.width
               // defaultColumnsItem.minWidth = cacheItem.minWidth
@@ -529,6 +543,7 @@ export default {
           propsData.minWidth = listItem.minWidth || propsData.minWidth
           delete propsData.width
         }
+        propsData.fixed = listItem.fixed
 
         // 确保固定列有最小宽度
         if (propsData.fixed === 'left' || propsData.fixed === '') {
@@ -541,8 +556,9 @@ export default {
       this.setPropsMinWidth(list)
       // 设置固定方向
       list.forEach((item, index) => {
-        if (item.columnVisible && item.fixed === 'left' || item.fixed === '' || item.fixed === 'right') {
-          this.$set(this.$slots.default[index].componentOptions.propsData, 'fixed', item.fixed)
+        const target = this.columns.find(slotItem => slotItem.key === item.prop)
+        if (target && target.componentOptions) {
+          this.$set(target.componentOptions.propsData, 'fixed', item.fixed)
         }
       })
       this.jnpf.storageSet({ [this.menuId + this._customKey]: this.transactionCacheList(list) })
@@ -559,6 +575,7 @@ export default {
       this.sortable = Sortable.create(el, {
         filter: '.non-draggable-header',
         ghostClass: 'sortable-ghost',
+        handle: this.isHandlerColumn ? '.handler-column' : '',
         setData: function(dataTransfer) {
           dataTransfer.setData('Text', '')
         },
@@ -731,6 +748,7 @@ export default {
         listQuery.orderItems = listQuery.orderItems.reduce((result, item) => {
           if (!item.column) return result
           if (this.columns.some(child => {
+            if (this.tranToUnderline) return true
             let childPropsData = child.componentOptions?.propsData
             if (!childPropsData || childPropsData.label === '操作') return false
             const sortProp = getSortProp(child.data.attrs || {}, item.column, { tranToUnderline: this.tranToUnderline })
@@ -742,6 +760,14 @@ export default {
           }
           return result
         }, [])
+        // 创建时间排序优先级固定最低
+        // if (listQuery.orderItems.length > 1) {
+        //   const originOrderItems = listQuery.orderItems
+        //   const targetIndex = originOrderItems.findIndex(item => ['createTime', 'create_time'].includes(item.column));
+        //   if (targetIndex > -1) {
+        //     listQuery.orderItems.push(originOrderItems.splice(targetIndex, 1)[0]);
+        //   }
+        // }
       }
       // 过滤掉keywordQuery关联属性中不存在于table的字段
       if (listQuery.keywordQuery && listQuery.keywordQuery.fieldList?.length) {

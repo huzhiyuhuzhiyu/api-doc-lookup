@@ -1,34 +1,24 @@
 <script>
-import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getButtonList, getColumns, getSystemSearchView } from "./data";
+import { getPrintBusInfo } from "@/api/system/printDev";
+import { getStockMoveList } from "@/api/salesManagement";
+import { getClassAttributeListByCode } from "@/api/masterDataManagement";
+import { getQuotationdatasendlist, purchaseOrderList } from "@/api/orderFollow";
 
-import {getButtonList, getColumns, getSearchList} from "./data";
-import {getPrintBusInfo} from "@/api/system/printDev";
-import {getStockMoveList} from "@/api/salesManagement";
-import {getClassAttributeListByCode} from "@/api/masterDataManagement";
-import {getQuotationdatasendlist, purchaseOrderList} from "@/api/orderFollow";
-import {deepClone} from "@/utils";
+import { purPurchaseReceiptReturnGoodsList } from "@/api/purchasingAndOutsourcingOrders";
+import { getStockPickedPage } from "@/api/batchPacking";
+import { getStockPlanPalletPage } from "@/api/PackagingPalletPlan";
 
-import {purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders";
-import {getStockPickedPage} from "@/api/batchPacking";
-import {getStockPlanPalletPage} from "@/api/PackagingPalletPlan";
-
-// 打印
+// 组件导入
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
-
-// 详情
 import outboundSaleSendForm from "@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue";
-
-// 装箱&批次
 import packingForm from './module/packingForm.vue'
 import autoRecBatchPacking from "./module/components/autoRecBatchPacking.vue";
-
-// 入库
 import InboundForm from "./module/inboundForm.vue";
 
-
 export default {
-  name: "index",
+  name: "WarehouseBusinessProcess",
   components: {
     outboundSaleSendForm,
     InboundForm,
@@ -36,7 +26,6 @@ export default {
     packingForm,
     BatchPrintBrowse,
     PrintDialog,
-    SuperQuery,
   },
   props: {
     warehouseCode: {
@@ -46,64 +35,13 @@ export default {
   },
   data() {
     return {
-      loading: false,
-      autoRecBatchPackingFormVisible: false,
-      packingFormVisible: false,
-      printVisible: false,
-      inboundFormVisible: false,
-      printQuery: {
-        category: ''
-      },
-      fullName: '',
-      enCode: '',
-      tableData: [],
-      total: 0,
-      superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'priority',
-          label: "发货优先级",
-          type: 'select',
-          options: this.global.shippingPriority
-        },
-      ],
-      initListQuery: {},
-      searchList: getSearchList('default'),
-      listQuery: {},
-      btnList: getButtonList('default'),
-      columnList: [],
-      columnsConfig: getColumns('default'),
-
-      selectedRow: [],
-      classAttributeList: [],
-      businessTypeData: this.getDictDataSync('warehouseBusinessType'),
-      activeProcess: '',
-      processes: [],
-      operationWidth: '160',
-      commonQueryConfig: {
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        superQuery: {},
-        pageNum: 1,
-        pageSize: 20
-      },
+      activeBusinessType: '',
+      availableBusinessTypes: [],
       businessTypeConfig: {
         // 生产领料入库
         outbound_pick_out: {
           api: purPurchaseReceiptReturnGoodsList,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
-            cooperativePartnerCode: '',
             notificationType: 'external_process',
             returnDeliveryType: 'back',
             documentStatus: 'submit',
@@ -116,12 +54,8 @@ export default {
         outbound_sale_send: {
           api: getQuotationdatasendlist,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
             notifyType: "sale",
             returnDeliveryType: 'delivery',
-            deliveryStatus: '',
             approvalStatus: 'ok',
           },
           detailConfig: {
@@ -134,11 +68,6 @@ export default {
         inbound_sale_return: {
           api: getQuotationdatasendlist,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
-            cooperativePartnerCode: '',
-            priority: '',
             notifyType: "sale",
             returnDeliveryType: 'back',
             inspectionStatus: 'inspected',
@@ -150,12 +79,8 @@ export default {
         finished_product_picking_send: {
           api: getStockPickedPage,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
             notifyType: "sale",
             returnDeliveryType: 'delivery',
-            deliveryStatus: '',
             approvalStatus: 'ok',
           },
         },
@@ -163,8 +88,6 @@ export default {
         inbound_finished_package: {
           api: getStockPlanPalletPage,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
             waitStock: true,
           },
         },
@@ -172,10 +95,6 @@ export default {
         inbound_purchase: {
           api: purchaseOrderList,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
-            cooperativePartnerCode: '',
             orderType: "procure",
             approvalStatus: 'ok',
           },
@@ -184,10 +103,6 @@ export default {
         outbound_purchase: {
           api: purPurchaseReceiptReturnGoodsList,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
-            cooperativePartnerCode: '',
             receiptReturnType: "back",
             approvalStatus: 'ok',
           },
@@ -196,10 +111,6 @@ export default {
         outbound_external_send: {
           api: getQuotationdatasendlist,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
-            cooperativePartnerCode: '',
             classAttributeList: this.classAttributeList,
             approvalStatus: 'ok',
           },
@@ -208,10 +119,6 @@ export default {
         inbound_external_return: {
           api: getQuotationdatasendlist,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
-            cooperativePartnerCode: '',
             inspectionStatus: 'inspected',
             classAttributeList: this.classAttributeList,
             receiptReturnType: "back",
@@ -222,10 +129,6 @@ export default {
         inbound_external: {
           api: purPurchaseReceiptReturnGoodsList,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
-            cooperativePartnerCode: '',
             receiptInboundFlag: 1,
             receiptReturnType: "back",
             approvalStatus: 'ok',
@@ -235,10 +138,6 @@ export default {
         outbound_external: {
           api: purPurchaseReceiptReturnGoodsList,
           initListQuery: {
-            ...this.commonQueryConfig,
-            orderNo: '',
-            cooperativePartnerName: '',
-            cooperativePartnerCode: '',
             notificationType: 'external_process',
             returnDeliveryType: 'back',
             documentStatus: 'submit',
@@ -247,270 +146,323 @@ export default {
             classAttributeList: this.classAttributeList,
           },
         },
+      },
 
-      }
+      tableData: [],
+      totalCount: 0,
+      selectedRows: [],
+      classAttributeList: [],
+
+      listQuery: {},
+      systemSearchView: getSystemSearchView(),
+      superQueryConditions: [
+        {
+          prop: 'priority',
+          label: "发货优先级",
+          type: 'select',
+          options: this.global.shippingPriority
+        },
+        {
+          prop: 'deliveryStatus',
+          label: "状态",
+          type: 'select',
+          options: this.global.shippingStatus
+        },
+      ],
+
+      loading: false,
+      isBatchPackingDialogVisible: false,
+      isPackingDialogVisible: false,
+      isPrintDialogVisible: false,
+      isInboundDialogVisible: false,
+
+      printConfig: {
+        category: ''
+      },
+      currentPrintTemplateName: '',
+      currentPrintTemplateCode: '',
+
+      operationButtonsWidth: '160',
+      buttonConfig: getButtonList(),
+      tableColumnsConfig: getColumns(),
+      displayedColumns: [],
+      businessTypeOptions: this.getDictDataSync('warehouseBusinessType'),
+
+      isPageInitialized: false,
     }
   },
   computed: {
-    currentTypeConfig() {
-      return this.businessTypeConfig[this.activeProcess] || {};
+    currentBusinessConfig() {
+      return this.businessTypeConfig[this.activeBusinessType] || {};
     },
-    hasDetailConfig() {
-      return !!this.currentTypeConfig.detailConfig;
+    hasDetailComponent() {
+      return !!this.currentBusinessConfig.detailConfig;
     },
-    isDetailVisible() {
-      return this.currentTypeConfig.detailConfig?.visible || false;
+    isDetailDialogVisible() {
+      return this.currentBusinessConfig.detailConfig?.visible || false;
     },
     // 出库
-    isOutbound() {
-      return ['outbound_purchase', 'outbound_external_send', 'outbound_external', 'finished_product_picking_send'].includes(this.activeProcess);
+    isOutboundOperation() {
+      return ['outbound_purchase', 'outbound_external_send', 'outbound_external', 'finished_product_picking_send']
+        .includes(this.activeBusinessType);
     },
     // 入库
-    isInbound() {
-      return ['inbound_purchase', 'inbound_sale_return', 'inbound_external_return', 'inbound_external', 'inbound_finished_package'].includes(this.activeProcess);
+    isInboundOperation() {
+      return ['inbound_purchase', 'inbound_sale_return', 'inbound_external_return', 'inbound_external', 'inbound_finished_package']
+        .includes(this.activeBusinessType);
     },
     // 装箱
-    isPacking() {
-      return ['outbound_sale_send'].includes(this.activeProcess);
+    isPackingOperation() {
+      return ['outbound_sale_send'].includes(this.activeBusinessType);
     },
     // 已装箱
-    isPacked() {
-      return (row) =>
-        row.packingStatus === 'boxed' &&
-        row.deliveryStatus === 'arranged';
-    }
-  },
-  watch: {
-    activeProcess(newVal) {
-      this.switchBusinessType(newVal);
+    isRowPacked() {
+      return (row) => row.packingStatus === 'boxed' && row.deliveryStatus === 'arranged';
     }
   },
   async created() {
-    await this.getClassAttributeListByCode();
-    await this.getStockMoveList();
-    await this.initData()
+    await this.initializePageData();
   },
   methods: {
-    async initData() {
-      this.loading = true
-      try {
-        if (!this.currentTypeConfig || !this.currentTypeConfig.api) return
-        const res = await this.currentTypeConfig.api(this.listQuery);
-        const {total, records} = res.data
-        this.tableData = records;
-        this.total = total
-      } finally {
-        this.loading = false
-      }
+    async initializePageData() {
+      await this.loadClassAttributes();
+      await this.loadBusinessProcesses();
+      this.isPageInitialized = true;
     },
 
-    calculateOperationWidth() {
+    async loadClassAttributes() {
+      const response = await getClassAttributeListByCode({ code: this.warehouseCode });
+      this.classAttributeList = response.data || [];
+    },
+
+    async loadBusinessProcesses() {
+      const response = await getStockMoveList(this.classAttributeList, this.warehouseCode);
+      this.availableBusinessTypes = response.data.map(item => ({
+        ...item,
+        name: this.businessTypeOptions.find(type => type.value === item.businessType)?.label,
+        pendingCount: item.todoNum
+      }));
+      this.activeBusinessType = this.availableBusinessTypes[0]?.businessType || '';
+      this.updateInterfaceConfiguration(this.activeBusinessType);
+      this.initializeQueryParameters(this.currentBusinessConfig);
+    },
+
+    async handleBusinessTypeChange(businessType) {
+      const config = this.currentBusinessConfig;
+      if (!config) return;
+
+      this.updateInterfaceConfiguration(businessType);
+      this.initializeQueryParameters(config);
+      this.adjustTableLayout();
+    },
+
+    updateInterfaceConfiguration(businessType) {
+      this.systemSearchView = getSystemSearchView(businessType);
+      this.buttonConfig = getButtonList(businessType);
+      this.tableColumnsConfig = getColumns(businessType);
+    },
+
+    initializeQueryParameters(config) {
+      this.listQuery = { ...this.listQuery, ...config.initListQuery }
+    },
+
+    adjustTableLayout() {
+      this.calculateOperationButtonsWidth();
+      this.loadTableData()
+      this.$nextTick(() => {
+        this.$refs.dataTable.doLayout();
+      });
+    },
+
+    calculateOperationButtonsWidth() {
       this.$nextTick(() => {
         if (this.$refs.operationButtons) {
           const buttons = this.$refs.operationButtons.querySelectorAll('.el-button');
           let totalWidth = 0;
           buttons.forEach(button => {
-            const buttonWidth = button.offsetWidth;
-            totalWidth += buttonWidth;
+            totalWidth += button.offsetWidth;
           });
-          this.operationWidth = totalWidth + (buttons.length * 10) + 20;
+          this.operationButtonsWidth = totalWidth + (buttons.length * 10) + 20;
         }
       });
     },
 
-    validateSelectedRows() {
-      if (!this.selectedRow.length) {
+    async loadTableData(customQuery) {
+      this.loading = true;
+      if (!this.isPageInitialized) {
+        await this.initializePageData();
+      }
+
+      if (customQuery) this.listQuery = customQuery;
+      if (!this.listQuery?.pageSize) {
+        this.$message.error('请先等待视图加载完成！');
+        return;
+      }
+
+      const loadIdentifier = +new Date();
+      this.currentLoadIdentifier = loadIdentifier;
+
+      try {
+        if (!this.currentBusinessConfig?.api) return;
+
+        if (loadIdentifier !== this.currentLoadIdentifier) return;
+
+        const response = await this.currentBusinessConfig.api(this.listQuery);
+        const { total, records } = response.data;
+
+        this.tableData = records;
+        this.totalCount = total;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    validateRowSelection() {
+      if (!this.selectedRows.length) {
         this.$message.warning('请至少选择一条数据');
         return false;
       }
-      if (this.selectedRow.length > 1) {
+      if (this.selectedRows.length > 1) {
         this.$message.warning('只能选择一条数据');
         return false;
       }
       return true;
     },
 
-    handleButtonClick(type) {
-      switch (type) {
+    handleMainButtonClick(buttonType) {
+      switch ( buttonType ) {
         case 'outboundSaleSendConfirm':
-          if (!this.validateSelectedRows()) return;
-          const outboundSaleSendConfirmStatus = new Set(['waiting', 'verified', 'finished', 'canceled'])
-          if (outboundSaleSendConfirmStatus.has(this.selectedRow[0].deliveryStatus)) {
-            this.$message.warning('当前状态不允许操作');
-            return;
-          }
-          this.onPackingForm(this.selectedRow[0], 'confirm')
+          this.handleOutboundSaleSendConfirmation();
           break;
       }
     },
 
-    // 装箱
-    handlePacking(row) {
-      this.onPackingForm(row, 'packing')
+    handleOutboundSaleSendConfirmation() {
+      if (!this.validateRowSelection()) return;
+
+      const selectedRow = this.selectedRows[0];
+      const invalidStatuses = new Set(['waiting', 'verified', 'finished', 'canceled']);
+
+      if (invalidStatuses.has(selectedRow.deliveryStatus)) {
+        this.$message.warning('当前状态不允许操作');
+        return;
+      }
+
+      this.openPackingDialog(selectedRow, 'confirm');
     },
 
-    // 装箱&批次编辑
-    handlePackingEdit(row, actionType, btnType) {
-      this.autoRecBatchPackingFormVisible = true;
+    // 装箱操作
+    handlePackingOperation(row) {
+      this.openPackingDialog(row, 'packing');
+    },
+
+    // 装箱单编辑
+    handlePackingEdit(row, actionType, buttonType) {
+      this.isBatchPackingDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.autoRecBatchPacking.init({
+        this.$refs.autoRecBatchPacking.initialize({
           id: row.id,
           formType: actionType,
-          type: btnType,
-        })
-      })
+          type: buttonType,
+        });
+      });
     },
 
-    handleOutbound(row) {
-
+    handleOutboundOperation(row) {
     },
 
-    handleInbound(row) {
-      this.inboundFormVisible = true;
+    handleInboundOperation(row) {
+      this.isInboundDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.inboundForm.init({
+        this.$refs.inboundForm.initialize({
           id: '',
           prefillData: row,
           btnType: 'add',
-          businessType: this.activeProcess,
+          businessType: this.activeBusinessType,
           classAttributeList: this.classAttributeList,
           warehouseCode: this.warehouseCode
-        })
-      })
+        });
+      });
     },
 
-    handleView(row) {
-      const detailConfig = this.currentTypeConfig.detailConfig;
+    handleDetailView(row) {
+      const detailConfig = this.currentBusinessConfig.detailConfig;
       if (!detailConfig) {
         this.$message.warning('当前业务类型不支持查看详情');
         return;
       }
+
       detailConfig.visible = true;
       this.$nextTick(() => {
-        this.$refs.detailComponent.init(row[detailConfig.rowId], 'look');
+        this.$refs.detailComponent.initialize(row[detailConfig.rowId], 'look');
       });
     },
 
-    onPackingForm(row, btnType) {
-      this.packingFormVisible = true
+    openPackingDialog(row, buttonType) {
+      this.isPackingDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.packingForm.init({
+        this.$refs.packingForm.initialize({
           id: row.id,
-          btnType: btnType,
-          businessType: this.activeProcess,
+          btnType: buttonType,
+          businessType: this.activeBusinessType,
           classAttributeList: this.classAttributeList,
           warehouseCode: this.warehouseCode
-        })
-      })
-    },
-
-
-    switchBusinessType(businessType) {
-      const config = this.businessTypeConfig[businessType];
-      if (!config) return;
-      this.btnList = getButtonList(businessType)
-      this.columnsConfig = getColumns(businessType);
-      this.searchList = getSearchList(businessType);
-      this.initListQuery = config.initListQuery || {};
-      this.listQuery = deepClone(this.initListQuery);
-      this.calculateOperationWidth()
-      this.$nextTick(() => {
-        this.$refs.dataTable.doLayout()
-        this.initData()
-      })
-    },
-
-    async getClassAttributeListByCode() {
-      const res = await getClassAttributeListByCode({code: this.warehouseCode});
-      this.classAttributeList = res.data || [];
-    },
-
-    async getStockMoveList() {
-      const res = await getStockMoveList(this.classAttributeList, this.warehouseCode);
-      this.processes = res.data.map(item => ({
-        ...item, name: this.businessTypeData.find(type => type.value === item.businessType).label,
-        num: item.todoNum
-      }))
-      this.activeProcess = this.processes[0].businessType
-    },
-
-    closePrint() {
-      this.printVisible = false
-    },
-
-    printView(row, enCode, fullName) {
-      this.selectedRow = [row]
-      this.enCode = enCode
-      this.fullName = fullName
-      this.printVisible = true
-      this.$nextTick(() => {
-        this.$refs.printTemplate.init(enCode)
-      })
-    },
-
-    async printOrder(enCode) {
-      try {
-        const res = await getPrintBusInfo(enCode)
-        if (!res.data) {
-          return this.$message.warning('未找到相应打印模版')
-        }
-        const id = res.data.id
-        const printData = this.selectedRow.map(item => ({
-          formId: item.id,
-          id: id
-        }))
-        this.$refs.batchPrint.print(printData);
-      } catch (e) {
-      }
-    },
-
-    async close(isInitData = true) {
-      this.packingFormVisible = false
-      this.autoRecBatchPackingFormVisible = false
-      this.inboundFormVisible = false
-      if (!isInitData) return
-      await this.initData()
-    },
-
-    sortChange({prop, order}) {
-      let newProp = ''
-      if (prop === 'createTime') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
-
-    columnSetFun() {
-      this.$refs.dataTable.showDrawer()
-    },
-
-    getAlign(align) {
-      return align || 'left'
-    },
-
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.initData()
-    },
-
-    search() {
-      this.searchList.forEach(item => {
-        this.listQuery[item.prop] = item.fieldValue;
+        });
       });
-      this.initData()
     },
 
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.searchList = getSearchList(this.activeProcess)
-      this.search()
+    openPrintPreview(row, templateCode, templateName) {
+      this.selectedRows = [row];
+      this.currentPrintTemplateCode = templateCode;
+      this.currentPrintTemplateName = templateName;
+      this.isPrintDialogVisible = true;
+
+      this.$nextTick(() => {
+        this.$refs.printTemplate.initialize(templateCode);
+      });
     },
+
+    async executePrint(templateCode) {
+      try {
+        const response = await getPrintBusInfo(templateCode);
+        if (!response.data) {
+          return this.$message.warning('未找到相应打印模版');
+        }
+
+        const templateId = response.data.id;
+        const printData = this.selectedRows.map(item => ({
+          formId: item.id,
+          id: templateId
+        }));
+
+        this.$refs.batchPrint.print(printData);
+      } catch ( error ) {
+        console.error('打印错误:', error);
+      }
+    },
+
+    closePrintDialog() {
+      this.isPrintDialogVisible = false;
+    },
+
+    closeDialog(shouldReloadData = true) {
+      this.isPackingDialogVisible = false;
+      this.isBatchPackingDialogVisible = false;
+      this.isInboundDialogVisible = false;
+
+      if (!shouldReloadData) return;
+      this.loadTableData();
+    },
+
+    getColumnAlignment(align) {
+      return align || 'left';
+    },
+
+    async reloadPageData() {
+      this.isPageInitialized = false;
+      await this.initializePageData();
+      await this.loadTableData();
+    }
   }
 }
 </script>
@@ -519,9 +471,9 @@ export default {
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <div class="business-process-container JNPF-common-search-box">
-        <el-radio-group v-model="activeProcess">
-          <template v-for="(process, index) in processes">
-            <el-badge :value="process.num" :max="99" :key="index" :hidden="!process.num">
+        <el-radio-group v-model="activeBusinessType" @change="handleBusinessTypeChange">
+          <template v-for="(process, index) in availableBusinessTypes">
+            <el-badge :value="process.pendingCount" :max="99" :key="index" :hidden="!process.pendingCount">
               <el-radio-button :label="process.businessType">
                 {{ process.name }}
               </el-radio-button>
@@ -529,80 +481,48 @@ export default {
           </template>
         </el-radio-group>
       </div>
-      <el-row class="JNPF-common-search-box" :gutter="16" style="margin-top: 5px !important;">
-        <el-form @submit.native.prevent @keyup.enter.native="search()">
-          <template v-for="item in searchList">
-            <el-col :span="4" :key="item.prop">
-              <el-form-item>
-                <el-input v-if="item.searchType === 'input'" v-model="item.fieldValue"
-                  :placeholder="'请输入' + item.label"
-                  clearable/>
-                <el-select v-else-if="item.searchType === 'select'" v-model="item.fieldValue"
-                  @change="search('basic')"
-                  :placeholder="'请选择' + item.label"
-                  clearable>
-                  <el-option v-for="(item2, index2) in item.options" :key="index2"
-                    :label="item2.label"
-                    :value="item2.value"></el-option>
-                </el-select>
-                <el-date-picker v-else-if="item.searchType === 'date'" v-model="item.fieldValue"
-                  :type="item.type" :value-format="item.valueFormat"
-                  :placeholder="'请选择' + item.label"
-                  clearable @keyup.enter.native="search('basic')"/>
-                <el-date-picker v-else-if="item.searchType === 'daterange'" v-model="item.fieldValue"
-                  :type="item.type" :value-format="item.valueFormat"
-                  :picker-options="item.pickerOptions"
-                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'"
-                  clearable @keyup.enter.native="search('basic')"/>
-              </el-form-item>
-            </el-col>
-          </template>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search"
-                @click="search('basic')">查询
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+<!--      :key="`search-${activeBusinessType}`"-->
+      <JNPF-tableQuery :key="`search-${activeBusinessType}`" :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
           <div class="JNPF-common-head-left">
             <CustomButton
-              :btnList="btnList"
-              @click="handleButtonClick"
+              :btnList="buttonConfig"
+              @click="handleMainButtonClick"
             />
           </div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true"/>
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+              <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                       @click="$refs.dataTable.showSortDrawer()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()"/>
+                       @click="$refs.dataTable.showDrawer()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()"/>
+                       @click="loadTableData()"/>
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="dbIncomAndOutInventoryIndex"
+
+        <JNPF-table
+          :customKey="`dbIncomAndOutInventoryIndex${activeBusinessType}`"
           v-loading="loading"
           :data="tableData"
           :row-key="'id'"
           :hasC="true"
           fixedNO
-          :setColumnDisplayList="columnList"
-          @selection-change="(val)=> selectedRow = val"
-          @sort-change="sortChange"
+          :setColumnDisplayList="displayedColumns"
+          @selection-change="(selected) => selectedRows = selected"
           ref="dataTable"
-          custom-column>
-          <template v-for="column in columnsConfig">
+          custom-column
+          :listQuery="listQuery"
+          @queryChange="loadTableData"
+          :queryJson="superQueryConditions"
+        >
+          <template v-for="column in tableColumnsConfig">
             <el-table-column
               v-if="typeof column.show === 'function' ? column.show() : true"
               :key="column.prop"
@@ -611,12 +531,12 @@ export default {
               :min-width="column.minWidth"
               :sortable="column.sortable"
               :fixed="column.fixed"
-              :align="getAlign(column.align)"
+              :align="getColumnAlignment(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
                 <template v-if="column.prop === 'orderNo'">
                   <el-link type="primary"
-                    @click.native="handleView(scope.row)">{{
+                           @click.native="handleDetailView(scope.row)">{{
                       scope.row.orderNo
                     }}
                   </el-link>
@@ -642,20 +562,20 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" :width="operationWidth" fixed="right">
+          <el-table-column label="操作" :width="operationButtonsWidth" fixed="right">
             <template slot-scope="{ row }">
               <div ref="operationButtons" class="operation-buttons">
-                <el-button v-if="isOutbound" size="mini" type="text" @click="handleOutbound(row)">
+                <el-button v-if="isOutboundOperation" size="mini" type="text" @click="handleOutboundOperation(row)">
                   出库
                 </el-button>
-                <el-button v-if="isInbound" size="mini" type="text" @click="handleInbound(row)">
+                <el-button v-if="isInboundOperation" size="mini" type="text" @click="handleInboundOperation(row)">
                   入库
                 </el-button>
-                <template v-if="isPacking">
-                  <el-button size="mini" type="text" :disabled="!(row.deliveryStatus === 'arranged')" @click="handlePacking(row)">
+                <template v-if="isPackingOperation">
+                  <el-button size="mini" type="text" :disabled="!(row.deliveryStatus === 'arranged')" @click="handlePackingOperation(row)">
                     装箱
                   </el-button>
-                  <el-button size="mini" type="text" :disabled="!isPacked(row)" @click="handlePackingEdit(row,'packing','edit')">
+                  <el-button size="mini" type="text" :disabled="!isRowPacked(row)" @click="handlePackingEdit(row,'packing','edit')">
                     编辑装箱单
                   </el-button>
                 </template>
@@ -663,33 +583,52 @@ export default {
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData"
+        <pagination
+          :total="totalCount"
+          :page.sync="listQuery.pageNum"
+          :limit.sync="listQuery.pageSize"
+          @pagination="loadTableData()"
         />
       </div>
     </div>
-    <!-- 高级查询 -->
-    <SuperQuery partentOrChild="TransitionApplicationRecordQuery" :show="superQueryVisible" ref="SuperQuery"
-      table-ref="dataTable"
-      :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
-    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
-    <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
-    <!--  装箱&批次  -->
-    <autoRecBatchPacking ref="autoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="close"/>
-    <packingForm ref="packingForm" v-if="packingFormVisible" @close="close"/>
-    <!--  入库  -->
-    <inboundForm ref="inboundForm" v-if="inboundFormVisible" @close="close"/>
-    <!--  详情  -->
+
+    <PrintDialog
+      :visible.sync="isPrintDialogVisible"
+      @closePrint="closePrintDialog"
+      @printSubmit="executePrint"
+      :printQuery="printConfig"
+      :enCode="currentPrintTemplateCode"
+      ref="printTemplate"
+    />
+    <BatchPrintBrowse ref="batchPrint" :fullName="currentPrintTemplateName"/>
+
+    <!-- 业务组件 -->
+    <autoRecBatchPacking
+      ref="autoRecBatchPacking"
+      v-if="isBatchPackingDialogVisible"
+      @close="closeDialog"
+    />
+    <packingForm
+      ref="packingForm"
+      v-if="isPackingDialogVisible"
+      @close="closeDialog"
+    />
+    <inboundForm
+      ref="inboundForm"
+      v-if="isInboundDialogVisible"
+      @close="closeDialog"
+    />
+
+    <!-- 详情组件 -->
     <component
-      v-if="hasDetailConfig && isDetailVisible"
-      :is="currentTypeConfig.detailConfig.component"
+      v-if="hasDetailComponent && isDetailDialogVisible"
+      :is="currentBusinessConfig.detailConfig.component"
       ref="detailComponent"
-      @close="currentTypeConfig.detailConfig.visible = false"
+      @close="currentBusinessConfig.detailConfig.visible = false"
     />
   </div>
 </template>
+
 <style lang="scss" scoped>
 .business-process-container {
   display: flex;

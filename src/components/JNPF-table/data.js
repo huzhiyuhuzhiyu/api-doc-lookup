@@ -4,11 +4,11 @@ import store from '@/store'
 export const symbolOptions = Object.freeze([{
   label: '等于',
   value: '==',
-  effectType: ['input', 'number', 'select', 'date', 'datetime']
+  effectType: ['input', 'number', 'select', 'date', 'datetime', 'month']
 }, {
   label: '不等于',
   value: '<>',
-  effectType: ['input', 'number', 'select', 'date', 'datetime']
+  effectType: ['input', 'number', 'select', 'date', 'datetime', 'month']
 }, {
   label: '包含',
   value: 'like',
@@ -20,31 +20,31 @@ export const symbolOptions = Object.freeze([{
 }, {
   label: '存在于',
   value: 'in',
-  effectType: ['input', 'select']
+  effectType: ['select']
 }, {
   label: '不存在于',
   value: 'notIn',
-  effectType: ['input', 'select']
+  effectType: ['select']
 }, {
   label: '大于',
   value: '>',
-  effectType: ['number', 'date', 'datetime']
+  effectType: ['number', 'date', 'datetime', 'month']
 }, {
   label: '小于',
   value: '<',
-  effectType: ['number', 'date', 'datetime']
+  effectType: ['number', 'date', 'datetime', 'month']
 }, {
   label: '大于等于',
   value: '>=',
-  effectType: ['number', 'date', 'datetime']
+  effectType: ['number', 'date', 'datetime', 'month']
 }, {
   label: '小于等于',
   value: '<=',
-  effectType: ['number', 'date', 'datetime']
+  effectType: ['number', 'date', 'datetime', 'month']
 }, {
   label: '介于',
   value: 'between',
-  effectType: ['date', 'datetime']
+  effectType: ['date', 'datetime', 'month']
 }, {
   label: '是否为空',
   value: 'empty',
@@ -94,18 +94,28 @@ export const getQueryProps = (column, queryJson = []) => {
         value: Number(item.enCode)
       }))
     }
+  } else if (column.label === '类别属性') {
+    props = {
+      type: 'select',
+      options: store.getters.dictionaryList.find(item => item.enCode === 'classAttribute').dictionaryList.map(item => ({
+        label: item.fullName,
+        value: item.enCode
+      }))
+    }
   } else if (column.label.includes('是否')) {
     props = {
       type: 'select',
+      customEffectType: ['==', '<>'],
       options: global.booleanOptions
     }
-  } else if (['数量', '数', '价', '库存', '金额', '成本', '毛利'].some(item => getLabelKeyword(column.label, ['(主)', '(副)', '(含税)', '(不含税)']).endsWith(item))) {
+  } else if (['数量', '数', '价', '库存', '金额', '成本', '毛利', '合计', '率'].some(item => getLabelKeyword(column.label, ['(主)', '(副)', '(含税)', '(不含税)', '(件)']).endsWith(item))) {
     props = {
       type: 'number',
     }
   } else if ([
     '创建人',
     '修改人',
+    '生产人',
   ].some(str => column.label.includes(str))) {
     props = {
       type: 'input',
@@ -118,6 +128,7 @@ export const getQueryProps = (column, queryJson = []) => {
     '省',
     '市',
     '区',
+    '进度',
   ].some(str => column.label.includes(str))) {
     props = {
       type: 'no'

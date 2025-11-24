@@ -19,7 +19,7 @@
           <el-switch v-model="fixedSearchFlag" @change="handleFixedSearchFlagChange" v-if="fixedSearchFlag !== null" />
         </div>
         <div class="filter-row">
-          <el-select v-model="filterSymbol" size="small" style="width: 100%;" placeholder="请选择比较符" @change="filterSymbolChange">
+          <el-select v-model="filterSymbol" size="small" style="width: 100%;" placeholder="请选择比较符">
             <el-option v-for="item in effectSymbolOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -36,19 +36,19 @@
           </template>
           <!-- 输入框 -->
           <template v-else-if="queryProps.type === 'input'">
-            <el-input v-model="filterValue" v-bind="{ placeholder: `请输入${['in', 'notIn'].includes(filterSymbol)?'（多条内容用逗号分隔）' : ''}`, maxlength: 100, clearable: true }"
-              @keyup.enter.native="confirmFilter"
+            <el-input v-model="filterValue" v-bind="{ placeholder: `${['in', 'notIn'].includes(filterSymbol) ? '输入多条内容用逗号分隔' : '请输入'}`, maxlength: 100, clearable: true }"
+                      @keyup.enter.native="confirmFilter"
             />
           </template>
           <!-- 输入框-数值 -->
           <template v-else-if="queryProps.type === 'number'">
             <el-input v-model.number="filterValue"
-              v-bind="{ placeholder: `请输入`, maxlength: 100, clearable: true, ...fieldCache }" @keyup.enter.native="confirmFilter" />
+                      v-bind="{ placeholder: `请输入`, maxlength: 100, clearable: true, ...fieldCache }" @keyup.enter.native="confirmFilter" />
           </template>
           <!-- 下拉选择器 -->
           <template v-else-if="queryProps.type === 'select'">
             <el-select v-model="filterValue"
-              v-bind="{ placeholder: `请选择`, clearable: true, multiple: ['in', 'notIn'].includes(filterSymbol), ...fieldCache }">
+                       v-bind="{ placeholder: `请选择`, clearable: true, multiple: ['in', 'notIn'].includes(filterSymbol), ...fieldCache }">
               <el-option v-for="(o, i) in queryProps.options" :key="i" v-bind="o"></el-option>
             </el-select>
           </template>
@@ -73,7 +73,7 @@
               })()
             }">
               <template slot="sidebar">
-                <el-tooltip placement="top" v-if="fieldCache.valueFormat.includes('yyyy')">
+                <el-tooltip placement="top" v-if="fieldCache.valueFormat.includes('yyyy-MM-dd')">
                   <el-switch v-model="timeOffset" active-text="动态" inactive-text=""></el-switch>
                   <div slot="content" v-html="genTooltip({ ...queryProps, tempFieldValue: filterValue, symbol: filterSymbol })"></div>
                 </el-tooltip>
@@ -133,6 +133,7 @@ export default {
       popoverColumnDesc: false,
       fieldCache: {}, // 属性缓存 用于解决方法无法转为json后存储问题
       timeOffset: false,
+      ignoreNextFilterSymbolWatch: 0, // 忽略n次筛选符号变化的watch
       closeDisabled: false // 是否禁用关闭PopoverCard
     }
   },
@@ -155,14 +156,23 @@ export default {
   mounted() {
     this.updateStatus()
   },
-  // watch: {
-  //   listQuery: {
-  //     handler() {
-  //       this.updateStatus()
-  //     },
-  //     deep: true
-  //   }
-  // },
+  watch: {
+    filterSymbol: {
+      handler(val, oldVal) {
+        if (this.ignoreNextFilterSymbolWatch) return this.ignoreNextFilterSymbolWatch--
+        if (['in', 'notIn'].includes(val) && this.queryProps.type === 'select') {
+          if (!this.filterValue || !Array.isArray(this.filterValue)) this.filterValue = []
+        } else if (['between'].includes(val)) {
+          if (!this.filterValue || !Array.isArray(this.filterValue)) this.filterValue = []
+        } else if ([val, oldVal].includes('empty')) {
+          this.filterValue = null
+        } else {
+          if (Array.isArray(this.filterValue)) this.filterValue = ''
+        }
+      },
+      deep: true
+    }
+  },
   methods: {
     updateStatus() {
       if (this.listQuery && Array.isArray(this.listQuery.orderItems)) {
@@ -181,6 +191,7 @@ export default {
         // console.log(target);
         if (target) {
           this.filterSymbol = target.symbol
+          this.ignoreNextFilterSymbolWatch++
           // this.filterValue = target.fieldValue?.includes(',') ? target.fieldValue.split(',') : target.fieldValue
           this.filterValue = target.fieldValue
           this.timeOffset = target.timeOffset
@@ -232,6 +243,7 @@ export default {
       this.handleFixedSearchFlagChange(false)
       this.filterSymbol = null
       this.filterValue = null
+      this.ignoreNextFilterSymbolWatch++
     },
     confirmFilter() {
       let listQuery = structuredClone(this.listQuery)
@@ -246,7 +258,9 @@ export default {
       listQuery.superQuery.matchLogic = 'AND'
       listQuery.superQuery.condition = listQuery.superQuery.condition.filter(item => item.field !== this.columnProps.prop)
       listQuery.superQuery.condition.unshift({
+        type: this.queryProps.type,
         field: this.columnProps.prop,
+        label: this.columnProps.label,
         symbol: this.filterSymbol,
         fieldValue: this.filterValue,
         timeOffset: this.timeOffset,
@@ -270,17 +284,6 @@ export default {
         this.$message.error('请先选择比较符！')
       }
     },
-    filterSymbolChange(val) {
-      if (['in', 'notIn'].includes(val) && this.queryProps.type === 'select') {
-        if (!this.filterValue || !Array.isArray(this.filterValue)) this.filterValue = []
-      } else if (['between'].includes(val)) {
-        if (!this.filterValue || !Array.isArray(this.filterValue)) this.filterValue = []
-      } else if (['empty'].includes(val)) {
-        if (typeof this.filterValue !== 'boolean') this.filterValue = null
-      } else {
-        if (Array.isArray(this.filterValue)) this.filterValue = ''
-      }
-    }
   }
 }
 </script>

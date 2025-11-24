@@ -7,7 +7,7 @@
  * @param {String} msg - 正则校验不通过提示
  * @param {function} callbackMethod - 校验不通过的回调方法[errMsg, index]
  * ==================================================
- * 
+ *
  * 用法
  * 1、{ validator: this.formValidate('fullName', '用户名由字母、数字、下划线以及短横线组成', () => { 回调方法 }), trigger: 'blur' }
  * 2、{ validator: this.formValidate('^(?!.*\\\\)(?!.*\\^)', '图号不能含有反斜杠和"^"', () => { 回调方法 }), trigger: 'blur' }
@@ -81,6 +81,10 @@ const regularList = {
   'allDate': { //判断请假时间和小时是否为0.5的倍数
     rule: /^[1-9]\d*\.[5]$|0\.[5]$|\.[0]$|^[1-9]\d*$/,
     msg: '时间只能是整数和0.5的倍数'
+  },
+  'bankAccount': { // 银行账号（支持对公账户和对私账户）
+    rule: /^[1-9]\d{9,29}$/, // 10-30位数字，不能以0开头
+    msg: '请输入正确的银行账号（10-30位数字）'
   },
   // 数值校验
   decimal(a, b, msg, callbackMethod) { // params:[参数1,参数2,错误msg,回调方法]

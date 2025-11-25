@@ -39,7 +39,7 @@ export function getBasicFormSchema(dataFormRef, context) {
         {
           validator: context.formValidate('noZero', '需求数量不能为0', (errMsg) => {
             context.$message.error(errMsg)
-          }), trigger: ['blur', 'change']
+          }), trigger: 'blur'
         },
         {
           validator: context.formValidate({
@@ -56,7 +56,7 @@ export function getBasicFormSchema(dataFormRef, context) {
           }),
           trigger: ['blur', 'change'],
         },
-        {required: true, message: '需求数量不能为空', trigger: ['blur', 'change'],},
+        { required: true, message: '需求数量不能为空', trigger: ['blur', 'change'], },
       ],
       change: () => {
         context.updatePlanDemandQuantity()
@@ -70,89 +70,71 @@ export function getColumns() {
     {
       prop: "orderDate",
       label: "订单日期",
-      minWidth: 120,
-      sortable: 'custom'
+      minWidth: 120
     },
     {
       prop: "cooperativePartnerCode",
       label: "客户编码",
-      minWidth: 200,
-      align: "left",
-      sortable: 'custom',
+      minWidth: 200
     },
     {
       prop: "orderType",
       label: "订单类型",
       minWidth: 120,
       slot: true,
-      dictType: 'salesOrderType',
-      sortable: 'custom'
+      dictType: 'salesOrderType'
     },
     {
       prop: "orderNo",
       label: "销售单号",
-      minWidth: 200,
-      align: "left",
-      sortable: 'custom',
+      minWidth: 200
     },
     {
       prop: "productName",
       label: "产品名称",
-      minWidth: 200,
-      align: "left",
-      sortable: 'custom',
+      minWidth: 200
     },
     {
       prop: "productCode",
       label: "产品编码",
-      minWidth: 200,
-      align: "left",
-      sortable: 'custom',
+      minWidth: 200
     },
     {
       prop: "customerProductDrawingNo",
       label: "客户型号",
-      minWidth: 200,
-      align: "left",
-      sortable: 'custom',
+      minWidth: 200
     },
     {
       prop: "vibrationLevel",
       label: "图纸版本号",
-      minWidth: 120,
-      sortable: 'custom'
+      minWidth: 120
     },
     {
       prop: "mainUnit",
       label: "单位",
-      minWidth: 90,
-      sortable: 'custom'
+      minWidth: 90
     },
     {
       prop: "deliveryDate",
       label: "交货日期",
-      minWidth: 120,
-      sortable: 'custom'
+      minWidth: 120
     },
     {
       prop: "issuanceNum",
       label: "需求数量",
-      minWidth: 120,
-      sortable: 'custom'
+      minWidth: 120
     },
     {
       prop: "feedbackDeliveryDate",
       label: "反馈交期",
-      minWidth: 120,
-      sortable: 'custom'
+      minWidth: 120
     },
     {
       prop: "deliveryStatus",
       label: "交期状态",
       minWidth: 120,
       slot: true,
-      dictType: 'deliveryStatus',
-      sortable: 'custom'
+      dictType: 'deliveryStatus'
     }
   ]
 }

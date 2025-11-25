@@ -1,13 +1,13 @@
 <script>
-import {deepClone} from "@/utils";
-import {getBasicFormSchema} from "./data";
+import { deepClone } from "@/utils";
+import { getBasicFormSchema } from "./data";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import {getBomByProductBomLine} from "@/api/basicData";
-import {addPurProcurementDemandPool} from "@/api/salesOrderPool";
+import { getBomByProductBomLine } from "@/api/basicData";
+import { addPurProcurementDemandPool } from "@/api/salesOrderPool";
 
 export default {
   name: "Form",
-  components: {TableFormProduct},
+  components: { TableFormProduct },
   data() {
     return {
       title: '',
@@ -59,10 +59,10 @@ export default {
     this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
   },
   methods: {
-    async init(row, type, productSourceOperate) {
+    async init(row, type) {
       this.btnType = type
       this.isLinesShow = row.productSource === 'assemble'
-      this.title = this.getTitle(type, productSourceOperate)
+      this.title = this.getTitle(type)
       this.dataForm = deepClone(row)
       if (this.isLinesShow) {
         await this.getBomLine(row.productsId)
@@ -90,8 +90,8 @@ export default {
       this.linesTableHeight = maxHeight
     },
 
-    getTitle(type, productSourceOperate) {
-      return productSourceOperate[type]
+    getTitle(type) {
+      return type === 'purchase' ? '成品需求' : '物料需求'
     },
 
     calcQuantity(a, b, c, d) {
@@ -106,12 +106,12 @@ export default {
       this.loading = true
       try {
         const res = await getBomByProductBomLine(id)
-        const {msg, data} = res
+        const { msg, data } = res
         if (msg === 'Success') {
           this.linesList = this.formatLinesList(data);
           this.loading = false
         }
-      } catch (err) {
+      } catch ( err ) {
         this.loading = false
       }
     },
@@ -152,13 +152,13 @@ export default {
       try {
         const apiMethod = addPurProcurementDemandPool
         const res = await apiMethod(params)
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success(MSG)
           this.goBack()
         }
         this.btnLoading = false
-      } catch (error) {
+      } catch ( error ) {
         this.btnLoading = false
       }
     },
@@ -193,7 +193,7 @@ export default {
             <el-tabs v-model="activeName">
               <el-tab-pane label="基础信息" name="jcInfo">
                 <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
-                  <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
+                  <el-collapse-item title="基本信息" name="basicInfo" :class="isLinesShow ? 'orderInfo' : ''" ref="dataFormRegion">
                     <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"/>
                   </el-collapse-item>
                   <el-collapse-item class="productInfo" title="产品信息" name="productInfo" v-if="isLinesShow">
@@ -220,7 +220,7 @@ export default {
                           <div class="right">
                             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                                @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
+                                       @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
                             </el-tooltip>
                           </div>
                         </div>

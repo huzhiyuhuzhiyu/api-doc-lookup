@@ -5,21 +5,27 @@ import { deepClone } from "@/utils";
 
 export default {
   name: "Form",
+  props: {
+    paymentType: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       title: '其他',
       btnType: '',
       loading: false,
       btnLoading: false,
-      dataForm: {},
+      dataForm: {
+        paymentType: '',
+        paymentDate: ''
+      },
       basicFormSchema: [],
       activeName: 'jcInfo',
       activeNames: ['basicInfo'],
       actions: {
         edit: async (id) => {
-          await this.getDetail(id);
-        },
-        copy: async (id) => {
           await this.getDetail(id);
         },
         look: async (id) => {
@@ -30,7 +36,6 @@ export default {
       },
       apiMethodActions: {
         add: addOtherTransactions,
-        copy: addOtherTransactions,
         edit: updateOtherTransactions,
       }
     }
@@ -40,13 +45,14 @@ export default {
       return this.btnType !== 'look'
     },
   },
-  mounted() {
-    this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
-  },
   methods: {
-    async init(id = '', type) {
+    async init(id = '', type, paymentType) {
+      const paymentTypeLabel = paymentType === 'pay' ? '付款' : '收款'
       this.btnType = type
-      this.title = this.getTitle(type)
+      this.title = this.getTitle(type, paymentTypeLabel)
+      this.dataForm.paymentType = paymentType
+      this.dataForm.paymentDate = this.jnpf.getToday()
+      this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this, paymentTypeLabel)
       if (id && this.actions[type]) {
         await this.actions[type](id);
       } else {
@@ -57,15 +63,14 @@ export default {
       })
     },
 
-    getTitle(type) {
+    getTitle(type, paymentTypeLabel) {
       switch ( type ) {
         case 'add':
-        case 'copy':
-          return `创建${ this.title }`
+          return `创建${ paymentTypeLabel }${ this.title }`
         case 'edit':
-          return `编辑${ this.title }`
+          return `编辑${ paymentTypeLabel }${ this.title }`
         case 'look':
-          return `查看${ this.title }`
+          return `查看${ paymentTypeLabel }${ this.title }`
       }
     },
 
@@ -90,9 +95,6 @@ export default {
         await this.$refs['dataForm'].$refs.main.validate()
 
         const params = deepClone(this.dataForm)
-        if (this.btnType === 'copy') {
-          params.id = ''
-        }
         let MSG = '提交成功'
         const apiMethod = this.apiMethodActions[this.btnType]
         const res = await apiMethod(params)

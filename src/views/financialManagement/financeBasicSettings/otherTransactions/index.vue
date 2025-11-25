@@ -22,8 +22,14 @@ export default {
         conditionJson: { // 视图内容配置*
           condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
             { prop: 'bankInfo', symbol: 'like', fixed: true },
-            { prop: 'depositBank', symbol: 'like', fixed: true },
-            { prop: 'type', symbol: '==', fixed: true },
+            { prop: 'paymentMethod', symbol: '==', fixed: true },
+            {
+              prop: 'paymentDate', // 属性*
+              value: [this.jnpf.getToday('YYYY-MM-DD', 'today-29'), this.jnpf.getToday('YYYY-MM-DD', 'todayLastMoment')], // 默认值
+              symbol: 'between', // 比较符*
+              timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+              fixed: true // 是否在搜索栏显示
+            },
           ],
           // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
@@ -34,7 +40,7 @@ export default {
             },
             {
               asc: false,
-              column: 'create_time'
+              column: 'createTime'
             }
           ]
         },
@@ -45,10 +51,10 @@ export default {
       total: 0,
       superQueryJson: [
         {
-          prop: 'type',
-          label: '分类',
+          prop: 'paymentMethod',
+          label: `${ this.paymentType === 'pay' ? '付款' : '收款' }方式`,
           type: 'select',
-          options: this.global.bankMaintenanceType
+          options: this.global.paymentMethodType
         },
       ],
       listQuery: {
@@ -56,7 +62,7 @@ export default {
       },
       btnList: buttonList,
       columnList: [],
-      columnsConfig: getColumns(),
+      columnsConfig: getColumns(this.paymentType),
     }
   },
   methods: {
@@ -82,7 +88,7 @@ export default {
         case 'add':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init('', type)
+            this.$refs.Form.init('', type, this.paymentType)
           })
           break;
         default:
@@ -93,10 +99,9 @@ export default {
       switch ( type ) {
         case 'look':
         case 'edit':
-        case 'copy':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(row.id, type)
+            this.$refs.Form.init(row.id, type, this.paymentType)
           })
           break;
         case 'delete':
@@ -219,9 +224,6 @@ export default {
                     </el-button>
                   </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleColumnClick(row, 'copy')">
-                    复制
-                  </el-dropdown-item>
                   <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
                     查看详情
                   </el-dropdown-item>

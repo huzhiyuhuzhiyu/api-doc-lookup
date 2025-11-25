@@ -225,6 +225,12 @@ const global = {
     { label: '保证金', value: 'cash_deposit' },
   ],
 
+  // 付款方式
+  paymentMethodType: [
+    { label: '转账', value: 'transfer_accounts' },
+    { label: '汇票', value: 'draft' },
+  ],
+
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {
     // 先从本地获取字典

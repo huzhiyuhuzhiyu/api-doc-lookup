@@ -24,11 +24,7 @@ export default {
           orderItems: [
             {
               asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'create_time'
+              column: 'createTime'
             }
           ]
         },

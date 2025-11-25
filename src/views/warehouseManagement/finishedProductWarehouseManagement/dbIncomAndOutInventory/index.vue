@@ -487,7 +487,6 @@ export default {
           </template>
         </el-radio-group>
       </div>
-      <!--      :key="`search-${activeBusinessType}`"-->
       <JNPF-tableQuery :key="`search-${activeBusinessType}`" :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">

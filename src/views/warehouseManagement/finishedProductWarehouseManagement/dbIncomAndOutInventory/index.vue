@@ -3,7 +3,7 @@ import { getButtonList, getColumns, getSystemSearchView } from "./data";
 import { getPrintBusInfo } from "@/api/system/printDev";
 import { getStockMoveList } from "@/api/salesManagement";
 import { getClassAttributeListByCode } from "@/api/masterDataManagement";
-import { getQuotationdatasendlist, purchaseOrderList } from "@/api/orderFollow";
+import { getQuotationdatasendlist } from "@/api/orderFollow";
 
 import { purPurchaseReceiptReturnGoodsList } from "@/api/purchasingAndOutsourcingOrders";
 import { getStockPickedPage } from "@/api/batchPacking";
@@ -93,9 +93,14 @@ export default {
         },
         // 采购收货入库
         inbound_purchase: {
-          api: purchaseOrderList,
+          api: purPurchaseReceiptReturnGoodsList,
           initListQuery: {
-            orderType: "procure",
+            inspectionStatus: 'inspected',
+            notificationType: 'procure',
+            receiptReturnType: 'receipt',
+            receivingStatus: 'not_finished',
+            receiptInboundFlag: true,
+            documentStatus: 'submit',
             approvalStatus: 'ok',
           },
         },
@@ -481,7 +486,7 @@ export default {
           </template>
         </el-radio-group>
       </div>
-<!--      :key="`search-${activeBusinessType}`"-->
+      <!--      :key="`search-${activeBusinessType}`"-->
       <JNPF-tableQuery :key="`search-${activeBusinessType}`" :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">

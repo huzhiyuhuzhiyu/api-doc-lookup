@@ -14,6 +14,7 @@ import {addWarehouseData, updateWarehouseData} from "@/api/warehouseManagement/i
 import PrintDialog from "@/components/no_mount/printDialog/index.vue";
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 import {getPrintBusInfo} from "@/api/system/printDev";
+import { getpurPurchaseReceiptReturnGoodsdetail } from "@/api/purchasingManagement/purchaseInquirySheet";
 
 
 export default {
@@ -136,8 +137,8 @@ export default {
         // 采购收货
         inbound_purchase: {
           api: {
-            fetchLines: purPurchaseOrderdetail,
-            dataPath: 'data.purchaseOrderLineVOList',
+            fetchLines: getpurPurchaseReceiptReturnGoodsdetail,
+            dataPath: 'data.noticeLineList',
             filter: {
               classAttribute: this.classAttributeList
             },

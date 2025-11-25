@@ -393,24 +393,34 @@ export function getColumns(type = 'default') {
     inbound_purchase: [
       {
         prop: "orderNo",
-        label: "订单号",
+        label: "通知单号",
         minWidth: 220,
         slot: true
       },
       {
-        prop: "cooperativePartnerCode",
+        prop: "partnerCode",
         label: "供应商编码",
         minWidth: 220,
       },
       {
-        prop: "cooperativePartnerName",
+        prop: "partnerName",
         label: "供应商名称",
         minWidth: 180,
       },
       {
-        prop: "deliveryDate",
-        label: "交货日期",
+        prop: "salesman",
+        label: "操作员",
+        minWidth: 160,
+      },
+      {
+        prop: "deliverDate",
+        label: "收货日期",
         minWidth: 120,
+      },
+      {
+        prop: 'remark',
+        label: '备注',
+        minWidth: 220,
       },
       ...createColumns
     ],

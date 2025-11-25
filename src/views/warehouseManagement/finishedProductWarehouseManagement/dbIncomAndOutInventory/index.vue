@@ -37,7 +37,54 @@ export default {
     return {
       activeBusinessType: '',
       availableBusinessTypes: [],
-      businessTypeConfig: {
+
+      tableData: [],
+      totalCount: 0,
+      selectedRows: [],
+      classAttributeList: [],
+
+      listQuery: {},
+      systemSearchView: getSystemSearchView(),
+      superQueryConditions: [
+        {
+          prop: 'priority',
+          label: "发货优先级",
+          type: 'select',
+          options: this.global.shippingPriority
+        },
+        {
+          prop: 'deliveryStatus',
+          label: "状态",
+          type: 'select',
+          options: this.global.shippingStatus
+        },
+      ],
+
+      loading: false,
+      isBatchPackingDialogVisible: false,
+      isPackingDialogVisible: false,
+      isPrintDialogVisible: false,
+      isInboundDialogVisible: false,
+
+      printConfig: {
+        category: ''
+      },
+      currentPrintTemplateName: '',
+      currentPrintTemplateCode: '',
+
+      operationButtonsWidth: '160',
+      buttonConfig: getButtonList(),
+      tableColumnsConfig: getColumns(),
+      displayedColumns: [],
+      businessTypeOptions: this.getDictDataSync('warehouseBusinessType'),
+
+      isPageInitialized: false,
+    }
+  },
+  computed: {
+    businessTypeConfig() {
+      const classAttr = this.classAttributeList;
+      return {
         // 生产领料入库
         outbound_pick_out: {
           api: purPurchaseReceiptReturnGoodsList,
@@ -47,7 +94,7 @@ export default {
             documentStatus: 'submit',
             approvalStatus: 'ok',
             receivingStatus: 'not_finished',
-            classAttributeList: this.classAttributeList,
+            classAttributeList: classAttr
           },
         },
         // 销售发货出库 （销售发货出库 功能：装箱单&推荐批次）
@@ -102,6 +149,7 @@ export default {
             receiptInboundFlag: true,
             documentStatus: 'submit',
             approvalStatus: 'ok',
+            classAttributeList: classAttr
           },
         },
         // 采购退货出库
@@ -116,7 +164,7 @@ export default {
         outbound_external_send: {
           api: getQuotationdatasendlist,
           initListQuery: {
-            classAttributeList: this.classAttributeList,
+            classAttributeList: classAttr,
             approvalStatus: 'ok',
           },
         },
@@ -125,7 +173,7 @@ export default {
           api: getQuotationdatasendlist,
           initListQuery: {
             inspectionStatus: 'inspected',
-            classAttributeList: this.classAttributeList,
+            classAttributeList: classAttr,
             receiptReturnType: "back",
             approvalStatus: 'ok',
           },
@@ -148,55 +196,11 @@ export default {
             documentStatus: 'submit',
             approvalStatus: 'ok',
             receivingStatus: 'not_finished',
-            classAttributeList: this.classAttributeList,
+            classAttributeList: classAttr,
           },
         },
-      },
-
-      tableData: [],
-      totalCount: 0,
-      selectedRows: [],
-      classAttributeList: [],
-
-      listQuery: {},
-      systemSearchView: getSystemSearchView(),
-      superQueryConditions: [
-        {
-          prop: 'priority',
-          label: "发货优先级",
-          type: 'select',
-          options: this.global.shippingPriority
-        },
-        {
-          prop: 'deliveryStatus',
-          label: "状态",
-          type: 'select',
-          options: this.global.shippingStatus
-        },
-      ],
-
-      loading: false,
-      isBatchPackingDialogVisible: false,
-      isPackingDialogVisible: false,
-      isPrintDialogVisible: false,
-      isInboundDialogVisible: false,
-
-      printConfig: {
-        category: ''
-      },
-      currentPrintTemplateName: '',
-      currentPrintTemplateCode: '',
-
-      operationButtonsWidth: '160',
-      buttonConfig: getButtonList(),
-      tableColumnsConfig: getColumns(),
-      displayedColumns: [],
-      businessTypeOptions: this.getDictDataSync('warehouseBusinessType'),
-
-      isPageInitialized: false,
-    }
-  },
-  computed: {
+      }
+    },
     currentBusinessConfig() {
       return this.businessTypeConfig[this.activeBusinessType] || {};
     },
@@ -248,11 +252,10 @@ export default {
         pendingCount: item.todoNum
       }));
       this.activeBusinessType = this.availableBusinessTypes[0]?.businessType || '';
-      this.updateInterfaceConfiguration(this.activeBusinessType);
-      this.initializeQueryParameters(this.currentBusinessConfig);
+      this.handleBusinessTypeChange(this.activeBusinessType)
     },
 
-    async handleBusinessTypeChange(businessType) {
+    handleBusinessTypeChange(businessType) {
       const config = this.currentBusinessConfig;
       if (!config) return;
 
@@ -268,12 +271,11 @@ export default {
     },
 
     initializeQueryParameters(config) {
-      this.listQuery = { ...this.listQuery, ...config.initListQuery }
+      this.listQuery = structuredClone(config.initListQuery);
     },
 
     adjustTableLayout() {
       this.calculateOperationButtonsWidth();
-      this.loadTableData()
       this.$nextTick(() => {
         this.$refs.dataTable.doLayout();
       });
@@ -293,25 +295,24 @@ export default {
     },
 
     async loadTableData(customQuery) {
-      this.loading = true;
-      if (!this.isPageInitialized) {
-        await this.initializePageData();
-      }
-
       if (customQuery) this.listQuery = customQuery;
+
       if (!this.listQuery?.pageSize) {
         this.$message.error('请先等待视图加载完成！');
         return;
       }
-
       const loadIdentifier = +new Date();
       this.currentLoadIdentifier = loadIdentifier;
 
+      this.loading = true;
       try {
         if (!this.currentBusinessConfig?.api) return;
 
-        if (loadIdentifier !== this.currentLoadIdentifier) return;
+        if (!this.isPageInitialized) {
+          await this.initializePageData();
+        }
 
+        if (loadIdentifier !== this.currentLoadIdentifier) return;
         const response = await this.currentBusinessConfig.api(this.listQuery);
         const { total, records } = response.data;
 
@@ -384,7 +385,7 @@ export default {
           prefillData: row,
           btnType: 'add',
           businessType: this.activeBusinessType,
-          classAttributeList: this.classAttributeList,
+          classAttributeList: classAttr,
           warehouseCode: this.warehouseCode
         });
       });
@@ -410,7 +411,7 @@ export default {
           id: row.id,
           btnType: buttonType,
           businessType: this.activeBusinessType,
-          classAttributeList: this.classAttributeList,
+          classAttributeList: classAttr,
           warehouseCode: this.warehouseCode
         });
       });

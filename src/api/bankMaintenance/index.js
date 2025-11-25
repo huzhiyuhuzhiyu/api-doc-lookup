@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 条款管理-分页
+// 银行维护-分页
 export function getBankPage(data) {
   return request({
     url: '/api/erp/bank/page',
@@ -9,7 +9,7 @@ export function getBankPage(data) {
   })
 }
 
-// 条款管理-详情
+// 银行维护-详情
 export function getBank(id) {
   return request({
     url: `/api/erp/bank/detail/${ id }`,
@@ -17,7 +17,7 @@ export function getBank(id) {
   })
 }
 
-// 条款管理-新增
+// 银行维护-新增
 export function addBank(data) {
   return request({
     url: '/api/erp/bank/add',
@@ -26,7 +26,7 @@ export function addBank(data) {
   })
 }
 
-// 条款管理-修改
+// 银行维护-修改
 export function updateBank(data) {
   return request({
     url: '/api/erp/bank/edit',
@@ -35,7 +35,7 @@ export function updateBank(data) {
   })
 }
 
-// 条款管理-删除
+// 银行维护-删除
 export function deleteBank(id) {
   return request({
     url: `/api/erp/bank/del/${ id }`,

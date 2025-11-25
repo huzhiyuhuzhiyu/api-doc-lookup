@@ -360,7 +360,7 @@ export default {
     handlePackingEdit(row, actionType, buttonType) {
       this.isBatchPackingDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.autoRecBatchPacking.initialize({
+        this.$refs.autoRecBatchPacking.init({
           id: row.id,
           formType: actionType,
           type: buttonType,
@@ -374,7 +374,7 @@ export default {
     handleInboundOperation(row) {
       this.isInboundDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.inboundForm.initialize({
+        this.$refs.inboundForm.init({
           id: '',
           prefillData: row,
           btnType: 'add',
@@ -394,14 +394,14 @@ export default {
 
       detailConfig.visible = true;
       this.$nextTick(() => {
-        this.$refs.detailComponent.initialize(row[detailConfig.rowId], 'look');
+        this.$refs.detailComponent.init(row[detailConfig.rowId], 'look');
       });
     },
 
     openPackingDialog(row, buttonType) {
       this.isPackingDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.packingForm.initialize({
+        this.$refs.packingForm.init({
           id: row.id,
           btnType: buttonType,
           businessType: this.activeBusinessType,
@@ -418,7 +418,7 @@ export default {
       this.isPrintDialogVisible = true;
 
       this.$nextTick(() => {
-        this.$refs.printTemplate.initialize(templateCode);
+        this.$refs.printTemplate.init(templateCode);
       });
     },
 

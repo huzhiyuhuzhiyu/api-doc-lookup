@@ -237,7 +237,7 @@ export default {
           <template v-else>
             <template v-for="column in columnsConfig">
               <el-table-column
-                v-if="typeof column.show === 'function' ? column.show() : true"
+                v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
                 :key="column.prop"
                 :prop="column.prop"
                 :label="column.label"

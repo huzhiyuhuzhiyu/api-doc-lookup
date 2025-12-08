@@ -24,29 +24,21 @@ export function getColumns() {
       prop: "orderNo",
       label: "订单号",
       minWidth: 220,
-      align: "left",
-      sortable: 'custom',
     },
     {
       prop: "contractNo",
       label: "客户合同号",
       minWidth: 220,
-      align: "left",
-      sortable: 'custom'
     },
     {
       prop: "cooperativePartnerCode",
       label: "客户编码",
       minWidth: 220,
-      align: "left",
-      sortable: 'custom',
     },
     {
       prop: "cooperativePartnerName",
       label: "客户名称",
       minWidth: 180,
-      align: "left",
-      sortable: 'custom'
     },
     {
       prop: "orderType",
@@ -54,13 +46,11 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'salesOrderType',
-      sortable: 'custom'
     },
     {
       prop: "orderDate",
       label: "订单日期",
       minWidth: 120,
-      sortable: 'custom'
     },
     {
       prop: "deliveryStatus",
@@ -68,19 +58,16 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'deliveryStatus',
-      sortable: 'custom'
     },
     {
       prop: "createTime",
       label: "创建时间",
       minWidth: 180,
-      sortable: 'custom'
     },
     {
       prop: "createByName",
       label: "创建人",
       minWidth: 120,
-      sortable: 'custom'
     }
   ]
 }

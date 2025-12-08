@@ -385,7 +385,7 @@ export default {
           prefillData: row,
           btnType: 'add',
           businessType: this.activeBusinessType,
-          classAttributeList: classAttr,
+          classAttributeList: this.classAttributeList,
           warehouseCode: this.warehouseCode
         });
       });
@@ -411,7 +411,7 @@ export default {
           id: row.id,
           btnType: buttonType,
           businessType: this.activeBusinessType,
-          classAttributeList: classAttr,
+          classAttributeList: this.classAttributeList,
           warehouseCode: this.warehouseCode
         });
       });

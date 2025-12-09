@@ -152,15 +152,18 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getbimProductAttributesObj, getbimProductAttributes, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
+import { deepClone } from "@/utils";
 
 export default {
   name: 'pendingOrders',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery, Detail },
   mixins: [getProjectList],
   props: {
-    source: {
-      type: String,
-      default: 'sale_order_finished_product'
+    queryObject: {
+      type: Object,
+      default: () => ({
+        sourceList: ['sale_order_finished_product']
+      })
     }
   },
   data() {
@@ -181,8 +184,8 @@ export default {
       treeLoading: false,
       listLoading: false,
       detailFlag: false,
-
-      orderForm: {
+      initOrderForm: {
+        ...this.queryObject,
         approvalStatus: 'ok',
         documentStatus: 'submit',
         orderState: 'not_finish',
@@ -190,9 +193,6 @@ export default {
         orderType: 'procure',
         deliveryEndDate: '',
         deliveryStartDate: '',
-        source: this.source,
-        // extensionFlag: 1,
-        // deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -212,9 +212,8 @@ export default {
           matchLogic: ''
         }
       },
-
+      orderForm: {},
       detailTotal: 0,
-
       gradeList: [],
       defaultProps: {
         children: 'childrenList',
@@ -371,6 +370,7 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    this.orderForm = deepClone(this.initOrderForm)
     await this.getOrderFiledMap()
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
@@ -737,40 +737,9 @@ export default {
       // 默认设置为近3天
       const end = new Date()
       const start = new Date()
-
       end.setDate(end.getDate() + 3)
       this.deliveryDateArr = [start, end]
-      this.orderForm = {
-        approvalStatus: 'ok',
-        documentStatus: 'submit',
-        orderState: 'not_finish',
-        receiptQueryFlag: 1,
-        orderType: 'procure',
-        // deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
-        deliveryStartDate: '',
-        source: this.source,
-        // extensionFlag: 1,
-        // deliverQueryFlag: 1,
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: 't1.create_time'
-          }
-        ],
-        superQuery: {
-          condition: [
-            {
-              field: '',
-              fieldValue: '',
-              symbol: ''
-            }
-          ],
-          matchLogic: ''
-        }
-      }
-
+      this.orderForm = deepClone(this.initOrderForm)
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },
@@ -784,22 +753,36 @@ export default {
     },
     addSupplier(id, btntype) {
       if (!this.list.length) return this.$message.error('请选择您要新建的订单')
-      let flag = this.hasDifferentCooperativePartnerCode(this.list)
-      if (flag) return this.$message.error('只能选择相同供应商的明细订单')
+
+      // 检查是否所有项都有相同的供应商代码和来源
+      const errors = this.checkConditions(this.list)
+      if (errors.length > 0) return this.$message.error(errors.join('；'))
+
       console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, this.list, this.source)
+        this.$refs.Form.init(id, btntype, false, this.list)
       })
     },
-    hasDifferentCooperativePartnerCode(arr) {
-      const codes = new Set()
 
-      for (const item of arr) {
-        codes.add(item.cooperativePartnerCode)
+    checkConditions(arr) {
+      const errors = []
+
+      const firstCooperativePartnerCode = arr[0].cooperativePartnerCode
+      const hasDifferentCooperativePartnerCode = arr.some(item =>
+        item.cooperativePartnerCode !== firstCooperativePartnerCode
+      )
+      if (hasDifferentCooperativePartnerCode) {
+        errors.push('只能选择相同供应商的明细订单')
       }
 
-      return codes.size > 1 // 如果有多个不同的代码，则返回 true
+      const firstSource = arr[0].source
+      const hasDifferentSource = arr.some(item => item.source !== firstSource)
+      if (hasDifferentSource) {
+        errors.push('只能选择相同来源的明细订单')
+      }
+
+      return errors
     },
     getCopyOrders(id, btntype) {
       this.formVisible = true

@@ -8,5 +8,5 @@ export default {
 </script>
 
 <template>
-  <receivingOrderDetails source="procure"/>
+  <receivingOrderDetails :query-object="{ sourceList: ['procure'] }"/>
 </template>

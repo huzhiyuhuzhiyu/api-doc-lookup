@@ -2,11 +2,11 @@
 import pendingOrders from '@/views/receivingManagement/purchaseAndReceiveFinishedProducts/pendingOrders/index.vue'
 
 export default {
-  components: {pendingOrders},
+  components: { pendingOrders },
   name: "index"
 }
 </script>
 
 <template>
-  <pendingOrders source="sale_order_material"/>
+  <pendingOrders :query-object="{ sourceList: ['sale_order_material','sale_order_finished_material'] }"/>
 </template>

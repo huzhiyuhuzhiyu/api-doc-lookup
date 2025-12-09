@@ -1,6 +1,5 @@
 import moment from "moment";
-import {deleteBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
-import {Message, MessageBox} from "element-ui";
+import { Message } from "element-ui";
 import store from '@/store'
 
 
@@ -12,17 +11,17 @@ import store from '@/store'
  * @param gapTime  每次执行fn函数的间隔时间 默认 0.3s
  * @returns {Promise<void>}
  */
-export function waitChange(fn,maxTime=10000,gapTime=300) {
+export function waitChange(fn, maxTime = 10000, gapTime = 300) {
   const { promise, resolve, reject } = getPromise()
-  const timer = setInterval(()=>{
+  const timer = setInterval(() => {
     let hasChange = fn()
     if (hasChange) {
-      timer &&  clearInterval(timer)
+      timer && clearInterval(timer)
       return resolve()
     }
   }, gapTime)
 
-  setTimeout(()=>{
+  setTimeout(() => {
     timer && clearInterval(timer)
     reject && reject()
   }, maxTime)
@@ -33,25 +32,25 @@ export function waitChange(fn,maxTime=10000,gapTime=300) {
  *
  * @returns {{resolve, reject, promise: Promise<unknown>}}
  */
-export function getPromise(){
-    let resolve, reject;
-    const promise = new Promise((res, rej)=>{
-        resolve =res;
-        reject =rej
-    })
-    return {
-        promise,
-        resolve,
-        reject
-    }
+export function getPromise() {
+  let resolve, reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej
+  })
+  return {
+    promise,
+    resolve,
+    reject
+  }
 }
 
 export const elFullScreen = ((() => {
-    const  arr = ['requestFullscreen','mozRequestFullScreen','webkitRequestFullscreen','msRequestFullScreen']
-    const fullScreenFnName = arr.find(item=>document.documentElement[item]) || 'requestFullscreen'
-    return (el) => {
-        el[fullScreenFnName] && el[fullScreenFnName]()
-    };
+  const arr = ['requestFullscreen', 'mozRequestFullScreen', 'webkitRequestFullscreen', 'msRequestFullScreen']
+  const fullScreenFnName = arr.find(item => document.documentElement[item]) || 'requestFullscreen'
+  return (el) => {
+    el[fullScreenFnName] && el[fullScreenFnName]()
+  };
 })());
 
 
@@ -60,11 +59,11 @@ export const elFullScreen = ((() => {
  * @returns {Array} 返回字典数据数组
  */
 export const getDictDataSync = (dictType) => {
-    const dict = store.getters.dictionaryList.length ? store.getters.dictionaryList.filter(o => o.enCode === dictType) : []
-    if (!dict || !dict.length) {
-        return [];
-    }
-    return (dict[0].dictionaryList || []).map((dict) => ({...dict, label: dict.fullName, value: dict.enCode}))
+  const dict = store.getters.dictionaryList.length ? store.getters.dictionaryList.filter(o => o.enCode === dictType) : []
+  if (!dict || !dict.length) {
+    return [];
+  }
+  return (dict[0].dictionaryList || []).map((dict) => ({ ...dict, label: dict.fullName, value: dict.enCode }))
 }
 
 /**
@@ -109,7 +108,9 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
+    if (key === 'a') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
+    }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -421,7 +422,7 @@ export function removeClass(ele, cls) {
 }
 
 export function getLabel(list, id, value, label) {
-  if (id != '' && Array.isArray(list) && list.length != 0){
+  if (id != '' && Array.isArray(list) && list.length != 0) {
     return !list.find(item => item[value] == id) ? id : list.find(item => item[value] == id)[label]
   } else {
     return id
@@ -436,23 +437,23 @@ export function getLabel(list, id, value, label) {
  * @example trim({a: '  abc  '}) => {a: 'abc'}
  * @example trim({a: '  abc  ', b: {c: '  abc  '}, c: [' abc ']}) => {a: 'abc', b: {c: 'abc'}, c: ['abc']}
  */
-export function trim(obj){
-    if(obj === null || obj === undefined) return obj
-    const objType =typeof obj
-    if(objType === 'string'){
-        return obj.trim()
+export function trim(obj) {
+  if (obj === null || obj === undefined) return obj
+  const objType = typeof obj
+  if (objType === 'string') {
+    return obj.trim()
+  }
+  if (objType !== 'object') return obj
+  const keys = Object.keys(obj)
+  for (let key of keys) {
+    const type = typeof obj[key]
+    if (type === 'string') {
+      obj[key] = obj[key].trim()
+    } else if (type === 'object') {
+      obj[key] = trim(obj[key])
     }
-    if(objType !== 'object') return obj
-    const keys =Object.keys(obj)
-    for (let key of keys) {
-        const type =typeof obj[key]
-        if(type === 'string'){
-            obj[key] = obj[key].trim()
-        }else if(type ==='object'){
-            obj[key] = trim(obj[key])
-        }
-    }
-    return obj
+  }
+  return obj
 }
 
 /**
@@ -463,11 +464,11 @@ export function trim(obj){
  * @example isEmpty({}) => true
  * @example isEmpty([]) => true
  */
-export function isEmpty(val){
-    if(val === null || val === undefined) return true
-    const type =typeof val
-    if(type=== 'string' && val.trim() === '') return true
-    return type === 'object' && Object.keys(val).length === 0;
+export function isEmpty(val) {
+  if (val === null || val === undefined) return true
+  const type = typeof val
+  if (type === 'string' && val.trim() === '') return true
+  return type === 'object' && Object.keys(val).length === 0;
 }
 
 /**
@@ -476,8 +477,8 @@ export function isEmpty(val){
  * @returns {boolean}
  * @see isEmpty
  */
-export function notEmpty(val){
-    return !isEmpty(val)
+export function notEmpty(val) {
+  return !isEmpty(val)
 }
 
 /**
@@ -488,11 +489,11 @@ export function notEmpty(val){
  * @returns {*}
  */
 export function mapIfNonePutArr(map, key, value) {
-    const has = map.has(key)
-    if (has) {
-      return map.get(key).push(value)
-    }
-    return map.set(key, [value])
+  const has = map.has(key)
+  if (has) {
+    return map.get(key).push(value)
+  }
+  return map.set(key, [value])
 }
 
 /**
@@ -501,37 +502,40 @@ export function mapIfNonePutArr(map, key, value) {
  * @param format
  * @returns {string}
  */
-export function formatDate(time=new Date(), format ="YYYY-MM-DD HH:mm:ss") {
+export function formatDate(time = new Date(), format = "YYYY-MM-DD HH:mm:ss") {
   return moment(new Date(time)).format(format)
 }
 
-export function getWeekFirstDay(format="YYYY-MM-DD 00:00:00"){
-    return moment().startOf('week').format(format)
+export function getWeekFirstDay(format = "YYYY-MM-DD 00:00:00") {
+  return moment().startOf('week').format(format)
 }
-export function getMonthFirstDay(format="YYYY-MM-DD 00:00:00"){
-    return moment().startOf('month').format(format)
+
+export function getMonthFirstDay(format = "YYYY-MM-DD 00:00:00") {
+  return moment().startOf('month').format(format)
 }
+
 /**
  * 生成uuid
  * @returns {string}
  */
 export function createUUID() {
-    let dt = new Date().getTime();
-    return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        const r = (dt + Math.random() * 16) % 16 | 0;
-        dt = Math.floor(dt / 16);
-        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
+  let dt = new Date().getTime();
+  return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = (dt + Math.random() * 16) % 16 | 0;
+    dt = Math.floor(dt / 16);
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
 }
+
 /**
  * 获取近一个月的时间
  * @returns {string[]}
  */
 export function nearMonth() {
-    const end = new Date()
-    const start = new Date()
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-    return [moment(start).format('YYYY-MM-DD'), moment(end).format('YYYY-MM-DD')]
+  const end = new Date()
+  const start = new Date()
+  start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+  return [moment(start).format('YYYY-MM-DD'), moment(end).format('YYYY-MM-DD')]
 }
 
 /**
@@ -540,10 +544,10 @@ export function nearMonth() {
  * @param tip
  * @returns {Promise<MessageBoxData>}
  */
-export function getQueryConfirm(vm,tip=""){
-    return vm.$confirm( tip || vm.$t('common.delTip'), vm.$t('common.tipTitle'), {
-            type: 'warning'
-    })
+export function getQueryConfirm(vm, tip = "") {
+  return vm.$confirm(tip || vm.$t('common.delTip'), vm.$t('common.tipTitle'), {
+    type: 'warning'
+  })
 }
 
 /**
@@ -553,26 +557,26 @@ export function getQueryConfirm(vm,tip=""){
  * @param createByConvert
  * @returns {{asc: boolean, column: (string|*)}}
  */
-export function getSortField(item,snakeCaseFieldList=[],createByConvert=true){
-    const {prop,order} = item
-    let newProp = ''
-    if (!snakeCaseFieldList.includes(prop)) {
-        if (prop === 'createByName') {
-            newProp = 'create_by'
-        }else{
-            newProp = prop
-        }
+export function getSortField(item, snakeCaseFieldList = [], createByConvert = true) {
+  const { prop, order } = item
+  let newProp = ''
+  if (!snakeCaseFieldList.includes(prop)) {
+    if (prop === 'createByName') {
+      newProp = 'create_by'
     } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      newProp = prop
     }
-    return {
-        asc: order === 'ascending',
-        column:order === null ? '' : newProp
-    }
+  } else {
+    newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+  }
+  return {
+    asc: order === 'ascending',
+    column: order === null ? '' : newProp
+  }
 }
 
-export function getSuccessInfo(tip="操作成功"){
-    return  Message.success(tip)
+export function getSuccessInfo(tip = "操作成功") {
+  return Message.success(tip)
 }
 
 /**
@@ -581,10 +585,10 @@ export function getSuccessInfo(tip="操作成功"){
  * @param key 键名
  * @returns {Map<any, any>}
  */
-export function array2Map(arr,key){
-    const map = new Map()
-    arr.forEach(item=> map.set(item[key],item))
-    return map
+export function array2Map(arr, key) {
+  const map = new Map()
+  arr.forEach(item => map.set(item[key], item))
+  return map
 }
 
 
@@ -595,22 +599,23 @@ export function array2Map(arr,key){
  * @param targetValue 目标值
  * @param duration 动画时长
  */
-export function increaseNumber(obj,valueField, targetValue, duration=500) {
-    const current = obj[valueField]
-    const startTime = performance.now();
-    const difference = targetValue - current;
-    function animate(time) {
-        const elapsedTime = time - startTime;
-        const progress = Math.min(elapsedTime / duration, 1); // 计算动画进度（范围为0到1）
+export function increaseNumber(obj, valueField, targetValue, duration = 500) {
+  const current = obj[valueField]
+  const startTime = performance.now();
+  const difference = targetValue - current;
 
-        const newValue = current + difference * progress; // 根据进度计算当前值
-        obj[valueField] = Math.floor(newValue);
-        if (progress < 1) {
-            requestAnimationFrame(animate); // 继续动画
-        }
+  function animate(time) {
+    const elapsedTime = time - startTime;
+    const progress = Math.min(elapsedTime / duration, 1); // 计算动画进度（范围为0到1）
+
+    const newValue = current + difference * progress; // 根据进度计算当前值
+    obj[valueField] = Math.floor(newValue);
+    if (progress < 1) {
+      requestAnimationFrame(animate); // 继续动画
     }
+  }
 
-    requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 }
 
 
@@ -619,8 +624,8 @@ export function increaseNumber(obj,valueField, targetValue, duration=500) {
  * @param time
  * @returns {Promise<unknown>}
  */
-export function sleep(time){
-    return new Promise(resolve=>setTimeout(resolve,time))
+export function sleep(time) {
+  return new Promise(resolve => setTimeout(resolve, time))
 }
 
 /**
@@ -630,34 +635,34 @@ export function sleep(time){
  * @param { Array } target
  * @param { Number | Function } gap 如果传入的是数字，则每隔gap个元素push一次，如果传入的是函数，则每次调用函数返回true时push一次
  */
-export function optimizeArrayPush(arr,target,gap=5){
+export function optimizeArrayPush(arr, target, gap = 5) {
 
-    const gapIsFn = typeof gap === 'function'
-    let index = gapIsFn ? 0 : Math.max(0,gap)
-    let run =null
+  const gapIsFn = typeof gap === 'function'
+  let index = gapIsFn ? 0 : Math.max(0, gap)
+  let run = null
 
-      if(gapIsFn){
-          run = (()=>{
-              index++
-              requestAnimationFrame(()=>{
-                  if(gap(index,target.length - arr.length)){
-                      arr.push(target[arr.length])
-                  }
-                  arr.length < target.length && run()
-              })
-          })
-      }else{
-          run = (()=>{
-              index++
-              requestAnimationFrame(()=>{
-                  if((index % gap === 0)){
-                      arr.push(target[arr.length])
-                  }
-                  arr.length < target.length && run()
-              })
-          })
-      }
-    run()
+  if (gapIsFn) {
+    run = (() => {
+      index++
+      requestAnimationFrame(() => {
+        if (gap(index, target.length - arr.length)) {
+          arr.push(target[arr.length])
+        }
+        arr.length < target.length && run()
+      })
+    })
+  } else {
+    run = (() => {
+      index++
+      requestAnimationFrame(() => {
+        if ((index % gap === 0)) {
+          arr.push(target[arr.length])
+        }
+        arr.length < target.length && run()
+      })
+    })
+  }
+  run()
 }
 
 /**
@@ -714,37 +719,162 @@ export function formatListQuery(queryConfigData) {
 }
 
 /**
- * 统一产品信息字段（支持对象和数组）
- * @param {Object|Array} data - 要处理的数据，可以是单个对象或对象数组
- * @param {Object} [fieldMap] - 字段映射配置，格式为 {标准字段名: [可能的字段名1, 可能的字段名2]}
- *                             默认使用常见产品字段映射
- * @returns {Object|Array} - 处理后的数据，保持原始数据结构（对象或数组）
- * @example
- * // 基本用法
- * const unified = unifyFields(rawData);
+ * 数据字段标准化处理器
+ * @param {Object|Array} data - 要处理的数据
+ * @param {Object|Function} rules - 处理规则，可以是配置对象或处理函数
+ * @param {Object} options - 选项配置
+ * @returns {Object|Array} - 处理后的数据
  *
- * // 自定义字段映射
- * const customMap = {
- *   productName: ['name', 'product_name'],
- *   productCode: ['code', 'sku']
- * };
- * const unified = unifyFields(rawData, customMap);
+ * @example
+ * // 方式1：简单字段映射
+ * const result1 = standardizeFields(data, {
+ *   productName: ['name', 'product_name']
+ * });
+ *
+ * // 方式2：复杂转换规则
+ * const result2 = standardizeFields(data, {
+ *   productName: {
+ *     from: ['name', 'product_name'],
+ *     transform: (value) => value?.trim(),
+ *     default: '未命名产品'
+ *   },
+ *   price: {
+ *     from: 'price',
+ *     transform: (value) => parseFloat(value) || 0,
+ *     default: 0
+ *   },
+ *   fullName: {
+ *     compute: (item) => `${item.firstName} ${item.lastName}`
+ *   }
+ * });
+ *
+ * // 方式3：使用处理函数
+ * const result3 = standardizeFields(data, (item) => ({
+ *   ...item,
+ *   normalizedField: item.rawField?.toUpperCase()
+ * }));
+ *
+ * // 方式4：链式处理
+ * const result4 = standardizeFields(data, [
+ *   { productName: ['name', 'product_name'] },
+ *   { price: { from: 'price', transform: parseFloat } },
+ *   (item) => ({ ...item, processed: true })
+ * ]);
  */
-export function unifyFields(data, fieldMap) {
+export function standardizeFields(data, rules = {}, options = {}) {
   if (Array.isArray(data)) {
-    return data.map(item => unifyFields(item, fieldMap));
+    return data.map(item => standardizeFields(item, rules, options));
   }
 
-  const result = {};
-  Object.keys(fieldMap).forEach(internalField => {
-    const possibleFields = fieldMap[internalField];
-    const foundField = possibleFields.find(field => data[field] !== undefined);
-    if (foundField) {
-      result[internalField] = data[foundField];
-    }
-  });
+  if (!data || typeof data !== 'object') {
+    return data;
+  }
 
-  return {...data, ...result};
+  const defaultOptions = {
+    keepOriginal: true,      // 是否保留原始字段
+    removeSource: false,     // 是否移除源字段
+    strictMode: false        // 未找到字段时抛出错误
+  };
+
+  const mergedOptions = { ...defaultOptions, ...options };
+  let result = mergedOptions.keepOriginal ? { ...data } : {};
+
+  // 处理规则可以是函数、数组或对象
+  const processRule = (rule, currentData) => {
+    // 规则为函数
+    if (typeof rule === 'function') {
+      return { ...currentData, ...rule(currentData) };
+    }
+
+    // 规则为数组（链式处理）
+    if (Array.isArray(rule)) {
+      return rule.reduce((acc, r) => processRule(r, acc), currentData);
+    }
+
+    // 规则为对象
+    const processed = { ...currentData };
+    Object.keys(rule).forEach(targetField => {
+      const ruleConfig = rule[targetField];
+
+      // 简写形式：数组表示可能的源字段
+      if (Array.isArray(ruleConfig)) {
+        const foundField = ruleConfig.find(field => processed[field] !== undefined);
+        if (foundField) {
+          processed[targetField] = processed[foundField];
+          if (mergedOptions.removeSource && foundField !== targetField) {
+            delete processed[foundField];
+          }
+        } else if (mergedOptions.strictMode) {
+          throw new Error(`字段映射失败：${ targetField } 的源字段 ${ ruleConfig.join(', ') } 均未找到`);
+        }
+      }
+
+      // 详细配置形式
+      else if (ruleConfig && typeof ruleConfig === 'object') {
+        const config = ruleConfig;
+
+        // 从指定字段计算
+        if (config.compute) {
+          processed[targetField] = config.compute(processed);
+        }
+
+        // 固定值
+        else if (config.hasOwnProperty('value')) {
+          processed[targetField] = config.value;
+        }
+
+        // 从指定字段复制
+        else if (config.from) {
+          const sourceFields = Array.isArray(config.from) ? config.from : [config.from];
+          const foundField = sourceFields.find(field => processed[field] !== undefined);
+
+          if (foundField) {
+            let value = processed[foundField];
+
+            // 应用转换函数
+            if (config.transform) {
+              value = config.transform(value, processed);
+            }
+
+            // 设置默认值（如果值为 undefined 或 null）
+            if (value === undefined || value === null) {
+              if (config.hasOwnProperty('default')) {
+                value = config.default;
+              }
+            }
+
+            processed[targetField] = value;
+
+            // 移除源字段
+            if (config.removeSource && foundField !== targetField) {
+              delete processed[foundField];
+            }
+          } else if (config.hasOwnProperty('default')) {
+            processed[targetField] = config.default;
+          } else if (mergedOptions.strictMode) {
+            throw new Error(`字段映射失败：${ targetField } 的源字段 ${ sourceFields.join(', ') } 均未找到`);
+          }
+        }
+
+        // 字段别名映射
+        else if (config.alias) {
+          const foundField = config.alias.find(field => processed[field] !== undefined);
+          if (foundField) {
+            processed[targetField] = processed[foundField];
+            if (config.removeSource && foundField !== targetField) {
+              delete processed[foundField];
+            }
+          } else if (config.hasOwnProperty('default')) {
+            processed[targetField] = config.default;
+          }
+        }
+      }
+    });
+
+    return processed;
+  };
+
+  return processRule(rules, result);
 }
 
 /**

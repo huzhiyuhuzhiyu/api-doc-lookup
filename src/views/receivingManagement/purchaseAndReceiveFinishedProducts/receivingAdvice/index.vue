@@ -162,9 +162,11 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   mixins: [getProjectList],
   props: {
-    source: {
-      type: String,
-      default: 'sale_order_finished_product'
+    queryObject: {
+      type: Object,
+      default: () => ({
+        sourceList: ['sale_order_finished_product']
+      })
     }
   },
   data() {
@@ -202,20 +204,17 @@ export default {
       userRelationListVisible: false,
       organizeIdTree: [],
       activeName: 'orderList',
-      salespersonList: [],
       detailFlag: false,
       exchangeList: [{ label: '正常发货', value: false }, { label: '换货发货', value: true }],
       shipmentsStateList: [{ label: '未完成', value: 'undelivered' }, { label: '已完成', value: 'delivered' }],
       orderStateList: [{ label: '待检验', value: 'unInspect' }, { label: '已检验', value: 'inspected' }],
       isfullReceiptFlag: [{ label: '是', value: 1 }, { label: '否', value: 0 }],
       documentStateList: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }],
-
       approvalStateList: [
         { label: '审批中', value: 'ing' },
         { label: ' 审批通过', value: 'ok' },
         { label: '审批拒绝', value: 'rebut' }
       ],
-
       departMentList: [
         { label: '送货', value: 'deliver_goods' },
         { label: '自提', value: 'self_pickup' },
@@ -227,6 +226,7 @@ export default {
       paymentCycleList: [],
       orderForm: {},
       orderFormlist: {
+        ...this.queryObject,
         approvalStatus: '',
         createByName: '',
         deliverDate: '',
@@ -238,7 +238,6 @@ export default {
         inspectionStatus: '',
         keyword: '',
         notificationType: 'procure',
-        source: this.source,
         notificationTypeList: [],
         orderItems: [
           {
@@ -524,21 +523,24 @@ export default {
       this.search('basic')
     },
     addSupplier(id, btntype) {
-      console.log(id, btntype)
+      const firstSource = this.selectArr[0].source
+      const hasDifferentSource = this.selectArr.some(item => item.source !== firstSource)
+      if (hasDifferentSource) {
+        this.$message.error('只能选择相同来源的明细订单')
+        return
+      }
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, [],this.source)
+        this.$refs.Form.init(id, btntype, false, [])
       })
     },
     addOrUpdateHandle(id, btntype) {
       this.formVisible = true
       if (id) {
         console.log(id)
-        // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype, false, [],this.source)
+          this.$refs.Form.init(id, btntype, false, [])
         })
-        // }, 600);
       }
     },
     handleDel(id) {

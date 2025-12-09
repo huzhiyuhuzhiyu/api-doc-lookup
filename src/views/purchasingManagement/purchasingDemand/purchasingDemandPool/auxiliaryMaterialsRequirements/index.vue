@@ -8,5 +8,5 @@ export default {
 </script>
 
 <template>
-  <purchasingDemandPool source="procure"></purchasingDemandPool>
+  <purchasingDemandPool :query-object="{ sourceList: ['procure'] }"></purchasingDemandPool>
 </template>

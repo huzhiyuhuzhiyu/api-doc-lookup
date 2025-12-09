@@ -740,7 +740,6 @@ export default {
       productTotal: 0,
       codeConfig: {},
       datafilelist: [],
-      provinces: [],
       orderForm: {
         cooperativePartnerCode: '',
         cooperativePartnerName: '',
@@ -911,7 +910,6 @@ export default {
       isdisabled: false,
       visible: false,
       btnLoading: false,
-      formLoading: false,
       dataForm: {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
@@ -1755,7 +1753,7 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data,source) {
+    init(id, btnType, approvalFlag, data) {
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
@@ -1766,8 +1764,8 @@ export default {
           this.dataFormTwo.productData = data
           this.dataForm.partnerName = data[0].cooperativePartnerName
           this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+          this.dataForm.source = data[0].source
           data.forEach((item) => {
-            console.log('ooooooo', item)
             item.ordersNo = item.orderNo
             this.$set(item, 'receivedQuantity', item.waitReceiptNum)
             this.$set(item, 'discount', 1)
@@ -1778,6 +1776,7 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
+          this.dataForm.source = res.data.notice.source
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -1823,7 +1822,6 @@ export default {
         this.dataForm.deliverDate = this.jnpf.getToday()
         this.getBusInfo()
       }
-      this.dataForm.source = source
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
         this.getBusInfo()

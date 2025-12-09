@@ -2,11 +2,11 @@
 import receivingAdvice from '@/views/receivingManagement/purchaseAndReceiveFinishedProducts/receivingAdvice/index.vue'
 
 export default {
-  components: {receivingAdvice},
+  components: { receivingAdvice },
   name: "index"
 }
 </script>
 
 <template>
-  <receivingAdvice source="procure"/>
+  <receivingAdvice :query-object="{ sourceList: ['procure'] }"/>
 </template>

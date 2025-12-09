@@ -2,11 +2,11 @@
 import purchaseOrder from '../purchaseOrder/index.vue'
 
 export default {
-  components: {purchaseOrder},
+  components: { purchaseOrder },
   name: "index"
 }
 </script>
 
 <template>
-  <purchaseOrder source="sale_order_material"/>
+  <purchaseOrder :query-object="{ sourceList: ['sale_order_material','sale_order_finished_material'] }"/>
 </template>

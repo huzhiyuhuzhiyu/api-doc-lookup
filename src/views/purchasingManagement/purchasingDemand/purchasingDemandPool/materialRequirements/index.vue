@@ -2,11 +2,11 @@
 import purchasingDemandPool from '../index.vue'
 
 export default {
-  components: {purchasingDemandPool},
+  components: { purchasingDemandPool },
   name: "index"
 }
 </script>
 
 <template>
-  <purchasingDemandPool source="sale_order_material"></purchasingDemandPool>
+  <purchasingDemandPool :query-object="{ sourceList: ['sale_order_material','sale_order_finished_material'] }"></purchasingDemandPool>
 </template>

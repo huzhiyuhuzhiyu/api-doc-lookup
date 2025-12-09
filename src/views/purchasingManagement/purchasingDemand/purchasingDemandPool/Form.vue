@@ -1243,13 +1243,10 @@ export default {
         goBack() {
             this.$emit('close')
         },
-        init(data, classAttributeFlag, type,source) {
+        init(data, classAttributeFlag, type) {
             this.formLoading = true
             this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
-            console.log(data, 'uuuu')
-            console.log(classAttributeFlag, 'classAttributeFlag')
             this.purchasingType = type
-            console.log(this.purchasingType, 'this.purchasingType')
             data.forEach((item) => {
                 if (item.productDrawingNo) {
                     item.productDrawingNo = item.productDrawingNo
@@ -1279,7 +1276,7 @@ export default {
                 }
             })
 
-            this.dataForm.source = source
+            this.dataForm.source = data[0].source
             this.dataForm.classAttribute = classAttributeFlag
             this.dataForm.currency = 'CNY'
             this.ProductListRequestObj = {

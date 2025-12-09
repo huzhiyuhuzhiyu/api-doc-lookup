@@ -198,7 +198,12 @@ export default {
   name: 'purchaseOrder',
   components: { JNPFForm,Form, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
   mixins: [getProjectList,AbProjectMixin],
-
+  props: {
+    queryObject: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       systemSearchView: [{
@@ -290,7 +295,8 @@ export default {
       listLoading: false,
       // 明细参数
       listQuery: {
-        classAttribute: 'other',
+        ...this.queryObject,
+        // classAttribute: 'other',
         orderType: 'procure',
       },
       total: 0,

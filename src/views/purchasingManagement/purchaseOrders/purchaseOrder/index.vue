@@ -17,9 +17,9 @@ export default {
     Form
   },
   props: {
-    source: {
-      type: String,
-      default: ''
+    queryObject: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
@@ -50,7 +50,7 @@ export default {
         },
       ],
       initListQuery: {
-        source: this.source,
+        ...this.queryObject,
         orderType: 'procure',
         orderItems: [
           {

@@ -10,7 +10,7 @@ import moment from "moment";
 import {getcategoryTree} from "@/api/basicData/materialSettings";
 import {getProducts} from "@/api/masterDataManagement";
 import {addProdOrder} from "@/api/productOrdes/finishedProductOrders";
-import {deepClone, unifyFields} from "@/utils";
+import {deepClone, standardizeFields} from "@/utils";
 
 export default {
   name: "packingForm",
@@ -350,7 +350,7 @@ export default {
     },
 
     async defaultInit(prefillData, pageSource) {
-      const unifiedData = unifyFields(prefillData, this.productFieldMap);
+      const unifiedData = standardizeFields(prefillData, this.productFieldMap);
       this.dataForm = _.merge({}, this.dataForm, unifiedData)
       if (unifiedData.planStartDate && unifiedData.planEndDate) {
         this.dataForm.planDate[0] = unifiedData.planStartDate

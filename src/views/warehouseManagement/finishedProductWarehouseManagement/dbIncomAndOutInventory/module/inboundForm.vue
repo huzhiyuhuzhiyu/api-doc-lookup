@@ -14,6 +14,7 @@ import PrintDialog from "@/components/no_mount/printDialog/index.vue";
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 import { getPrintBusInfo } from "@/api/system/printDev";
 import { getpurPurchaseReceiptReturnGoodsdetail } from "@/api/purchasingManagement/purchaseInquirySheet";
+import { standardizeFields } from "@/utils";
 
 
 export default {
@@ -129,55 +130,61 @@ export default {
     businessTypeConfig() {
       return {
         default: {
-          api: null,
+          fetchLines: null,
+          dataPath: null,
+          filter: null,
+          formatter: null,
+          showActions: { selectProduct: true, batchDelete: true },
+          print: { enabled: false, enCode: '', fullName: '' },
+          defaultForm: {}
+        },
+        // 销售退货
+        inbound_sale_return: {
+          fetchLines: getQuotationsendlist,
+          dataPath: 'data.noticeLineList',
+          filter: {
+            classAttribute: this.classAttributeList
+          },
+          formatter: (item) => ({
+            ...item,
+            noticeId: item.returnDeliveryNoticeId,
+          }),
           showActions: { selectProduct: true, batchDelete: true },
           print: { enabled: false, enCode: '', fullName: '' },
           defaultForm: {}
         },
         // 采购收货
         inbound_purchase: {
-          api: {
-            fetchLines: getpurPurchaseReceiptReturnGoodsdetail,
-            dataPath: 'data.noticeLineList',
-            filter: {
-              classAttribute: this.classAttributeList
-            },
-            formatter: (item) => ({
-              ...item,
-              sourceNo: this.dataForm.sourceNo,
-              ordersId: item.purchaseOrderId,
-              noticeId: item.purchaseReceiptReturnGoodsId,
-              noticeLineId: item.id,
-              productDrawingNo: item.drawingNo,
-              costPrice: item.price,
-              undeliveredQuantity: item.requiredReceivedQuantity,
-              receivedQuantity: item.receiptQuantity
-            })
+          fetchLines: getpurPurchaseReceiptReturnGoodsdetail,
+          dataPath: 'data.noticeLineList',
+          filter: {
+            classAttribute: this.classAttributeList
           },
+          formatter: (item) => ({
+            ...item,
+            ordersId: item.purchaseOrderId,
+            noticeId: item.purchaseReceiptReturnGoodsId,
+            receivedQuantity: item.receiptQuantity,
+            undeliveredQuantity: item.requiredReceivedQuantity,
+          }),
+          showActions: { selectProduct: true, batchDelete: true },
           print: {},
-          showActions: { selectProduct: true, batchDelete: true }
+          defaultForm: {}
         },
         // 成品包装入库
         inbound_finished_package: {
-          api: {
-            fetchLines: getStockPlanPallet,
-            dataPath: 'data.stockPlanPalletLineList',
-            filter: {
-              waitReceivedQuantity: val => val > 0
-            },
-            formatter: (item) => ({
-              ...item,
-              sourceNo: this.dataForm.sourceNo,
-              noticeId: item.planPalletId,
-              noticeLineId: item.id,
-              ordersId: item.productionOrderId,
-              ordersLineId: item.documentLineId,
-              productDrawingNo: item.productsDrawingNo,
-              productName: item.productsName,
-              productCode: item.productsCode,
-              undeliveredQuantity: item.waitReceivedQuantity,
-            })
+          fetchLines: getStockPlanPallet,
+          dataPath: 'data.stockPlanPalletLineList',
+          filter: {
+            waitReceivedQuantity: val => val > 0
           },
+          formatter: (item) => ({
+            ...item,
+            noticeId: item.planPalletId,
+            ordersId: item.productionOrderId,
+            ordersLineId: item.documentLineId,
+            undeliveredQuantity: item.waitReceivedQuantity,
+          }),
           print: {
             enabled: true,
             enCode: '',
@@ -192,10 +199,9 @@ export default {
     },
     businessConfig() {
       const defaultConfig = this.businessTypeConfig.default;
-      return {
-        ...defaultConfig,
-        ...this.businessTypeConfig[this.businessType] || {}
-      };
+      const businessConfig = this.businessTypeConfig[this.businessType] || {};
+
+      return _.merge({}, defaultConfig, businessConfig);
     },
     hasC() {
       const actions = this.businessConfig.showActions || {};
@@ -255,59 +261,95 @@ export default {
       this.dataForm.sourceNo = _.isArray(prefillData) ? prefillData[0].orderNo : prefillData.orderNo;
       this.dataForm.businessType = this.businessType
       await this.fetchAndSetWarehouseInfo();
+
       if (_.isArray(prefillData)) {
-        this.linesList = prefillData.map(item => ({
-          ...item,
-        })) || [];
+        await this.processLinesData({
+          lines: prefillData,
+          config: {
+            filter: this.businessConfig.filter,
+            formatter: this.businessConfig.formatter
+          }
+        });
       } else {
         await this.fetchBusinessLines(prefillData);
       }
     },
 
-    async fetchBusinessLines(data) {
-      const config = this.businessTypeConfig[this.businessType]?.api || {};
-
+    async processLinesData({ lines, config }) {
       try {
-        const response = await config.fetchLines(data.id);
-
-        let lines = dataProcessor.extractData(response, config.dataPath);
         if (!Array.isArray(lines)) {
           lines = [lines].filter(Boolean);
         }
-        lines = dataProcessor.applyFilter(lines, config.filter);
 
-        // 先进行通用处理，包括金额计算
-        const commonProcessedLines = lines.map(item => {
-          // 通用字段处理
-          const processedItem = {
-            ...item,
-            sourceNo: this.dataForm.sourceNo || item.sourceNo,
-            businessType: this.businessType,
-            noticeLineId: item.id,
-            costPrice: item.price,
-            num: item.undeliveredQuantity,
-          };
-
-          processedItem.taxRate = processedItem.taxRate ? Number(processedItem.taxRate) : null;
-
-          if (processedItem.price && processedItem.taxRate !== null) {
-            processedItem.excludingTaxCostPrice = this.jnpf.math(
-              'divide',
-              [processedItem.price, 1 + processedItem.taxRate / 100],
-              6
-            );
-          } else {
-            processedItem.excludingTaxCostPrice = processedItem.price || 0;
+        const standardizationRules = {
+          sourceNo: { compute: (item) => this.dataForm.sourceNo || item.sourceNo },
+          businessType: { value: this.businessType },
+          productName: { from: ['productName', 'productsName'] },
+          productCode: { from: ['productCode', 'productsCode'] },
+          productDrawingNo: { from: ['productDrawingNo', 'drawingNo', 'productsDrawingNo'] },
+          noticeLineId: { from: 'id' },
+          costPrice: { from: 'price', transform: (value) => parseFloat(value) || 0 },
+          taxRate: { from: 'taxRate', transform: (value) => value ? parseFloat(value) : null },
+          excludingTaxCostPrice: {
+            compute: (item) => {
+              if (item.price && item.taxRate !== null) {
+                return this.jnpf.math('divide', [item.price, 1 + item.taxRate / 100], 6);
+              }
+              return item.price || 0;
+            }
+          },
+          totalAmount: {
+            compute: (item) => this.jnpf.math('multiply', [item.num || 0, item.price || 0], 2)
+          },
+          taxAmount: {
+            compute: (item) => {
+              const taxPerUnit = this.jnpf.math(
+                'subtract',
+                [item.price || 0, item.excludingTaxCostPrice || 0]
+              );
+              return this.jnpf.math('multiply', [item.num || 0, taxPerUnit], 2);
+            }
+          },
+          excludingTaxTotalAmount: {
+            compute: (item) => this.jnpf.math('subtract', [item.totalAmount || 0, item.taxAmount || 0], 2)
           }
+        };
 
-          this.calculateAmountFields(processedItem);
+        lines = standardizeFields(lines, standardizationRules);
 
-          return processedItem;
+        if (config.filter) {
+          lines = dataProcessor.applyFilter(lines, config.filter);
+        }
+
+        let formattedLines = config.formatter
+          ? lines.map(item => config.formatter(item))
+          : lines;
+
+        formattedLines = formattedLines.map(item => ({
+          ...item,
+          num: item.undeliveredQuantity,
+        }));
+
+        this.linesList = formattedLines;
+
+      } catch ( error ) {
+        console.error(`[${ this.businessType }] 数据处理失败:`, error);
+        this.linesList = [];
+      }
+    },
+
+    async fetchBusinessLines(data) {
+      try {
+        const response = await this.businessConfig.fetchLines(data.id);
+        let lines = dataProcessor.extractData(response, this.businessConfig.dataPath);
+
+        await this.processLinesData({
+          lines: lines,
+          config: {
+            filter: this.businessConfig.filter,
+            formatter: this.businessConfig.formatter
+          }
         });
-
-        this.linesList = commonProcessedLines.map(item =>
-          config.formatter ? config.formatter(item) : item
-        );
 
       } catch ( error ) {
         console.error(`[${ this.businessType }] 数据加载失败:`, error);
@@ -1046,46 +1088,39 @@ export default {
 
 <template>
   <transition name="el-zoom-in-center">
-    <div class="JNPF-preview-main org-form">
-      <div class="JNPF-common-layout">
-        <div class="JNPF-common-layout-center JNPF-flex-main">
-          <div class="JNPF-preview-main transitionForm org-form">
-            <div class="JNPF-common-page-header">
-              <el-page-header @back="$emit('close',false)" :content="title"/>
-              <div class="options">
-                <template v-if="activeType">
-                  <el-button type="primary" :loading="btnLoading" @click="handleSubmit(false)">
-                    保存并提交
-                  </el-button>
-                  <el-button v-if="showPrintButton" type="primary" :loading="btnLoading" @click="handleSubmit(true)">
-                    提交并打印
-                  </el-button>
-                </template>
-                <el-button @click="$emit('close',false)">{{ $t('common.cancelButton') }}</el-button>
-              </div>
-            </div>
-            <div class="main" v-loading="loading" ref="main">
-              <el-tabs v-model="activeName">
-                <el-tab-pane label="基础信息" name="jcInfo">
-                  <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
-                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
-                      <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                                :btnType="btnType"/>
-                    </el-collapse-item>
-                    <el-collapse-item class="productInfo"
-                                      title="产品信息"
-                                      name="productInfo">
-                      <div class="TableForm_title">
-                      </div>
-                      <TableForm-product
-                        @input="contentChanges"
-                        :value="linesList"
-                        :hasToolbar="false"
-                        ref="linesForm"
-                        :tableItems="linesListItems"
-                        :btnType="btnType"
-                        :hasActionbar="false"
-                        :tableProps="{
+    <div class="JNPF-preview-main transitionForm">
+      <div class="JNPF-common-page-header">
+        <el-page-header @back="$emit('close',false)" :content="title"/>
+        <div class="options">
+          <template v-if="activeType">
+            <el-button type="primary" :loading="btnLoading" @click="handleSubmit(false)">
+              保存并提交
+            </el-button>
+            <el-button v-if="showPrintButton" type="success" :loading="btnLoading" @click="handleSubmit(true)">
+              提交并打印
+            </el-button>
+          </template>
+          <el-button @click="$emit('close',false)">{{ $t('common.cancelButton') }}</el-button>
+        </div>
+      </div>
+      <div class="main" v-loading="loading" ref="main">
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="基础信息" name="jcInfo">
+            <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
+                <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm" :btnType="btnType"/>
+              </el-collapse-item>
+              <el-collapse-item class="productInfo" title="产品信息" name="productInfo">
+                <div class="TableForm_title"></div>
+                <TableForm-product
+                  @input="contentChanges"
+                  :value="linesList"
+                  :hasToolbar="false"
+                  ref="linesForm"
+                  :tableItems="linesListItems"
+                  :btnType="btnType"
+                  :hasActionbar="false"
+                  :tableProps="{
                         is: 'JNPF-table',
                         customKey:`dbIncomAndOutInventory_tableForm_${businessType}`,
                         fixedNO: true,
@@ -1097,36 +1132,33 @@ export default {
                         summaryMethod,
                         'show-summary': true
                       }"
-                      >
-                        <template slot="top">
-                          <div class="tableTopContainer">
-                            <div class="left">
-                              <template v-if="activeType">
-                                <el-button v-if="businessConfig.showActions.selectProduct" type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog()">
-                                  选择产品
-                                </el-button>
-                                <span v-if="businessConfig.showActions.selectProduct && businessConfig.showActions.batchDelete">|</span>
-                                <el-button v-if="businessConfig.showActions.batchDelete" type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
-                                           @click="$refs.linesForm.batchDelete()">批量删除
-                                </el-button>
-                              </template>
-                            </div>
-                            <div class="right">
-                              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                                         @click="$refs.linesForm.$refs.tableRef.showDrawer()"/>
-                              </el-tooltip>
-                            </div>
-                          </div>
+                >
+                  <template slot="top">
+                    <div class="tableTopContainer">
+                      <div class="left">
+                        <template v-if="activeType">
+                          <el-button v-if="businessConfig.showActions.selectProduct" type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog()">
+                            选择产品
+                          </el-button>
+                          <span v-if="businessConfig.showActions.selectProduct && businessConfig.showActions.batchDelete">|</span>
+                          <el-button v-if="businessConfig.showActions.batchDelete" type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.linesForm.batchDelete()">
+                            批量删除
+                          </el-button>
                         </template>
-                      </TableForm-product>
-                    </el-collapse-item>
-                  </el-collapse>
-                </el-tab-pane>
-              </el-tabs>
-            </div>
-          </div>
-        </div>
+                      </div>
+                      <div class="right">
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                                   @click="$refs.linesForm.$refs.tableRef.showDrawer()"/>
+                        </el-tooltip>
+                      </div>
+                    </div>
+                  </template>
+                </TableForm-product>
+              </el-collapse-item>
+            </el-collapse>
+          </el-tab-pane>
+        </el-tabs>
       </div>
       <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
                    :printQuery="printQuery" :enCode="businessConfig.print.enCode" ref="printTemplate"/>

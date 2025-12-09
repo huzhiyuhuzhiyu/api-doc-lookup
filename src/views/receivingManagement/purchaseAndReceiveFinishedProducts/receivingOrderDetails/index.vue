@@ -172,9 +172,11 @@ export default {
   components: { Form, ExportForm, SuperQuery },
   mixins: [getProjectList],
   props: {
-    source: {
-      type: String,
-      default: 'sale_order_finished_product'
+    queryObject: {
+      type: Object,
+      default: () => ({
+        sourceList: ['sale_order_finished_product']
+      })
     }
   },
   data() {
@@ -210,7 +212,6 @@ export default {
       userRelationListVisible: false,
       organizeIdTree: [],
       activeName: 'orderList',
-      salespersonList: [],
       detailFlag: false,
       exchangeList: [{ label: '退货', value: false }, { label: '换货', value: true }],
       shipmentsStateList: [{ label: '待发货', value: 'undelivered' }, { label: '已发货', value: 'delivered' }],
@@ -235,6 +236,7 @@ export default {
       paymentCycleList: [],
       orderForm: {},
       initOrderForm: {
+        ...this.queryObject,
         approvalStatus: '',
         createByName: '',
         deliverDate: '',
@@ -246,7 +248,6 @@ export default {
         inspectionStatus: '',
         keyword: '',
         notificationType: 'procure',
-        source: this.source,
         notificationTypeList: [],
         orderItems: [
           {
@@ -758,18 +759,15 @@ export default {
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, [],this.source)
+        this.$refs.Form.init(id, btntype, false, [])
       })
     },
     addOrUpdateHandle(id, btntype) {
       this.formVisible = true
       if (id) {
-        console.log(id)
-        // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype, false, [],this.source)
+          this.$refs.Form.init(id, btntype, false, [])
         })
-        // }, 600);
       }
     },
     handleDel(id) {

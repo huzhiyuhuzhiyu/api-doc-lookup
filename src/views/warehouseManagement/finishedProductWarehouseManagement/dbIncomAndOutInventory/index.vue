@@ -229,9 +229,6 @@ export default {
       return (row) => row.packingStatus === 'boxed' && row.deliveryStatus === 'arranged';
     }
   },
-  async created() {
-    await this.initializePageData();
-  },
   methods: {
     async initializePageData() {
       await this.loadClassAttributes();
@@ -256,6 +253,7 @@ export default {
     },
 
     handleBusinessTypeChange(businessType) {
+      console.log("this.currentBusinessConfig ✈️ ", this.currentBusinessConfig)
       const config = this.currentBusinessConfig;
       if (!config) return;
 
@@ -306,8 +304,6 @@ export default {
 
       this.loading = true;
       try {
-        if (!this.currentBusinessConfig?.api) return;
-
         if (!this.isPageInitialized) {
           await this.initializePageData();
         }

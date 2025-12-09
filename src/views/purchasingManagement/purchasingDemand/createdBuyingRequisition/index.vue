@@ -1,5 +1,5 @@
 <script>
-import {deepClone, unifyFields} from "@/utils";
+import {deepClone, standardizeFields} from "@/utils";
 import TableFormProduct from "@/components/no_mount/TableForm-product/index.vue";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
@@ -252,7 +252,7 @@ export default {
         productsId: ['id'],
       };
 
-      const unifiedData = unifyFields(prefillData, productFieldMap);
+      const unifiedData = standardizeFields(prefillData, productFieldMap);
 
       this.linesList = unifiedData.map(item => ({
         ...this.createdObj(),

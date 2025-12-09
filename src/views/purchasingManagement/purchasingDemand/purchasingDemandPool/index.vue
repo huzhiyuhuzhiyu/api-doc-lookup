@@ -47,8 +47,7 @@
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
-            <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
-            <el-button size="mini" type="primary" @click="addOrUpdateHandle(true)">合并采购</el-button>
+            <el-button size="mini" type="primary" @click="addOrUpdateHandle">生成采购订单</el-button>
 
             <!-- <el-button size="mini" type="primary" @click="batchFixed()">批量定价</el-button>  -->
           </div>
@@ -184,7 +183,7 @@ import fixedForm from '@/views/purchasingManagement/priceAdjustmentInquiry/fixed
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getclassAttributeList,getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
-import { getLabel } from '@/utils/index'
+import { deepClone, getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import tenantMinix from "@/mixins/generator/TenantMinix";
@@ -194,9 +193,9 @@ export default {
   components: { JNPFForm, QuiryForm, fixedForm, SuperQuery },
   mixins: [AbProjectMixin,tenantMinix],
   props: {
-    source: {
-      type: String,
-      default: ''
+    queryObject: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
@@ -207,7 +206,6 @@ export default {
       isDeputyUnitSwitch: '',
       tableFlag: false,
       superQueryVisible: false,
-
       superQueryJson: [
       {
           prop: 'projectId',
@@ -333,15 +331,15 @@ export default {
         }
       ],
       classAttributeList: [],
-      listQuery: {
+      initListQuery: {
+        ...this.queryObject,
         orderItems: [
           {
             asc: false,
             column: 'create_time'
           }
         ],
-        projectId:"",
-        // orderDistribute:'order_distribute',
+        projectId: "",
         createByName: '',
         createEndTime: '',
         createRequirementDate: '', //创建日期
@@ -357,11 +355,11 @@ export default {
         productCode: '', //产品编码
         productName: '', //产品名称
         productDrawingNo: '', //品名规格
-        source: this.source, //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
         sourceOrderNo: '', //来源单号
         startTime: '', //创建开始时间
         hasPrice: ''
       },
+      listQuery: {},
       demandStatusList: [
         {
           label: '未完成',
@@ -442,6 +440,7 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    this.listQuery = deepClone(this.initListQuery);
     await this.getOrderFiledMap()
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
@@ -467,24 +466,21 @@ export default {
         type: 'input'
       })
     }
-    let arr=[]
-    console.log("this.abProjectList",this.abProjectList);
+    let arr = []
+    console.log("this.abProjectList", this.abProjectList);
     this.abProjectList.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.id
-          }
-          arr.push(obj)
-        })
-        let classAttributeObj = this.superQueryJson.find((item) => item.prop === 'projectId')
-
-if (classAttributeObj) {
-  classAttributeObj.options = arr
-}
+      let obj = {
+        label: item.name,
+        value: item.id
+      }
+      arr.push(obj)
+    })
+    let classAttributeObj = this.superQueryJson.find((item) => item.prop === 'projectId')
+    if (classAttributeObj) {
+      classAttributeObj.options = arr
+    }
     this.advancedQueryFuns()
     this.tableDataFlag = true
-
-
     this.initData()
   },
   methods: {
@@ -713,37 +709,7 @@ if (classAttributeObj) {
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.deliveryDateArr = []
-      this.listQuery = {
-        projectId:"",
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        createByName: '',
-        createEndTime: '',
-        createRequirementDate: '', //创建日期
-        createStartTime: '',
-        deliveryDate: '', //交期
-        deliveryEndTime: '',
-        deliveryStartTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        demandStatus: null, //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
-        poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
-        productCode: '', //产品编码
-        productName: '', //产品名称
-        productDrawingNo: '', //品名规格
-        source: this.source, //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
-        sourceOrderNo: '', //来源单号
-        startTime: ''
-      }
+      this.listQuery = deepClone(this.initListQuery);
       this.createRequirementDate = []
       this.deliveryDate = []
       this.$refs.SuperQuery.conditionList = []
@@ -756,79 +722,82 @@ if (classAttributeObj) {
     //   })
     // },
     // 生成采购订单 将选中的数据传递过去
-    addOrUpdateHandle(isSameSource) {
+    addOrUpdateHandle() {
       if (this.selectData.length === 0) {
         this.$message({
-          message: '请选择你要生成的采购订单',
+          message: '请选择要生成采购订单的数据',
           type: 'error',
           duration: 1500
         })
-      } else {
-        if (isSameSource) {
-          const firstOrderNo = this.selectData[0].sourceOrderNo
-          const allSameOrderNo = this.selectData.every(item => item.sourceOrderNo === firstOrderNo)
+        return
+      }
 
-          if (!allSameOrderNo) {
-            this.$message.error('仅支持同一个订单来源合并！')
-            return
+      // 固定判断是否同一个订单来源
+      const firstSource = this.selectData[0].source
+      const allSameSource = this.selectData.every(item => item.source === firstSource)
+
+      if (!allSameSource) {
+        this.$message.error('仅支持同一个来源合并生成采购订单！')
+        return
+      }
+
+      // 检查是否已下单数量大于等于计划需求数
+      let hasItemList = []
+      let msg = true
+
+      for (let i = 0; i < this.selectData.length; i++) {
+        let item = this.selectData[i]
+        if (item.orderedQuantity != null) {
+          if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
+            hasItemList.push(item.productName || item.productCode)
+            msg = false
           }
-        }
-
-        let msg = true
-        let tempList = JSON.parse(JSON.stringify(this.selectData))
-        let hasItemList = []
-
-        for (let i = 0; i < this.selectData.length; i++) {
-          let item = this.selectData[i]
-
-          if (item.orderedQuantity != null) {
-            if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
-              hasItemList.push(item.productName)
-              if (hasItemList.length) {
-                this.$message.error(`已下单数量已大于或等于计划需求数的产品：${hasItemList.join('、')}`)
-                msg = false
-              } else {
-                msg = true
-              }
-            }
-          }
-        }
-
-        if (msg) {
-          this.selectData.forEach((item, index) => {
-            item.purchaseQuantity = item.planDemandQuantity - item.orderedQuantity * 1
-            if (item.calculationDirection === 'multiplication') {
-              this.$set(
-                this.selectData[index],
-                'purchaseQuantity2',
-                this.jnpf.numberFormat(item.purchaseQuantity * item.ratio)
-              )
-            } else {
-              this.$set(
-                this.selectData[index],
-                'purchaseQuantity2',
-                this.jnpf.numberFormat(item.purchaseQuantity / item.ratio)
-              )
-            }
-          })
-
-          var maxDate = null // 最大日期初始值设为null
-          // 遍历列表中的数据 找到最大交期
-          for (var i = 0; i < this.selectData.length; i++) {
-            var currentDate = new Date(this.selectData[i].deliveryDate)
-            if (maxDate === null || currentDate > maxDate) {
-              maxDate = currentDate
-            }
-          }
-
-          let demandDelivery = null
-          demandDelivery = maxDate.toISOString().split('T')[0]
-          this.formVisible = true
-          this.$nextTick(() => {
-            this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool',this.listQuery.source)
-          })
         }
       }
+
+      if (!msg) {
+        this.$message.error(`已下单数量已大于或等于计划需求数的产品：${hasItemList.join('、')}`)
+        return
+      }
+
+      // 计算采购数量和交期
+      this.selectData.forEach((item, index) => {
+        item.purchaseQuantity = item.planDemandQuantity - (item.orderedQuantity || 0)
+        if (item.calculationDirection === 'multiplication') {
+          this.$set(
+            this.selectData[index],
+            'purchaseQuantity2',
+            this.jnpf.numberFormat(item.purchaseQuantity * item.ratio)
+          )
+        } else {
+          this.$set(
+            this.selectData[index],
+            'purchaseQuantity2',
+            this.jnpf.numberFormat(item.purchaseQuantity / item.ratio)
+          )
+        }
+      })
+
+      // 找到最大交期
+      let maxDate = null
+      for (let i = 0; i < this.selectData.length; i++) {
+        if (this.selectData[i].deliveryDate) {
+          const currentDate = new Date(this.selectData[i].deliveryDate)
+          if (maxDate === null || currentDate > maxDate) {
+            maxDate = currentDate
+          }
+        }
+      }
+
+      let demandDelivery = null
+      if (maxDate) {
+        demandDelivery = maxDate.toISOString().split('T')[0]
+      }
+
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool')
+      })
     },
 
     // 关闭询价单页面

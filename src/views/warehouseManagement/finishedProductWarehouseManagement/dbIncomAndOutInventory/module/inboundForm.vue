@@ -35,6 +35,7 @@ export default {
       businessType: '',
       dataForm: {
         approvalFlag: false,
+        sourceType: 'notice',
         orderNo: '',
         sourceNo: '',
         businessType: '',
@@ -144,9 +145,13 @@ export default {
             },
             formatter: (item) => ({
               ...item,
+              sourceNo: this.dataForm.sourceNo,
               undeliveredQuantity: item.waitReceiptNum,
               ordersId: item.purchaseOrderId,
+              noticeId: item.purchaseReceiptReturnGoodsId,
+              noticeLineId: item.id,
               productDrawingNo: item.drawingNo,
+              costPrice: item.price,
             })
           },
           print: {},
@@ -270,6 +275,7 @@ export default {
           lines = [lines].filter(Boolean);
         }
         lines = dataProcessor.applyFilter(lines, config.filter);
+        console.log("lines ✈️ ", lines)
         this.linesList = lines.map(item => ({
           ...(config.formatter ? config.formatter(item) : item)
         }));
@@ -392,7 +398,7 @@ export default {
             listQuery.classAttribute = data.classAttribute
             return listQuery
           },
-          render: ['inbound_finished_package'].includes(this.businessType)
+          render: ['inbound_finished_package', 'inbound_purchase'].includes(this.businessType)
         },
         {
           prop: "cooperativePartnerName",

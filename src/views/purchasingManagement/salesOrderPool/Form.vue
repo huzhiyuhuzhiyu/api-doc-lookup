@@ -19,6 +19,7 @@ export default {
         drawingNo: '',
         productName: '',
         issuanceNum: '',
+        source: '',
       },
       basicFormSchema: [],
       linesList: [],
@@ -51,6 +52,20 @@ export default {
       linesTableHeight: 0,
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
+      demandTypeMap: {
+        product: {
+          label: '成品需求',
+          value: 'sale_order_finished_product',
+        },
+        component: {
+          label: '子件需求',
+          value: 'sale_order_material',
+        },
+        mainComponent: {
+          label: '主子件需求',
+          value: 'sale_order_finished_material',
+        },
+      }
     }
   },
   created() {
@@ -59,11 +74,12 @@ export default {
     this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
   },
   methods: {
-    async init(row, type) {
+    async init(row, type, productSource) {
       this.btnType = type
-      this.isLinesShow = row.productSource === 'assemble'
-      this.title = this.getTitle(type)
+      this.isLinesShow = ['mainComponent', 'component'].includes(productSource)
+      this.title = this.getTitle(productSource)
       this.dataForm = deepClone(row)
+      this.dataForm.source = this.demandTypeMap[productSource].value
       if (this.isLinesShow) {
         await this.getBomLine(row.productsId)
       } else {
@@ -91,7 +107,7 @@ export default {
     },
 
     getTitle(type) {
-      return type === 'purchase' ? '成品需求' : '物料需求'
+      return this.demandTypeMap[type].label
     },
 
     calcQuantity(a, b, c, d) {
@@ -135,13 +151,14 @@ export default {
     },
 
     async handleSubmit() {
-      if (!this.linesList.length) return this.$message.error('无产品信息，请添加产品！')
+      if (!this.linesList.length) return this.$message.error('无BOM子件信息，无法提交！')
       // 校验表单
       this.btnLoading = true
       const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
       if (!valid_1) return this.btnLoading = false
       const deepParams = deepClone(this.dataForm)
       const params = {
+        ...deepParams,
         orderNo: deepParams.orderNo,
         ordersId: deepParams.ordersId,
         ordersLineId: deepParams.id,

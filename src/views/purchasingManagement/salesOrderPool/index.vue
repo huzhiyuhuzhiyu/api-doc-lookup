@@ -111,13 +111,12 @@ export default {
         default:
       }
     },
-    handleColumnClick(row, type) {
+    handleColumnClick(row, type, productSource) {
       switch ( type ) {
-        case 'purchase':
-        case 'assemble':
+        case 'add':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(row, type)
+            this.$refs.Form.init(row, type, productSource)
           })
           break;
         default:
@@ -197,13 +196,13 @@ export default {
           </template>
           <el-table-column label="操作" width="260" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'purchase')">
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'add','product')">
                 成品需求
               </el-button>
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'assemble')">
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'add','component')">
                 子件需求
               </el-button>
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'assemble')">
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'add','mainComponent')">
                 主子件需求
               </el-button>
             </template>

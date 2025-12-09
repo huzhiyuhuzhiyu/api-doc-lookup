@@ -3,23 +3,22 @@ import * as _ from "highcharts";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
-import {getQuotationsendlist} from "@/api/salesManagement";
-import {getLocationList} from "@/api/warehouseManagement/inventory";
-import {getcategoryTrees, getsaleOrderDetailList} from "@/api/salesManagement/assemblyOrders";
-import {getCooperativeData, getWarehouseInfo, getWarehouseList} from "@/api/basicData";
-import {dataProcessor} from "./data";
-import {purPurchaseOrderdetail} from "@/api/purchasingAndOutsourcingOrders";
-import {getStockPlanPallet} from "@/api/PackagingPalletPlan";
-import {addWarehouseData, updateWarehouseData} from "@/api/warehouseManagement/inboundAndOutbound";
+import { getQuotationsendlist } from "@/api/salesManagement";
+import { getLocationList } from "@/api/warehouseManagement/inventory";
+import { getcategoryTrees, getsaleOrderDetailList } from "@/api/salesManagement/assemblyOrders";
+import { getCooperativeData, getWarehouseInfo, getWarehouseList } from "@/api/basicData";
+import { dataProcessor } from "./data";
+import { getStockPlanPallet } from "@/api/PackagingPalletPlan";
+import { addWarehouseData, updateWarehouseData } from "@/api/warehouseManagement/inboundAndOutbound";
 import PrintDialog from "@/components/no_mount/printDialog/index.vue";
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
-import {getPrintBusInfo} from "@/api/system/printDev";
+import { getPrintBusInfo } from "@/api/system/printDev";
 import { getpurPurchaseReceiptReturnGoodsdetail } from "@/api/purchasingManagement/purchaseInquirySheet";
 
 
 export default {
   name: "inboundForm",
-  components: {BatchPrintBrowse, PrintDialog, TableFormProduct},
+  components: { BatchPrintBrowse, PrintDialog, TableFormProduct },
   mixins: [flowMixin, busFlow],
   data() {
     return {
@@ -70,15 +69,15 @@ export default {
         methodArr: {},
         listMethod: getsaleOrderDetailList,
         tableItems: [
-          {prop: 'orderNo', label: '订单号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-          {prop: 'productCode', label: '产品编码', sortable: 'custom'},
-          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-          {prop: 'waitDeliverNum', label: '待发货数量', minWidth: '160px', sortable: 'custom'},
-          {prop: 'deliveryDate', label: '交货日期', minWidth: '160px', sortable: 'custom'},
-          {prop: 'remark', label: '备注', minWidth: '160px'},
-          {prop: 'createTime', label: '创建时间', sortable: 'custom'}
+          { prop: 'orderNo', label: '订单号', minWidth: '220px', sortable: 'custom' },
+          { prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom' },
+          { prop: 'productCode', label: '产品编码', sortable: 'custom' },
+          { prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
+          { prop: 'mainUnit', label: '单位', sortable: 'custom' },
+          { prop: 'waitDeliverNum', label: '待发货数量', minWidth: '160px', sortable: 'custom' },
+          { prop: 'deliveryDate', label: '交货日期', minWidth: '160px', sortable: 'custom' },
+          { prop: 'remark', label: '备注', minWidth: '160px' },
+          { prop: 'createTime', label: '创建时间', sortable: 'custom' }
         ],
         listRequestObj: {
           cooperativePartnerId: '',
@@ -97,8 +96,8 @@ export default {
           ]
         },
         searchList: [
-          {prop: 'productName', label: '产品名称', type: 'input'},
-          {prop: 'productCode', label: '产品编码', type: 'input'},
+          { prop: 'productName', label: '产品名称', type: 'input' },
+          { prop: 'productCode', label: '产品编码', type: 'input' },
         ]
       },
 
@@ -131,8 +130,8 @@ export default {
       return {
         default: {
           api: null,
-          showActions: {selectProduct: true, batchDelete: true},
-          print: {enabled: false, enCode: '', fullName: ''},
+          showActions: { selectProduct: true, batchDelete: true },
+          print: { enabled: false, enCode: '', fullName: '' },
           defaultForm: {}
         },
         // 采购收货
@@ -146,16 +145,17 @@ export default {
             formatter: (item) => ({
               ...item,
               sourceNo: this.dataForm.sourceNo,
-              undeliveredQuantity: item.waitReceiptNum,
               ordersId: item.purchaseOrderId,
               noticeId: item.purchaseReceiptReturnGoodsId,
               noticeLineId: item.id,
               productDrawingNo: item.drawingNo,
               costPrice: item.price,
+              undeliveredQuantity: item.requiredReceivedQuantity,
+              receivedQuantity: item.receiptQuantity
             })
           },
           print: {},
-          showActions: {selectProduct: true, batchDelete: true}
+          showActions: { selectProduct: true, batchDelete: true }
         },
         // 成品包装入库
         inbound_finished_package: {
@@ -172,10 +172,10 @@ export default {
               noticeLineId: item.id,
               ordersId: item.productionOrderId,
               ordersLineId: item.documentLineId,
-              undeliveredQuantity: item.waitReceivedQuantity,
               productDrawingNo: item.productsDrawingNo,
               productName: item.productsName,
               productCode: item.productsCode,
+              undeliveredQuantity: item.waitReceivedQuantity,
             })
           },
           print: {
@@ -183,7 +183,7 @@ export default {
             enCode: '',
             fullName: '',
           },
-          showActions: {selectProduct: false, batchDelete: false},
+          showActions: { selectProduct: false, batchDelete: false },
           defaultForm: {
             sourceType: 'notice'
           }
@@ -229,7 +229,7 @@ export default {
   },
   methods: {
     async init(params) {
-      const {id, prefillData, btnType, businessType, classAttributeList, warehouseCode} = params;
+      const { id, prefillData, btnType, businessType, classAttributeList, warehouseCode } = params;
       this.btnType = btnType
       this.classAttributeList = classAttributeList
       this.warehouseCode = warehouseCode
@@ -275,12 +275,41 @@ export default {
           lines = [lines].filter(Boolean);
         }
         lines = dataProcessor.applyFilter(lines, config.filter);
-        console.log("lines ✈️ ", lines)
-        this.linesList = lines.map(item => ({
-          ...(config.formatter ? config.formatter(item) : item)
-        }));
 
-      } catch (error) {
+        // 先进行通用处理，包括金额计算
+        const commonProcessedLines = lines.map(item => {
+          // 通用字段处理
+          const processedItem = {
+            ...item,
+            sourceNo: this.dataForm.sourceNo || item.sourceNo,
+            businessType: this.businessType,
+            noticeLineId: item.id,
+            costPrice: item.price,
+            num: item.undeliveredQuantity,
+          };
+
+          processedItem.taxRate = processedItem.taxRate ? Number(processedItem.taxRate) : null;
+
+          if (processedItem.price && processedItem.taxRate !== null) {
+            processedItem.excludingTaxCostPrice = this.jnpf.math(
+              'divide',
+              [processedItem.price, 1 + processedItem.taxRate / 100],
+              6
+            );
+          } else {
+            processedItem.excludingTaxCostPrice = processedItem.price || 0;
+          }
+
+          this.calculateAmountFields(processedItem);
+
+          return processedItem;
+        });
+
+        this.linesList = commonProcessedLines.map(item =>
+          config.formatter ? config.formatter(item) : item
+        );
+
+      } catch ( error ) {
         console.error(`[${ this.businessType }] 数据加载失败:`, error);
         this.linesList = [];
       }
@@ -288,7 +317,7 @@ export default {
 
     async fetchAndSetWarehouseInfo() {
       try {
-        const {data: warehouses} = await getWarehouseList({code: this.warehouseCode});
+        const { data: warehouses } = await getWarehouseList({ code: this.warehouseCode });
         if (!warehouses || warehouses.length === 0) {
           this.$message.error('未找到匹配的仓库');
         }
@@ -297,15 +326,39 @@ export default {
         this.dataForm.warehouseName = primaryWarehouse.name;
         this.dataForm.warehouseId = primaryWarehouse.id;
 
-        const {data: warehouseDetails} = await getWarehouseInfo(primaryWarehouse.id);
+        const { data: warehouseDetails } = await getWarehouseInfo(primaryWarehouse.id);
         this.wareHouseInfo = warehouseDetails;
         this.dataForm.warehouseType = warehouseDetails.type;
         this.locationEnabled = warehouseDetails.locationStatus !== 'disabled';
         this.setBasicFormSchema()
         this.setLinesListItems()
-      } catch (error) {
+      } catch ( error ) {
       }
     },
+
+    calculateAmountFields(item) {
+      // 计算价税合计
+      item.totalAmount = this.jnpf.math(
+        'multiply',
+        [item.num, item.price || 0],
+        2
+      );
+
+      // 计算税额
+      const taxPerUnit = this.jnpf.math(
+        'subtract',
+        [item.price || 0, item.excludingTaxCostPrice || 0]
+      );
+      item.taxAmount = this.jnpf.math('multiply', [item.num, taxPerUnit], 2);
+
+      // 计算未税金额
+      item.excludingTaxTotalAmount = this.jnpf.math(
+        'subtract',
+        [item.totalAmount, item.taxAmount],
+        2
+      );
+    },
+
 
     setBasicFormSchema() {
       this.basicFormSchema = [
@@ -315,7 +368,7 @@ export default {
           value: "",
           type: "input",
           disabled: true,
-          itemRules: [{required: true, trigger: "blur"}],
+          itemRules: [{ required: true, trigger: "blur" }],
         },
         {
           prop: "sourceNo",
@@ -323,7 +376,7 @@ export default {
           value: "",
           type: "input",
           disabled: true,
-          itemRules: [{required: true, trigger: "blur"}],
+          itemRules: [{ required: true, trigger: "blur" }],
         },
         {
           prop: "businessType",
@@ -332,7 +385,7 @@ export default {
           type: "select",
           options: this.getDictDataSync('warehouseBusinessType'),
           disabled: true,
-          itemRules: [{required: true, trigger: "blur"}],
+          itemRules: [{ required: true, trigger: "blur" }],
         },
         {
           prop: "partnerName",
@@ -347,19 +400,19 @@ export default {
           value: "",
           type: "custom",
           customComponent: "ComSelect-page",
-          itemRules: [{required: true, trigger: "change"}],
+          itemRules: [{ required: true, trigger: "change" }],
           title: '选择供应商',
           treeTitle: '供应商分类',
           renderTree: true,
           multiple: false,
           clearable: true,
-          methodArr: {method: getcategoryTrees, requestObj: {type: 'supplier'}},
+          methodArr: { method: getcategoryTrees, requestObj: { type: 'supplier' } },
           listMethod: getCooperativeData,
           tableItems: [
-            {prop: 'code', label: '供应商编码'},
-            {prop: 'name', label: '供应商名称'},
-            {prop: 'nameEn', label: '英文名称'},
-            {prop: 'taxId', label: '税号'}
+            { prop: 'code', label: '供应商编码' },
+            { prop: 'name', label: '供应商名称' },
+            { prop: 'nameEn', label: '英文名称' },
+            { prop: 'taxId', label: '税号' }
           ],
           listRequestObj: {
             code: '',
@@ -380,8 +433,8 @@ export default {
             ]
           },
           searchList: [
-            {prop: 'code', label: '供应商编码', type: 'input'},
-            {prop: 'name', label: '供应商名称', type: 'input'}
+            { prop: 'code', label: '供应商编码', type: 'input' },
+            { prop: 'name', label: '供应商名称', type: 'input' }
           ],
           change: (id, data) => {
             // dom更新后重新校验此元素
@@ -406,19 +459,19 @@ export default {
           value: "",
           type: "custom",
           customComponent: "ComSelect-page",
-          itemRules: [{required: true, trigger: "change"}],
+          itemRules: [{ required: true, trigger: "change" }],
           title: '选择客户',
           treeTitle: '客户分类',
           renderTree: true,
           multiple: false,
           clearable: true,
-          methodArr: {method: getcategoryTrees, requestObj: {type: 'customer'}},
+          methodArr: { method: getcategoryTrees, requestObj: { type: 'customer' } },
           listMethod: getCooperativeData,
           tableItems: [
-            {prop: 'code', label: '供应商编码'},
-            {prop: 'name', label: '供应商名称'},
-            {prop: 'nameEn', label: '英文名称'},
-            {prop: 'taxId', label: '税号'}
+            { prop: 'code', label: '供应商编码' },
+            { prop: 'name', label: '供应商名称' },
+            { prop: 'nameEn', label: '英文名称' },
+            { prop: 'taxId', label: '税号' }
           ],
           listRequestObj: {
             code: '',
@@ -439,8 +492,8 @@ export default {
             ]
           },
           searchList: [
-            {prop: 'code', label: '供应商编码', type: 'input'},
-            {prop: 'name', label: '供应商名称', type: 'input'}
+            { prop: 'code', label: '供应商编码', type: 'input' },
+            { prop: 'name', label: '供应商名称', type: 'input' }
           ],
           change: (id, data) => {
             // dom更新后重新校验此元素
@@ -481,7 +534,7 @@ export default {
               this.dataForm.warehouseType = ''
             }
           },
-          requestObj: {type: 'normal', state: 'enable'},
+          requestObj: { type: 'normal', state: 'enable' },
           dialogTitle: '选择仓库',
           method: getWarehouseList,
           itemDisabled: true
@@ -494,13 +547,13 @@ export default {
           customComponent: 'ComSelect-page',
           renderTree: false,
           searchList: [
-            {prop: 'name', label: '库位名称', type: 'input'},
-            {prop: 'code', label: '库位编码', type: 'input'}
+            { prop: 'name', label: '库位名称', type: 'input' },
+            { prop: 'code', label: '库位编码', type: 'input' }
           ],
           tableItems: [
-            {prop: 'name', label: '库位名称'},
-            {prop: 'code', label: '库位编码'},
-            {prop: 'remark', label: '备注'}
+            { prop: 'name', label: '库位名称' },
+            { prop: 'code', label: '库位编码' },
+            { prop: 'remark', label: '备注' }
           ],
           change: (val, data, paramsObj) => {
             if (!val && data.length) return
@@ -530,7 +583,7 @@ export default {
             warehouseId: this.dataForm.warehouseId,
             pageNum: 1,
             pageSize: 20,
-            orderItems: [{asc: false, column: ''}, {asc: false, column: 'createTime'}],
+            orderItems: [{ asc: false, column: '' }, { asc: false, column: 'createTime' }],
             state: 'enable'
           },
           dialogTitle: '选择库位',
@@ -543,13 +596,13 @@ export default {
           value: 'qualified',
           type: 'select',
           options: [
-            {label: '合格', value: 'qualified'},
-            {label: '待检验', value: 'unInspect'}
+            { label: '合格', value: 'qualified' },
+            { label: '待检验', value: 'unInspect' }
           ],
           clearable: false,
           render: ['inbound_purchase'].includes(this.businessType),
           itemRules: [
-            {required: true, trigger: 'change'}
+            { required: true, trigger: 'change' }
           ]
         },
         {
@@ -557,7 +610,7 @@ export default {
           label: "单据日期",
           value: this.jnpf.getToday(),
           type: "date",
-          itemRules: [{required: true, trigger: "change"}],
+          itemRules: [{ required: true, trigger: "change" }],
         },
         {
           prop: "remark",
@@ -623,17 +676,18 @@ export default {
           prop: 'shelfSpaceName',
           label: '库位',
           value: '',
+          minWidth: 220,
           type: 'custom',
           customComponent: 'ComSelect-page',
           renderTree: false,
           searchList: [
-            {prop: 'name', label: '库位名称', type: 'input'},
-            {prop: 'code', label: '库位编码', type: 'input'}
+            { prop: 'name', label: '库位名称', type: 'input' },
+            { prop: 'code', label: '库位编码', type: 'input' }
           ],
           tableItems: [
-            {prop: 'name', label: '库位名称'},
-            {prop: 'code', label: '库位编码'},
-            {prop: 'remark', label: '备注'}
+            { prop: 'name', label: '库位名称' },
+            { prop: 'code', label: '库位编码' },
+            { prop: 'remark', label: '备注' }
           ],
           beforeSubmit: (data, paramsObj) => {
             const groupKey = paramsObj.scope.row.noticeLineId || paramsObj.scope.row.ordersLineId
@@ -643,40 +697,46 @@ export default {
             }
             return true
           },
-          change: (val, data, paramsObj) => {
-            this.$nextTick(() => {
-              this.$refs['tableForm'].$refs.main.validateField(`data.${ paramsObj.scope.$index }.shelfSpaceName`)
-            })
+          change: async (val, data, paramsObj) => {
             if (!val && data.length) return
+
+            const rowIndex = paramsObj.scope.$index
+            const updatedRow = { ...paramsObj.scope.row }
+
             if (data && data.length) {
-              paramsObj.scope.row.shelfSpaceId = data[0].all.id
-              paramsObj.scope.row.shelfSpaceName = data[0].all.name
-              paramsObj.scope.row.warehouseId = data[0].all.warehouseId
-              paramsObj.scope.row.warehouseName = data[0].all.warehouseName
+              updatedRow.shelfSpaceId = data[0].all.id
+              updatedRow.shelfSpaceName = data[0].all.name
+              updatedRow.warehouseId = data[0].all.warehouseId
+              updatedRow.warehouseName = data[0].all.warehouseName
             } else {
-              paramsObj.scope.row.shelfSpaceId = ''
-              paramsObj.scope.row.shelfSpaceName = ''
-              paramsObj.scope.row.warehouseId = ''
-              paramsObj.scope.row.warehouseName = ''
+              updatedRow.shelfSpaceId = ''
+              updatedRow.shelfSpaceName = ''
+              updatedRow.warehouseId = ''
+              updatedRow.warehouseName = ''
             }
+
+            this.$set(this.linesList, rowIndex, updatedRow)
+
+            this.$nextTick(() => {
+              this.$refs['linesForm'].$refs.main.validateField(`data.${ rowIndex }.shelfSpaceName`)
+            })
           },
           listRequestObj: {
             warehouseId: this.dataForm.warehouseId,
             pageNum: 1,
             pageSize: 20,
-            orderItems: [{asc: false, column: ''}, {asc: false, column: 'createTime'}],
+            orderItems: [{ asc: false, column: '' }, { asc: false, column: 'createTime' }],
             state: 'enable'
           },
           dialogTitle: '选择库位',
           listMethod: getLocationList,
-          width: '180',
           itemRules: [
             {
               validator: this.formValidate({
                 type: 'noEmtry', params: ['', (...args) => validErrorMessage('库位', ...args)]
               }), trigger: 'no'
             },
-            {required: true, trigger: 'no'}
+            { required: true, trigger: 'no' }
           ],
           render: this.locationEnabled
         },
@@ -697,8 +757,36 @@ export default {
         {
           prop: 'num',
           label: `${ this.inboundLabel }数量`,
-          type: 'view',
-          minWidth: 140,
+          type: 'input',
+          minWidth: 220,
+          itemRules: [
+            {
+              validator: this.formValidate({ type: 'noEmtry', params: [null, (...args) => validErrorMessage(`${ this.inboundLabel }数量`, ...args)] }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({ type: 'decimal', params: [20, 6, null, (...args) => validErrorMessage(`${ this.inboundLabel }数量`, ...args)] }),
+              trigger: 'blur'
+            },
+            { validator: this.formValidate('positiveNumber', null, (...args) => validErrorMessage(`${ this.inboundLabel }数量`, ...args)), trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'calc',
+                params: [(rowIndex, value) => {
+                  if ([].includes(this.businessType)) return true
+                  return Number(value) <= Number(this.linesList[rowIndex].undeliveredQuantity)
+                }, `不能超过对应待${ this.inboundLabel }数量`, (...args) => validErrorMessage(`${ this.inboundLabel }数量`, ...args)]
+              }), trigger: 'blur'
+            }
+          ],
+          input: async (val, scope, transformFlag) => {
+            await this.$nextTick()
+
+            const item = scope.row
+
+            this.calculateAmountFields(item);
+          }
         },
         {
           prop: 'receivedQuantity',
@@ -712,15 +800,79 @@ export default {
           type: 'view',
           minWidth: 140,
         },
+        ...(() => {
+          if (['inbound_purchase', 'inbound_external', 'inbound_sale_return', 'inbound_purchase_exchange', 'inbound_purchase2', 'inbound_external2'].includes(this.businessType)) {
+            // 获取税率(数据字典)
+            const taxrateDict = this.$store.getters.dictionaryList.find(item => item.enCode === 'taxrate')
+            const taxRateList = taxrateDict.dictionaryList.map(item => ({
+              label: item.fullName,
+              value: Number(item.enCode)
+            }))
+            return [
+              {
+                prop: 'price',
+                label: '单价(含税)',
+                minWidth: 160,
+                type: 'input',
+                itemRules: [
+                  { required: true, trigger: 'blur' },
+                  {
+                    validator: this.formValidate({ type: 'decimal', params: [20, 6, null, (...args) => validErrorMessage('单价(含税)', ...args)] }),
+                    trigger: 'blur'
+                  }
+                ],
+                input: (val, scope) => {
+                  this.linesListItems.find(item => item.prop === 'num').input(scope.row.num, scope)
+                },
+                clearable: true
+              },
+              {
+                prop: 'excludingTaxCostPrice',
+                label: '单价(不含税)',
+                minWidth: 160,
+                type: 'view',
+                itemRules: [
+                  { required: true, trigger: 'blur' },
+                  {
+                    validator: this.formValidate({ type: 'decimal', params: [20, 6, null, (...args) => validErrorMessage('单价(不含税)', ...args)] }),
+                    trigger: 'blur'
+                  }
+                ],
+                input: (val, scope) => {
+                  this.linesListItems.find(item => item.prop === 'num').input(scope.row.num, scope, 'changeExcludingTaxCostPrice')
+                },
+                clearable: true,
+              },
+              {
+                prop: 'taxRate',
+                label: '税率',
+                minWidth: 160,
+                type: 'select',
+                options: taxRateList,
+                itemRules: [
+                  { required: true, trigger: 'change' },
+                ],
+                change: (val, scope) => {
+                  this.linesListItems.find(item => item.prop === 'num').input(scope.row.num, scope)
+                },
+                clearable: true
+              },
+              { prop: 'taxAmount', label: '税额', minWidth: 160, type: 'view' },
+              { prop: 'totalAmount', label: '总金额(含税)', minWidth: 160, type: 'view' },
+              { prop: 'excludingTaxTotalAmount', label: '总金额(不含税)', minWidth: 160, type: 'view' },
+            ]
+          }
+          return []
+        })(),
       ]
       this.$nextTick(() => {
-        this.$refs.tableForm.setDefaultValue()
-        this.$refs.tableForm.$refs.tableRef.doLayout()
+        this.$refs.linesForm.setDefaultValue()
+        this.$refs.linesForm.$refs.tableRef.doLayout()
       })
     },
 
     async getOrderNoConfig() {
-      const {number} = await this.$store.dispatch('base/getOrderNoConfig', 'RKDH')
+      const { number } = await this.$store.dispatch('base/getOrderNoConfig', 'RKDH')
       this.dataForm.orderNo = `${ number }`
     },
 
@@ -765,7 +917,7 @@ export default {
     },
 
     getTitle(type) {
-      switch (type) {
+      switch ( type ) {
         case 'add':
         case 'copy':
           return `创建${ this.title }`
@@ -780,19 +932,19 @@ export default {
       this.loading = true
       try {
         const res = await getQuotationsendlist(id)
-        const {msg, data} = res
+        const { msg, data } = res
         if (msg === 'Success') {
           this.dataForm = data.notice
           this.linesList = data.noticeLineList
           this.loading = false
         }
-      } catch (err) {
+      } catch ( err ) {
         this.loading = false
       }
     },
 
     summaryMethod(param) {
-      const {columns, data} = param
+      const { columns, data } = param
       const sums = []
       columns.forEach((column, index) => {
         if (column.type === 'index') {
@@ -842,7 +994,7 @@ export default {
           id: id
         }))
         this.$refs.batchPrint.print(printData);
-      } catch (e) {
+      } catch ( e ) {
       }
     },
 
@@ -851,7 +1003,7 @@ export default {
       // 校验表单
       this.btnLoading = true
       const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
-      const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
+      const valid_2 = await this.$refs['linesForm'].$refs.main.validate().catch(err => false)
       if (!valid_1 || !valid_2) return this.btnLoading = false
 
       this.dataForm.documentStatus = 'submit'
@@ -874,13 +1026,13 @@ export default {
       try {
         const apiMethod = this.apiMethodActions[this.btnType]
         const res = await apiMethod(params)
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success(MSG)
           isPrint ? this.printView(this.dataForm) : this.goBack()
         }
         this.btnLoading = false
-      } catch (error) {
+      } catch ( error ) {
         this.btnLoading = false
       }
     },
@@ -918,23 +1070,24 @@ export default {
                   <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
                       <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                        :btnType="btnType"/>
+                                :btnType="btnType"/>
                     </el-collapse-item>
                     <el-collapse-item class="productInfo"
-                      title="产品信息"
-                      name="productInfo">
+                                      title="产品信息"
+                                      name="productInfo">
                       <div class="TableForm_title">
                       </div>
                       <TableForm-product
                         @input="contentChanges"
                         :value="linesList"
                         :hasToolbar="false"
-                        ref="tableForm"
+                        ref="linesForm"
                         :tableItems="linesListItems"
                         :btnType="btnType"
                         :hasActionbar="false"
                         :tableProps="{
                         is: 'JNPF-table',
+                        customKey:`dbIncomAndOutInventory_tableForm_${businessType}`,
                         fixedNO: true,
                         hasC: hasC,
                         height: linesTableHeight,
@@ -943,7 +1096,8 @@ export default {
                         customColumn: true,
                         summaryMethod,
                         'show-summary': true
-                      }">
+                      }"
+                      >
                         <template slot="top">
                           <div class="tableTopContainer">
                             <div class="left">
@@ -953,14 +1107,14 @@ export default {
                                 </el-button>
                                 <span v-if="businessConfig.showActions.selectProduct && businessConfig.showActions.batchDelete">|</span>
                                 <el-button v-if="businessConfig.showActions.batchDelete" type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
-                                  @click="$refs.tableForm.batchDelete()">批量删除
+                                           @click="$refs.linesForm.batchDelete()">批量删除
                                 </el-button>
                               </template>
                             </div>
                             <div class="right">
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                                  @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
+                                         @click="$refs.linesForm.$refs.tableRef.showDrawer()"/>
                               </el-tooltip>
                             </div>
                           </div>
@@ -975,10 +1129,10 @@ export default {
         </div>
       </div>
       <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
-        :printQuery="printQuery" :enCode="businessConfig.print.enCode" ref="printTemplate"/>
+                   :printQuery="printQuery" :enCode="businessConfig.print.enCode" ref="printTemplate"/>
       <BatchPrintBrowse ref="batchPrint" :fullName="businessConfig.print.fullName"/>
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false"
-        @change="submitAllProduct"/>
+                      @change="submitAllProduct"/>
     </div>
   </transition>
 </template>

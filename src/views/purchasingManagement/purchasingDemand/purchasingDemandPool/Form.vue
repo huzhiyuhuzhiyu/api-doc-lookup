@@ -304,9 +304,9 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                          <el-table-column v-if="isZY" prop="productSymbol" label="代号" width="160">
+                          <el-table-column prop="discount" label=加点 width="160">
                               <template slot-scope="scope">
-                                  <el-input placeholder="请输入代号" v-model="scope.row.productSymbol" :disabled="type === 'look'"></el-input>
+                                  <el-input placeholder="请输入加点" v-model="scope.row.discount" :disabled="type === 'look'"></el-input>
                               </template>
                           </el-table-column>
                         <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
@@ -322,41 +322,41 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="rawStockMill" label="原材料厂家" width="120"
-                          v-if="isXY || isJR">
-                          <template slot-scope="scope">
-                            <el-form-item>
-                              <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
-                                style="width: 100%;">
-                                <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"
-                                  :label="item.name" :value="item.name"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
+<!--                        <el-table-column prop="rawStockMill" label="原材料厂家" width="120"-->
+<!--                          v-if="isXY || isJR">-->
+<!--                          <template slot-scope="scope">-->
+<!--                            <el-form-item>-->
+<!--                              <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable-->
+<!--                                style="width: 100%;">-->
+<!--                                <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"-->
+<!--                                  :label="item.name" :value="item.name"></el-option>-->
+<!--                              </el-select>-->
+<!--                            </el-form-item>-->
+<!--                          </template>-->
+<!--                        </el-table-column>-->
 
-                        <el-table-column
-                          v-if=" sealingCoverTypingFlag === '1'"
-                          prop="pairingModeName" label="配对方式" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in pairingModeList" :key="index"
-                                :label="item.name" :value="item.id"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
-                        <el-table-column prop="processId" label="工序" min-width="120">
-                          <template slot-scope="scope">
-                            <el-form-item>
-                              <el-select v-model="scope.row.processId" placeholder="请选择" clearable>
-                                <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                                  :value="item.id"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
+<!--                        <el-table-column-->
+<!--                          v-if=" sealingCoverTypingFlag === '1'"-->
+<!--                          prop="pairingModeName" label="配对方式" min-width="120">-->
+<!--                          <template slot-scope="scope">-->
+<!--                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择" clearable-->
+<!--                              style="width: 100%;">-->
+<!--                              <el-option v-for="(item, index) in pairingModeList" :key="index"-->
+<!--                                :label="item.name" :value="item.id"></el-option>-->
+<!--                            </el-select>-->
+<!--                          </template>-->
+<!--                        </el-table-column>-->
+<!--                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />-->
+<!--                        <el-table-column prop="processId" label="工序" min-width="120">-->
+<!--                          <template slot-scope="scope">-->
+<!--                            <el-form-item>-->
+<!--                              <el-select v-model="scope.row.processId" placeholder="请选择" clearable>-->
+<!--                                <el-option v-for="(item, index) in list8" :key="index" :label="item.name"-->
+<!--                                  :value="item.id"></el-option>-->
+<!--                              </el-select>-->
+<!--                            </el-form-item>-->
+<!--                          </template>-->
+<!--                        </el-table-column>-->
                         <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip key="1">
                           <template slot-scope="scope">

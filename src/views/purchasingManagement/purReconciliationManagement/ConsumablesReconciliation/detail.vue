@@ -2,11 +2,11 @@
 import purReconManagementDetail from '../purReconManagementDetail/index.vue'
 
 export default {
-  components: {purReconManagementDetail},
+  components: { purReconManagementDetail },
   name: "detail"
 }
 </script>
 
 <template>
-  <purReconManagementDetail source="procure"/>
+  <purReconManagementDetail :query-object="{ sourceList: ['procure'] }"/>
 </template>

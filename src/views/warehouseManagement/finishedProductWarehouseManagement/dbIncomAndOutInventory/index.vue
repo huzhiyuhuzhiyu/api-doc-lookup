@@ -16,11 +16,13 @@ import outboundSaleSendForm from "@/views/salesManagement/shippingnotice/saleMet
 import packingForm from './module/packingForm.vue'
 import autoRecBatchPacking from "./module/components/autoRecBatchPacking.vue";
 import InboundForm from "./module/inboundForm.vue";
+import OutboundForm from "./module/outboundForm.vue";
 
 export default {
   name: "WarehouseBusinessProcess",
   components: {
     outboundSaleSendForm,
+    OutboundForm,
     InboundForm,
     autoRecBatchPacking,
     packingForm,
@@ -65,6 +67,7 @@ export default {
       isPackingDialogVisible: false,
       isPrintDialogVisible: false,
       isInboundDialogVisible: false,
+      isOutboundDialogVisible: false,
 
       printConfig: {
         category: ''
@@ -371,6 +374,17 @@ export default {
     },
 
     handleOutboundOperation(row) {
+      this.isOutboundDialogVisible = true;
+      this.$nextTick(() => {
+        this.$refs.outboundForm.init({
+          id: '',
+          prefillData: row,
+          btnType: 'add',
+          businessType: this.activeBusinessType,
+          classAttributeList: this.classAttributeList,
+          warehouseCode: this.warehouseCode
+        });
+      });
     },
 
     handleInboundOperation(row) {
@@ -525,7 +539,7 @@ export default {
         >
           <template v-for="column in tableColumnsConfig">
             <el-table-column
-              v-if="typeof column.show === 'function' ? column.show() : true"
+              v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
               :key="column.prop"
               :prop="column.prop"
               :label="column.label"
@@ -619,7 +633,11 @@ export default {
       v-if="isInboundDialogVisible"
       @close="closeDialog"
     />
-
+    <outboundForm
+      ref="outboundForm"
+      v-if="isOutboundDialogVisible"
+      @close="closeDialog"
+    />
     <!-- 详情组件 -->
     <component
       v-if="hasDetailComponent && isDetailDialogVisible"

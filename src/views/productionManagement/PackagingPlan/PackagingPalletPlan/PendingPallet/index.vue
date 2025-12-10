@@ -305,7 +305,7 @@ export default {
               custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
               <template v-for="column in batchColumns">
                 <el-table-column
-                  v-if="typeof column.show === 'function' ? column.show() : true"
+                  v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
                   :key="column.prop"
                   :prop="column.prop"
                   :label="column.label"
@@ -376,7 +376,7 @@ export default {
               custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
               <template v-for="column in singleBoxColumns">
                 <el-table-column
-                  v-if="typeof column.show === 'function' ? column.show() : true"
+                  v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
                   :key="column.prop"
                   :prop="column.prop"
                   :label="column.label"

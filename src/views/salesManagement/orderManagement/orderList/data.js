@@ -1,6 +1,6 @@
-import {getCooperativeData} from "@/api/basicData";
+import { getCooperativeData } from "@/api/basicData";
 import global from "@/utils/global";
-import {deepClone} from "@/utils";
+import { deepClone } from "@/utils";
 
 /**
  * @description 按钮权限列表
@@ -60,7 +60,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       disabled: true,
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "orderType",
@@ -68,7 +68,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "select",
       options: global.salesOrderType,
-      itemRules: [{required: true, trigger: "change"}],
+      itemRules: [{ required: true, trigger: "change" }],
     },
     {
       prop: "cooperativePartnerName",
@@ -76,19 +76,19 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "custom",
       customComponent: "ComSelect-page",
-      itemRules: [{required: true, trigger: "change"}],
+      itemRules: [{ required: true, trigger: "change" }],
       title: '选择客户',
       renderTree: false,
       multiple: false,
       clearable: true,
       listMethod: getCooperativeData,
       tableItems: [
-        {prop: 'name', label: '客户名称', minWidth: '220px', sortable: 'custom'},
-        {prop: 'code', label: '客户编码', sortable: 'custom'},
-        {prop: 'contacts', label: '联系人', sortable: 'custom'},
-        {prop: 'mobilePhone', label: '手机', sortable: 'custom'},
-        {prop: 'phone', label: '电话', sortable: 'custom'},
-        {prop: 'salespersonIdText', label: '所属销售', sortable: 'custom'},
+        { prop: 'name', label: '客户名称', minWidth: '220px', sortable: 'custom' },
+        { prop: 'code', label: '客户编码', sortable: 'custom' },
+        { prop: 'contacts', label: '联系人', sortable: 'custom' },
+        { prop: 'mobilePhone', label: '手机', sortable: 'custom' },
+        { prop: 'phone', label: '电话', sortable: 'custom' },
+        { prop: 'salespersonIdText', label: '所属销售', sortable: 'custom' },
       ],
       listRequestObj: {
         name: '',
@@ -107,7 +107,7 @@ export function getBasicFormSchema(dataFormRef, context) {
         ]
       },
       searchList: [
-        {prop: 'name', label: '客户名称', type: 'input'},
+        { prop: 'name', label: '客户名称', type: 'input' },
       ],
       change: (id, data) => {
         context.dataForm.cooperativePartnerName = data[0].all.name
@@ -136,7 +136,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       disabled: true,
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "contractNo",
@@ -150,7 +150,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "custom",
       customComponent: "ComSelect",
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
       change: async (val) => {
         context.dataForm.salesId = ""
         if (!val || !val.length) return context.dataForm.departmentId = ''
@@ -169,21 +169,21 @@ export function getBasicFormSchema(dataFormRef, context) {
       get options() {
         return context.salesList
       },
-      itemRules: [{required: true, trigger: "change"}],
+      itemRules: [{ required: true, trigger: "change" }],
     },
     {
       prop: "orderDate",
       label: "订单日期",
       value: "",
       type: "date",
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "deliveryDate",
       label: "交货日期",
       value: "",
       type: "date",
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "remark",
@@ -208,22 +208,16 @@ export function getColumns() {
       prop: "orderNo",
       label: "订单编号",
       minWidth: 220,
-      align: "left",
-      sortable: 'custom',
     },
     {
       prop: "cooperativePartnerCode",
       label: "客户编码",
       minWidth: 220,
-      align: "left",
-      sortable: 'custom',
     },
     {
       prop: "cooperativePartnerName",
       label: "客户名称",
       minWidth: 180,
-      align: "left",
-      sortable: 'custom',
     },
     {
       prop: "orderType",
@@ -231,46 +225,36 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'salesOrderType',
-      sortable: 'custom',
     },
     {
       prop: "departmentName",
       label: "所属部门",
       minWidth: 120,
-      align: "left",
-      sortable: 'custom',
     },
     {
       prop: "salesName",
       label: "所属销售",
       minWidth: 120,
-      sortable: 'custom',
-      align: "left",
     },
     {
       prop: "orderDate",
       label: "订单日期",
       minWidth: 120,
-      sortable: 'custom',
     },
     {
       prop: "contractNo",
       label: "客户合同号",
       minWidth: 220,
-      align: "left",
-      sortable: 'custom',
     },
     {
       prop: "num",
       label: "订单数量",
       minWidth: 100,
-      sortable: 'custom',
     },
     {
       prop: "deliveryDate",
       label: "交货日期",
       minWidth: 120,
-      sortable: 'custom',
     },
     {
       prop: "deliveryStatus",
@@ -278,7 +262,6 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'deliveryStatus',
-      sortable: 'custom',
     },
     {
       prop: "documentStatus",
@@ -286,19 +269,16 @@ export function getColumns() {
       minWidth: 120,
       slot: true,
       dictType: 'documentStatusList',
-      sortable: 'custom',
     },
     {
       prop: "createTime",
       label: "创建时间",
       minWidth: 180,
-      sortable: 'custom',
     },
     {
       prop: "createByName",
       label: "创建人",
       minWidth: 120,
-      sortable: 'custom',
     }
   ]
 }

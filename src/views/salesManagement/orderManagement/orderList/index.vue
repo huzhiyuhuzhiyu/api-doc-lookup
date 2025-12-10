@@ -303,19 +303,24 @@ export default {
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="orderList"
-                    v-loading="loading"
-                    :data="tableData"
-                    :has-c="true"
-                    @selection-change="(val) => selectedRow = val"
-                    :row-key="'id'"
-                    fixedNO
-                    :setColumnDisplayList="columnList"
-                    ref="dataTable"
-                    custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+        <JNPF-table
+          customKey="orderList"
+          v-loading="loading"
+          :data="tableData"
+          :has-c="true"
+          @selection-change="(val) => selectedRow = val"
+          :row-key="'id'"
+          fixedNO
+          :setColumnDisplayList="columnList"
+          ref="dataTable"
+          custom-column
+          :listQuery="listQuery"
+          @queryChange="initData"
+          :queryJson="superQueryJson"
+        >
           <template v-for="column in columnsConfig">
             <el-table-column
-              v-if="typeof column.show === 'function' ? column.show() : true"
+              v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
               :key="column.prop"
               :prop="column.prop"
               :label="column.label"

@@ -1,6 +1,4 @@
 <script>
-import SuperQuery from '@/components/SuperQuery/index.vue'
-
 import { buttonList, getColumns } from "./data";
 import { getsaleOrderList } from "@/api/salesManagement/assemblyOrders";
 import { getPrintBusInfo } from "@/api/system/printDev";
@@ -14,7 +12,6 @@ export default {
   components: {
     BatchPrintBrowse,
     PrintDialog,
-    SuperQuery,
     Form
   },
   data() {
@@ -81,9 +78,6 @@ export default {
       columnsConfig: getColumns(),
       selectedRow: [],
     }
-  },
-  created() {
-
   },
   methods: {
     async initData(listQuery) {
@@ -236,24 +230,45 @@ export default {
           fixedNO
           :setColumnDisplayList="columnList"
           ref="dataTable"
-          :auto-column="true"
-          :columns-config="columnsConfig"
+          custom-column
           :listQuery="listQuery"
           @queryChange="initData"
-          :queryJson="superQueryJson">
-          <template slot="extra-columns">
-            <el-table-column label="操作" width="180" fixed="right">
-              <template slot-scope="{ row }">
-                <el-button size="mini" type="text"
-                          @click="handleColumnClick(row, 'look')">
-                  详情
-                </el-button>
-                <el-button size="mini" type="text" @click="handleColumnClick(row, 'confirmDeliveryDate')">
-                  完成
-                </el-button>
+          :queryJson="superQueryJson"
+        >
+          <template v-for="column in columnsConfig">
+            <el-table-column
+              v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
+              :key="column.prop"
+              :prop="column.prop"
+              :label="column.label"
+              :min-width="column.minWidth"
+              :sortable="column.sortable"
+              :fixed="column.fixed"
+              :align="getAlign(column.align)"
+            >
+              <template v-if="column.slot" v-slot="scope">
+                <template v-if="column.dictType">
+                   <span>
+                <el-tag
+                  :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
+                    global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
+                  }}</el-tag>
+                   </span>
+                </template>
               </template>
             </el-table-column>
           </template>
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="{ row }">
+              <el-button size="mini" type="text"
+                @click="handleColumnClick(row, 'look')">
+                详情
+              </el-button>
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'confirmDeliveryDate')">
+                完成
+              </el-button>
+            </template>
+          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
         />

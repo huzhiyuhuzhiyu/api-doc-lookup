@@ -2,11 +2,11 @@
 import purReconManagementDetail from '../purReconManagementDetail/index.vue'
 
 export default {
-  components: {purReconManagementDetail},
+  components: { purReconManagementDetail },
   name: "detail"
 }
 </script>
 
 <template>
-  <purReconManagementDetail source="sale_order_finished_product"/>
+  <purReconManagementDetail :query-object="{ sourceList: ['sale_order_finished_product'] }"/>
 </template>

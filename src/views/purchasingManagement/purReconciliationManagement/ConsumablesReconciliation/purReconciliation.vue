@@ -2,11 +2,11 @@
 import purReconciliation from '../purReconciliation/index.vue'
 
 export default {
-  components: {purReconciliation},
+  components: { purReconciliation },
   name: "index"
 }
 </script>
 
 <template>
-  <purReconciliation source="procure"/>
+  <purReconciliation :query-object="{ sourceList: ['procure'] }"/>
 </template>

@@ -129,9 +129,9 @@ export default {
   name: 'purReconManagement',
   components: { JNPFForm, ExportForm, SuperQuery,orderDetailForm,deliveryNoteDetailForm,purchaseTH },
   props: {
-    source: {
-      type: String,
-      default: ''
+    queryObject: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
@@ -184,7 +184,7 @@ export default {
       formVisible: false,
       listLoading: false,
       listQuery: {
-        source: this.source,
+        ...this.queryObject,
         businessType: 'purchase_delivery_return',
       },
       receiptReturnTypeList: [
@@ -382,25 +382,35 @@ export default {
     },
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle() {
-      if (this.selectData.length === 0) {
-        this.$message({
-          message: '请选择你要生成的采购对账单',
-          type: 'error',
-          duration: 1500
-        })
-      } else {
-        let firstCode = this.selectData[0].partnerCode
-        let allCode = this.selectData.every((obj) => obj.partnerCode === firstCode)
-        if (allCode) {
-          this.formVisible = true
-          this.$nextTick(() => {
-            this.$refs.procureForm.init(this.selectData, this.source)
-          })
-        } else {
-          this.$message.error('请选择供应商相同的通知单!')
-        }
+      if (!this.selectData.length) return this.$message.error('请选择你要生成的采购对账单')
+
+      // 检查是否所有项都有相同的供应商代码和来源
+      const errors = this.checkConditions(this.selectData)
+      if (errors.length > 0) return this.$message.error(errors.join('；'))
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.procureForm.init(this.selectData)
+      })
+    },
+    checkConditions(arr) {
+      const errors = []
+
+      const firstPartnerCode = arr[0].partnerCode
+      const hasDifferentPartnerCode = arr.some(item =>
+        item.partnerCode !== firstPartnerCode
+      )
+      if (hasDifferentPartnerCode) {
+        errors.push('只能选择相同供应商的明细订单')
       }
-    }
+
+      const firstSource = arr[0].source
+      const hasDifferentSource = arr.some(item => item.source !== firstSource)
+      if (hasDifferentSource) {
+        errors.push('只能选择相同来源的明细订单')
+      }
+
+      return errors
+    },
   }
 }
 </script>

@@ -78,7 +78,18 @@
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
-
+                <el-col :span="6">
+                  <el-form-item label="银行账号" prop="bankId">
+                    <el-select v-model="dataForm.bankId" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option
+                        v-for="item in bankAccountList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
                 <el-col :span="12">
                   <el-form-item label="备注" prop="remark">
                     <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200"
@@ -117,10 +128,11 @@
 </template>
 
 <script>
-import { getfinAccountList, getfinAccountDetail } from '@/api/ReconciliaRePayments/index'
+import { getfinAccountDetail } from '@/api/ReconciliaRePayments/index'
 
-import { addfinInvoiceRecords, getfinPaymentRecords, addfinPaymentRecords } from '@/api/financialManagement/index'
-import formValidate from "@/utils/formValidate";
+import { addfinPaymentRecords, getfinPaymentRecords } from '@/api/financialManagement/index'
+import { getBankPage } from "@/api/bankMaintenance";
+
 export default {
   components: {
   },
@@ -132,12 +144,12 @@ export default {
   },
   computed: {
     showLabel() {
-      let label = this.reconciliationType !== 'receivable' ? '付' : '收'
-      return label
+      return this.reconciliationType !== 'receivable' ? '付' : '收'
     },
   },
   data() {
     return {
+      bankAccountList: [],
       height: 0,
       activeNames: ['productInfo', 'basicInfo'],
       payData: [],
@@ -204,6 +216,7 @@ export default {
           // { validator: this.numCalcMethod(), trigger: 'blur' },
           // { validator: this.formValidate('noZero', `付款金额不能为0`,), trigger: 'blur' }
         ],
+        bankId: { required: true, message: '请选择银行账号', trigger: 'change' },
       },
     }
   },
@@ -213,6 +226,17 @@ export default {
     this.switchStyle()
   },
   methods: {
+   async fetchBankAccountList() {
+     try {
+       const response = await getBankPage({ pageNum: 1, pageSize: -1, })
+       const { records } = response.data
+       this.bankAccountList = records.map(item => ({
+         label: item.bankId,
+         value: item.id,
+       }))
+     } catch ( e ) {
+     }
+    },
     //自适应窗口
     async switchStyle() {
       await this.$nextTick();
@@ -254,9 +278,9 @@ export default {
         }
       };
     },
-    init(id, type) {
+  async init(id, type) {
       this.visible = true
-      console.log(id);
+      await this.fetchBankAccountList()
       this.dataForm.accountsReceivableReconciliationId = id
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()

@@ -158,9 +158,9 @@ export default {
   name: 'purchaseInquirySheet',
   components: { JNPFForm, SuperQuery, withdrawnForm },
   props: {
-    source: {
-      type: String,
-      default: ''
+    queryObject: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
@@ -205,7 +205,7 @@ export default {
       formVisible: false,
       listLoading: false,
       listQuery: {
-        source: this.source,
+        ...this.queryObject,
         active: true,
         reconciliationType: 'payable',
       },

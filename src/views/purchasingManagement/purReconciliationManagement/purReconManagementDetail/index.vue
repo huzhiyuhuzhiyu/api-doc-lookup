@@ -120,9 +120,9 @@ export default {
   name: 'purReconManagementDetail',
   components: { JNPFForm, withdrawnForm, SuperQuery, ExportForm },
   props: {
-    source: {
-      type: String,
-      default: ''
+    queryObject: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
@@ -166,7 +166,7 @@ export default {
       reconciliationDate: [],
       createRequirementDate: [],
       listQuery: {
-        source: this.source,
+        ...this.queryObject,
         active: true,
         reconciliationType: 'payable',
       },

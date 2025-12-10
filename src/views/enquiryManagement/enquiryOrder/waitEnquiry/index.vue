@@ -55,7 +55,7 @@
            :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
           @sort-change="sortChange" ref="dataTable" custom-column>
           <template v-for="column in columnsConfig">
-            <el-table-column v-if="typeof column.show === 'function' ? column.show() : true" :key="column.prop"
+            <el-table-column v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)" :key="column.prop"
               :prop="column.prop" :label="column.label" :min-width="column.minWidth" :sortable="column.sortable"
               :fixed="column.fixed" :align="getAlign(column.align)">
               <template v-if="column.slot" v-slot="scope">

@@ -136,7 +136,7 @@ export default {
               <el-tabs v-model="activeName">
                 <el-tab-pane label="基础信息" name="jcInfo">
                   <el-collapse v-model="activeNames" style="margin-top: 5px;">
-                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
+                    <el-collapse-item title="基本信息" name="basicInfo" ref="dataFormRegion">
                       <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
                         :btnType="btnType"/>
                     </el-collapse-item>

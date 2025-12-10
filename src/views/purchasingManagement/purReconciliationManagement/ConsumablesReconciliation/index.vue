@@ -2,11 +2,11 @@
 import purReconManagement from '../purReconManagement/index.vue'
 
 export default {
-  components: {purReconManagement},
+  components: { purReconManagement },
   name: "index"
 }
 </script>
 
 <template>
-  <purReconManagement source="procure"/>
+  <purReconManagement :query-object="{ sourceList: ['procure'] }"/>
 </template>

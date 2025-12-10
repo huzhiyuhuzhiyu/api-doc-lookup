@@ -533,7 +533,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(data,source) {
+    init(data) {
       this.dataFormTwo.data = []
       // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
 
@@ -601,7 +601,7 @@ export default {
 
       this.dataForm.cooperativePartnerName = data[0].partnerName
       this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-      this.dataForm.source = source
+      this.dataForm.source = data[0].source
       // 获取当前日期
       const currentDate = new Date()
 

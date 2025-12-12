@@ -294,8 +294,8 @@ export default {
         look: async (id) => {
           await this.getDetail(id);
         },
-        default: async (prefillData, pageSource) => {
-          this.defaultInit(prefillData, pageSource);
+        default: async (prefillData) => {
+          this.defaultInit(prefillData);
           await this.getOrderNoConfig('PROD', 'dataForm');
           await this.getOrderNoConfig('PODH', 'pickForm');
         },
@@ -321,7 +321,7 @@ export default {
       return this.btnType === 'arrange' ? '编排数量' : '生产数量';
     },
     isShowMaterialList() {
-      return this.dataForm.productSource === 'assemble' && this.dataForm.orderType === 'packaging'
+      return this.dataForm.productSource === 'assemble'
     }
   },
   mounted() {
@@ -329,15 +329,15 @@ export default {
     this.basicPickFormSchema = getBasicPickFormSchema(this.$refs.dataForm, this)
   },
   methods: {
-    async init(id = '', type, prefillData = {}, pageSource = '') {
+    async init(id = '', type, prefillData = {}) {
       this.loading = true
       this.btnType = type
-      this.title = this.getTitle(type, pageSource)
+      this.title = this.getTitle(type)
 
       if (id && this.actions[type]) {
         await this.actions[type](id);
       } else {
-        await this.actions.default(prefillData, pageSource);
+        await this.actions.default(prefillData);
       }
       this.updateBasicFormSchema()
       this.updateLinesListItems()
@@ -349,7 +349,7 @@ export default {
       })
     },
 
-    async defaultInit(prefillData, pageSource) {
+    async defaultInit(prefillData) {
       const unifiedData = standardizeFields(prefillData, this.productFieldMap);
       this.dataForm = _.merge({}, this.dataForm, unifiedData)
       if (unifiedData.planStartDate && unifiedData.planEndDate) {
@@ -359,7 +359,6 @@ export default {
       this.dataForm.productionQuantity = unifiedData.availableArrangeQuantity
       this.dataForm.productionPlanId = unifiedData.id
       this.dataForm.taskMethod = 'not_appoint'
-      this.dataForm.orderType = pageSource
 
       if (unifiedData.routingId) await this.getRoutingDetail(unifiedData.routingId)
       if (unifiedData.productionLineId) await this.selectLine(unifiedData.productionLineId)
@@ -370,7 +369,7 @@ export default {
     updateBasicFormSchema() {
       this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this).map(item => {
         if (this.btnType === 'add') {
-          if (item.prop === 'drawingNo' && this.dataForm.orderType !== 'flipping') {
+          if (item.prop === 'drawingNo') {
             return this.getDrawingNoFieldConfig(item);
           }
 
@@ -595,9 +594,8 @@ export default {
       this.linesTableHeight = maxHeight
     },
 
-    getTitle(type, pageSource) {
-      this.title = pageSource === 'flipping' ? '重检单' : '包装计划'
-      switch (type) {
+    getTitle(type) {
+      switch ( type ) {
         case 'arrange':
           return `${ this.title }编排`
         case 'add':

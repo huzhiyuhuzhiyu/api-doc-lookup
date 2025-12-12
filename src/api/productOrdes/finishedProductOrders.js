@@ -163,3 +163,13 @@ export function addProdPickOrder(data) {
     data
   })
 }
+
+
+// 生成重检单
+export function addStockChangePackage(data) {
+  return request({
+    url: `/api/wms/stockChangePackage/insert`,
+    method: 'POST',
+    data
+  })
+}

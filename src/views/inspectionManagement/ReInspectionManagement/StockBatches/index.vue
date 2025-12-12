@@ -1,6 +1,6 @@
 <script>
 import {buttonList, getColumns} from "./data";
-import Form from '@/views/productionManagement/PackagingPlan/module/Form.vue'
+import Form from './module/Form.vue'
 import {inventorySpaceList} from "@/api/warehouseManagement/inventory";
 
 export default {
@@ -35,7 +35,9 @@ export default {
       total: 0,
       superQueryVisible: false,
       superQueryJson: [],
-      listQuery: {},
+      listQuery: {
+        inventoryFlag: true,
+      },
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
@@ -80,7 +82,7 @@ export default {
           if (!this.validateSelectedRows()) return;
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init('', 'add', this.selectedRow[0], 'flipping')
+            this.$refs.Form.init('', 'add', false, this.selectedRow)
           })
           break;
         default:

@@ -78,6 +78,8 @@ const global = {
     { label: '正常工序', value: 'normal' },
     { label: '抽检工序', value: 'random' },
     { label: '全检工序', value: 'full' },
+    { label: '打字工序', value: 'typing' },
+    { label: '包装工序', value: 'packing' },
   ],
 
   // 销售订单状态

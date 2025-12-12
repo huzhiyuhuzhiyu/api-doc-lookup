@@ -390,7 +390,7 @@ export default {
           change: this.inspectionMethodChange,
           itemRules: [{required: true, trigger: 'change'}],
           sm: 6,
-          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
+          itemDisabled: () => this.inspectionType === 'work_report' && (this.scope.inspectionMethod === 'spot_check' || this.scope.inspectionMethod === 'all'),
           options: generateInspectionMethodList(this.inspectionType)
         },
         {
@@ -546,7 +546,7 @@ export default {
           dataForm.docId = scope.productionOrderId;
           dataForm.docLineId = scope.id;
           dataForm.docNo = scope.orderNo;
-          dataForm.inspectionMethod = scope.orderNo;
+          dataForm.inspectionMethod = scope.inspectionMethod;
         },
         finished: (scope, dataForm) => {
           dataForm.inspectionQuantity = Number(scope.qualifiedQuantity) + Number(scope.unqualifiedQuantity);
@@ -911,6 +911,7 @@ export default {
       this.$refs['dataForm'].$refs['main'].clearValidate('unqualifiedQuantity')
       if (val === 'qualified') {
         // this.dataForm.unqualifiedQuantity = '0'
+        this.dataForm.treatmentResults = ''
         !this.dataForm.itemList ? (this.dataForm.itemList = []) : ''
         !this.dataForm.causesList ? (this.dataForm.causesList = []) : ''
 

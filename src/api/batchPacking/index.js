@@ -44,6 +44,14 @@ export function updateStockPackingList(data) {
   })
 }
 
+// 装箱单-撤回
+export function withdrawStockPackingList (id) {
+  return request({
+    url: `/api/erp/sale/orders/notice/withdraw/${id}`,
+    method: 'get',
+  })
+}
+
 // 装箱单-详情
 export function getStockPackingListNoticeDetail(id) {
   return request({

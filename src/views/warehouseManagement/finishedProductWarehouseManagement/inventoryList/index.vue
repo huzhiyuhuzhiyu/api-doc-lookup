@@ -1,9 +1,9 @@
 <script>
-import {buttonList, getColumns} from "./data";
+import { buttonList, getColumns } from "./data";
 import PrintDialogPro from '@/components/no_mount/PrintDialogPro'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/directInandOutWarehouse/index.vue'
-import {deletepurProcurementRequire} from "@/api/purchasingManagement/purchaseInquirySheet";
-import {getWarehouseList} from "@/api/warehouseManagement/inboundAndOutbound";
+import { deletepurProcurementRequire } from "@/api/purchasingManagement/purchaseInquirySheet";
+import { getWarehouseList } from "@/api/warehouseManagement/inboundAndOutbound";
 
 export default {
   name: "index",
@@ -24,10 +24,10 @@ export default {
         fullName: "默认视图", // 视图名称*
         conditionJson: { // 视图内容配置*
           condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
-            {prop: 'orderNo', symbol: 'like', fixed: true},
-            {prop: 'businessType', symbol: '==', fixed: true},
-            {prop: 'supplierPartnerName', symbol: 'like', fixed: true},
-            {prop: 'cooperativePartnerName', symbol: 'like', fixed: true},
+            { prop: 'orderNo', symbol: 'like', fixed: true },
+            { prop: 'businessType', symbol: '==', fixed: true },
+            { prop: 'supplierPartnerName', symbol: 'like', fixed: true },
+            { prop: 'cooperativePartnerName', symbol: 'like', fixed: true },
           ],
           pageSize: 20, // 每页条数*
           orderItems: [
@@ -341,7 +341,7 @@ export default {
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
         const res = await getWarehouseList(this.listQuery);
-        const {total, records} = res.data
+        const { total, records } = res.data
         this.tableData = records;
         this.total = total
       } finally {
@@ -350,7 +350,7 @@ export default {
     },
 
     handleButtonClick(type) {
-      switch (type) {
+      switch ( type ) {
         case '':
           break;
         default:
@@ -358,8 +358,12 @@ export default {
     },
 
     handleColumnClick(row, type) {
-      switch (type) {
+      switch ( type ) {
         case 'edit':
+          this.visible = true;
+          this.$nextTick(() => {
+            this.$refs.Form.init(row.id, type)
+          })
           break;
         case 'look':
           this.handleView(row, type);
@@ -427,7 +431,7 @@ export default {
             this.currentDetail.instance.init(...[...fixedArgs, ...extraArgs]);
           }
         });
-      } catch (error) {
+      } catch ( error ) {
         this.$message.error('加载详情组件失败');
         this.currentDetail.visible = false;
       }
@@ -438,7 +442,7 @@ export default {
         type: 'warning'
       }).then(async () => {
         const res = await deletepurProcurementRequire(id);
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success('删除成功')
           this.initData()
@@ -510,15 +514,15 @@ export default {
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="数据排序设置" placement="top">
               <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
-                @click="$refs.dataTable.showSortDrawer()"/>
+                       @click="$refs.dataTable.showSortDrawer()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()"/>
+                       @click="columnSetFun()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()"/>
+                       @click="initData()"/>
             </el-tooltip>
           </div>
         </div>
@@ -566,14 +570,14 @@ export default {
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text"
-                @click="handleColumnClick(row, 'edit')"
-                :disabled="isDisabled('edit',row)"
+                         @click="handleColumnClick(row, 'edit')"
+                         :disabled="isDisabled('edit',row)"
               >
                 编辑
               </el-button>
               <el-button class="JNPF-table-delBtn" size="mini" type="text"
-                @click="handleColumnClick(row, 'delete')"
-                :disabled="isDisabled('delete',row)"
+                         @click="handleColumnClick(row, 'delete')"
+                         :disabled="isDisabled('delete',row)"
               >
                 删除
               </el-button>

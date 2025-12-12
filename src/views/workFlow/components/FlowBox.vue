@@ -365,6 +365,7 @@ export default {
         'b067': 'planManagement/MRPoperation/pendClculationPlan/ReplaceRulesForm.vue',
         'b068': 'productionManagement/assemblyPick/orderAwitPick/Form/index.vue',
         'b069': 'productionManagement/assemblyPick/orderAwitPick/Form/index.vue',
+        'b0128': 'inspectionManagement/ReInspectionManagement/StockBatches/module/Form.vue',
       },
       inspectionTypeList: [
         // 不良品

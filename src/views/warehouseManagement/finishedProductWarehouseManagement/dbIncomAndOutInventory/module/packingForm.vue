@@ -1,20 +1,23 @@
 <script>
-import {deepClone} from "@/utils";
-import {getPackingBasicFormSchema} from "./data";
-import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import {getAddressInfo} from "@/api/basicData";
-import {confirmOrdersNotice, getQuotationsendlist} from "@/api/salesManagement";
+import { deepClone, getQueryConfirm } from "@/utils";
+import { getPackingBasicFormSchema } from "./data";
+import { getAddressInfo } from "@/api/basicData";
+import { confirmOrdersNotice, getQuotationsendlist } from "@/api/salesManagement";
+import { withdrawStockPackingList } from "@/api/batchPacking";
+
 import autoRecBatchPacking from "./components/autoRecBatchPacking.vue";
+import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 
 export default {
   name: "packingForm",
-  components: {autoRecBatchPacking, TableFormProduct},
+  components: { autoRecBatchPacking, TableFormProduct },
   data() {
     return {
       title: '销售发货通知单',
       btnType: '',
       loading: false,
       btnLoading: false,
+      withdrawLoading: false,
       autoRecBatchPackingFormVisible: false,
       globalPackagingMethod: '',
       classAttributeList: [],
@@ -230,7 +233,7 @@ export default {
   },
   methods: {
     async init(params) {
-      const {id, btnType, businessType, classAttributeList, warehouseCode} = params;
+      const { id, btnType, businessType, classAttributeList, warehouseCode } = params;
       this.btnType = btnType
       this.title = this.getTitle(btnType)
       this.classAttributeList = classAttributeList
@@ -248,13 +251,13 @@ export default {
     updateLinesListItems() {
       this.linesListItems = this.linesListItems.map(item => {
         if (item.prop === 'urgentQuantity') {
-          return {...item, render: this.isConfirm}
+          return { ...item, render: this.isConfirm }
         }
 
         if (this.confirmProps.has(item.prop)) {
-          return {...item, render: this.isConfirm}
+          return { ...item, render: this.isConfirm }
         } else if (this.packingProps.has(item.prop)) {
-          return {...item, render: this.isPacking}
+          return { ...item, render: this.isPacking }
         }
 
         return item
@@ -266,7 +269,7 @@ export default {
         this.$message.warning('请先完成装箱操作,再进行自动推荐批次操作')
         return
       }
-      switch (actionType) {
+      switch ( actionType ) {
         case 'packing':
         case 'autoRecommend':
           this.autoRecBatchPackingFormVisible = true;
@@ -284,7 +287,7 @@ export default {
     },
 
     async getAddressInfo(id) {
-      const {data} = await getAddressInfo(id)
+      const { data } = await getAddressInfo(id)
       const defaultAddress = data.find(item => item.defaultFlag);
       const {
         recipient,
@@ -326,7 +329,7 @@ export default {
     },
 
     getTitle(type) {
-      switch (type) {
+      switch ( type ) {
         case 'packing':
           return `${ this.title }装箱`
         case 'confirm':
@@ -340,9 +343,9 @@ export default {
       this.loading = true
       try {
         const res = await getQuotationsendlist(id)
-        const {msg, data} = res
+        const { msg, data } = res
         if (msg === 'Success') {
-          const {country, countryName, provinceName, cityName, areaName, address} = data.notice
+          const { country, countryName, provinceName, cityName, areaName, address } = data.notice
           this.dataForm = data.notice
           this.fileList = this.fileListMap('', data.attachmentList)
           this.linesList = data.noticeLineList.map(item => ({
@@ -354,7 +357,7 @@ export default {
             : `${ countryName }${ address }`
           this.loading = false
         }
-      } catch (err) {
+      } catch ( err ) {
         this.loading = false
       }
     },
@@ -412,14 +415,33 @@ export default {
       let MSG = '确认成功'
       try {
         const res = await confirmOrdersNotice(params)
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success(MSG)
           this.goBack()
         }
         this.btnLoading = false
-      } catch (error) {
+      } catch ( error ) {
         this.btnLoading = false
+      }
+    },
+
+    async handleWithdraw() {
+      try {
+        await getQueryConfirm(this, '确定要撤回箱单吗？此操作将撤销已装箱的记录。')
+        this.withdrawLoading = true
+
+        await withdrawStockPackingList(this.dataForm.id)
+        this.$message.success('箱单撤回成功')
+
+        this.getDetail(this.dataForm.id)
+
+      } catch ( error ) {
+        if (error !== 'cancel') {
+          this.$message.error(error.message || '撤回失败')
+        }
+      } finally {
+        this.withdrawLoading = false
       }
     },
 
@@ -460,7 +482,7 @@ export default {
                     <el-button type="primary" :loading="btnLoading">
                       完成
                     </el-button>
-                    <el-button type="danger" :loading="btnLoading">
+                    <el-button type="danger" :loading="withdrawLoading" @click="handleWithdraw">
                       箱单撤回
                     </el-button>
                   </template>
@@ -474,11 +496,11 @@ export default {
                   <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
                       <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                        btnType="look"/>
+                                btnType="look"/>
                     </el-collapse-item>
                     <el-collapse-item class="productInfo"
-                      title="产品信息"
-                      name="productInfo">
+                                      title="产品信息"
+                                      name="productInfo">
                       <TableForm-product
                         @input="contentChanges"
                         :value="linesList"
@@ -505,24 +527,24 @@ export default {
                                 <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
                                   <el-form-item label="包装">
                                     <el-select v-model="globalPackagingMethod" placeholder="包装"
-                                      @change="(val) => globalChange(val,'packagingMethod')"
-                                      style="width: 80px">
+                                               @change="(val) => globalChange(val,'packagingMethod')"
+                                               style="width: 80px">
                                       <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
-                                        :label="item.label" :value="item.value"/>
+                                                 :label="item.label" :value="item.value"/>
                                     </el-select>
                                   </el-form-item>
                                 </el-form>
                               </template>
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                                  @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
+                                         @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
                               </el-tooltip>
                             </div>
                           </div>
                         </template>
                       </TableForm-product>
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;"
-                        class="text">
+                           class="text">
                         <span style="font-weight:500;margin-right:10px">共发数量：{{ totalNum }}</span>
                       </div>
                     </el-collapse-item>

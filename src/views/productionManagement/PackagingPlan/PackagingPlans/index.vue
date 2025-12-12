@@ -153,7 +153,7 @@ export default {
         case 'arrange':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init('', type, row, 'packaging')
+            this.$refs.Form.init('', type, row)
           })
           break;
         case 'close':

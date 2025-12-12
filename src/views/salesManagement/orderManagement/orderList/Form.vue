@@ -815,7 +815,9 @@ export default {
       this.addProductProps.listMethod = type === 'customer' ? getcooperativeProduct : getProducts
       this.$refs.ComSelectProductRef.openDialog()
     },
-
+    deleteLines(scope) {
+      this.linesList.splice(scope.$index, 1)
+    },
     contentChanges(dataOrIndex, prop, value) {
       if (Array.isArray(dataOrIndex)) {
         this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
@@ -977,7 +979,7 @@ export default {
                         :hasToolbar="false"
                         ref="tableForm" :tableItems="linesListItems"
                         :btnType="btnType"
-                        :hasActionbar="false"
+                        @deleteth="deleteLines"
                         :tableProps="{
                         is: 'JNPF-table',
                         fixedNO: true,

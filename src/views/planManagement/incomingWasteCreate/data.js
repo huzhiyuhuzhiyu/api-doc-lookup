@@ -2,7 +2,7 @@ export const buttonList = [
   {
     buttonType: 'primary',
     type: 'procurementRequirement',
-    permission: 'btn_procurement_requirement',
+    permission: 'btn_purchase_order',
     icon: '',
     text: '生成采购单'
   }

@@ -49,6 +49,7 @@ export default {
       total: 0,
       columnList: [],
       columnsConfig: getColumns(),
+      selectedRow: []
     }
   },
   methods: {
@@ -83,15 +84,14 @@ export default {
     handleColumnClick(row, type) {
       switch ( type ) {
         case '':
-
           break;
         default:
       }
     },
     handleButtonClick(type) {
       switch ( type ) {
-        case '':
-
+        case 'purchaseOrder':
+          if (!this.validateSelectedRows()) return;
           break;
         default:
       }
@@ -143,6 +143,8 @@ export default {
           v-loading="loading"
           :data="tableData"
           :row-key="'id'"
+          :has-c="['btn_purchase_order']"
+          @selection-change="(val) => selectedRow = val"
           fixedNO
           :setColumnDisplayList="columnList"
           ref="dataTable"

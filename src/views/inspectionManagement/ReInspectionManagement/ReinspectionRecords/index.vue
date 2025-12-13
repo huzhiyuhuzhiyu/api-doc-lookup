@@ -24,7 +24,7 @@ export default {
             //   fixed: true // 是否在搜索栏显示
             // },
             { prop: 'orderNo', symbol: 'like', fixed: true },
-            { prop: 'status', symbol: '==', fixed: true },
+            { prop: 'status', symbol: '==', value: 'not_confirm', fixed: true },
           ],
           keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
@@ -48,7 +48,6 @@ export default {
       ],
       listQuery: {
         changePackageType: 'flipping',
-        status: 'not_confirm',
       },
       btnList: buttonList,
       columnList: [],

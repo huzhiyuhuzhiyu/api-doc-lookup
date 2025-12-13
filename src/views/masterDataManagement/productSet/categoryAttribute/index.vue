@@ -4,29 +4,36 @@
         <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">
           <div class="JNPF-common-layout"> -->
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <JNPF-tableQuery :listQuery="form" :systemSearchView="systemSearchView" tableRef="dataTable" />
+      <JNPF-tableQuery :listQuery="form" :systemSearchView="systemSearchView" tableRef="dataTable"/>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
-          <topOpts @add="addSupplier()" />
+          <topOpts @add="addSupplier()"/>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+              <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                       @click="$refs.dataTable.showSortDrawer()"/>
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                       @click="columnSetFun()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                       @click="initData()"/>
             </el-tooltip>
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
-          custom-column :setColumnDisplayList="columnList" hasMove @changeMove="changeMove" customKey="JNPFTableKey_496179" :listQuery="form" @queryChange="initData" :queryJson="superQueryJson">
-          <el-table-column prop="name" label="类别名称" width="250" />
-          <el-table-column prop="code" label="类别编码" min-width="150" />
+                    custom-column :setColumnDisplayList="columnList" hasMove @changeMove="changeMove" customKey="JNPFTableKey_496179" :listQuery="form" @queryChange="initData"
+                    :queryJson="superQueryJson">
+          <el-table-column prop="name" label="类别名称" width="250"/>
+          <el-table-column prop="code" label="类别编码" min-width="150"/>
           <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
             <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
           </el-table-column> -->
-          <el-table-column prop="remark" label="备注" width="250" />
-          <el-table-column prop="createTime" label="创建时间" width="180" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
+          <el-table-column prop="remark" label="备注" width="250"/>
+          <el-table-column prop="createTime" label="创建时间" width="180"/>
+          <el-table-column prop="createByName" label="创建人" width="100"/>
           <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
@@ -44,28 +51,22 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize" @pagination="initData()" />
+        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize" @pagination="initData()"/>
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData()" @close="closeForm" />
-    <WarehouseForm v-if="warehouseFormVisible" ref="warehouseForm" @refreshDataList="initData()" @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData()" @close="closeForm"/>
+    <WarehouseForm v-if="warehouseFormVisible" ref="warehouseForm" @refreshDataList="initData()" @close="closeForm"/>
     <!-- 高级查询 -->
 
   </div>
 </template>
 
 <script>
-import {
-  updataClassAttribute,
-  delClassAttribute,
-  getclassAttributeList,
-  disabledClassAttributeState
-} from '@/api/masterDataManagement/index'
+import { delClassAttribute, disabledClassAttributeState, getclassAttributeList, updateSortBatch } from '@/api/masterDataManagement/index'
 import Form from './Form'
 import WarehouseForm from './WarehouseForm.vue'
-import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { updateSortBatch } from '@/api/masterDataManagement/index'
+
 export default {
   name: 'supplierProfile',
   components: { Form, SuperQuery, WarehouseForm },
@@ -241,7 +242,8 @@ export default {
             location.reload()
           })
         })
-        .catch(() => { })
+        .catch(() => {
+        })
     },
     copyHandle(id) {
       this.formVisible = true
@@ -268,7 +270,8 @@ export default {
             location.reload()
           })
         })
-        .catch(() => { })
+        .catch(() => {
+        })
     },
     handleUserRelation(id, parentId, btnType) {
       this.formVisible = true

@@ -1,8 +1,7 @@
 <script>
-import {buttonList, getColumns} from "./data";
+import { buttonList, getColumns } from "./data";
 import Form from '@/views/productionManagement/PackagingPlan/module/Form.vue'
-import {inventorySpaceList} from "@/api/warehouseManagement/inventory";
-import {ordershengchanList} from "@/api/productOrdes";
+import { getStockChangePackageLineList, submitStockChangePackage } from "@/api/stockChangePackage";
 
 export default {
   name: "index",
@@ -24,6 +23,8 @@ export default {
             //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
             //   fixed: true // 是否在搜索栏显示
             // },
+            { prop: 'orderNo', symbol: 'like', fixed: true },
+            { prop: 'status', symbol: '==', fixed: true },
           ],
           keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
@@ -34,11 +35,20 @@ export default {
       visible: false,
       tableData: [],
       total: 0,
-      superQueryVisible: false,
-      superQueryJson: [],
+      superQueryJson: [
+        {
+          prop: 'status',
+          label: '状态',
+          type: 'select',
+          options: [
+            { label: '未确认', value: 'not_confirm' },
+            { label: '已确认', value: 'confirmed' },
+          ]
+        }
+      ],
       listQuery: {
-        source: 'package_plan',
-        orderType: 'flipping',
+        changePackageType: 'flipping',
+        status: 'not_confirm',
       },
       btnList: buttonList,
       columnList: [],
@@ -57,15 +67,14 @@ export default {
       this.loading = true
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
-        const res = await ordershengchanList(this.listQuery);
-        const {total, records} = res.data
+        const res = await getStockChangePackageLineList(this.listQuery);
+        const { total, records } = res.data
         this.tableData = records;
         this.total = total
       } finally {
         this.loading = false
       }
     },
-
     validateSelectedRows() {
       if (!this.selectedRow.length) {
         this.$message.warning('请至少选择一条数据');
@@ -77,9 +86,8 @@ export default {
       }
       return true;
     },
-
     handleButtonClick(type) {
-      switch (type) {
+      switch ( type ) {
         case 'reInspection':
           if (!this.validateSelectedRows()) return;
           this.visible = true
@@ -90,17 +98,31 @@ export default {
         default:
       }
     },
-
+    handleColumnClick(row, type) {
+      switch ( type ) {
+        case 'submit':
+          this.handleSubmit(row.id)
+          break;
+        default:
+      }
+    },
+    async handleSubmit(id) {
+      try {
+        await submitStockChangePackage(id);
+        this.$message.success('提交成功');
+        this.initData()
+      } catch ( e ) {
+        this.$message.error(e.message || '提交失败');
+      }
+    },
     close(isInitData = true) {
       this.visible = false
       if (!isInitData) return
       this.initData()
     },
-
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-
     getAlign(align) {
       return align || 'left'
     },
@@ -123,19 +145,20 @@ export default {
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="数据排序设置" placement="top">
               <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
-                @click="$refs.dataTable.showSortDrawer()"/>
+                       @click="$refs.dataTable.showSortDrawer()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()"/>
+                       @click="columnSetFun()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()"/>
+                       @click="initData()"/>
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="PackagingPlans"
+        <JNPF-table
+          customKey="ReinspectionRecords"
           v-loading="loading"
           :data="tableData"
           :has-c="true"
@@ -144,7 +167,11 @@ export default {
           fixedNO
           :setColumnDisplayList="columnList"
           ref="dataTable"
-          custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          custom-column
+          :listQuery="listQuery"
+          @queryChange="initData"
+          :queryJson="superQueryJson"
+        >
           <template v-for="column in columnsConfig">
             <el-table-column
               v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
@@ -168,6 +195,13 @@ export default {
               </template>
             </el-table-column>
           </template>
+          <el-table-column label="操作" width="120" fixed="right">
+            <template slot-scope="{ row }">
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'submit')">
+                提交
+              </el-button>
+            </template>
+          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
         />

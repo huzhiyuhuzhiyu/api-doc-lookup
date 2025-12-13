@@ -134,6 +134,7 @@ const global = {
     { label: '已安排', value: 'arranged', type: 'success' },
     { label: '已拣货', value: 'picked', type: 'primary' },
     { label: '已核对', value: 'verified', type: 'primary' },
+    { label: '未确认', value: 'not_confirm', type: 'danger' },
     { label: '已确认', value: 'confirmed', type: 'success' },
     { label: "未完成", value: "not_finished", type: "danger" },
     { label: '已完成', value: 'finished', type: 'success' },

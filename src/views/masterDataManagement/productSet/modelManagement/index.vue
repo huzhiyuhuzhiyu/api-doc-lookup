@@ -21,7 +21,10 @@
           </el-button>
           <!-- </topOpts> -->
           <div class="JNPF-common-head-right">
-
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+              <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                       @click="$refs.dataTable.showSortDrawer()"/>
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -41,8 +44,8 @@
           <el-table-column prop="oilNum" label="油脂用量(毫克)" min-width="142" />
           <el-table-column prop="holderNum" label="保持架用量(个)" min-width="142" />
           <el-table-column prop="sealingRingNum" label="密封圈用量(个)" min-width="142" />
-          <el-table-column prop="createTime" label="创建时间" width="180" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" />
+          <el-table-column prop="createByName" label="创建人" min-width="100" />
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"

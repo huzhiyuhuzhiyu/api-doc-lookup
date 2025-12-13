@@ -9,37 +9,31 @@ export function getColumns() {
       prop: 'purchaseOrderNo',
       label: '采购单号',
       minWidth: 220,
-      align: "left",
     },
     {
       prop: 'purchaseOrderNo',
       label: '订单号',
       minWidth: 220,
-      align: "left",
     },
     {
       prop: 'productName',
       label: '产品名称',
       minWidth: 220,
-      align: "left",
     },
     {
       prop: 'productCode',
       label: '产品编码',
       minWidth: 220,
-      align: "left",
     },
     {
       prop: 'drawingNo',
       label: '产品型号',
       minWidth: 220,
-      align: "left",
     },
     {
       prop: 'customerProductDrawingNo',
       label: '客户产品型号',
       minWidth: 220,
-      align: "left",
     },
     {
       prop: 'purchaseQuantity',
@@ -50,13 +44,11 @@ export function getColumns() {
       prop: 'cooperativePartnerCode',
       label: '客户编码',
       minWidth: 120,
-      align: "left",
     },
     {
       prop: 'cooperativePartnerName',
       label: '客户名称',
       minWidth: 120,
-      align: "left",
     },
     {
       prop: 'orderDate',

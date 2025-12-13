@@ -10,17 +10,17 @@
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                    @keyup.enter.native="search('basic')" />
+                            @keyup.enter.native="search('basic')"/>
 
                   <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                    clearable>
+                             clearable>
                     <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                      :value="item2.value"></el-option>
+                               :value="item2.value"></el-option>
                   </el-select>
                   <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                    :type="item.dateType"
-                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                                  :type="item.dateType"
+                                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                 </el-form-item>
               </el-col>
             </template>
@@ -29,22 +29,23 @@
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                  style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable>
+                                style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable>
                 </el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="orderForm.planStatus"  >
+                <el-select v-model="orderForm.planStatus">
                   <el-option v-for="item in planStatusList" :key="item.value" :label="item.label"
-                    :value="item.value"></el-option>
+                             :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
-                  {{ $t('common.search') }}</el-button>
+                  {{ $t('common.search') }}
+                </el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
               </el-form-item>
@@ -56,54 +57,54 @@
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier()" :addText="'生成计划'">
               <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
+                         @click="exportForm('dataTable')">导出
+              </el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                         @click="superQueryVisible = true"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                  @click="columnSetFun()" />
+                         @click="columnSetFun()"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()"/>
               </el-tooltip>
             </div>
           </div>
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
-            @selection-change="handleSelectionChange" :hasC="orderForm.planStatus=='not_generated'" customKey="JNPFTableKey_190481">
-            <el-table-column prop="orderNo" label="订单号" min-width="160" sortable="custom"> </el-table-column>
-            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" />
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
+                      :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
+                      @selection-change="handleSelectionChange" :hasC="orderForm.planStatus=='not_generated'" customKey="JNPFTableKey_190481">
+            <el-table-column prop="orderNo" label="订单号" min-width="160" sortable="custom"></el-table-column>
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom"/>
+            <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom"/>
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" min-width="280" sortable="custom" />
-            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" v-if="isPairingModeSwitch === '1'" />
+                             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="drawingNo" label="品名规格" min-width="280" sortable="custom"/>
+            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom"/>
+            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" v-if="isPairingModeSwitch === '1'"/>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-              v-if="isProjectSwitch == 1" />
-            <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="80" />
-            <el-table-column prop="num" label="订单数量" min-width="120" sortable="custom" />
-            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
-            <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" min-width="120" fixed="right" v-if="isXBN">
+                             v-if="isProjectSwitch == 1"/>
+            <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"/>
+            <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom"/>
+            <el-table-column prop="mainUnit" label="单位" min-width="80"/>
+            <el-table-column prop="num" label="订单数量" min-width="120" sortable="custom"/>
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'"/>
+            <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom"/>
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"/>
+            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom"/>
+            <el-table-column label="操作" min-width="220" fixed="right">
               <template slot-scope="scope">
-
                 <el-button size="mini" type="text" @click.native="printFun(scope.row.id)">打印备货工艺</el-button>
-
+                <el-button v-has="'btn_issuePoolSaleLines'" size="mini" type="text" @click="handleIssuePool(scope.row)">下达需求池</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
 
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-            @pagination="initData">
+                      @pagination="initData">
 
           </pagination>
 
@@ -112,44 +113,47 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"/>
 
 
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download"/>
     <!-- 高级查询 -->
     <SuperQuery :table-ref="'dataTable'" :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
+                @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+                 :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body/>
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"/>
+    <LssueRequirements :visible.sync="issuePoolDialog" :issuePoolForm="issuePoolForm" @initData="initData"/>
   </div>
 </template>
 
 <script>
-import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
+import { excelExport } from '@/api/basicData/index'
+import { deleteOrders, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import getProjectList from '@/mixins/generator/getProjectList'
-import { mapGetters, mapState } from 'vuex'
-import {
-  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
-} from "@/api/masterDataManagement/index";
+import { mapGetters } from 'vuex'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import tenantMinix from "@/mixins/generator/TenantMinix";
+import LssueRequirements from "@/views/planManagement/assemblyPlan/salesOrderCreation/module/LssueRequirements.vue";
 
 export default {
   name: 'salesOrderCreation',
-  components: { Form, ExportForm, SuperQuery, PrintBrowse,
-    PrintDialog,},
-    mixins: [getProjectList,tenantMinix],
+  components: {
+    LssueRequirements,
+    Form, ExportForm, SuperQuery, PrintBrowse,
+    PrintDialog,
+  },
+  mixins: [getProjectList, tenantMinix],
 
   data() {
     return {
+      issuePoolDialog: false,
+      issuePoolForm: {},
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -159,14 +163,14 @@ export default {
 
       ],
 
-                planStatusList:[ {
-                            label: '未转计划' ,
-                            value: 'not_generated'
-                        },
-                        {
-                            label: '已转计划',
-                            value: 'generated'
-                        },],
+      planStatusList: [{
+        label: '未转计划',
+        value: 'not_generated'
+      },
+        {
+          label: '已转计划',
+          value: 'generated'
+        },],
       columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
@@ -264,7 +268,6 @@ export default {
         // },
 
 
-
         {
           prop: 'contractNo',
           label: "客户合同号",
@@ -284,9 +287,6 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-
-
-
 
 
       ],
@@ -328,12 +328,17 @@ export default {
     this.search('basic')
   },
   methods: {
-     // 配对方式显示隐藏
-     async getPairingModeSwitch(code, type) {
+    handleIssuePool(row) {
+      this.issuePoolForm = row
+      this.issuePoolDialog = true
+    },
+    // 配对方式显示隐藏
+    async getPairingModeSwitch(code, type) {
       try {
         this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.tableDataFlag = true
-      } catch (error) { }
+      } catch ( error ) {
+      }
     },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
@@ -369,16 +374,12 @@ export default {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.isProjectSwitchFlag = true
-      } catch (error) { }
+      } catch ( error ) {
+      }
     },
     handleSelectionChange(val) {
       this.selectList = val
     },
-
-
-
-
-
 
 
     superQuerySearch(query) {
@@ -401,7 +402,6 @@ export default {
     },
 
 
-
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'productName' || prop == 'pairingModeName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus') {
@@ -419,9 +419,6 @@ export default {
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
-
-
-
 
 
     // 关闭新建编辑页面
@@ -601,7 +598,8 @@ export default {
             duration: 1500,
           })
         })
-      }).catch(() => { })
+      }).catch(() => {
+      })
     },
     handleUserRelation(id, btnType) {
       this.formVisible = true
@@ -614,8 +612,12 @@ export default {
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
       let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      columnList = columnList.map(item => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
     },
     download(data) {
       this.exportFormVisible = false
@@ -656,7 +658,6 @@ export default {
 .el-tabs__nav-scroll {
   padding-left: 10px;
 }
-
 
 
 .JNPF-common-search-box {

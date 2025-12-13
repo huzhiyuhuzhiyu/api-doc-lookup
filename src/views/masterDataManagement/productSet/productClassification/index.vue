@@ -14,7 +14,10 @@
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip>
-
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+              <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                       @click="$refs.dataTable.showSortDrawer()"/>
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>

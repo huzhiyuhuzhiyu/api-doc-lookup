@@ -1,14 +1,12 @@
 <script>
-import SuperQuery from '@/components/SuperQuery/index.vue'
-import {buttonList, getColumns} from "./data";
-import {getChangeRecordListPage} from "@/api/drawConf";
+import { buttonList, getColumns } from "./data";
+import { getChangeRecordListPage } from "@/api/drawConf";
 import Form from "@/views/masterDataManagement/drawConf/Form.vue";
 
 export default {
   name: "index",
   components: {
     Form,
-    SuperQuery,
   },
   data() {
     return {
@@ -17,9 +15,9 @@ export default {
         fullName: "默认视图", // 视图名称*
         conditionJson: { // 视图内容配置*
           condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
-            {prop: 'cooperativePartnerName', symbol: 'like', fixed: true},
-            {prop: 'customerProductDrawingNo', symbol: 'like', fixed: true},
-            {prop: 'drawingNo', symbol: 'like', fixed: true},
+            { prop: 'cooperativePartnerName', symbol: 'like', fixed: true },
+            { prop: 'customerProductDrawingNo', symbol: 'like', fixed: true },
+            { prop: 'drawingNo', symbol: 'like', fixed: true },
             // 这里放置系统原顶栏显示的查询元素，如：
             // {
             //   prop: 'createTime', // 属性*
@@ -43,7 +41,6 @@ export default {
       loading: false,
       visible: false,
       btnList: buttonList,
-      superQueryVisible: false,
       superQueryJson: [],
       listQuery: {},
       tableData: [],
@@ -65,25 +62,23 @@ export default {
       this.loading = true
       try {
         const res = await getChangeRecordListPage(this.listQuery);
-        const {total, records} = res.data
+        const { total, records } = res.data
         this.tableData = records;
         this.total = total
       } finally {
         this.loading = false
       }
     },
-
     handleButtonClick(type) {
-      switch (type) {
+      switch ( type ) {
         case '':
 
           break;
         default:
       }
     },
-
     handleColumnClick(row, type) {
-      switch (type) {
+      switch ( type ) {
         case 'look':
           this.visible = true
           this.$nextTick(() => {
@@ -93,15 +88,12 @@ export default {
         default:
       }
     },
-
     close() {
       this.visible = false
     },
-
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-
     getAlign(align) {
       return align || 'left'
     },
@@ -122,24 +114,33 @@ export default {
             />
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+              <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                       @click="$refs.dataTable.showSortDrawer()"/>
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()"/>
+                       @click="columnSetFun()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()"/>
+                       @click="initData()"/>
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="drawingRevisionRecord"
+        <JNPF-table
+          customKey="drawingRevisionRecord"
           v-loading="loading"
           :data="tableData"
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"
           ref="dataTable"
-          custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          custom-column
+          :listQuery="listQuery"
+          @queryChange="initData"
+          :queryJson="superQueryJson"
+        >
           <template v-for="column in columnsConfig">
             <el-table-column
               v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
@@ -165,7 +166,7 @@ export default {
           <el-table-column label="操作" width="90" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text"
-                @click="handleColumnClick(row, 'look')">
+                         @click="handleColumnClick(row, 'look')">
                 查看详情
               </el-button>
             </template>

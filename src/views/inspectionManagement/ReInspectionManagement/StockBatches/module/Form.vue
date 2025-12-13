@@ -1,8 +1,8 @@
 <script>
 import { getBasicFormSchema } from "./data";
-import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import { addStockChangePackage } from "@/api/productOrdes/finishedProductOrders";
+import { addStockChangePackage } from "@/api/stockChangePackage";
 import { standardizeFields } from "@/utils";
+import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
 
@@ -23,6 +23,7 @@ export default {
       dataForm: {
         approvalFlag: false,
         changePackageType: 'flipping',
+        documentStatus: 'submit',
       },
       basicFormSchema: [],
       linesList: [],
@@ -118,6 +119,7 @@ export default {
         num: ['inventoryQuantity'],
         sourceId: ['id'],
         sourceLineId: ['id'],
+        inventoryLineId: ['id'],
         id: {
           value: ''
         }

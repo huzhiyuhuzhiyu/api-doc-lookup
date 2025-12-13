@@ -71,6 +71,15 @@ export const deleteOrders = (id) => {
   })
 }
 
+// 销售订单明细-下达需求池
+export function issuePoolSaleLines(data) {
+  return request({
+    url: `/api/erp/sale/orders/line/issue/pool`,
+    method: 'post',
+    data
+  })
+}
+
 // 获取订单类型的编排属性
 export const getAttributeline = (type) => {
   return request({

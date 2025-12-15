@@ -210,7 +210,6 @@ export default {
   },
   methods: {
     async init(id = '', type, prefillData = [], formData = {}) {
-      console.log("prefillData ✈️ ", prefillData)
       this.loading = true
       this.btnType = type
       this.title = this.getTitle(type)
@@ -246,61 +245,57 @@ export default {
 
       this.recommendProps.listRequestObj.productsId = row.productsId || row.productId
       this.recommendProps.listRequestObj.packagingMethod = row.packagingMethod
+      this.recommendProps.listRequestObj.changePackageNum = row.num
       this.$refs.ComSelectRecommendRef.openDialog()
     },
-    recommendSubmit(id, selectedData) {
-      if (!selectedData.length) {
-        this.$message.warning('未选择推荐库存产品');
-        return;
-      }
-
-      const sourceProduct = this.linesList[this.currentSourceIndex];
-      if (!sourceProduct) {
-        this.$message.error('源产品不存在');
-        return;
-      }
-
-      const remainingNum = parseFloat(sourceProduct.remainingNum) || parseFloat(sourceProduct.num) || 0;
-
-      const selectedProducts = [];
-
-      let selectedTotalNum = 0;
-      selectedData.forEach(item => {
-        const standardizedItem = standardizeFields([item], this.recommendProductFieldMap)[0].all;
-        if (standardizedItem) {
-          const num = standardizedItem.inventoryQuantity || 0;
-          selectedTotalNum = this.jnpf.math('+', [selectedTotalNum, num]);
-          selectedProducts.push(standardizedItem);
+    async recommendSubmit(id, selectedData) {
+      try {
+        const sourceProduct = this.linesList[this.currentSourceIndex];
+        if (!sourceProduct) {
+          this.$message.error('源产品不存在');
+          return;
         }
-      });
 
-      if (selectedTotalNum > remainingNum) {
-        this.$message.error(`选择的产品数量 ${ selectedTotalNum } 超过源产品剩余可换包装数量 ${ remainingNum }`);
-        return;
-      }
+        const selectedProducts = selectedData
+          .map(item => {
+            return standardizeFields([item], this.recommendProductFieldMap)[0]?.all;
+          })
+          .filter(item => item);
 
-      let addedCount = 0;
-      selectedProducts.forEach(item => {
-        const exists = this.recommendLinesList.some(rec => rec.sourceProductId === sourceProduct.id);
-        if (!exists) {
-          const newRecommendProduct = {
-            ...item,
-            sourceProductId: sourceProduct.id,
-            sourceProductIndex: this.currentSourceIndex,
-            num: item.inventoryQuantity,
-            originalNum: parseFloat(item.num) || 0,
-            sourceId: this.dataForm.sourceId,
-            sourceLineId: sourceProduct.id,
-          };
-          this.recommendLinesList.push(newRecommendProduct);
-          addedCount++;
+        const remainingNum = this.jnpf.numberFormat(sourceProduct.remainingNum || sourceProduct.num || 0, 4);
+
+        const selectedNumbers = selectedProducts.map(item => item.outboundQuantity || 0);
+        const selectedTotalNum = this.jnpf.math('+', selectedNumbers, 4);
+
+        if (selectedTotalNum > remainingNum) {
+          this.$message.error(`选择的产品库存数量 ${ selectedTotalNum } 超过源产品剩余可换包装数量 ${ remainingNum }`);
+          return;
         }
-      });
-      if (addedCount > 0) {
-        this.updateSourceProductRemainingNum();
-        this.$message.success(`成功添加 ${ addedCount } 个推荐产品`);
-      } else {
-        this.$message.warning('所有选择的产品已存在于推荐列表中');
+
+        const newRecommendProducts = selectedProducts
+          .map(item => {
+            return {
+              ...item,
+              sourceProductId: sourceProduct.id,
+              sourceProductIndex: this.currentSourceIndex,
+              num: item.outboundQuantity,
+              sourceId: this.dataForm.sourceId,
+              sourceLineId: sourceProduct.id,
+            };
+          })
+          .filter(item => item !== null);
+
+        if (newRecommendProducts.length > 0) {
+          this.recommendLinesList.push(...newRecommendProducts);
+
+          this.updateSourceProductRemainingNum();
+
+          this.$message.success(`成功添加 ${ newRecommendProducts.length } 个推荐产品`);
+        } else {
+          this.$message.warning('所有选择的产品已存在于推荐列表中');
+        }
+      } catch ( error ) {
+        this.$message.error('处理推荐产品数据失败');
       }
     },
     // 更新所有源产品的剩余数量
@@ -368,6 +363,13 @@ export default {
         this.linesList = JSON.parse(JSON.stringify(dataOrIndex));
       } else if (prop) {
         this.linesList[dataOrIndex][prop] = value;
+      }
+    },
+    recommendContentChanges(dataOrIndex, prop, value) {
+      if (Array.isArray(dataOrIndex)) {
+        this.recommendLinesList = JSON.parse(JSON.stringify(dataOrIndex));
+      } else if (prop) {
+        this.recommendLinesList[dataOrIndex][prop] = value;
       }
     },
     async handleSubmit() {
@@ -482,6 +484,7 @@ export default {
               </el-collapse-item>
               <el-collapse-item class="productInfo" title="推荐换包装产品信息" name="recommendInfo">
                 <TableForm-product
+                  @input="recommendContentChanges"
                   :value="recommendLinesList"
                   :hasToolbar="false"
                   ref="recommendTableForm"
@@ -528,7 +531,15 @@ export default {
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page v-bind="recommendProps" ref="ComSelectRecommendRef" :element-show="false" @change="recommendSubmit"/>
+      <ComSelect-page v-bind="recommendProps" ref="ComSelectRecommendRef" :element-show="false" @change="recommendSubmit">
+        <template #outboundQuantity="row">
+          <el-input
+            v-model="row.row.outboundQuantity"
+            placeholder="请输入出库数量"
+            clearable
+          />
+        </template>
+      </ComSelect-page>
     </div>
   </transition>
 </template>

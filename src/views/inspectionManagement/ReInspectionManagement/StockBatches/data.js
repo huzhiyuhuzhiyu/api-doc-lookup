@@ -6,7 +6,7 @@ export const buttonList = [
     buttonType: 'primary',
     type: 'reInspection',
     permission: 'btn_reInspection',
-    icon: '',
+    icon: 'el-icon-plus',
     text: '生成重检单'
   }
 ]

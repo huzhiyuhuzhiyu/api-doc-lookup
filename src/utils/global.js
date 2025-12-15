@@ -213,13 +213,14 @@ const global = {
     { label: '在库重检', value: 'stock_inspection', type: 'info' },
   ],
 
-  // 任务类型
+// 任务类型
   orderType: [
     { label: '正常任务', value: 'normal', type: 'warning' },
     { label: '返工任务', value: 'rework', type: 'info' },
+    { label: '翻库任务', value: 'flipping', type: 'success' },
   ],
 
-  // 任务类型
+  // 银行维护类型
   bankMaintenanceType: [
     { label: '银行存款', value: 'bank_deposit' },
     { label: '应收票据', value: 'notes_receivable' },

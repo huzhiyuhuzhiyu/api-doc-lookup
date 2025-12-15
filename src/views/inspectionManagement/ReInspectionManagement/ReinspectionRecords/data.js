@@ -1,15 +1,7 @@
 /**
  * @description 按钮权限列表
  */
-export const buttonList = [
-  {
-    buttonType: 'primary',
-    type: 'reInspection',
-    permission: 'btn_reInspection',
-    icon: '',
-    text: '生成重检单'
-  }
-]
+export const buttonList = []
 
 export function getColumns() {
   return [

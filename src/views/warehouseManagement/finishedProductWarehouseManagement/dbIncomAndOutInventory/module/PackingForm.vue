@@ -289,7 +289,7 @@ export default {
     },
     handleChangePackaging() {
       if (!this.$refs.tableForm.selectedList.length) {
-        this.$message.warning('请选择要操作的行')
+        this.$message.warning('请选择要换包装的产品')
         return
       }
       this.changePackagingFormVisible = true;

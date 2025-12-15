@@ -213,11 +213,22 @@ const global = {
     { label: '在库重检', value: 'stock_inspection', type: 'info' },
   ],
 
-// 任务类型
+  // 任务类型
   orderType: [
     { label: '正常任务', value: 'normal', type: 'warning' },
     { label: '返工任务', value: 'rework', type: 'info' },
     { label: '翻库任务', value: 'flipping', type: 'success' },
+  ],
+  // 任务状态
+  orderStatus: [
+    { label: '已完成', value: 'finish', type: 'success' },
+    { label: '进行中', value: 'normal', type: 'warning' },
+    { label: '已暂停', value: 'suspend', type: 'info' },
+    { label: '已关单', value: 'closed', type: 'danger' },
+    { label: '强制中止', value: 'force_abort', type: 'danger' },
+    { label: '外协中', value: 'outsourced', type: 'primary' },
+    { label: '采购中', value: 'procurement', type: 'primary' },
+    { label: '撤回', value: 'back', type: 'info' },
   ],
 
   // 银行维护类型

@@ -1,16 +1,9 @@
 <script>
 import { buttonList, getColumns } from "./data";
-import Form from '@/views/productionManagement/ringPlan/ringTaskManagement/reworkForm.vue'
-import { ordershengchanList } from "@/api/productOrdes";
-// 引入打印流转卡组件
-import PrintFlowCard from './components/PrintFlowCard.vue'
+import { getReworkWorkPage } from "@/api/productOrdes/finishedProductOrders";
 
 export default {
   name: "index",
-  components: {
-    Form,
-    PrintFlowCard
-  },
   data() {
     return {
       systemSearchView: [{
@@ -35,9 +28,6 @@ export default {
         },
       }],
       loading: false,
-      visible: false,
-      // 添加打印流转卡相关数据
-      printFlowCardVisible: false,
       tableData: [],
       total: 0,
       superQueryJson: [
@@ -56,10 +46,6 @@ export default {
       columnList: [],
       columnsConfig: getColumns(),
       selectedRow: [],
-      // 打印相关参数
-      printQuery: {
-        categoryId: 'p023'
-      }
     }
   },
   created() {
@@ -73,7 +59,7 @@ export default {
       this.loading = true
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
-        const res = await ordershengchanList(this.listQuery);
+        const res = await getReworkWorkPage(this.listQuery);
         const { total, records } = res.data
         this.tableData = records;
         this.total = total
@@ -81,30 +67,10 @@ export default {
         this.loading = false
       }
     },
-    validateSelectedRows() {
-      if (!this.selectedRow.length) {
-        this.$message.warning('请至少选择一条数据');
-        return false;
-      }
-      if (this.selectedRow.length > 1) {
-        this.$message.warning('只能选择一条数据');
-        return false;
-      }
-      return true;
-    },
     handleButtonClick(type) {
       switch ( type ) {
-        case 'reworkTask':
-          this.visible = true
-          this.$nextTick(() => {
-            this.$refs.Form.init('', 'add')
-          })
-          break;
-        // 添加打印流转卡按钮处理
-        case 'transferCardPrint':
-          if (this.validateSelectedRows()) {
-            this.printFlowCardVisible = true
-          }
+        case '':
+
           break;
         default:
       }
@@ -115,15 +81,6 @@ export default {
           break;
         default:
       }
-    },
-    close(isInitData = true) {
-      this.visible = false
-      if (!isInitData) return
-      this.initData()
-    },
-    // 添加打印流转卡关闭处理
-    handlePrintFlowCardClose() {
-      this.printFlowCardVisible = false
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -189,9 +146,6 @@ export default {
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
-                <template v-if="column.prop === 'prodSchedule'">
-                  <el-progress :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
-                </template>
                 <template v-if="column.dictType">
                    <span>
                 <el-tag
@@ -203,20 +157,10 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <AttributeColumns :isSlot="false" btnType="look" :dataType="'line'" :moduleConfig="'produce'"/>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
         />
       </div>
     </div>
-    <Form ref="Form" v-if="visible" @close="close"/>
-    <!-- 添加打印流转卡组件 -->
-    <PrintFlowCard
-      :visible.sync="printFlowCardVisible"
-      :selected-rows="selectedRow"
-      :print-query="printQuery"
-      :en-code="'p023'"
-      @close="handlePrintFlowCardClose"
-    />
   </div>
 </template>

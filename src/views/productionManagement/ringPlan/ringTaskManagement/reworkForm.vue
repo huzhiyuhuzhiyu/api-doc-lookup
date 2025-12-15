@@ -62,6 +62,15 @@
                                                     </el-select>
                                                 </el-form-item>
                                             </el-col>
+                                          <el-col :sm="6" :xs="24">
+                                            <el-form-item label="产线" prop="productionLineId">
+                                              <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
+                                                         @change="selectLine">
+                                                <el-option v-for="(item, index) in productionLineList" :key="index" :label="item.name"
+                                                           :value="item.id"></el-option>
+                                              </el-select>
+                                            </el-form-item>
+                                          </el-col>
                                             <el-col :sm="12" :xs="24">
                                                 <el-form-item label="备注" prop="remark">
                                                     <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -654,7 +663,7 @@ export default {
             deviceData: [],
             personnelData: [],
             workstationList: [],
-            lineList: [],
+            productionLineList: [],
             codeConfig: {},
             dispatchSearchForm: {
                 resIdList: [],
@@ -1209,7 +1218,7 @@ export default {
             objs.projectId = this.dataForm.projectId
             getProductionLineList(objs).then((res) => {
                 console.log("产线", res);
-                this.lineList = res.data.records;
+                this.productionLineList = res.data.records;
             });
         },
         // 获取工艺详情

@@ -104,6 +104,14 @@ export function getOrderSourceList(data) {
   })
 }
 
+//   返工任务查询
+export function getReworkWorkPage(data) {
+  return request({
+    url: `/api/mrp/work/rework/page`,
+    method: 'POST',
+    data
+  })
+}
 
 // 生产订单进度跟踪
 

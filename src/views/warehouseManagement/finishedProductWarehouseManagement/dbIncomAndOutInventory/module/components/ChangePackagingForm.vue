@@ -169,6 +169,30 @@ export default {
             this.$message.error(`请进行推荐库存选择！`)
             return false
           }
+          const zeroOutboundItems = data.filter(item => {
+            const outboundQty = item.all.outboundQuantity;
+
+            if (outboundQty == null || outboundQty === '') {
+              return true;
+            }
+
+            const num = parseFloat(outboundQty);
+            return isNaN(num) || num === 0;
+          });
+
+          if (zeroOutboundItems.length > 0) {
+            const productNames = zeroOutboundItems.map(item =>
+              item.all.productName || item.all.productCode || `产品(型号:${item.all.productDrawingNo})`
+            ).join('、');
+
+            if (zeroOutboundItems.length === 1) {
+              this.$message.error(`产品"${productNames}"的出库数量为0，请取消勾选或填写正确的出库数量！`);
+            } else {
+              this.$message.error(`${zeroOutboundItems.length}个产品的出库数量为0：${productNames}，请取消勾选或填写正确的出库数量！`);
+            }
+
+            return false;
+          }
           return true
         },
       },
@@ -177,6 +201,7 @@ export default {
         productName: ['productName'],
         productCode: ['productCode'],
         productDrawingNo: ['productDrawingNo'],
+        inventoryLineId: ['stockInventoryLineId'],
       },
 
       productFieldMap: {
@@ -258,7 +283,7 @@ export default {
 
         const selectedProducts = selectedData
           .map(item => {
-            return standardizeFields([item], this.recommendProductFieldMap)[0]?.all;
+            return standardizeFields(item.all, this.recommendProductFieldMap);
           })
           .filter(item => item);
 
@@ -276,11 +301,11 @@ export default {
           .map(item => {
             return {
               ...item,
-              sourceProductId: sourceProduct.id,
+              sourceProductId: sourceProduct.sourceLineId,
               sourceProductIndex: this.currentSourceIndex,
               num: item.outboundQuantity,
               sourceId: this.dataForm.sourceId,
-              sourceLineId: sourceProduct.id,
+              sourceLineId: sourceProduct.sourceLineId,
             };
           })
           .filter(item => item !== null);
@@ -372,6 +397,20 @@ export default {
         this.recommendLinesList[dataOrIndex][prop] = value;
       }
     },
+    mergeRecommendLinesSimple() {
+      const mergedMap = {};
+
+      this.recommendLinesList.forEach(item => {
+        const key = `${ item.productsId }_${ item.packagingMethod }`;
+
+        if (!mergedMap[key]) {
+          mergedMap[key] = { ...item };
+        } else {
+          mergedMap[key].num = this.jnpf.math('+', [mergedMap[key].num, item.num], 4);
+        }
+      });
+      return Object.values(mergedMap);
+    },
     async handleSubmit() {
       // 校验表单
       this.btnLoading = true
@@ -395,9 +434,11 @@ export default {
         return;
       }
 
+      const mergedList = this.mergeRecommendLinesSimple();
+
       const params = {
         stockChangePackage: this.dataForm,
-        stockChangePackageLineList: this.linesList,
+        stockChangePackageLineList: mergedList,
         stockChangePackageWarehouseLineList: this.recommendLinesList
       }
 

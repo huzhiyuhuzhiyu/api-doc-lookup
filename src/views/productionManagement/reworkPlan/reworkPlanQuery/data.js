@@ -26,11 +26,11 @@ export function getColumns() {
       minWidth: 180
     },
     {
-      prop: "orderType",
-      label: "任务类型",
+      prop: "orderStatus",
+      label: "任务状态",
       minWidth: 160,
       slot: true,
-      dictType: 'orderType',
+      dictType: 'orderStatus',
     },
     {
       prop: "productCode",
@@ -48,16 +48,6 @@ export function getColumns() {
       minWidth: 220
     },
     {
-      prop: "productCategoryName",
-      label: "产品分类",
-      minWidth: 160
-    },
-    {
-      prop: "pairingModeName",
-      label: "配对方式",
-      minWidth: 120
-    },
-    {
       prop: "mainUnit",
       label: "单位",
       minWidth: 80
@@ -73,12 +63,6 @@ export function getColumns() {
       minWidth: 160
     },
     {
-      prop: "prodSchedule",
-      label: "完成进度",
-      minWidth: 180,
-      slot: true,
-    },
-    {
       prop: "routingName",
       label: "工艺路线名称",
       minWidth: 160
@@ -87,13 +71,6 @@ export function getColumns() {
       prop: "routingCode",
       label: "工艺路线编码",
       minWidth: 160
-    },
-    {
-      prop: "taskMethod",
-      label: "编排任务方式",
-      minWidth: 160,
-      slot: true,
-      dictType: 'taskMethodStatus',
     },
     {
       prop: "productionLineName",
@@ -109,13 +86,6 @@ export function getColumns() {
       prop: "planEndDate",
       label: "计划结束日期",
       minWidth: 160
-    },
-    {
-      prop: "urgentFlag",
-      label: "是否紧急",
-      minWidth: 160,
-      slot: true,
-      dictType: 'booleanOptions',
     },
     {
       prop: "createTime",

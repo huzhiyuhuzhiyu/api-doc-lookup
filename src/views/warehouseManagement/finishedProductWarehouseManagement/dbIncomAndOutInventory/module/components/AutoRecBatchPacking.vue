@@ -516,6 +516,7 @@ export default {
       if (this.isTypeAdd && this.isPacking && this.dataForm.packingStatus === 'boxed') {
         this.$message.warning('已装箱，请勿重复装箱')
         this.btnLoading = false
+        return
       }
 
       this.dataForm.documentId = this.dataForm.id

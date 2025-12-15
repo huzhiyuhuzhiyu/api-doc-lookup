@@ -2,12 +2,13 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 
 import { buttonList, getColumns } from "./data";
-import { deleteOrders, getsaleOrderList } from "@/api/salesManagement/assemblyOrders";
+import { closeOrders, deleteOrders, getsaleOrderList } from "@/api/salesManagement/assemblyOrders";
 import { getOrdersConfirmed, getOrdersConfirmedIssuance, ordersFeedbackDeliveryFinished } from "@/api/salesManagement/orderChanges";
 import { getPrintBusInfo } from "@/api/system/printDev";
 import Form from './Form.vue'
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
+import { getQueryConfirm } from "@/utils";
 
 export default {
   name: "index",
@@ -238,10 +239,26 @@ export default {
         case 'delete':
           this.handleRemove(row.id)
           break;
+        case 'close':
+          this.handleCloseOrder(row.id)
+          break;
         default:
       }
     },
+    async handleCloseOrder(id) {
+      try {
+        await getQueryConfirm(this, '确定要关闭此订单吗？');
 
+        await closeOrders(id);
+
+        this.$message.success('关单成功');
+        await this.initData();
+      } catch ( error ) {
+        if (error !== 'cancel') {
+          this.$message.error('关单失败');
+        }
+      }
+    },
     handleRemove(id) {
       this.$confirm('您确定要删除这些数据吗, 是否继续？', '提示', {
         type: 'warning'
@@ -360,6 +377,9 @@ export default {
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="handleColumnClick(row, 'copy')">
                     复制
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleColumnClick(row, 'close')" :disabled="row.documentStatus === 'draft' || row.orderState === 'finish'">
+                    关单
                   </el-dropdown-item>
                   <el-dropdown-item :disable="row.documentStatus === 'draft'"
                                     @click.native="printView(row,'p002','销售单打印')">

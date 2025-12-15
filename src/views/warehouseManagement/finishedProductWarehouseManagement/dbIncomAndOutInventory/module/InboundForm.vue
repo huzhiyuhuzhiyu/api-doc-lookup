@@ -6,8 +6,9 @@ import busFlow from "@/mixins/generator/busFlow";
 import { getQuotationsendlist } from "@/api/salesManagement";
 import { getLocationList } from "@/api/warehouseManagement/inventory";
 import { getcategoryTrees, getsaleOrderDetailList } from "@/api/salesManagement/assemblyOrders";
-import { getBatchNumber, getCooperativeData, getWarehouseInfo, getWarehouseList } from "@/api/basicData";
+import { getCooperativeData, getWarehouseInfo, getWarehouseList } from "@/api/basicData";
 import { dataProcessor } from "./data";
+import { getStockPlanPallet } from "@/api/PackagingPalletPlan";
 import { addWarehouseData, updateWarehouseData } from "@/api/warehouseManagement/inboundAndOutbound";
 import PrintDialog from "@/components/no_mount/printDialog/index.vue";
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
@@ -17,12 +18,12 @@ import { standardizeFields } from "@/utils";
 
 
 export default {
-  name: "outboundForm",
+  name: "InboundForm",
   components: { BatchPrintBrowse, PrintDialog, TableFormProduct },
   mixins: [flowMixin, busFlow],
   data() {
     return {
-      title: '出库单',
+      title: '入库单',
       btnType: '',
       loading: false,
       btnLoading: false,
@@ -35,6 +36,26 @@ export default {
       dataForm: {
         approvalFlag: false,
         sourceType: 'notice',
+        orderNo: '',
+        sourceNo: '',
+        businessType: '',
+        partnerName: '',
+        undeliveredQuantity: '',
+        warehouseId: '',
+        warehouseName: '',
+        shelfSpaceId: '',
+        shelfSpaceName: '',
+        supplierPartnerName: '',
+        supplierPartnerCode: '',
+        supplierPartnerId: '',
+        cooperativePartnerName: '',
+        cooperativePartnerCode: '',
+        cooperativePartnerId: '',
+        inspectionResults: '',
+        orderDate: '',
+        documentStatus: '',
+        documentType: '',
+        remark: '',
       },
       basicFormSchema: [],
       linesList: [],
@@ -117,8 +138,23 @@ export default {
           print: { enabled: false, enCode: '', fullName: '' },
           defaultForm: {}
         },
-        // 采购退货
-        outbound_purchase: {
+        // 销售退货
+        inbound_sale_return: {
+          fetchLines: getQuotationsendlist,
+          dataPath: 'data.noticeLineList',
+          filter: {
+            classAttribute: this.classAttributeList
+          },
+          formatter: (item) => ({
+            ...item,
+            noticeId: item.returnDeliveryNoticeId,
+          }),
+          showActions: { selectProduct: true, batchDelete: true },
+          print: { enabled: false, enCode: '', fullName: '' },
+          defaultForm: {}
+        },
+        // 采购收货
+        inbound_purchase: {
           fetchLines: getpurPurchaseReceiptReturnGoodsdetail,
           dataPath: 'data.noticeLineList',
           filter: {
@@ -128,10 +164,36 @@ export default {
             ...item,
             ordersId: item.purchaseOrderId,
             noticeId: item.purchaseReceiptReturnGoodsId,
+            receivedQuantity: item.receiptQuantity,
+            undeliveredQuantity: item.requiredReceivedQuantity,
           }),
           showActions: { selectProduct: true, batchDelete: true },
-          print: { enabled: false, enCode: '', fullName: '' },
+          print: {},
           defaultForm: {}
+        },
+        // 成品包装入库
+        inbound_finished_package: {
+          fetchLines: getStockPlanPallet,
+          dataPath: 'data.stockPlanPalletLineList',
+          filter: {
+            waitReceivedQuantity: val => val > 0
+          },
+          formatter: (item) => ({
+            ...item,
+            noticeId: item.planPalletId,
+            ordersId: item.productionOrderId,
+            ordersLineId: item.documentLineId,
+            undeliveredQuantity: item.waitReceivedQuantity,
+          }),
+          print: {
+            enabled: true,
+            enCode: '',
+            fullName: '',
+          },
+          showActions: { selectProduct: false, batchDelete: false },
+          defaultForm: {
+            sourceType: 'notice'
+          }
         },
       }
     },
@@ -149,21 +211,24 @@ export default {
       const config = this.businessConfig.print || {};
       return config.enabled && this.activeType;
     },
-    outboundLabel() {
-      if (['outbound_sale_send', 'outbound_sale_exchange'].includes(this.businessType)) {
-        return '发货'
-      }
-      if (this.businessType === 'outbound_external_send') {
-        return '发料'
-      }
-      if (['outbound_purchase', 'outbound_external'].includes(this.businessType)) {
-        return '退货'
-      }
-      if (this.businessType === 'outbound_pick_out') {
-        return '领料'
+    inboundLabel() {
+      if (['inbound_purchase', 'inbound_external'].includes(this.businessType)) {
+        return '收货';
       }
 
-      return ''
+      if (this.businessType === 'inbound_sale_return') {
+        return this.dataForm.exchangeGoodsFlag ? '换货' : '退货';
+      }
+
+      if (['inbound_finished_package']
+        .includes(this.businessType)) {
+        return '入库';
+      }
+
+      if (['inbound_external_return'].includes(this.businessType)) {
+        return '退料';
+      }
+      return '入库';
     }
   },
   mounted() {
@@ -369,7 +434,7 @@ export default {
           label: "供应商/客户",
           value: "",
           type: "input",
-          render: ['outbound_sale_send', 'outbound_external_send', 'outbound_purchase', 'outbound_external'].includes(this.businessType)
+          render: ['inbound_purchase'].includes(this.businessType)
         },
         {
           prop: "supplierPartnerName",
@@ -568,6 +633,21 @@ export default {
           render: this.locationEnabled
         },
         {
+          prop: 'inspectionResults',
+          label: '检验结果',
+          value: 'qualified',
+          type: 'select',
+          options: [
+            { label: '合格', value: 'qualified' },
+            { label: '待检验', value: 'unInspect' }
+          ],
+          clearable: false,
+          render: ['inbound_purchase'].includes(this.businessType),
+          itemRules: [
+            { required: true, trigger: 'change' }
+          ]
+        },
+        {
           prop: "orderDate",
           label: "单据日期",
           value: this.jnpf.getToday(),
@@ -631,92 +711,8 @@ export default {
         {
           prop: 'batchNumber',
           label: '批次号',
-          width: '200',
-          type: 'custom',
-          customComponent: 'ComSelect-page',
-          beforeOpen: (paramsObj) => {
-            if (!this.dataForm.warehouseId) return this.$message.error('请先选择仓库')
-            return true
-          },
-          renderTree: false,
-          tableItems: [
-            { prop: 'batchNumber', label: '批次号', width: '200' },
-            { prop: 'partnerName', label: '供应商名称', width: '180' },
-            { prop: 'warehouseName', label: '仓库名称' },
-            { prop: 'shelfSpaceName', label: '库位', render: this.locationEnabled },
-            { prop: 'inspectionResultsText', label: '检验结果', slot: true, dictType: 'inspectionResultsType' },
-            { prop: 'availableQuantity', label: '可用数量' },
-            { prop: 'occupancyQuantity', label: '占用数量' }
-          ],
-          listMethod: getBatchNumber,
-          listRequestObj: (index) => {
-            const data = this.linesList[index]
-            return {
-              pageNum: 1,
-              pageSize: 20,
-              orderItems: [{
-                asc: false,
-                column: ''
-              }],
-              availableBatch: true,
-              inspectStockFlag: true,
-              excludeProcessFlag: data.processId ? 0 : 1,
-              productsId: data.productsId,
-              vibrationLevel: data.vibrationLevel,
-              sealingCoverTyping: data.sealingCoverTyping,
-              oil: data.oil,
-              processId: data.processId ? data.processId : '',
-              clearance: data.clearance,
-              accuracyLevel: data.accuracyLevel,
-              warehouseId: data.warehouseId || this.dataForm.warehouseId,
-              packagingMethod: data.packagingMethod,
-              specialRequire: data.specialRequire,
-              batchNumber: '',
-              partnerName: '',
-              shelfSpaceName: ''
-            }
-          },
-          searchList: [
-            { prop: 'batchNumber', label: '批次号', type: 'input' },
-            { prop: 'partnerName', label: '供应商名称', type: 'input' },
-            { prop: 'shelfSpaceName', label: '库位', type: 'input', render: this.locationEnabled }
-          ],
-          change: (val, data, paramsObj) => {
-            const index = paramsObj.scope.$index
-            this.$nextTick(() => {
-              this.$refs['linesForm'].$refs.main.validateField(`data.${ index }.batchNumber`)
-            })
-            if (data && data.length) { // 数据有效，进行更新
-              data = data[0].all
-              const flattenedData = this.linesList
-              flattenedData[index].warehouseId = data.warehouseId
-              flattenedData[index].shelfSpaceId = data.shelfSpaceId
-              flattenedData[index].shelfSpaceName = data.shelfSpaceName
-              this.$set(flattenedData[index], 'availableBatchNumber', data.inventoryQuantity) // 用$set防止合计行不计算
-              flattenedData[index].batchNumber = data.batchNumber
-              // 如果批次数量小于待出库数量，则把出库数量设为批次数量，反之则为待出库数量
-              if (['outbound_sale_send', 'outbound_external_send', 'outbound_pick_out'].includes(this.businessType)) {
-                const newNum = Math.min(data.inventoryQuantity, flattenedData[index].undeliveredQuantity)
-                if (newNum !== Number(flattenedData[index].num)) {
-                  this.$message.success(`产品信息第${ index + 1 }行：自动更新${ this.outboundLabel }数量成功`)
-                  this.$nextTick(() => {
-                    this.$refs['linesForm'].$refs.main.validateField(`data.${ index }.num`)
-                  })
-                }
-                flattenedData[index].num = newNum
-              }
-            }
-          },
-          itemRules: [
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: [null, (errMsg, index) => {
-                  this.$message.error(`产品信息第${ index + 1 }行：批次号${ errMsg }`)
-                }]
-              }), trigger: 'no'
-            },
-            { required: true, trigger: 'no' }
-          ],
+          type: 'view',
+          minWidth: 180,
         },
         {
           prop: 'shelfSpaceName',
@@ -802,27 +798,27 @@ export default {
         },
         {
           prop: 'num',
-          label: `${ this.outboundLabel }数量`,
+          label: `${ this.inboundLabel }数量`,
           type: 'input',
           minWidth: 220,
           itemRules: [
             {
-              validator: this.formValidate({ type: 'noEmtry', params: [null, (...args) => validErrorMessage(`${ this.outboundLabel }数量`, ...args)] }),
+              validator: this.formValidate({ type: 'noEmtry', params: [null, (...args) => validErrorMessage(`${ this.inboundLabel }数量`, ...args)] }),
               trigger: 'blur'
             },
             { required: true, trigger: 'blur' },
             {
-              validator: this.formValidate({ type: 'decimal', params: [20, 6, null, (...args) => validErrorMessage(`${ this.outboundLabel }数量`, ...args)] }),
+              validator: this.formValidate({ type: 'decimal', params: [20, 6, null, (...args) => validErrorMessage(`${ this.inboundLabel }数量`, ...args)] }),
               trigger: 'blur'
             },
-            { validator: this.formValidate('positiveNumber', null, (...args) => validErrorMessage(`${ this.outboundLabel }数量`, ...args)), trigger: 'blur' },
+            { validator: this.formValidate('positiveNumber', null, (...args) => validErrorMessage(`${ this.inboundLabel }数量`, ...args)), trigger: 'blur' },
             {
               validator: this.formValidate({
                 type: 'calc',
                 params: [(rowIndex, value) => {
                   if ([].includes(this.businessType)) return true
                   return Number(value) <= Number(this.linesList[rowIndex].undeliveredQuantity)
-                }, `不能超过对应待${ this.outboundLabel }数量`, (...args) => validErrorMessage(`${ this.outboundLabel }数量`, ...args)]
+                }, `不能超过对应待${ this.inboundLabel }数量`, (...args) => validErrorMessage(`${ this.inboundLabel }数量`, ...args)]
               }), trigger: 'blur'
             }
           ],
@@ -836,13 +832,13 @@ export default {
         },
         {
           prop: 'receivedQuantity',
-          label: `已${ this.outboundLabel }数量`,
+          label: `已${ this.inboundLabel }数量`,
           type: 'view',
           minWidth: 140,
         },
         {
           prop: 'undeliveredQuantity',
-          label: `待${ this.outboundLabel }数量`,
+          label: `待${ this.inboundLabel }数量`,
           type: 'view',
           minWidth: 140,
         },
@@ -1053,7 +1049,7 @@ export default {
       if (!valid_1 || !valid_2) return this.btnLoading = false
 
       this.dataForm.documentStatus = 'submit'
-      this.dataForm.documentType = 'outbound'
+      this.dataForm.documentType = 'inbound'
 
       const deepParams = _.merge({}, this.dataForm, this.businessConfig.defaultForm);
       const newLines = this.linesList.map(item => ({
@@ -1145,8 +1141,7 @@ export default {
                             选择产品
                           </el-button>
                           <span v-if="businessConfig.showActions.selectProduct && businessConfig.showActions.batchDelete">|</span>
-                          <el-button v-if="businessConfig.showActions.batchDelete" type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
-                                     @click="$refs.linesForm.batchDelete()">
+                          <el-button v-if="businessConfig.showActions.batchDelete" type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.linesForm.batchDelete()">
                             批量删除
                           </el-button>
                         </template>

@@ -5,12 +5,12 @@ import { getAddressInfo } from "@/api/basicData";
 import { confirmOrdersNotice, getQuotationsendlist } from "@/api/salesManagement";
 import { withdrawStockPackingList } from "@/api/batchPacking";
 
-import autoRecBatchPacking from "./components/autoRecBatchPacking.vue";
+import AutoRecBatchPacking from "./components/AutoRecBatchPacking.vue";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 
 export default {
-  name: "packingForm",
-  components: { autoRecBatchPacking, TableFormProduct },
+  name: "PackingForm",
+  components: { AutoRecBatchPacking, TableFormProduct },
   data() {
     return {
       title: '销售发货通知单',
@@ -274,7 +274,7 @@ export default {
         case 'autoRecommend':
           this.autoRecBatchPackingFormVisible = true;
           this.$nextTick(() => {
-            this.$refs.autoRecBatchPacking.init({
+            this.$refs.AutoRecBatchPacking.init({
               id: this.dataForm.id,
               formType: actionType,
               type: btnType,
@@ -285,7 +285,9 @@ export default {
         default:
       }
     },
+    handleChangePackaging(){
 
+    },
     async getAddressInfo(id) {
       const { data } = await getAddressInfo(id)
       const defaultAddress = data.find(item => item.defaultFlag);
@@ -427,6 +429,10 @@ export default {
     },
 
     async handleWithdraw() {
+      if (this.dataForm.packingStatus !== 'boxed') {
+        this.$message.warning('非已装箱状态，无法撤回')
+        return
+      }
       try {
         await getQueryConfirm(this, '确定要撤回箱单吗？此操作将撤销已装箱的记录。')
         this.withdrawLoading = true
@@ -512,7 +518,7 @@ export default {
                         :tableProps="{
                         is: 'JNPF-table',
                         fixedNO: true,
-                        hasC: false,
+                        hasC: true,
                         height: linesTableHeight,
                         rowKey: 'id',
                         defaultExpandAll: true,
@@ -521,6 +527,9 @@ export default {
                         <template slot="top">
                           <div class="tableTopContainer">
                             <div class="left">
+                              <el-button type="warning" @click="handleChangePackaging">
+                                换包装
+                              </el-button>
                             </div>
                             <div class="right">
                               <template v-if="isEdit">
@@ -558,7 +567,7 @@ export default {
           </div>
         </div>
       </div>
-      <autoRecBatchPacking ref="autoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="closeBatchPacking"/>
+      <AutoRecBatchPacking ref="AutoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="closeBatchPacking"/>
     </div>
   </transition>
 </template>

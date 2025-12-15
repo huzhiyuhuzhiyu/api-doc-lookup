@@ -13,10 +13,11 @@ import { getStockPlanPalletPage } from "@/api/PackagingPalletPlan";
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 import outboundSaleSendForm from "@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue";
-import packingForm from './module/packingForm.vue'
-import autoRecBatchPacking from "./module/components/autoRecBatchPacking.vue";
-import InboundForm from "./module/inboundForm.vue";
-import OutboundForm from "./module/outboundForm.vue";
+
+import PackingForm from './module/PackingForm.vue'
+import AutoRecBatchPacking from "./module/components/AutoRecBatchPacking.vue";
+import InboundForm from "./module/InboundForm.vue";
+import OutboundForm from "./module/OutboundForm.vue";
 
 export default {
   name: "WarehouseBusinessProcess",
@@ -24,8 +25,8 @@ export default {
     outboundSaleSendForm,
     OutboundForm,
     InboundForm,
-    autoRecBatchPacking,
-    packingForm,
+    AutoRecBatchPacking,
+    PackingForm,
     BatchPrintBrowse,
     PrintDialog,
   },
@@ -365,7 +366,7 @@ export default {
     handlePackingEdit(row, actionType, buttonType) {
       this.isBatchPackingDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.autoRecBatchPacking.init({
+        this.$refs.AutoRecBatchPacking.init({
           id: row.id,
           formType: actionType,
           type: buttonType,
@@ -376,7 +377,7 @@ export default {
     handleOutboundOperation(row) {
       this.isOutboundDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.outboundForm.init({
+        this.$refs.OutboundForm.init({
           id: '',
           prefillData: row,
           btnType: 'add',
@@ -390,7 +391,7 @@ export default {
     handleInboundOperation(row) {
       this.isInboundDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.inboundForm.init({
+        this.$refs.InboundForm.init({
           id: '',
           prefillData: row,
           btnType: 'add',
@@ -417,7 +418,7 @@ export default {
     openPackingDialog(row, buttonType) {
       this.isPackingDialogVisible = true;
       this.$nextTick(() => {
-        this.$refs.packingForm.init({
+        this.$refs.PackingForm.init({
           id: row.id,
           btnType: buttonType,
           businessType: this.activeBusinessType,
@@ -618,23 +619,23 @@ export default {
     <BatchPrintBrowse ref="batchPrint" :fullName="currentPrintTemplateName"/>
 
     <!-- 业务组件 -->
-    <autoRecBatchPacking
-      ref="autoRecBatchPacking"
+    <AutoRecBatchPacking
+      ref="AutoRecBatchPacking"
       v-if="isBatchPackingDialogVisible"
       @close="closeDialog"
     />
-    <packingForm
-      ref="packingForm"
+    <PackingForm
+      ref="PackingForm"
       v-if="isPackingDialogVisible"
       @close="closeDialog"
     />
-    <inboundForm
-      ref="inboundForm"
+    <InboundForm
+      ref="InboundForm"
       v-if="isInboundDialogVisible"
       @close="closeDialog"
     />
-    <outboundForm
-      ref="outboundForm"
+    <OutboundForm
+      ref="OutboundForm"
       v-if="isOutboundDialogVisible"
       @close="closeDialog"
     />

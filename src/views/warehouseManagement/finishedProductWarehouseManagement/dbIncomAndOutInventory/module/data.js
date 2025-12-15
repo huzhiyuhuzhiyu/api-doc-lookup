@@ -1,3 +1,5 @@
+import { getProcessList } from "@/api/basicData/processSettingss";
+
 /**
  * @description 装箱表单基础数据
  */
@@ -93,6 +95,77 @@ export function getPackingBasicFormSchema(dataFormRef, context) {
     }
   ]
 }
+
+/**
+ * @description 换包装表单基础数据
+ */
+export function getChangePackagingFormSchema(dataFormRef, context) {
+  return [
+    {
+      prop: "orderNo",
+      label: "重检单号",
+      value: "",
+      type: "input",
+      itemRules: [{ required: true, trigger: "blur" }],
+      get disabled() {
+        return context.isOrderNoEditable
+      }
+    },
+    {
+      prop: 'batchNumber',
+      label: '批次号',
+      type: 'input',
+      value: "",
+    },
+    {
+      prop: "priority",
+      label: "优先级",
+      value: "",
+      type: 'select',
+      options: context.global.shippingPriority,
+    },
+    {
+      prop: "planDate",
+      label: "计划日期",
+      value: "",
+      type: "date_interval",
+      itemRules: [{ required: true, trigger: "change" }],
+      change(val) {
+        if (!val.length) return
+        context.dataForm.planStartDate = val[0]
+        context.dataForm.planEndDate = val[1]
+      }
+    },
+    {
+      prop: "orderDate",
+      label: "单据日期",
+      value: "",
+      type: "date",
+      itemRules: [{ required: true, trigger: "blur" }],
+    },
+    {
+      prop: "routingName",
+      label: "工艺路线",
+      value: "",
+      type: "custom",
+      customComponent: "ComSelect-page",
+      itemRules: [{ required: true, trigger: "change" }],
+      title: '选择工艺路线',
+      renderTree: false,
+      multiple: false,
+      clearable: true,
+      listMethod: getProcessList,
+    },
+    {
+      prop: "remark",
+      label: "备注",
+      value: "",
+      type: "textarea",
+      sm: 24
+    }
+  ]
+}
+
 
 
 /**

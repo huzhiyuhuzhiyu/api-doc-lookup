@@ -220,7 +220,7 @@ export default {
             }
         },
         initData() {
-            if (this.timeArr&& this.timeArr.length) {
+            if (this.timeArr && this.timeArr.length) {
                 this.tableQuery.startTime = this.timeArr[0] + ' 00:00:00'
                 this.tableQuery.endTime = this.timeArr[1] + ' 23:59:59'
             } else {

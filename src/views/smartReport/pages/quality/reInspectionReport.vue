@@ -20,7 +20,7 @@ export default {
           }
         }, // 启用动态表头
         summaryConfig: {
-          showSummary: true, // 控制是否显示汇总行
+          showSummary: false, // 控制是否显示汇总行
           summaryMapping: {}, // 字段映射 （接口返回汇总字段）
         },
         columnsConfig: [

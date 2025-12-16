@@ -171,7 +171,7 @@
                         :highlight-current-row="false" @row-dblclick="rowDblclickFun" @selection-change="currentChange"
                         :row-class-name="getRowClassName" :checkSelectable="checkSelectable" ref="dataTable"
                         @row-click="handleRowClick" :tree-props="{ children: 'childrenList', hasChildren: '' }" :row-key="'id'"
-                        :default-expand-all="expands" @sort-change="sortChange">
+                        :default-expand-all="expands" @sort-change="sortChange" custom-column>
               <template v-if="!listDataTreeFlag">
                 <template v-for="item in tableItems">
                   <el-table-column
@@ -904,7 +904,6 @@ export default {
     confirm() {
       setTimeout(async () => {
         let selectedData = []
-        if (!this.selectedIds.length && !this.confirms) return this.$message.error("请选择数据")
         this.btnLoading = true
         for (let i = 0; i < this.selectedIds.length; i++) {
           let item = []

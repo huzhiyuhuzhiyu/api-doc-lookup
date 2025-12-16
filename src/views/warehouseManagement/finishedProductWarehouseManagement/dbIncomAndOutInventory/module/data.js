@@ -103,7 +103,7 @@ export function getChangePackagingFormSchema(dataFormRef, context) {
   return [
     {
       prop: "orderNo",
-      label: "重检单号",
+      label: "换包装单号",
       value: "",
       type: "input",
       itemRules: [{ required: true, trigger: "blur" }],
@@ -155,6 +155,36 @@ export function getChangePackagingFormSchema(dataFormRef, context) {
       multiple: false,
       clearable: true,
       listMethod: getProcessList,
+      tableItems: [
+        { prop: 'name', label: '工艺路线名称', minWidth: '220px', sortable: 'custom' },
+        { prop: 'code', label: '工艺路线编码', minWidth: '220px', sortable: 'custom' },
+      ],
+      listRequestObj: {
+        code: "",
+        name: "",
+        documentStatus: "submit",
+        source: "packaging",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ]
+      },
+      searchList: [
+        { prop: 'name', label: '工艺路线名称', type: 'input' },
+        { prop: 'code', label: '工艺路线编码', type: 'input' },
+      ],
+      change: (id, data) => {
+        context.dataForm.routingId = data[0].all.id;
+        context.dataForm.routingName = data[0].all.name;
+      },
     },
     {
       prop: "remark",

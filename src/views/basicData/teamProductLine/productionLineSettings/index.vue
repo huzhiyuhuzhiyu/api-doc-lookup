@@ -321,6 +321,7 @@ export default {
       }
     },
     initData() {
+      this.listLoading = true
       if (this.isProjectSwitch === '1') {
         this.tableQuery.projectId = this.userInfo.projectId
       }

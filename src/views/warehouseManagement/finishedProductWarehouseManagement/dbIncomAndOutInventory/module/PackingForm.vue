@@ -7,10 +7,11 @@ import { withdrawStockPackingList } from "@/api/batchPacking";
 
 import AutoRecBatchPacking from "./components/AutoRecBatchPacking.vue";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
+import ChangePackagingForm from "@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/module/components/ChangePackagingForm.vue";
 
 export default {
   name: "PackingForm",
-  components: { AutoRecBatchPacking, TableFormProduct },
+  components: { ChangePackagingForm, AutoRecBatchPacking, TableFormProduct },
   data() {
     return {
       title: '销售发货通知单',
@@ -19,6 +20,7 @@ export default {
       btnLoading: false,
       withdrawLoading: false,
       autoRecBatchPackingFormVisible: false,
+      changePackagingFormVisible: false,
       globalPackagingMethod: '',
       classAttributeList: [],
       warehouseCode: '',
@@ -285,8 +287,15 @@ export default {
         default:
       }
     },
-    handleChangePackaging(){
-
+    handleChangePackaging() {
+      if (!this.$refs.tableForm.selectedList.length) {
+        this.$message.warning('请选择要换包装的产品')
+        return
+      }
+      this.changePackagingFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs.ChangePackagingForm.init('', 'add', this.$refs.tableForm.selectedList,this.dataForm)
+      })
     },
     async getAddressInfo(id) {
       const { data } = await getAddressInfo(id)
@@ -455,7 +464,9 @@ export default {
       this.autoRecBatchPackingFormVisible = false;
       this.getDetail(this.dataForm.id);
     },
-
+    closeChangePackagingForm() {
+      this.changePackagingFormVisible = false;
+    },
     goBack() {
       this.$emit('close', this.activeType);
     }
@@ -465,57 +476,54 @@ export default {
 
 <template>
   <transition name="el-zoom-in-center">
-    <div class="JNPF-preview-main org-form">
-      <div class="JNPF-common-layout">
-        <div class="JNPF-common-layout-center JNPF-flex-main">
-          <div class="JNPF-preview-main transitionForm org-form">
-            <div class="JNPF-common-page-header">
-              <el-page-header @back="goBack" :content="title"/>
-              <div class="options">
-                <template v-if="activeType">
-                  <template v-if="btnType === 'confirm'">
-                    <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">
-                      确认
-                    </el-button>
-                  </template>
-                  <template v-else-if="btnType === 'packing'">
-                    <el-button type="primary" :loading="btnLoading" @click="handleOpenTransitionPage('packing','add')">
-                      装箱单
-                    </el-button>
-                    <el-button type="primary" :loading="btnLoading" @click="handleOpenTransitionPage('autoRecommend','add')">
-                      自动推荐批次
-                    </el-button>
-                    <el-button type="primary" :loading="btnLoading">
-                      完成
-                    </el-button>
-                    <el-button type="danger" :loading="withdrawLoading" @click="handleWithdraw">
-                      箱单撤回
-                    </el-button>
-                  </template>
-                </template>
-                <el-button @click="$emit('close',false)">{{ $t('common.cancelButton') }}</el-button>
-              </div>
-            </div>
-            <div class="main" v-loading="loading" ref="main">
-              <el-tabs v-model="activeName">
-                <el-tab-pane label="基础信息" name="jcInfo">
-                  <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
-                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
-                      <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                                btnType="look"/>
-                    </el-collapse-item>
-                    <el-collapse-item class="productInfo"
-                                      title="产品信息"
-                                      name="productInfo">
-                      <TableForm-product
-                        @input="contentChanges"
-                        :value="linesList"
-                        :hasToolbar="false"
-                        ref="tableForm"
-                        :btnType="isEdit ? '' : 'look'"
-                        :tableItems="linesListItems"
-                        :hasActionbar="false"
-                        :tableProps="{
+    <div class="JNPF-preview-main transitionForm">
+      <div class="JNPF-common-page-header">
+        <el-page-header @back="goBack" :content="title"/>
+        <div class="options">
+          <template v-if="activeType">
+            <template v-if="btnType === 'confirm'">
+              <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">
+                确认
+              </el-button>
+            </template>
+            <template v-else-if="btnType === 'packing'">
+              <el-button type="primary" :loading="btnLoading" @click="handleOpenTransitionPage('packing','add')">
+                装箱单
+              </el-button>
+              <el-button type="primary" :loading="btnLoading" @click="handleOpenTransitionPage('autoRecommend','add')">
+                自动推荐批次
+              </el-button>
+              <el-button type="primary" :loading="btnLoading">
+                完成
+              </el-button>
+              <el-button type="danger" :loading="withdrawLoading" @click="handleWithdraw">
+                箱单撤回
+              </el-button>
+            </template>
+          </template>
+          <el-button @click="$emit('close',false)">{{ $t('common.cancelButton') }}</el-button>
+        </div>
+      </div>
+      <div class="main" v-loading="loading" ref="main">
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="基础信息" name="jcInfo">
+            <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
+                <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
+                          btnType="look"/>
+              </el-collapse-item>
+              <el-collapse-item class="productInfo"
+                                title="产品信息"
+                                name="productInfo">
+                <TableForm-product
+                  @input="contentChanges"
+                  :value="linesList"
+                  :hasToolbar="false"
+                  ref="tableForm"
+                  :btnType="isEdit ? '' : 'look'"
+                  :tableItems="linesListItems"
+                  :hasActionbar="false"
+                  :tableProps="{
                         is: 'JNPF-table',
                         fixedNO: true,
                         hasC: true,
@@ -524,50 +532,48 @@ export default {
                         defaultExpandAll: true,
                         customColumn: true,
                       }">
-                        <template slot="top">
-                          <div class="tableTopContainer">
-                            <div class="left">
-                              <el-button type="warning" @click="handleChangePackaging">
-                                换包装
-                              </el-button>
-                            </div>
-                            <div class="right">
-                              <template v-if="isEdit">
-                                <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
-                                  <el-form-item label="包装">
-                                    <el-select v-model="globalPackagingMethod" placeholder="包装"
-                                               @change="(val) => globalChange(val,'packagingMethod')"
-                                               style="width: 80px">
-                                      <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
-                                                 :label="item.label" :value="item.value"/>
-                                    </el-select>
-                                  </el-form-item>
-                                </el-form>
-                              </template>
-                              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                                         @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
-                              </el-tooltip>
-                            </div>
-                          </div>
-                        </template>
-                      </TableForm-product>
-                      <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;"
-                           class="text">
-                        <span style="font-weight:500;margin-right:10px">共发数量：{{ totalNum }}</span>
+                  <template slot="top">
+                    <div class="tableTopContainer">
+                      <div class="left">
+                        <el-button type="warning" @click="handleChangePackaging">
+                          换包装
+                        </el-button>
                       </div>
-                    </el-collapse-item>
-                  </el-collapse>
-                </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
-                  <UploadWj v-model="fileList" :disabled="true" :detailed="true"></UploadWj>
-                </el-tab-pane>
-              </el-tabs>
-            </div>
-          </div>
-        </div>
+                      <div class="right">
+                        <template v-if="isEdit">
+                          <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
+                            <el-form-item label="包装">
+                              <el-select v-model="globalPackagingMethod" placeholder="包装"
+                                         @change="(val) => globalChange(val,'packagingMethod')"
+                                         style="width: 80px">
+                                <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
+                                           :label="item.label" :value="item.value"/>
+                              </el-select>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                                   @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
+                        </el-tooltip>
+                      </div>
+                    </div>
+                  </template>
+                </TableForm-product>
+                <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;"
+                     class="text">
+                  <span style="font-weight:500;margin-right:10px">共发数量：{{ totalNum }}</span>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </el-tab-pane>
+          <el-tab-pane label="附件" name="annex">
+            <UploadWj v-model="fileList" :disabled="true" :detailed="true"></UploadWj>
+          </el-tab-pane>
+        </el-tabs>
       </div>
       <AutoRecBatchPacking ref="AutoRecBatchPacking" v-if="autoRecBatchPackingFormVisible" @close="closeBatchPacking"/>
+      <ChangePackagingForm ref="ChangePackagingForm" v-if="changePackagingFormVisible" @close="closeChangePackagingForm"></ChangePackagingForm>
     </div>
   </transition>
 </template>

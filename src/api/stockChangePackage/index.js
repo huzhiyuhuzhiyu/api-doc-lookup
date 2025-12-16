@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 生成重检单
+// 生成重检单/换包装
 export function addStockChangePackage(data) {
   return request({
     url: `/api/wms/stockChangePackage/insert`,
@@ -21,6 +21,15 @@ export function submitStockChangePackage(id) {
 export function getStockChangePackageLineList(data) {
   return request({
     url: `/api/wms/stockChangePackage/line/list`,
+    method: 'POST',
+    data
+  })
+}
+
+// 换包装-推荐库存
+export function getRecommendedInventory(data) {
+  return request({
+    url: `/api/wms/stockChangePackage/recommendedInventory`,
     method: 'POST',
     data
   })

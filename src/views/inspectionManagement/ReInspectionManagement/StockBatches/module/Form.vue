@@ -21,6 +21,7 @@ export default {
       btnLoading: false,
       isOrderNoEditable: false,
       dataForm: {
+        orderNo: '',
         approvalFlag: false,
         changePackageType: 'flipping',
         documentStatus: 'submit',
@@ -250,7 +251,7 @@ export default {
         <div class="options">
           <template v-if="activeType">
             <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">
-              保存并提交
+              保存
             </el-button>
           </template>
           <el-button @click="$emit('close',false)">{{ $t('common.cancelButton') }}</el-button>

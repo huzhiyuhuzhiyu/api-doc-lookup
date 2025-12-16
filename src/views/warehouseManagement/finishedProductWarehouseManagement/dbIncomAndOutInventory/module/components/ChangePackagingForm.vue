@@ -331,7 +331,7 @@ export default {
       });
 
       this.recommendLinesList.forEach(recommendItem => {
-        const sourceProductIndex = this.linesList.findIndex(item => item.id === recommendItem.sourceProductId);
+        const sourceProductIndex = this.linesList.findIndex(item => item.sourceLineId === recommendItem.sourceProductId);
         if (sourceProductIndex !== -1) {
           const recommendNum = recommendItem.num || 0;
           const currentRemaining = this.linesList[sourceProductIndex].remainingNum || 0;

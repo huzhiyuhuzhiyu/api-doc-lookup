@@ -50,7 +50,7 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
                 导出
               </el-button>
-               
+
 
             </div>
             <div class="JNPF-common-head-right">
@@ -247,11 +247,16 @@ export default {
   name: 'assemblyplanManagement',
   components: { SuperQuery, ExportForm,userTransfer,InspectionDetail,PrintBrowse,PrintDialog},
   mixins: [getProjectList],
+  props:{
+    queryParams:{
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       workOrderData: [],
       printList: [],
-      selectArr: [],
       printVisible: false,
       workOrderVisible:false,
       printBrowseVisible: false,
@@ -277,7 +282,7 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
-      ], 
+      ],
       columnList: ["productsCode",],
 
       superQueryVisible: false,
@@ -313,6 +318,7 @@ export default {
 
       orderForm: {},
       orderFormlist: {
+        ...this.queryParams,
         orderNo: "",
         processName: "",
         productsDrawingNo: "",
@@ -394,7 +400,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-         
+
 
 
         {
@@ -438,13 +444,13 @@ export default {
           prop: "markingMethod",
           typeCode: "pa014"
         },
-        
+
       ],
       isProjectSwitchFlag: false,
       isProjectSwitch: '',
     }
   },
-  
+
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -466,7 +472,7 @@ export default {
     this.getProductClassFun()
   },
   methods: {
-    
+
         handleSelectWork(val) {
       if (val.length) {
         this.workOrderData.forEach(item => {
@@ -608,7 +614,7 @@ export default {
           this.btnLoading = false
         })
       }
-      
+
     },
     // 获取打字内容等
     getProductClassFun() {
@@ -640,7 +646,7 @@ export default {
           });
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
           if (oilObj) {
-            // 将options赋值为5  
+            // 将options赋值为5
             oilObj.options = JSON.parse(JSON.stringify(arr));
           }
         })

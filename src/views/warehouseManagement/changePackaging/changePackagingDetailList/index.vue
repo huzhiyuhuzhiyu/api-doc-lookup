@@ -48,7 +48,7 @@ export default {
         }
       ],
       listQuery: {
-        changePackageType: 'flipping',
+        changePackageType: 'change_package',
       },
       btnList: buttonList,
       columnList: [],
@@ -108,7 +108,7 @@ export default {
     },
     async handleSubmit(id) {
       try {
-        await getQueryConfirm(this, '确认提交换重检单吗？')
+        await getQueryConfirm(this, '确认提交换包装单吗？')
 
         await submitStockChangePackage(id);
         this.$message.success('提交成功');

@@ -406,6 +406,14 @@ export function confirmOrdersNotice (data) {
   })
 }
 
+// 发货通知单-送货单确认
+export function confirmSaleOrdersNotice (id) {
+  return request({
+    url: `/api/erp/sale/orders/notice/delivery/confirmation/${id}`,
+    method: 'GET',
+  })
+}
+
 // 根据产品id去查历史报价
 export function getHistoricalQuotationByProductsId (productsId) {
   return request({

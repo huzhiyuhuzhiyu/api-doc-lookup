@@ -1,13 +1,19 @@
 <script>
-import {buttonList, getColumns} from "../data";
+import { buttonList, getColumns } from "../data";
 import Form from '../createdBuyingRequisition/index.vue'
-import {deletepurProcurementRequire, getPurProcurementRequirementsList} from "@/api/purchasingManagement/purchaseInquirySheet";
-import {withdrawn} from "@/api/basicData/approvalAdministrator";
+import { deletepurProcurementRequire, getPurProcurementRequirementsList } from "@/api/purchasingManagement/purchaseInquirySheet";
+import { withdrawn } from "@/api/basicData/approvalAdministrator";
 
 export default {
   name: "index",
   components: {
     Form,
+  },
+  props: {
+    type: {
+      type: String,
+      default: 'procure',
+    },
   },
   data() {
     return {
@@ -16,8 +22,8 @@ export default {
         fullName: "默认视图", // 视图名称*
         conditionJson: { // 视图内容配置*
           condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
-            {prop: 'orderNo', symbol: 'like', fixed: true},
-            {prop: 'documentStatus', symbol: '==', fixed: true},
+            { prop: 'orderNo', symbol: 'like', fixed: true },
+            { prop: 'documentStatus', symbol: '==', fixed: true },
           ],
           // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
@@ -36,6 +42,7 @@ export default {
       superQueryVisible: false,
       superQueryJson: [],
       listQuery: {
+        type: this.type,
         userFlag: true,
       },
       btnList: buttonList,
@@ -56,7 +63,7 @@ export default {
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
         const res = await getPurProcurementRequirementsList(this.listQuery);
-        const {total, records} = res.data
+        const { total, records } = res.data
         this.tableData = records;
         this.total = total
       } finally {
@@ -65,7 +72,7 @@ export default {
     },
 
     handleButtonClick(type) {
-      switch (type) {
+      switch ( type ) {
         case '':
           break;
         default:
@@ -73,7 +80,7 @@ export default {
     },
 
     handleColumnClick(row, type) {
-      switch (type) {
+      switch ( type ) {
         case 'add':
           this.visible = true
           this.$nextTick(() => {
@@ -102,7 +109,7 @@ export default {
         type: 'warning'
       }).then(async () => {
         const res = await deletepurProcurementRequire(id);
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success('删除成功')
           this.initData()
@@ -117,7 +124,7 @@ export default {
           type: 'warning'
         });
 
-        const res = await withdrawn({formId});
+        const res = await withdrawn({ formId });
         this.$message({
           type: 'success',
           message: '撤回成功',
@@ -126,7 +133,7 @@ export default {
             this.initData();
           }
         });
-      } catch (error) {
+      } catch ( error ) {
       }
     },
 
@@ -172,26 +179,26 @@ export default {
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="数据排序设置" placement="top">
               <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
-                @click="$refs.dataTable.showSortDrawer()"/>
+                       @click="$refs.dataTable.showSortDrawer()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()"/>
+                       @click="columnSetFun()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()"/>
+                       @click="initData()"/>
             </el-tooltip>
           </div>
         </div>
         <JNPF-table customKey="myBuyingRequisition"
-          v-loading="loading"
-          :data="tableData"
-          :row-key="'id'"
-          fixedNO
-          :setColumnDisplayList="columnList"
-          ref="dataTable"
-          custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+                    v-loading="loading"
+                    :data="tableData"
+                    :row-key="'id'"
+                    fixedNO
+                    :setColumnDisplayList="columnList"
+                    ref="dataTable"
+                    custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
           <template v-for="column in columnsConfig">
             <el-table-column
               v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
@@ -224,14 +231,14 @@ export default {
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text"
-                @click="handleColumnClick(row, 'edit')"
-                :disabled="isDisabled('edit',row)"
+                         @click="handleColumnClick(row, 'edit')"
+                         :disabled="isDisabled('edit',row)"
               >
                 编辑
               </el-button>
               <el-button class="JNPF-table-delBtn" size="mini" type="text"
-                @click="handleColumnClick(row, 'delete')"
-                :disabled="isDisabled('delete',row)"
+                         @click="handleColumnClick(row, 'delete')"
+                         :disabled="isDisabled('delete',row)"
               >
                 删除
               </el-button>
@@ -248,7 +255,7 @@ export default {
                     重新提交
                   </el-dropdown-item>
                   <el-dropdown-item v-if="isDisabled('withdrawn',row)"
-                    @click.native="handleColumnClick(row, 'withdrawn')">
+                                    @click.native="handleColumnClick(row, 'withdrawn')">
                     审批撤回
                   </el-dropdown-item>
                   <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
@@ -263,6 +270,6 @@ export default {
         />
       </div>
     </div>
-    <Form ref="Form" v-if="visible" :autoInit="false" @close="close"/>
+    <Form ref="Form" v-if="visible" :autoInit="false" :type="this.type" @close="close"/>
   </div>
 </template>

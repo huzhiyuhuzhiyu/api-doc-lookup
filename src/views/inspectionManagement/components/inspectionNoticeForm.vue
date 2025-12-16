@@ -390,7 +390,7 @@ export default {
           change: this.inspectionMethodChange,
           itemRules: [{required: true, trigger: 'change'}],
           sm: 6,
-          itemDisabled: () => this.inspectionType === 'work_report' && (this.scope.inspectionMethod === 'spot_check' || this.scope.inspectionMethod === 'all'),
+          itemDisabled: this.inspectionType === 'work_report' && (this.scope.inspectionMethod === 'spot_check' || this.scope.inspectionMethod === 'all'),
           options: generateInspectionMethodList(this.inspectionType)
         },
         {
@@ -503,6 +503,7 @@ export default {
     // 初始化
     async init(row, readOnly, inspectionType, type, businessCode) {
       console.log("row ✈️ ", row)
+      console.log("inspectionType ✈️ ", inspectionType)
       await this.getProjectSwitch('system', 'project')
       this.getBimBusinessDetail(inspectionType)
 
@@ -526,6 +527,7 @@ export default {
           dataForm.docId = scope.purchaseReceiptReturnGoodsId;
           dataForm.docLineId = scope.id;
           dataForm.docNo = scope.orderNo;
+          dataForm.status = 'wait_confirmed';
         },
         external: (scope, dataForm) => {
           dataForm.inspectionQuantity = scope.receivedQuantity;

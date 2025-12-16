@@ -62,7 +62,7 @@
                     <div slot="header" class="clearfix">
                       <span class="orderNo">单号：{{ item.orderNo }}</span>
                     </div>
-                    <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>     
+                    <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>
                         <el-table-column prop="productName" label="产品名称" width="120"
                           v-if="$store.getters.configData.product.enable_productName"></el-table-column>               -->
                     <div class="label_title" v-if="$store.getters.configData.product.enable_productName&&item.productName"> 产品名称:{{ item.productName }}</div>
@@ -460,10 +460,17 @@ import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getUserListPost } from '@/api/permission/user'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import { deepClone } from "@/utils";
 export default {
   name: 'ringCompletionReport',
   components: { ExportForm, Diagram, taskForm, produceTaskReportForm, ProcessReportForm, GroupReportForm, PersonReportForm, DeviceReportForm, ProduceLineReportForm },
   mixins: [getProjectList],
+  props:{
+    queryParams: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       isProjectSwitch: '',
@@ -490,7 +497,8 @@ export default {
       taskFormVisible: false,
       produceTotal: 0,
       produceData: [],
-      produceForm: {
+      initProduceForm: {
+        ...this.queryParams,
         orderNo: "",
         productDrawingNo: "",
         planSsd: "",
@@ -512,13 +520,15 @@ export default {
           matchLogic: ""
         },
       },
+      produceForm: {},
       planDate: [],
       orderTypeList: [
         { label: "正常任务", value: "normal" },
         { label: "返工任务", value: "rework" },
       ],
 
-      processForm: {
+      initProcessForm: {
+        ...this.queryParams,
         productClassAttribute:"semi_finished",
         workReportFlag:true,
         name: "",
@@ -534,12 +544,9 @@ export default {
         }],
 
       },
+      processForm: {},
       processTotal: 0,
       ProcessData: [],
-
-
-
-
       personTotal: 0,
       personData: [],
 
@@ -670,8 +677,10 @@ export default {
     }
   },
   async created() {
+    this.produceForm = deepClone(this.initProduceForm)
+    this.processForm = deepClone(this.initProcessForm)
     await this.getProjectSwitch('system', 'project')
- 
+
   },
   methods: {
     closeTaskFun(row) {
@@ -789,7 +798,7 @@ export default {
 
       }
     },
- 
+
     // 生产任务列表
     searchProductData() {
       if (this.planDate.length) {
@@ -816,28 +825,7 @@ export default {
     },
     resetProduceData() {
       this.planDate = []
-      this.produceForm = {
-        orderNo: "",
-        productDrawingNo: "",
-        planSsd: "",
-        planSed: "",
-        orderStatus: "normal",
-        documentStatus: "submit",
-        classAttribute: "semi_finished",
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        superQuery: {
-          condition: [],
-          matchLogic: ""
-        },
-      }
+      this.produceForm = deepClone(this.initProduceForm)
       this.searchProductData()
     },
     // 查看任务
@@ -873,21 +861,7 @@ export default {
       })
     },
     resetProcessData() {
-      this.processForm = {
-        name: "",
-        code: "",
-        pageNum: 1,
-        pageSize: 24,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "reporting_sort"
-        }],
-        productClassAttribute: "semi_finished",
-        workReportFlag:true,
-      }
+      this.processForm = deepClone(this.initProcessForm)
       this.searchProcessData()
     },
     // 产线

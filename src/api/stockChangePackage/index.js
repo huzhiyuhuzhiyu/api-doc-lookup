@@ -9,7 +9,7 @@ export function addStockChangePackage(data) {
   })
 }
 
-// 提交重检单
+// 提交重检单/换包装
 export function submitStockChangePackage(id) {
   return request({
     url: `/api/wms/stockChangePackage/submit/${ id }`,
@@ -17,7 +17,7 @@ export function submitStockChangePackage(id) {
   })
 }
 
-// 获取重检单记录
+// 获取重检单记录/换包装记录
 export function getStockChangePackageLineList(data) {
   return request({
     url: `/api/wms/stockChangePackage/line/list`,

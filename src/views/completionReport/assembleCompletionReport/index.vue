@@ -464,10 +464,17 @@ import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getUserListPost } from '@/api/permission/user'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import { deepClone } from "@/utils";
 export default {
   name: 'assembleCompletionReport',
   components: { ExportForm, Diagram, taskForm, produceTaskReportForm, ProcessReportForm, GroupReportForm, PersonReportForm, DeviceReportForm, ProduceLineReportForm },
   mixins: [getProjectList],
+  props:{
+    queryParams: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       isProjectSwitch: '',
@@ -494,7 +501,8 @@ export default {
       taskFormVisible: false,
       produceTotal: 0,
       produceData: [],
-      produceForm: {
+      initProduceForm: {
+        ...this.queryParams,
         orderNo: "",
         productDrawingNo: "",
         planSsd: "",
@@ -516,13 +524,14 @@ export default {
           matchLogic: ""
         },
       },
+      produceForm: {},
       planDate: [],
       orderTypeList: [
         { label: "正常任务", value: "normal" },
         { label: "返工任务", value: "rework" },
       ],
-
-      processForm: {
+      initProcessForm: {
+        ...this.queryParams,
         productClassAttribute: "finish_product",
         workReportFlag: true,
         name: "",
@@ -538,6 +547,7 @@ export default {
         }],
 
       },
+      processForm: {},
       processTotal: 0,
       ProcessData: [],
 
@@ -675,10 +685,12 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.$refs.scanInput.focus(); // 确保输入框需要 ref 的引用  
+      this.$refs.scanInput.focus(); // 确保输入框需要 ref 的引用
     });
   },
   async created() {
+    this.produceForm = deepClone(this.initProduceForm)
+    this.processForm = deepClone(this.initProcessForm)
     await this.getProjectSwitch('system', 'project')
 
   },
@@ -732,8 +744,8 @@ export default {
     searchResult() {
       if (this.scanResult) {
         setTimeout(() => {
-          // this.processData(data); 
-          
+          // this.processData(data);
+
           const cleanedResult = this.scanResult.trim();
           console.log(this.scanResult);
           getscanResultData({ code: cleanedResult, classAttribute: "finish_product" }).then(res => {
@@ -829,28 +841,7 @@ export default {
     },
     resetProduceData() {
       this.planDate = []
-      this.produceForm = {
-        orderNo: "",
-        productDrawingNo: "",
-        planSsd: "",
-        planSed: "",
-        orderStatus: "normal",
-        documentStatus: "submit",
-        classAttribute: "finish_product",
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        superQuery: {
-          condition: [],
-          matchLogic: ""
-        },
-      }
+      this.produceForm = deepClone(this.initProduceForm)
       this.searchProductData()
     },
     // 查看任务
@@ -887,21 +878,7 @@ export default {
       })
     },
     resetProcessData() {
-      this.processForm = {
-        name: "",
-        code: "",
-        pageNum: 1,
-        pageSize: 24,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "reporting_sort"
-        }],
-        productClassAttribute: "finish_product",
-        workReportFlag:true,
-      }
+      this.processForm = deepClone(this.initProcessForm)
       this.searchProcessData()
     },
     // 产线

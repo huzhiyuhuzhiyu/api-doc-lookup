@@ -4,6 +4,12 @@ import {linesRequirements} from "@/api/purchasingManagement/purchaseInquirySheet
 
 export default {
   name: "index",
+  props: {
+    type: {
+      type: String,
+      default: 'procure',
+    },
+  },
   data() {
     return {
       systemSearchView: [{
@@ -33,7 +39,9 @@ export default {
       total: 0,
       superQueryVisible: false,
       superQueryJson: [],
-      listQuery: {},
+      listQuery: {
+        type: this.type,
+      },
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(true),

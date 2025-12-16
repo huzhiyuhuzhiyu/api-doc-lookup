@@ -7,6 +7,7 @@
         <p class="header-txt"> · 打印预览</p>
       </div>
       <div class="options">
+        <el-button v-if="isOrderConfirm" type="primary" size="small" @click="confirm">订单确认</el-button>
         <el-button type="primary" size="small" @click="word">下载</el-button>
         <el-button type="primary" size="small" @click="print">打印</el-button>
         <el-button @click="closeDialog()">{{ $t('common.cancelButton') }}</el-button>
@@ -31,10 +32,15 @@
 import { mapGetters } from "vuex"
 import {getData} from '@/api/system/printDev'
 import QRCode from 'qrcodejs2'
+import { getQueryConfirm } from "@/utils";
+import { confirmSaleOrdersNotice } from "@/api/salesManagement";
 export default {
-  props: ['id', 'formId', 'fullName', 'params','printHtml','noQr','recordList'],
+  props: ['id', 'formId', 'fullName', 'params','printHtml','noQr','recordList', 'enCode'],
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    isOrderConfirm() {
+      return this.enCode === 'p003'
+    },
   },
   data() {
     return {
@@ -233,6 +239,22 @@ export default {
         this.loading = false
         return this.$refs.tsPrint.innerHTML
       })
+    },
+    async confirm() {
+      this.loading = true
+      try {
+        await getQueryConfirm(this, '此操作将确认送货通知单，是否继续？')
+
+        const formId = this.recordList.map(item => item.formId)[0]
+        await confirmSaleOrdersNotice(formId)
+        this.$message.success('确认成功')
+      } catch ( error ) {
+        if (error !== 'cancel') {
+          this.$message.error(error.message || '确认失败');
+        }
+      } finally {
+        this.loading = false
+      }
     },
     isChildTable(cells) {
       let tableName = ''

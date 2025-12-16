@@ -92,11 +92,11 @@ export default {
     visible(newVal) {
       this.dialogVisible = newVal
       if (newVal) {
-        const { num, ordersId } = this.issuePoolForm;
+        const { num, id } = this.issuePoolForm;
         this.dataForm = {
           num,
           issueQuantity: num,
-          saleOrdersLineId: ordersId,
+          saleOrdersLineId: id,
         };
       }
     }

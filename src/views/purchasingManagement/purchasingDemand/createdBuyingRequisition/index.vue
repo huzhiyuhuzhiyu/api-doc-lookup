@@ -19,6 +19,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    type: {
+      type: String,
+      default: 'procure',
+    },
   },
   name: "createdBuyingRequisition",
   components: {Process, RecordList, TableFormProduct},
@@ -32,6 +36,7 @@ export default {
       userList: [],
       prefillData: [],
       dataForm: {
+        type: this.type,
         orderNo: '',
         deliveryDate: '',
         organizeIdTrees: [],
@@ -310,6 +315,7 @@ export default {
     },
 
     getTitle(type) {
+      this.title = this.type === 'factory' ? '工厂请购单' : this.title
       switch (type) {
         case 'add':
         case 'copy':
@@ -415,8 +421,9 @@ export default {
       if ('close' in this.$listeners) {
         this.$emit('close', this.activeType);
       } else {
+        const path = this.type === 'factory' ? '/purchasingManagement/factoryPurchase/myFactoryPurchaseOrder' : '/purchasingManagement/purchasingDemand/myBuyingRequisition'
         setTimeout(() => {
-          this.$router.push('/purchasingManagement/purchasingDemand/myBuyingRequisition')
+          this.$router.push(path)
         }, 100)
       }
     },

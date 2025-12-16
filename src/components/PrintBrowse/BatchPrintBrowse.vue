@@ -5,6 +5,10 @@ export default {
     fullName: {
       type: String,
       default: ''
+    },
+    enCode: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -53,7 +57,7 @@ export default {
 
 <template>
   <div>
-    <print-browse :print-html="printHtml" :fullName="fullName" :recordList="childArr" :visible.sync="printVisible" ref="print"/>
+    <print-browse :print-html="printHtml" :fullName="fullName" :enCode="enCode" :recordList="childArr" :visible.sync="printVisible" ref="print"/>
     <template v-if="childShow">
       <child ref="child" v-for="item in childArr" :form-id="item.formId" :params="item.params" :no-qr="true" :id="item.id" :key="item.formId"/>
     </template>

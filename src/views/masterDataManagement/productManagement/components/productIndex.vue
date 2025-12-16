@@ -7,7 +7,7 @@
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="getcategoryTree(true)">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
               <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
@@ -40,44 +40,7 @@
       </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4" v-if="isProductNameSwitch === '1'">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;" @change="productSourceChange">
-                <el-option v-for="(item, index) in productSourceList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
@@ -104,9 +67,9 @@
             </el-button>
           </div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+              <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                       @click="$refs.dataTable.showSortDrawer()" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -116,18 +79,18 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_398000">
+        <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" custom-column
+          ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_398000" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+          <el-table-column prop="code" label="产品编码" min-width="140">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                 {{ scope.row.code }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+          <el-table-column prop="name" label="产品名称" min-width="140" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" />
           <el-table-column prop="productCategoryName" label="产品分类" width="120" />
           <el-table-column prop="mainUnit" label="主单位" width="120" />
           <el-table-column prop="productSource" label="产品来源" width="120">
@@ -150,7 +113,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="brand" label="品牌" width="120" />
-          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" />
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
@@ -179,7 +142,7 @@
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+          :limit.sync="listQuery.pageSize" @pagination="initData()" />
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"
@@ -216,9 +179,6 @@
         </el-button>
       </span>
     </el-dialog>
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <el-dialog title="快速创建" :visible.sync="quickVisible" width="50%" :before-close="handleClose"
       class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" :close-on-press-escape="false">
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
@@ -321,7 +281,6 @@ import {
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
 import { mapState } from 'vuex'
-import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList,
   getbimProductAttributes,
@@ -334,7 +293,7 @@ import { mapGetters } from 'vuex'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getProjectList } from '@/api/system/projectManagement'
 export default {
-  components: { Form, ExportForm, SuperQuery },
+  components: { Form, ExportForm },
   name: 'productCom',
   props: {
     initListQuery: {
@@ -377,6 +336,34 @@ export default {
   },
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            { prop: 'approvalStatus', symbol: '==', value: 'ok', fixed: false },
+            { prop: 'productSource', symbol: '==', value: '', fixed: true },
+          ],
+          keywordQuery: {
+            keywordFlag: true, // 是否开启关键词查询
+            fieldList: [
+              'code',
+              'name',
+              'drawingNo',
+              'model',
+              'spec',
+            ],
+          },
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
+        },
+      }],
       importProjectId: '',
       isProductNameSwitch: '',
       isProjectSwitch: '',
@@ -468,28 +455,7 @@ export default {
         classAttribute: this.initListQuery.classAttribute
       },
       filterText: '',
-      superQueryVisible: false,
       superQueryJson: [
-        {
-          prop: 'code',
-          label: '产品编码',
-          type: 'input'
-        },
-        {
-          prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
-          prop: 'productCategoryName',
-          label: '产品分类',
-          type: 'input'
-        },
-        {
-          prop: 'mainUnit',
-          label: '主单位',
-          type: 'select'
-        },
         {
           prop: 'productSource',
           label: '产品来源',
@@ -597,25 +563,6 @@ export default {
           type: 'select',
           options: []
         },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        }
       ],
       columnList: ['remark', 'createTime', 'createByName'],
       exportFormVisible: false,
@@ -627,12 +574,6 @@ export default {
       listLoading: false,
       loadingText: false,
       listQuery: {},
-      productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
-      productSourceList: [
-        { label: '生产', value: 'produce' },
-        { label: '采购', value: 'purchase' },
-        { label: '外协', value: 'out' }
-      ], // 产品来源
       total: 0,
       formVisible: false,
       expands: true,
@@ -658,6 +599,7 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     await this.getProjectSwitch()
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch === '1') {
@@ -667,9 +609,7 @@ export default {
         type: 'input'
       })
     }
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getcategoryTree()
-    this.initData()
     if (localStorage.getItem(this.listQuery.classAttribute)) {
       let roleFlag = JSON.parse(localStorage.getItem(this.listQuery.classAttribute))
       this.expands = roleFlag
@@ -681,9 +621,6 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
-    productSourceChange(){
-      this.initData()
-    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -773,11 +710,6 @@ export default {
           this.quickForm.code = data.number
         }
       } catch (error) { }
-    },
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
@@ -1402,7 +1334,7 @@ export default {
       return data.name.indexOf(value) !== -1
     },
     // 获取指定树状列表
-    getcategoryTree() {
+    getcategoryTree(refreshFlag) {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
@@ -1411,7 +1343,7 @@ export default {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {
             this.treeLoading = false
-            this.initData()
+            if (refreshFlag) this.$refs.dataTable.queryChange(this.listQuery)
           })
         })
         .catch(() => {
@@ -1422,18 +1354,6 @@ export default {
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.id
-      this.search()
-    },
-
-    sortChange({ prop, order }) {
-      let newProp
-      if (prop === 'projectName') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
     // 关闭新建、编辑页面
@@ -1444,8 +1364,10 @@ export default {
         this.initData()
       }
     },
-
-    initData() {
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
       this.listLoading = true
       if (this.isProjectSwitch === '1') {
         this.listQuery.projectId = this.userInfo.projectId
@@ -1458,6 +1380,8 @@ export default {
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getProductList(this.listQuery)
         .then((res) => {
+          if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
           this.tableData = res.data.records
 
           this.total = res.data.total
@@ -1467,17 +1391,6 @@ export default {
           this.listLoading = false
         })
     },
-    search() {
-      this.initData()
-    },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.$refs.SuperQuery.conditionList = []
-      this.filterText = ''
-      this.search()
-    },
-
     addOrUpdateHandle(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {

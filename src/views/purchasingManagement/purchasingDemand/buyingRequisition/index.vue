@@ -9,6 +9,12 @@ export default {
   components: {
     Form,
   },
+  props: {
+    type: {
+      type: String,
+      default: 'procure',
+    },
+  },
   data() {
     return {
       systemSearchView: [{
@@ -36,6 +42,7 @@ export default {
       superQueryVisible: false,
       superQueryJson: [],
       listQuery: {
+        type: this.type,
         userFlag: false,
       },
       btnList: buttonList,
@@ -263,6 +270,6 @@ export default {
         />
       </div>
     </div>
-    <Form ref="Form" v-if="visible" :autoInit="false" @close="close"/>
+    <Form ref="Form" v-if="visible" :autoInit="false" :type="this.type" @close="close"/>
   </div>
 </template>

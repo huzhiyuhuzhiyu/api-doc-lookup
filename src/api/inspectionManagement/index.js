@@ -46,6 +46,13 @@ export function detailInspectionData(id) {
     method: 'GET'
   })
 }
+// 检验单 确认
+export function confirmedInspection(id) {
+  return request({
+    url: `/api/wms/qc/inspection/confirmed/${id}`,
+    method: 'GET'
+  })
+}
 // 检验单 通过通知单获取检验单详情
 export function detailInspectionDataByBizid(bizId) {
   return request({

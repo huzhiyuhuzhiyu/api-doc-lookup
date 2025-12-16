@@ -42,7 +42,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading"> 
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
                <el-button size="mini" type="primary" icon="el-icon-printer"
@@ -68,7 +68,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" @selection-change="handeleProductInfoData" hasC  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
-             @sort-change="sortChange" custom-column   
+             @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList" customKey="JNPFTableKey_852046">
             <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="220" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="220" sortable="custom"></el-table-column>
@@ -104,7 +104,7 @@
 
 
 
- 
+
             <el-table-column prop="aperture" label="孔径" min-width="120" sortable="custom" />
             <el-table-column prop="orderStatus" label="任务状态" min-width="120">
               <template slot-scope="scope">
@@ -127,7 +127,7 @@
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="withdrawFun(scope.row)"  :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
                 <!-- <el-button size="mini" type="text" @click="editHandle(scope.row)" :disabled="scope.row.lastFlag">修改</el-button> -->
-                <el-button size="mini"  v-if="$store.getters.configData.inspect.work_report_inspect" type="text" @click="viewFun(scope.row.inspectionId)"  :disabled="scope.row.inspectionStatus!='inspected'||!scope.row.inspectionId" 
+                <el-button size="mini"  v-if="$store.getters.configData.inspect.work_report_inspect" type="text" @click="viewFun(scope.row.inspectionId)"  :disabled="scope.row.inspectionStatus!='inspected'||!scope.row.inspectionId"
                  >查看检验记录</el-button>
 
               </template>
@@ -269,6 +269,12 @@ export default {
   name: 'ringReportRecord',
   components: { SuperQuery, ExportForm,userTransfer,InspectionDetail,PrintBrowse,PrintDialog},
   mixins: [getProjectList,tenantMinix],
+  props:{
+    queryParams:{
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       workOrderData: [],
@@ -288,7 +294,7 @@ export default {
       printQuery: {
         category: 'Productionmanage'
       },
-      
+
       inspectionDetailVisible:false,
       superQuery: {},
       superForm: {},
@@ -298,7 +304,7 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
-      ], 
+      ],
       columnList: ["productsCode",],
 
       superQueryVisible: false,
@@ -335,6 +341,7 @@ export default {
       totalQualifiedQuantity: 0,
       orderForm: {},
       orderFormlist: {
+        ...this.queryParams,
         orderNo: "",
         processName: "",
         productsDrawingNo: "",
@@ -358,7 +365,7 @@ export default {
 
       totalData:{},
       total: 0,
-      formVisible: false, 
+      formVisible: false,
 
       superQueryJson: [
         {
@@ -415,7 +422,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-         
+
 
 
         {
@@ -449,7 +456,7 @@ export default {
       isProjectSwitch: '',
     }
   },
-  
+
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -471,7 +478,7 @@ export default {
     this.getProductClassFun()
   },
   methods: {
-     
+
         handleSelectWork(val) {
       if (val.length) {
         this.workOrderData.forEach(item => {
@@ -485,7 +492,7 @@ export default {
           item.selectFlag = false
         });
       }
-    }, 
+    },
       closePrint() {
       this.printVisible = false
     },
@@ -613,7 +620,7 @@ export default {
           this.btnLoading = false
         })
       }
-      
+
     },
     // 获取打字内容等
     getProductClassFun() {
@@ -645,7 +652,7 @@ export default {
           });
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
           if (oilObj) {
-            // 将options赋值为5  
+            // 将options赋值为5
             oilObj.options = JSON.parse(JSON.stringify(arr));
           }
         })
@@ -697,7 +704,7 @@ export default {
         this.orderForm.reportStartDate = ""
         this.orderForm.reportEndDate = ""
       }
-      
+
      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
      getSalaryDetailList(this.orderForm).then(res => {
         console.log("报工记录", res);

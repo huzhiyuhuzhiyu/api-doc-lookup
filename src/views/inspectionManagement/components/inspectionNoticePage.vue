@@ -113,13 +113,24 @@
                 <el-tag type="danger" v-else-if="scope.row.documentStatus == 'back'">撤回</el-tag>
               </template>
             </el-table-column>
+            <el-table-column v-if="pageData.type === 'procure'" prop="status" label="检验确认状态" min-width="180" sortable="custom">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="global.getDictLabelGlobal('workReportInspection', scope.row.status, { withType: true }).type">{{
+                    global.getDictLabelGlobal('workReportInspection', scope.row.status)
+                  }}</el-tag>
+              </template>
+            </el-table-column>
             <!-- <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" sortable="custom" /> -->
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
-            <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="200" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="处理" :hasEdit="false" :hasDel="false">
+                  <el-button v-if="pageData.type === 'procure'" size="mini" type="text" @click.native="handleConfirm(scope.row)">
+                    确认
+                  </el-button>
                   <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'look')">
                     查看详情
                   </el-button>
@@ -146,7 +157,7 @@
 </template>
 
 <script>
-import { getInspectionList, deleteInspectionData, getInspectionLinesList,inspectionRevoke } from '@/api/inspectionManagement/index' // 检验单
+import { getInspectionList, deleteInspectionData, getInspectionLinesList, inspectionRevoke, confirmedInspection } from '@/api/inspectionManagement/index' // 检验单
 import { documentStatusList, approvalStatusList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import Form from './defectiveProductHandlingForm.vue'
 import DetailForm from './inspectionFormManagementDetail.vue'
@@ -159,6 +170,8 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import { getQueryConfirm } from "@/utils";
+import { confirmSaleOrdersNotice } from "@/api/salesManagement";
 export default {
   components: { Form, ExportForm, DetailForm,DetailReportWorkForm, SuperQuery },
   mixins: [getProjectList],
@@ -365,6 +378,19 @@ export default {
     }
   },
   methods: {
+    async handleConfirm(row) {
+      try {
+        await getQueryConfirm(this, '此操作将确认检验单，是否继续？')
+
+        await confirmedInspection(row.id)
+        this.$message.success('确认成功')
+        this.initData()
+      } catch ( error ) {
+        if (error !== 'cancel') {
+          this.$message.error(error.message || '确认失败');
+        }
+      }
+    },
     handleSelectionChange(val){
       this.selectArr=val
     },

@@ -175,8 +175,8 @@ const global = {
 
   // 检验状态
   workReportInspection: [
-    { label: '待确认', value: 'wait_confirmed', type: 'info' },
-    { label: '完成', value: 'confirmed', type: 'info' },
+    { label: '待确认', value: 'wait_confirmed', type: 'warning' },
+    { label: '完成', value: 'confirmed', type: 'success' },
   ],
 
   // 检验方式

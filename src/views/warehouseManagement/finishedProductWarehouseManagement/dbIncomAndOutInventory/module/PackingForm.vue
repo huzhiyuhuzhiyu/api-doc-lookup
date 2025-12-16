@@ -292,6 +292,10 @@ export default {
         this.$message.warning('请选择要换包装的产品')
         return
       }
+      if (this.dataForm.packingStatus !== 'boxed') {
+        this.$message.warning('请先完成装箱操作,再进行换包装操作')
+        return
+      }
       this.changePackagingFormVisible = true;
       this.$nextTick(() => {
         this.$refs.ChangePackagingForm.init('', 'add', this.$refs.tableForm.selectedList,this.dataForm)

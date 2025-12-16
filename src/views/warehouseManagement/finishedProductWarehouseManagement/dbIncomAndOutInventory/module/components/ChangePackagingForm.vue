@@ -397,6 +397,20 @@ export default {
         this.recommendLinesList[dataOrIndex][prop] = value;
       }
     },
+    mergeRecommendLinesSimple() {
+      const mergedMap = {};
+
+      this.recommendLinesList.forEach(item => {
+        const key = `${ item.productsId }_${ item.packagingMethod }`;
+
+        if (!mergedMap[key]) {
+          mergedMap[key] = { ...item };
+        } else {
+          mergedMap[key].num = this.jnpf.math('+', [mergedMap[key].num, item.num], 4);
+        }
+      });
+      return Object.values(mergedMap);
+    },
     async handleSubmit() {
       // 校验表单
       this.btnLoading = true
@@ -420,9 +434,11 @@ export default {
         return;
       }
 
+      const mergedList = this.mergeRecommendLinesSimple();
+
       const params = {
         stockChangePackage: this.dataForm,
-        stockChangePackageLineList: this.recommendLinesList,
+        stockChangePackageLineList: mergedList,
         stockChangePackageWarehouseLineList: this.recommendLinesList
       }
 

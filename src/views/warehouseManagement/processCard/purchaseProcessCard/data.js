@@ -14,7 +14,7 @@ export const buttonList = [
     type: 'export',
     permission: 'btn_export',
     exportType: '1018',
-    exportName: '包装任务进度',
+    exportName: '采购明细分卡',
     tableRef: 'dataTable',
   }
 ]

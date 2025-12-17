@@ -21,9 +21,9 @@
 </template>
 
 <script>
-import { issuePoolSaleLines } from "@/api/salesManagement/assemblyOrders";
 import { getProductionLineList } from "@/api/basicData";
 import { getProcessList } from "@/api/basicData/processSettingss";
+import { divideTransferCard } from "@/api/purchasingAndOutsourcingOrders";
 
 export default {
   props: {
@@ -52,11 +52,14 @@ export default {
       if (newVal) {
         await this.fetchProductionLines()
         this.updateDataFormItems()
-        const { waitSplitQuantity, id } = this.issuePoolForm;
+        const { waitSplitQuantity, num, id } = this.formData;
         this.dataForm = {
-          waitSplitQuantity,
-          num,
-          saleOrdersLineId: id,
+          waitSplitQuantity: num,
+          splitQuantity: 0,
+          stockMoveWarehouseLineId: id,
+          productionLineId: '',
+          routingId: '',
+          routingName: '',
         };
       }
     }
@@ -72,15 +75,15 @@ export default {
           sm: 24
         },
         {
-          prop: 'num',
+          prop: 'splitQuantity',
           label: '分卡数量',
           type: 'input',
           itemRules: [
-            {
-              validator: this.formValidate('noZero', '分卡数量不能为0', (errMsg) => {
-                this.$message.error(errMsg)
-              }), trigger: ['blur', 'change']
-            },
+            // {
+            //   validator: this.formValidate('noZero', '分卡数量不能为0', (errMsg) => {
+            //     this.$message.error(errMsg)
+            //   }), trigger: ['blur', 'change']
+            // },
             {
               validator: this.formValidate({
                 type: 'noEmtry', params: ['分卡数量不能为空', (errMsg) => {
@@ -99,7 +102,7 @@ export default {
             {
               validator: this.formValidate({
                 type: 'calc',
-                params: [(rowIndex, value) => +value <= +this.dataForm.num, "不能大于可分卡数量", (errMsg, rowIndex) => {
+                params: [(rowIndex, value) => +value <= +this.dataForm.waitSplitQuantity, "不能大于可分卡数量", (errMsg, rowIndex) => {
                   this.$message.error(`分卡数量${ errMsg }`)
                 }]
               }), trigger: 'blur'
@@ -136,7 +139,7 @@ export default {
             code: "",
             name: "",
             documentStatus: "submit",
-            source: "packaging",
+            source: "production",
             pageNum: 1,
             pageSize: 20,
             orderItems: [
@@ -155,8 +158,8 @@ export default {
             { prop: 'code', label: '工艺路线编码', type: 'input' },
           ],
           change: (id, data) => {
-            context.dataForm.routingId = data[0].all.id;
-            context.dataForm.routingName = data[0].all.name;
+            this.dataForm.routingId = data[0].all.id;
+            this.dataForm.routingName = data[0].all.name;
           },
           sm: 24,
         },
@@ -165,7 +168,7 @@ export default {
     async fetchProductionLines() {
       try {
         const { data } = await getProductionLineList({
-          pageNum: 1,
+          pageNum: -1,
           pageSize: -1
         });
         this.productionLinesList = data.records.map(item => ({
@@ -183,17 +186,17 @@ export default {
       await this.$refs.dataForm.$refs.main.validate()
       try {
         this.loading = true
-        const res = await issuePoolSaleLines([this.dataForm])
+        const res = await divideTransferCard(this.dataForm)
         const { msg } = res
         if (msg === 'Success') {
-          this.$message.success('下达成功')
+          this.$message.success('分卡成功')
           this.dialogVisible = false
           this.$emit('initData')
         } else {
-          this.$message.error(msg || '下达失败')
+          this.$message.error(msg || '分卡失败')
         }
       } catch ( error ) {
-        this.$message.error('下达需求池数据出错')
+        this.$message.error('分卡数据出错')
       } finally {
         this.loading = false
       }

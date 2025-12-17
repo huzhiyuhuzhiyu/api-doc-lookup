@@ -1,7 +1,6 @@
 <script>
 import { buttonList, getColumns } from "./data";
 import { getInventorySummaryData } from "@/api/warehouseManagement/inventory";
-import { getSummaries } from "@/utils";
 import processCardForm from "../modules/processCardForm.vue";
 
 export default {
@@ -76,9 +75,6 @@ export default {
       } finally {
         this.loading = false
       }
-    },
-    getSummaries(param) {
-      return getSummaries(param, this);
     },
     validateSelectedRows() {
       if (!this.selectedRow.length) {
@@ -164,8 +160,6 @@ export default {
           :listQuery="listQuery"
           @queryChange="initData"
           :queryJson="superQueryJson"
-          show-summary
-          :summary-method="getSummaries"
         >
           <template v-for="column in columnsConfig">
             <el-table-column

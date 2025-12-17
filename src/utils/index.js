@@ -719,6 +719,54 @@ export function formatListQuery(queryConfigData) {
 }
 
 /**
+ * 获取表格合计行数据
+ * @param {Object} param - table 的 summary 方法参数
+ * @param {Object} context - 上下文对象，包含汇总配置和数据
+ * @returns {Array} 合计行数据数组
+ */
+export function getSummaries(param, context) {
+  const { columns } = param;
+  const sums = [];
+
+  if (!context || !context.apiTotalData) {
+    // 如果没有提供汇总数据，返回空数组
+    return sums;
+  }
+
+  columns.forEach((column, index) => {
+    if (index === 0) {
+      sums[index] = '合计';
+      return;
+    }
+
+    // 获取映射后的汇总值
+    sums[index] = getMappedSummaryValue(column.property, context);
+  });
+
+  return sums;
+}
+
+/**
+ * 获取映射后的接口汇总值
+ */
+export function getMappedSummaryValue(displayProp, context) {
+  const { summaryMapping = {}, apiTotalData = {} } = context;
+
+  if (!displayProp) return '--';
+
+  try {
+    const dataProp = summaryMapping[displayProp] || displayProp;
+    const value = dataProp.includes('.')
+      ? dataProp.split('.').reduce((obj, key) => (obj && obj[key] !== undefined ? obj[key] : undefined), apiTotalData)
+      : apiTotalData[dataProp];
+
+    return value !== undefined ? value : '--';
+  } catch ( error ) {
+    return '--';
+  }
+}
+
+/**
  * 数据字段标准化处理器
  * @param {Object|Array} data - 要处理的数据
  * @param {Object|Function} rules - 处理规则，可以是配置对象或处理函数

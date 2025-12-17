@@ -96,6 +96,7 @@ export default {
           initListQuery: {
             documentStatus: 'submit',
             approvalStatus: 'ok',
+            notifyType: 'picking',
             pickingFlag: 1,
             classAttributeList: classAttr
           },
@@ -564,6 +565,11 @@ export default {
                 <template v-if="column.prop === 'retreatExchangeGoodsFlag'">
                   <span>
                     {{ scope.row.exchangeGoodsFlag ? '换货' : '退货' }}
+                  </span>
+                </template>
+                <template v-if="column.prop === 'receiveType'">
+                  <span>
+                    {{ scope.row.receiveType === 'order' ? '任务物料' : '工序物料' }}
                   </span>
                 </template>
                 <template v-if="column.dictType">

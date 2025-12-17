@@ -155,35 +155,28 @@ export function getColumns(type = 'default') {
     // 生产领料入库
     outbound_pick_out: [
       {
+        prop: "productionOrderNo",
+        label: "生产任务单号",
+        minWidth: 220,
+      },
+      {
         prop: "orderNo",
-        label: "收货单号",
+        label: "领料单号",
         minWidth: 220,
+        // slot: true
+      },
+      {
+        prop: "receiveType",
+        label: "领料类型",
+        minWidth: 160,
         slot: true
+      // <div v-if="scope.row.receiveType == 'order'">任务物料</div>
+      // <div v-if="scope.row.receiveType == 'process'">工序物料</div>
       },
       {
-        prop: "partnerCode",
-        label: "供应商编码",
-        minWidth: 220,
-      },
-      {
-        prop: "partnerName",
-        label: "供应商名称",
-        minWidth: 180,
-      },
-      {
-        prop: "salesman",
-        label: "操作员",
-        minWidth: 180,
-      },
-      {
-        prop: "deliverDate",
-        label: "收货日期",
-        minWidth: 120,
-      },
-      {
-        prop: 'remark',
-        label: '备注',
-        minWidth: 220,
+        prop: "remark",
+        label: "备注",
+        minWidth: 80,
       },
       ...createColumns
     ],

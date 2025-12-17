@@ -91,7 +91,7 @@ export default {
       const { path, meta, fullPath, name: routeName } = this.$route
       this.name = meta.zhTitle
       this.code = meta.title
-      this.warehouseCode = fullPath.split('?')[1] || ''
+      this.warehouseCode = fullPath.match(/\$\{([^}]+)\}/)[1] || ''
 
       const pathSegments = path.split('/').filter(segment => segment)
       this.businessType = pathSegments[pathSegments.length - 1]

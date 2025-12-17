@@ -18,6 +18,7 @@ import PackingForm from './module/PackingForm.vue'
 import AutoRecBatchPacking from "./module/components/AutoRecBatchPacking.vue";
 import InboundForm from "./module/InboundForm.vue";
 import OutboundForm from "./module/OutboundForm.vue";
+import { WithdrawalList } from "@/api/productOrdes";
 
 export default {
   name: "WarehouseBusinessProcess",
@@ -91,13 +92,11 @@ export default {
       return {
         // 生产领料入库
         outbound_pick_out: {
-          api: purPurchaseReceiptReturnGoodsList,
+          api: WithdrawalList,
           initListQuery: {
-            notificationType: 'external_process',
-            returnDeliveryType: 'back',
             documentStatus: 'submit',
             approvalStatus: 'ok',
-            receivingStatus: 'not_finished',
+            pickingFlag: 1,
             classAttributeList: classAttr
           },
         },

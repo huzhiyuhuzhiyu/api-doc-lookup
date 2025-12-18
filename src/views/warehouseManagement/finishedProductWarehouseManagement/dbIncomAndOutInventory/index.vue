@@ -98,7 +98,7 @@ export default {
             approvalStatus: 'ok',
             notifyType: 'picking',
             pickingFlag: 1,
-            classAttributeList: classAttr
+            productClassAttributeList: classAttr
           },
         },
         // 销售发货出库 （销售发货出库 功能：装箱单&推荐批次）

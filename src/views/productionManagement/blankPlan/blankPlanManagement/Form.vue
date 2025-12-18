@@ -98,7 +98,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.taskMethod == 'appoint'">
+                      <el-col :sm="6" :xs="24" v-if="true"><!-- 原dataForm.taskMethod == 'appoint' -->
                         <el-form-item label="产线" prop="productionLineId">
                           <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
                             @change="selectLine">
@@ -774,7 +774,7 @@ export default {
       let hasItemList = []
       for (let i = 0; i < data.length; i++) {
         let item = data[i];
-        
+
         item.productsId =  item.id
         item.productsCode =  item.code
         item.productsName =  item.name
@@ -901,12 +901,12 @@ export default {
       }
       this.selectRows = []; // 清空选中的行的数据
     },
-    delethHandle(scope){ 
+    delethHandle(scope){
       this.$confirm(this.$t('此操作将删除当前数据，确认删除？'), this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => { 
+      }).then(() => {
       this.dataFormTwo.data.splice(scope.$index, 1)
-    
+
       }).catch(() => { })
     },
     // 输入编排数量，重新计算投料数量
@@ -915,7 +915,7 @@ export default {
         if (this.hasWorkOrderFlagFalse) {
           this.materialList.forEach(item => {
             this.$set(item, 'materialsUsedQuantity', this.dataForm.productionQuantity)
-          }); 
+          });
         } else {
           this.materialList.forEach(item => {
             let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)),  item.qty]), 6)
@@ -958,13 +958,13 @@ export default {
       getProductionLineInfo(e).then(res => {
         console.log("产线", res);
         let list = res.data.workstationList
-        // 遍历 arr 数组  
+        // 遍历 arr 数组
         this.dataFormTwo.data.forEach(item => {
-          // 在 arr2 中查找与当前 item 的 processId 相同的 item  
+          // 在 arr2 中查找与当前 item 的 processId 相同的 item
           const match = list.find(el => el.processId === item.processId && item.processingType == "self_produced");
           if (match) {
             console.log(match);
-            // 如果匹配，更新 workstationResList 和 workstationResMap  
+            // 如果匹配，更新 workstationResList 和 workstationResMap
             item.routingProResList = match.workstationResList;
             item.routingProResMap = match.workstationResMap;
           }
@@ -1264,7 +1264,7 @@ export default {
       const time = y + '-' + m + '-' + d
       return time
     },
-    
+
 
 
 
@@ -1364,7 +1364,7 @@ export default {
 
           if (!this.hasWorkOrderFlagFalse) {
             // 都生成工单 产品的bom作为料
-            // 返回 false  
+            // 返回 false
             this.workFlag = true
             if (this.dataForm.bomId) {
 
@@ -1393,12 +1393,12 @@ export default {
           } else {
             // 产品+该道工序作为料
             // 存在不生成工单的数据并且是外协的，并找出最后一道不生成工单的数据
-            // 找到 sort 最大的对象  
+            // 找到 sort 最大的对象
             let maxSortItem = processList.reduce((maxItem, item) => {
               return item.sort > maxItem.sort ? item : maxItem;
             });
 
-            // 返回 sort 最大值的数据  
+            // 返回 sort 最大值的数据
             console.log(6666, maxSortItem);
             this.workFlagFalseInfo = maxSortItem
             let obj = {
@@ -1432,7 +1432,7 @@ export default {
       console.log("dataf",this.dataForm,this.dataForm.pickingWay);
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
-      this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity)) 
+      this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       if(this.dataForm.planStartDate&&this.dataForm.planEndDate){
         this.dataForm.planDate[0]=this.dataForm.planStartDate
         this.dataForm.planDate[1]=this.dataForm.planEndDate
@@ -1491,7 +1491,7 @@ export default {
               });
               break;
             }
-          } 
+          }
           // else {
           //   if (!item.personId && item.processingType == "self_produced") {
           //     submitFlag = false;
@@ -1516,7 +1516,7 @@ export default {
         this.dataForm.materialFlag = false
 
       }
-      
+
       if (this.materialList.length) {
         let hasAutoReduceType = this.materialList.some(item => item.reduceType === "auto")
         if (this.dataForm.pickingWay == 'production_order') {

@@ -41,9 +41,9 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      
-                  
-                      
+
+
+
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单位" prop="mainUnit">
                           <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
@@ -57,7 +57,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                     
+
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="编排任务方式" prop="taskMethod">
                           <el-select v-model="dataForm.taskMethod" placeholder="请选择编排任务方式" style="width: 100%;"
@@ -67,7 +67,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.taskMethod == 'appoint'">
+                      <el-col :sm="6" :xs="24" v-if="true"><!-- 原dataForm.taskMethod == 'appoint' -->
                         <el-form-item label="产线" prop="productionLineId">
                           <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
                             @change="selectLine">
@@ -575,9 +575,9 @@ export default {
         {label:"内返",value:"inner_flipping",},
         {label:"外返",value:"out_flipping",},
         {label:"仓返",value:"warehouse_flipping",},
-      
+
       ],
-        
+
       linesFormItems_right: [],
       processVisible: false,
       productVisible: false,
@@ -893,7 +893,7 @@ export default {
           ],
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 160,
-    
+
         },
         { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140 },
       ]
@@ -1142,13 +1142,13 @@ export default {
     selectLine(e) {
       getProductionLineInfo(e).then(res => {
         let list = res.data.workstationList
-        // 遍历 arr 数组  
+        // 遍历 arr 数组
         this.dataFormTwo.data.forEach(item => {
-          // 在 arr2 中查找与当前 item 的 processId 相同的 item  
+          // 在 arr2 中查找与当前 item 的 processId 相同的 item
           const match = list.find(el => el.processId === item.processId && item.processingType == "self_produced");
           if (match) {
             console.log(match);
-            // 如果匹配，更新 workstationResList 和 workstationResMap  
+            // 如果匹配，更新 workstationResList 和 workstationResMap
             item.routingProResList = match.workstationResList;
             item.routingProResMap = match.workstationResMap;
           }

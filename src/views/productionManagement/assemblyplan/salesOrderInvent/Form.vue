@@ -76,7 +76,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.taskMethod == 'appoint'">
+                      <el-col :sm="6" :xs="24" v-if="true"><!-- 原dataForm.taskMethod == 'appoint' -->
                         <el-form-item label="产线" prop="productionLineId">
                           <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
                             @change="selectLine">
@@ -893,13 +893,13 @@ export default {
       getProductionLineInfo(e).then(res => {
         console.log("产线", res);
         let list = res.data.workstationList
-        // 遍历 arr 数组  
+        // 遍历 arr 数组
         this.dataFormTwo.data.forEach(item => {
-          // 在 arr2 中查找与当前 item 的 processId 相同的 item  
+          // 在 arr2 中查找与当前 item 的 processId 相同的 item
           const match = list.find(el => el.processId === item.processId && item.processingType == "self_produced");
           if (match) {
             console.log(match);
-            // 如果匹配，更新 workstationResList 和 workstationResMap  
+            // 如果匹配，更新 workstationResList 和 workstationResMap
             item.routingProResList = match.workstationResList;
             item.routingProResMap = match.workstationResMap;
           }
@@ -938,7 +938,7 @@ export default {
       getBimBusinessSwitchConfigList(obj).then(res => {
         this.allocationFlag = res.data.produce[0].configValue1 == '1' ? true : false
         this.fetchData("PODH")
-       
+
       })
     },
     //领料人
@@ -1254,7 +1254,7 @@ export default {
       this.$set(this.dataForm, 'routingName', "")
       this.$refs.dataForm.clearValidate('planDate');
       this.$refs.dataForm.clearValidate('routingName');
-    
+
       if (this.dataForm.bomId) {
         BOMLineList(this.dataForm.bomId).then(res => {
           console.log("bom详情", res);
@@ -1272,7 +1272,7 @@ export default {
       this.dataForm.productsDrawingNo = data[0].productDrawingNo
       this.dataForm.projectId = data[0].projectId
       this.dataForm.mainUnit = data[0].mainUnit
-      // this.dataForm.productionQuantity=data[0].inventoryQuantity 
+      // this.dataForm.productionQuantity=data[0].inventoryQuantity
       this.dataForm.stockInventoryLineId = data[0].id
       this.dataForm.productsId = data[0].productsId
       this.$set(this.dataForm, 'orderType', 'flipping')

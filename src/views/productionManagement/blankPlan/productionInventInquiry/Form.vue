@@ -67,7 +67,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="dataForm.taskMethod == 'appoint'">
+                  <el-col :sm="6" :xs="24" v-if="true"><!-- 原dataForm.taskMethod == 'appoint' -->
                     <el-form-item label="产线" prop="productionLineId">
                       <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
                         @change="selectLine">
@@ -491,7 +491,7 @@ export default {
       routingVisible: false,
       collectForm: {
         orderNo: "",
-        operationDate: this.jnpf.getToday(), 
+        operationDate: this.jnpf.getToday(),
         personId: "",
       },
       collectConfig: {
@@ -610,7 +610,7 @@ export default {
       isCheckingSwitch: "",
       workFlagFalseInfo: {},//不生成工单的数据
       currentProcessInfo: {},//当前所选的工序
-      workFlag: null,//是否都生成工单标志 
+      workFlag: null,//是否都生成工单标志
     }
   },
   computed: {
@@ -702,13 +702,13 @@ export default {
       getProductionLineInfo(e).then(res => {
         console.log("产线", res);
         let list = res.data.workstationList
-        // 遍历 arr 数组  
+        // 遍历 arr 数组
         this.dataFormTwo.data.forEach(item => {
-          // 在 arr2 中查找与当前 item 的 processId 相同的 item  
+          // 在 arr2 中查找与当前 item 的 processId 相同的 item
           const match = list.find(el => el.processId === item.processId && item.processingType == "self_produced");
           if (match) {
             console.log(match);
-            // 如果匹配，更新 workstationResList 和 workstationResMap  
+            // 如果匹配，更新 workstationResList 和 workstationResMap
             item.routingProResList = match.workstationResList;
             item.routingProResMap = match.workstationResMap;
           }
@@ -1053,44 +1053,44 @@ export default {
         });
         let processList = res.data.routingLineList.sort((a, b) => a.sort - b.sort);
 
-        // 找到当前 processId 的对象  
+        // 找到当前 processId 的对象
         let currentItem = processList.find(item => item.processId === this.dataForm.processId);
 
         if (currentItem) {
           this.currentProcessInfo = currentItem
-          // 返回当前数据  
+          // 返回当前数据
 
-          // 获取当前 object's sort 值  
+          // 获取当前 object's sort 值
           let currentSortValue = currentItem.sort;
 
-          // 找出所有 sort 大于 currentSortValue 的对象  
+          // 找出所有 sort 大于 currentSortValue 的对象
           let largerSortItems = processList.filter(item => item.sort > currentSortValue);
 
           if (largerSortItems.length > 0) {
-            // 检查新数组中是否有 workOrderFlag 为 false 的对象 
+            // 检查新数组中是否有 workOrderFlag 为 false 的对象
             this.dataFormTwo.data = largerSortItems
 
             let hasWorkOrderFlagFalse = largerSortItems.some(item => !item.workOrderFlag);
 
             if (!hasWorkOrderFlagFalse) {
               // 都生成工单
-              // 返回 false  
+              // 返回 false
               this.workFlag = true
               //               console.log(false);
             } else {
               // 存在不生成工单的数据，并找出最后一道不生成工单的数据
-              // 找到 sort 最大的对象  
+              // 找到 sort 最大的对象
               let maxSortItem = largerSortItems.reduce((maxItem, item) => {
                 return item.sort > maxItem.sort ? item : maxItem;
               });
 
-              // 返回 sort 最大值的数据  
+              // 返回 sort 最大值的数据
               console.log(maxSortItem);
               this.workFlagFalseInfo = maxSortItem
             }
           } else {
             this.$message.error("数据存在问题,请检查后重试")
-            // 如果没有大于的 sort 值，返回空数组  
+            // 如果没有大于的 sort 值，返回空数组
             this.dataFormTwo.data = []
           }
         } else {
@@ -1118,7 +1118,7 @@ export default {
       this.dataForm.productsDrawingNo = data[0].productDrawingNo
       this.dataForm.projectId = data[0].projectId
       this.dataForm.mainUnit = data[0].mainUnit
-      // this.dataForm.productionQuantity=data[0].inventoryQuantity 
+      // this.dataForm.productionQuantity=data[0].inventoryQuantity
       this.dataForm.stockInventoryLineId = data[0].id
       this.dataForm.productsId = data[0].productsId
       this.$set(this.dataForm, 'orderType', 'transit')
@@ -1212,7 +1212,7 @@ export default {
         lineEdgeList: arr,
         materialList: [],
       }
-      // 都生成工单  则投料清单数据为  所选数据的产品+所选的工序作为料 
+      // 都生成工单  则投料清单数据为  所选数据的产品+所选的工序作为料
 
       if (this.workFlag) {
         let objs = {
@@ -1228,7 +1228,7 @@ export default {
         }
         obj.materialList = [...obj.materialList, objs]
       } else {
-        // 如果存在不生成工单的数据 
+        // 如果存在不生成工单的数据
         let objs = {
           calculationDirection: this.dataForm.calculationDirection,
           deputyUnit: this.dataForm.deputyUnit,

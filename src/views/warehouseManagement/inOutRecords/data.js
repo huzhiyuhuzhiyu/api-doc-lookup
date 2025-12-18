@@ -19,7 +19,6 @@ export function getColumns() {
       label: "单号",
       minWidth: 220,
       align: "left",
-      slot: true,
     },
     {
       prop: "businessType",

@@ -22,7 +22,6 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "询价日期",
       value: "",
       type: "date",
-      itemDisabled: true,
     },
     {
       prop: "createByName",
@@ -43,7 +42,6 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "采购负责人",
       value: "",
       type: "input",
-      disabled: true,
     },
   ]
 }

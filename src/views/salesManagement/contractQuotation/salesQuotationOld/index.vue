@@ -27,11 +27,11 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')" :addText="'报价'">
+            <topOpts @add="addSupplier('', 'add','purchase_quotation')" :addText="'报价'">
               <el-button type="primary" size="mini" icon="el-icon-plus"
                 @click="addSupplier('', 'add', 'directly_quotation')">直接报价</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('tableForm')">导出</el-button>
+                @click="exportForm('dataTable')">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -47,7 +47,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table customKey="hsCodes" v-loading="listLoading" :data="tableDataList" :has-c="true"
+          <JNPF-table customKey="salesQuotationOld" v-loading="listLoading" :data="tableDataList" :has-c="true"
             @selection-change="(val) => selectedRow = val" :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
             @sort-change="sortChange" ref="dataTable" custom-column>
             <template v-for="column in columnsConfig">
@@ -234,6 +234,12 @@ export default {
       quoteType: '',
       columnsConfig: [
         {
+          prop: "quotationTime",
+          label: "报价日期",
+          minWidth: 120,
+          sortable: 'custom',
+        },
+        {
           prop: "quotationNo",
           label: "报价单号",
           minWidth: 220,
@@ -252,12 +258,6 @@ export default {
           label: "客户名称",
           minWidth: 220,
           align: "left",
-          sortable: 'custom',
-        },
-        {
-          prop: "inquiryTime",
-          label: "询价日期",
-          minWidth: 120,
           sortable: 'custom',
         },
         {
@@ -286,8 +286,15 @@ export default {
           dictType: 'quotationStatus',
         },
         {
-          prop: "quotationTime",
-          label: "报价日期",
+          prop: "quotationType",
+          label: "报价类型",
+          minWidth: 120,
+          slot: true,
+          dictType: 'quotationType',
+        },
+        {
+          prop: "inquiryTime",
+          label: "询价日期",
           minWidth: 120,
           sortable: 'custom',
         },
@@ -320,7 +327,7 @@ export default {
       this.search('super')
     },
     columnSetFun() {
-      this.$refs.tableForm.showDrawer()
+      this.$refs.dataTable.showDrawer()
     },
 
     sortChange({ prop, order }) {

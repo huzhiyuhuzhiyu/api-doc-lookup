@@ -16,10 +16,6 @@ export default {
       type: String,
       default: ''
     },
-    businessType: {
-      type: String,
-      default: ''
-    },
   },
   data() {
     return {
@@ -58,9 +54,7 @@ export default {
           options: this.getDictDataSync('warehouseBusinessType'),
         },
       ],
-      listQuery: {
-        businessType: this.businessType,
-      },
+      listQuery: {},
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
@@ -537,7 +531,7 @@ export default {
           </div>
         </div>
         <JNPF-table
-          customKey="inventoryList"
+          customKey="inventoryDetaisList"
           v-loading="loading"
           :data="tableData"
           :row-key="'id'"

@@ -140,6 +140,12 @@ export default {
           minWidth: 80,
         },
         {
+          prop: 'numStr',
+          label: '数量',
+          type: 'view',
+          minWidth: 160,
+        },
+        {
           prop: 'sampleNumStr',
           label: '样品数',
           type: 'view',
@@ -148,8 +154,20 @@ export default {
         {
           prop: 'sampleAmounts',
           label: '样品报价',
-          type: 'view',
+          type: 'input',
           minWidth: 160,
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            { validator: this.formValidate('positiveNumber', '样品报价必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+          ]
+        },
+        {
+          prop: 'sampleQuotationFlag',
+          label: '是否样品报价',
+          type: 'select',
+          options: this.global.booleanOptions,
+          minWidth: 160,
+          disable: true,
         },
         {
           prop: 'procurementAmounts',
@@ -201,6 +219,12 @@ export default {
         {
           prop: 'material',
           label: '材质',
+          type: 'input',
+          minWidth: 160,
+        },
+        {
+          prop: 'remark',
+          label: '备注',
           type: 'view',
           minWidth: 160,
         },
@@ -229,7 +253,7 @@ export default {
         },
         {
           prop: "quotationDate",
-          label: "询价日期",
+          label: "报价日期",
           value: "",
           type: "date",
           itemDisabled: true,
@@ -248,13 +272,12 @@ export default {
           type: "input",
           disabled: true,
         },
-        {
-          prop: "",
-          label: "采购负责人",
-          value: "",
-          type: "input",
-          disabled: true,
-        },
+        // {
+        //   prop: "",
+        //   label: "采购负责人",
+        //   value: "",
+        //   type: "input",
+        // },
         {
           prop: "cooperativePartnerName",
           label: "供应商",
@@ -432,6 +455,8 @@ export default {
               moldAmounts: item.moldAmounts || 0,
               deliveryDate: item.deliveryDate || '',
               remark1: item.remark1 || '',
+              quotationLineId: item.id,
+              quotationId: item.salesQuotationId,
             }
           }),
           this.formLoading = false
@@ -505,7 +530,7 @@ export default {
       this.getProductsList(row)
     },
     setOldSupplierData() {
-      const data = deepClone(this.oldSupplierData) 
+      const data = deepClone(this.oldSupplierData)
       this.dataForm.cooperativePartnerName = data.name
       this.dataForm.cooperativePartnerCode = data.code
       this.dataForm.cooperativePartnerId = data.id

@@ -939,48 +939,45 @@ export default {
 
 <template>
   <transition name="el-zoom-in-center">
-    <div class="JNPF-preview-main org-form">
-      <div class="JNPF-common-layout">
-        <div class="JNPF-common-layout-center JNPF-flex-main">
-          <div class="JNPF-preview-main transitionForm org-form">
-            <div class="JNPF-common-page-header">
-              <el-page-header @back="$emit('close',false)" :content="title"/>
-              <div class="options">
-                <template v-if="activeType">
-                  <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
-                    保存草稿
-                  </el-button>
-                  <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
-                    保存并提交
-                  </el-button>
-                </template>
-                <el-button @click="$emit('close',false)">{{
-                    $t('common.cancelButton')
-                  }}
-                </el-button>
-              </div>
-            </div>
-            <div class="main" v-loading="loading" ref="main">
-              <el-tabs v-model="activeName">
-                <el-tab-pane label="基础信息" name="jcInfo">
-                  <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
-                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
-                      <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                        :btnType="btnType"/>
-                    </el-collapse-item>
-                    <el-collapse-item class="productInfo"
-                      title="产品信息"
-                      name="productInfo">
-                      <div class="TableForm_title">
-                      </div>
-                      <TableForm-product
-                        @input="contentChanges"
-                        :value="computedLinesList"
-                        :hasToolbar="false"
-                        ref="tableForm" :tableItems="linesListItems"
-                        :btnType="btnType"
-                        @deleteth="deleteLines"
-                        :tableProps="{
+    <div class="JNPF-preview-main transitionForm">
+      <div class="JNPF-common-page-header">
+        <el-page-header @back="$emit('close',false)" :content="title"/>
+        <div class="options">
+          <template v-if="activeType">
+            <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
+              保存草稿
+            </el-button>
+            <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
+              保存并提交
+            </el-button>
+          </template>
+          <el-button @click="$emit('close',false)">{{
+              $t('common.cancelButton')
+            }}
+          </el-button>
+        </div>
+      </div>
+      <div class="main" v-loading="loading" ref="main">
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="基础信息" name="jcInfo">
+            <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
+                <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
+                          :btnType="btnType"/>
+              </el-collapse-item>
+              <el-collapse-item class="productInfo"
+                                title="产品信息"
+                                name="productInfo">
+                <div class="TableForm_title">
+                </div>
+                <TableForm-product
+                  @input="contentChanges"
+                  :value="computedLinesList"
+                  :hasToolbar="false"
+                  ref="tableForm" :tableItems="linesListItems"
+                  :btnType="btnType"
+                  @deleteth="deleteLines"
+                  :tableProps="{
                         is: 'JNPF-table',
                         fixedNO: true,
                         hasC: activeType,
@@ -989,74 +986,71 @@ export default {
                         defaultExpandAll: true,
                         customColumn: true,
                       }">
-                        <template slot="top">
-                          <div class="tableTopContainer">
-                            <div class="left">
-                              <template v-if="activeType">
-                                <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('customer')">选择客户产品</el-button>
-                                <span>|</span>
-                                <el-button type="text" icon="el-icon-plus" @click="addLineForm">新增一行</el-button>
-                                <span>|</span>
-                                <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('')">选择产品</el-button>
-                                <span>|</span>
-                                <el-button type="text" icon="el-icon-plus" @click="importProduct">导入产品</el-button>
-                                <span>|</span>
-                                <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.tableForm.batchDelete()">批量删除</el-button>
-                              </template>
-                            </div>
-                            <div class="right">
-                              <template v-if="activeType">
-                                <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
-                                <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
-                                  <el-form-item label="包装">
-                                    <el-select v-model="globalPackagingMethod" placeholder="包装"
-                                      @change="(val) => globalChange(val,'packagingMethod')"
-                                      style="width: 80px">
-                                      <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
-                                        :label="item.label" :value="item.value"/>
-                                    </el-select>
-                                  </el-form-item>
-                                  <el-form-item label="品牌">
-                                    <el-select v-model="globalBrand" placeholder="品牌"
-                                      @change="(val) => globalChange(val,'clearance')"
-                                      style="width: 100px">
-                                      <el-option v-for="item in getDictDataSync('brand')" :key="item.value"
-                                        :label="item.label" :value="item.value"/>
-                                    </el-select>
-                                  </el-form-item>
-                                </el-form>
-                              </template>
-                              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                                  @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
-                              </el-tooltip>
-                            </div>
-                          </div>
+                  <template slot="top">
+                    <div class="tableTopContainer">
+                      <div class="left">
+                        <template v-if="activeType">
+                          <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('customer')">选择客户产品</el-button>
+                          <span>|</span>
+                          <el-button type="text" icon="el-icon-plus" @click="addLineForm">新增一行</el-button>
+                          <span>|</span>
+                          <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('')">选择产品</el-button>
+                          <span>|</span>
+                          <el-button type="text" icon="el-icon-plus" @click="importProduct">导入产品</el-button>
+                          <span>|</span>
+                          <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.tableForm.batchDelete()">批量删除</el-button>
                         </template>
-                      </TableForm-product>
-                      <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
-                        <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
-                        <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
-                        <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ excludingTaxAmount }}</span>
                       </div>
-                    </el-collapse-item>
-                  </el-collapse>
-                </el-tab-pane>
-                <el-tab-pane label="流程信息" name="approvalFlow">
-                  <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId"
-                    style="margin-top: 5px;"/>
-                </el-tab-pane>
-                <el-tab-pane v-if="!activeType && dataForm.approvalFlag" label="流转记录"
-                  name="transferList">
-                  <recordList :list='flowTaskOperatorRecordList' :endTime='endTime'/>
-                </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
-                  <UploadWj v-model="fileList" :disabled="!activeType" :detailed="!activeType"></UploadWj>
-                </el-tab-pane>
-              </el-tabs>
-            </div>
-          </div>
-        </div>
+                      <div class="right">
+                        <template v-if="activeType">
+                          <el-button type="text" icon="el-icon-edit" @click="showDialog = true">打字内容</el-button>
+                          <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
+                            <el-form-item label="包装">
+                              <el-select v-model="globalPackagingMethod" placeholder="包装"
+                                         @change="(val) => globalChange(val,'packagingMethod')"
+                                         style="width: 80px">
+                                <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
+                                           :label="item.label" :value="item.value"/>
+                              </el-select>
+                            </el-form-item>
+                            <el-form-item label="品牌">
+                              <el-select v-model="globalBrand" placeholder="品牌"
+                                         @change="(val) => globalChange(val,'clearance')"
+                                         style="width: 100px">
+                                <el-option v-for="item in getDictDataSync('brand')" :key="item.value"
+                                           :label="item.label" :value="item.value"/>
+                              </el-select>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                                   @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
+                        </el-tooltip>
+                      </div>
+                    </div>
+                  </template>
+                </TableForm-product>
+                <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
+                  <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
+                  <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
+                  <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ excludingTaxAmount }}</span>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </el-tab-pane>
+          <el-tab-pane label="流程信息" name="approvalFlow">
+            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId"
+                     style="margin-top: 5px;"/>
+          </el-tab-pane>
+          <el-tab-pane v-if="!activeType && dataForm.approvalFlag" label="流转记录"
+                       name="transferList">
+            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime'/>
+          </el-tab-pane>
+          <el-tab-pane label="附件" name="annex">
+            <UploadWj v-model="fileList" :disabled="!activeType" :detailed="!activeType"></UploadWj>
+          </el-tab-pane>
+        </el-tabs>
       </div>
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct"/>
       <TypingEditorDialog

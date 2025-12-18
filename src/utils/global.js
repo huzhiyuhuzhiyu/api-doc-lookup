@@ -155,6 +155,12 @@ const global = {
     { label: '待反馈', value: 'pending_feedback', type: 'warning' },
   ],
 
+  // 报价类型
+  quotationType: [
+    { label: '采购报价', value: 'purchase_quotation', type: 'primary' },
+    { label: '直接报价', value: 'directly_quotation', type: 'success' },
+  ],
+
   // 编排任务方式
   taskMethodStatus: [
     { label: '指定加工对象', value: 'appoint', type: 'warning' },

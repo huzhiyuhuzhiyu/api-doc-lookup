@@ -1,6 +1,6 @@
 <template>
   <transition name="el-zoom-in-center">
-    <div class="JNPF-preview-main org-form">
+    <div class="JNPF-preview-main transitionForm">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="$emit('close')"
           :content="btnType == 'add' || btnType == 'copy' ? quoteText : btnType == 'edit' ? '编辑销售报价' : '查看销售报价'" />
@@ -25,6 +25,8 @@
                 <div v-if="btnType != 'look'">
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
                     icon="el-icon-plus" @click="addProduct">选择产品</el-button>
+                  |
+                  <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog">选择客户产品</el-button>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <JNPF-table customKey="salesQuotationOld" ref="product" :has-c="this.btnType !== 'look'" fixedNO :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
@@ -166,7 +168,7 @@
                         <el-input v-model="scope.row.remark2" disabled maxlength="200" />
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'add' || btnType == 'edit'">
+                    <el-table-column label="操作" width="160" fixed="right" v-if="btnType == 'add' || btnType == 'edit'">
                       <template slot-scope="scope">
                         <el-button type="text" @click="deltable(scope)" class="JNPF-table-delBtn">删除</el-button>
                         <el-button type="text" v-if="quoteType !== 'directly_quotation'"
@@ -344,6 +346,7 @@
       </el-dialog>
       <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
       <Form v-if="formVisible" ref="Form"></Form>
+      <ComSelect-page v-bind="addCustomerProductProps" ref="ComSelectCustomerProductRef" :element-show="false" @change="submitAllCustomerProduct"/>
     </div>
   </transition>
 </template>
@@ -375,6 +378,53 @@ export default {
   mixins: [busFlow, flowMixin, getProjectList,],
   data() {
     return {
+      addCustomerProductProps: {
+        title: '选择产品',
+        activeType: '',
+        renderTree: false,
+        multiple: true,
+        listMethod: getcooperativeProduct,
+        tableItems: [
+          {prop: 'customerProductNo', label: ' 客户料号', fixed: 'left'},
+          {prop: 'customerProductName', label: ' 客户产品名称', fixed: 'left'},
+          {prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom'},
+          {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
+          {prop: 'productCode', label: '产品编码', sortable: 'custom'},
+          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
+          {prop: 'mainUnit', label: '单位', sortable: 'custom'},
+          {prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom'}
+        ],
+        listRequestObj: {
+          partnerId: '',
+          partnerType: 'customer',
+          productCode: "",
+          productName: "",
+          productStatus: 'enable',
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [
+            {
+              asc: false,
+              column: ''
+            },
+            {
+              asc: false,
+              column: 'create_time'
+            }
+          ]
+        },
+        beforeSubmit: (data, paramsObj) => {
+          if (!data || !data.length) {
+            this.$message.error(`请进行产品选择！`)
+            return false
+          }
+          return true
+        },
+        searchList: [
+          {prop: 'productName', label: '产品名称', type: 'input'},
+          {prop: 'productCode', label: '产品编码', type: 'input'},
+        ]
+      },
       highlightCurrentFlag: false,
       isProductNameSwitch: "",
       isProjectSwitch: '',
@@ -425,6 +475,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        quotationType: '',
         quotationNo: "",
         deliver: '',
         publicPrivateSeaId: '',
@@ -734,6 +785,23 @@ export default {
     this.tableFlag = true
   },
   methods: {
+    submitAllCustomerProduct(id,data){
+      const newData = data.map(item => ({
+        ...item.all,
+        productName: item.all.name,
+        productCode: item.all.code,
+        productsDrawingNo: item.all.drawingNo,
+        productsId: item.all.productsId,
+        cooperativePartnerProductId: item.all.id
+      }));
+
+      this.dataFormTwo.lines = [...this.linesList, ...newData]
+    },
+    selectProductRefOpenDialog() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+      this.addCustomerProductProps.listRequestObj.partnerId = this.dataForm.cooperativePartnerId
+      this.$refs.ComSelectCustomerProductRef.openDialog()
+    },
     setOldSupplierData() {
       const data = deepClone(this.oldSupplierData)
       this.dataForm.cooperativePartnerIdText = data.name

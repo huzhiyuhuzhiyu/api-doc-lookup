@@ -78,7 +78,7 @@
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
-          <el-table-column prop="num" label="数量" width="80" sortable="custom" />
+          <el-table-column prop="numStr" label="数量" width="80" sortable="custom" />
           <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom" />
           <el-table-column prop="taxRate" label="税率" width="110" sortable="custom">
             <template slot-scope="scope">

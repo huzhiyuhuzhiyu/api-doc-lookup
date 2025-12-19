@@ -602,13 +602,6 @@ export default {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     await this.getProjectSwitch()
     await this.getProductNameSwitch('product', 'enable_productName')
-    if (this.isProductNameSwitch === '1') {
-      this.superQueryJson.splice(1, 0, {
-        prop: 'name',
-        label: '产品名称',
-        type: 'input'
-      })
-    }
     this.getcategoryTree()
     if (localStorage.getItem(this.listQuery.classAttribute)) {
       let roleFlag = JSON.parse(localStorage.getItem(this.listQuery.classAttribute))

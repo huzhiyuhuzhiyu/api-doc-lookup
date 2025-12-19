@@ -1,43 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div v-if="!formVisible" class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="5">
-            <el-form-item>
-              <el-input v-model="listQuery.code" @keyup.enter.native="search()" placeholder="工艺路线编码" clearable
-                maxlength="20"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="5">
-            <el-form-item>
-              <el-input v-model="listQuery.name" @keyup.enter.native="search()" placeholder="工艺路线名称" clearable
-                maxlength="20"></el-input>
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.state" placeholder="工艺状态" clearable style="width: 100%;">
-                <el-option
-                  v-for="(item, index) in stateList"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">查询</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置</el-button>
-            </el-form-item>
-          </el-col>
-          <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-            icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="listTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
@@ -51,10 +15,10 @@
             </el-button>
           </div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true"/>
-            </el-tooltip>
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                  @click="$refs.listTable.showSortDrawer()" />
+              </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()"/>
             </el-tooltip>
@@ -63,31 +27,31 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableDataFlag" :data="list" @sort-change="sortChange" highlight-current-row :fixedNO="true"
-          class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_548188">
-          <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
+        <JNPF-table :data="list" highlight-current-row :fixedNO="true"
+          class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_548188" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          <el-table-column prop="code" label="工艺路线编码" align="left" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">
                 {{ scope.row.code }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180"/>
+          <el-table-column prop="name" label="工艺路线名称" align="left" min-width="180"/>
           <el-table-column prop="processNames" label="工艺路线" align="left" min-width="220"/>
-          <el-table-column prop="source" label="工艺类型" align="center" min-width="180" sortable="custom">
+          <el-table-column prop="source" label="工艺类型" align="center" min-width="180">
             <template slot-scope="scope">
               <el-tag>{{ global.getDictLabelGlobal('craftType', scope.row.source) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" sortable="custom" width="160">
+          <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" width="160">
             <template slot-scope="scope">
               <div v-if="scope.row.reportRulesFlag == '0'">否</div>
               <div v-if="scope.row.reportRulesFlag == '1'">是</div>
             </template>
           </el-table-column>
 
-          <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom"/>
-          <el-table-column prop="createByName" label="创建人" align="left" width="100" sortable="custom"/>
+          <el-table-column prop="createTime" label="创建时间" align="left" min-width="180"/>
+          <el-table-column prop="createByName" label="创建人" align="left" width="100"/>
           <el-table-column prop="remark" label="备注" align="left" min-width="180"/>
           <!-- <el-table-column prop="state" label="工艺状态" align="center" sortable="custom" width="120" >
               <template slot-scope="scope">
@@ -95,7 +59,7 @@
                 <div v-if="scope.row.state == 'disable'"><el-tag type="danger">禁用</el-tag></div>
               </template>
             </el-table-column> -->
-          <el-table-column prop="documentStatus" label="单据状态" align="center" sortable="custom" width="120">
+          <el-table-column prop="documentStatus" label="单据状态" align="center" width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.documentStatus == 'draft'">
                 <el-tag type="warning">草稿</el-tag>
@@ -105,7 +69,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" align="center"
             v-if="showAppCodeFlag">
             <template slot-scope="scope">
               <el-tag disable-transitions
@@ -156,17 +120,11 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" class="pagination"/>
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()" class="pagination"/>
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm"/>
-
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download"/>
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
-
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
       <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
@@ -202,67 +160,65 @@ import JNPFForm from './Form'
 import {deleteProcess, detailProcess, getProcessList, importProcess} from '@/api/basicData/processSettingss'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import {excelExport} from '@/api/basicData/index'
-import SuperQuery from '@/components/SuperQuery/index.vue'
 import {withdrawn} from '@/api/basicData/approvalAdministrator'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
   name: 'processSettingss',
-  components: {JNPFForm, ExportForm, SuperQuery},
+  components: {JNPFForm, ExportForm},
   mixins: [getProjectList],
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            // {
+            //   prop: 'createTime', // 属性*
+            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
+            //   symbol: 'between', // 比较符*
+            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+            //   fixed: true // 是否在搜索栏显示
+            // },
+            { prop: 'code', symbol: 'like', fixed: true },
+            { prop: 'name', symbol: 'like', fixed: true },
+          ],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
+        },
+      }],
       uploadVisib: false,
       importProjectId: '',
       isProjectSwitch: '',
-      tableDataFlag: false,
-      superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'code',
-          label: '工艺路线编码',
-          type: 'input'
-        },
-        {
-          prop: 'name',
-          label: '工艺路线名称',
-          type: 'input'
-        },
-        {
-          prop: 'documentStatus',
-          label: '单据状态',
-          type: 'select',
-          options: [{label: '草稿', value: 'draft'}, {label: '提交', value: 'submit'}]
-        },
-        {
-          prop: 'approvalStatus',
-          label: '审批状态',
+          prop: 'reportRulesFlag',
+          label: '按工艺顺序报工',
           type: 'select',
           options: [
-            {label: '审批中', value: 'ing'},
-            {label: '审批通过', value: 'ok'},
-            {label: '审批拒绝', value: 'rebut'},
-            {label: '审批撤回', value: 'withdrawn'}
+            {
+              label: '是',
+              value: '1'
+            },
+            {
+              label: '否',
+              value: '0'
+            }
           ]
         },
         {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
+          prop: 'source',
+          label: '工艺类型',
+          type: 'select',
+          options: this.global.craftType
         }
       ],
       exportFormVisible: false,
@@ -302,64 +258,10 @@ export default {
           value: 'rebut'
         }
       ],
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now()
-        },
-        shortcuts: [
-          {
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '上个月',
-            onClick(picker) {
-              const end = new Date(moment(new Date().getTime()).format('YYYY-MM-01 00:00:00'))
-              const start = new Date()
-              end.setTime(end.getTime() - 3600 * 1000 * 24)
-              start.setTime(end.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
-      },
       listLoading: true,
       total: 0,
       listQuery: {
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
         routeType: 'processLibrary',
-        code: '',
-        name: '',
-        state: '',
-        approvalStatus: '',
-        documentStatus: '',
-        createEndTime: '',
-        createStartTime: ''
       },
       formVisible: false,
       dataDetail: [],
@@ -379,14 +281,10 @@ export default {
     }
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
-    this.tableDataFlag = true
-    this.initData()
   },
   methods: {
     // 导入
     importForm() {
-
-      // this.$refs.UploadProduct.$el.querySelector('input').click()
       if (this.userInfo.projectId !== '1') {
         this.importProjectId = this.userInfo.projectId
       } else {
@@ -445,8 +343,6 @@ export default {
           this.formLoading = false
           this.loadingText = ''
         })
-
-
     },
     // 导入产品  下载导入错误数据
     downNoProduct(res) {
@@ -529,24 +425,9 @@ export default {
         .catch(() => {
         })
     },
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
+
     moreQueries() {
       this.visible = true
-    },
-    dataFormSubmit() {
-      this.listQuery.pageNum = 1
-      if (this.customerRecognitionTime && this.customerRecognitionTime.length > 0) {
-        this.listQuery.createStartTime = this.customerRecognitionTime[0] + ' 00:00:00'
-        this.listQuery.createEndTime = this.customerRecognitionTime[1] + ' 23:59:59'
-      } else {
-        this.listQuery.createStartTime = ''
-        this.listQuery.createEndTime = ''
-      }
-      this.initData()
     },
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
@@ -564,17 +445,7 @@ export default {
         this.detailLoading = false
       })
     },
-    sortChange({prop, order}) {
-      let newProp
-      if (prop === 'createByName') {
-        newProp = 'create_by'
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
+
     columnSetFun() {
       this.$refs.listTable.showDrawer()
     },
@@ -614,7 +485,12 @@ export default {
           })
       }
     },
-    initData() {
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
       this.listLoading = true
       this.detailLoading = false
       if (this.isProjectSwitch === '1') {
@@ -669,37 +545,12 @@ export default {
         this.$refs.JNPFForm.init(id, type)
       })
     },
-    search() {
-      this.listQuery.pageNum = 1
-      this.initData()
-    },
+
     refresh() {
       this.formVisible = false
-      this.reset()
+      this.initData()
     },
-    reset() {
-      this.$refs['listTable'].$refs.JNPFTable.clearSort()
-      this.listQuery = {
-        orderItems: [
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        code: '',
-        name: '',
-        state: '',
-        approvalStatus: '',
-        documentStatus: '',
-        createEndTime: '',
-        createStartTime: ''
-      }
-      this.customerRecognitionTime = []
-      this.$refs.SuperQuery.conditionList = []
-      this.search()
-    }
+
   }
 }
 </script>

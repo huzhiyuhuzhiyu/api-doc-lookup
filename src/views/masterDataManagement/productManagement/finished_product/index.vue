@@ -1000,7 +1000,7 @@ export default {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.id
       this.listQuery.productCategoryCode = data.code
-      this.search()
+      this.initData()
     },
 
 
@@ -1019,7 +1019,6 @@ export default {
       const listLoadKey = this.listLoadKey = +new Date();
       if (listLoadKey !== this.listLoadKey) return; // 请求过期
       this.listLoading = true
-      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getProductList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records

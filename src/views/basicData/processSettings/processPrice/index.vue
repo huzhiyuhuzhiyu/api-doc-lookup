@@ -7,7 +7,7 @@
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="getcategoryTree(true)">刷新数据</el-dropdown-item>
               <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item> -->
             </el-dropdown-menu>
@@ -38,63 +38,15 @@
       </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="工序编码" clearable @keyup.enter.native="search('basic')" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="工序名称" clearable @keyup.enter.native="search('basic')" />
-            </el-form-item>
-          </el-col> -->
-          <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4">
-              <el-form-item>
-                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                  @keyup.enter.native="search('basic')" />
-
-                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                  clearable>
-                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                    :value="item2.value"></el-option>
-                </el-select>
-                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                  :type="item.dateType"
-                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </template>
-          <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.pricingType" placeholder="计价类型" clearable style="width: 100%;" @change="pricingTypeChange">
-                <el-option
-                  v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]"
-                  :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:10px">
           <el-button type="primary" @click="handleBatch">批量设置价格</el-button>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                  @click="$refs.dataTable.showSortDrawer()" />
+              </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -103,12 +55,12 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList" customKey="JNPFTableKey_967780">
-          <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
-          <el-table-column prop="code" label="工序编码" min-width="160" sortable="custom"></el-table-column>
+        <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" custom-column
+          ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList" customKey="JNPFTableKey_967780" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          <el-table-column prop="name" label="工序名称" min-width="180" />
+          <el-table-column prop="code" label="工序编码" min-width="160"></el-table-column>
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="pricingType" label="计价类型" width="120" sortable="custom">
+          <el-table-column prop="pricingType" label="计价类型" width="120">
             <template slot-scope="{ row }">
               <template v-if="row.pricingType == 'by_time'">
                 计时
@@ -120,41 +72,16 @@
           </el-table-column>
           <el-table-column prop="price" label="单价(元)" width="130">
           </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="createByName" label="创建人" width="100" />
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()" />
       </div>
     </div>
     <!-- 批量设置价格 -->
     <el-dialog v-if="analyseDialog" title="批量设置单价" :close-on-click-modal="false" append-to-body
       :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
-      <el-row :gutter="15" style="margin-top: 0px;">
-        <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
-          <el-row :gutter="30">
-            <el-col :sm="24">
-              <el-form-item prop="pricingType" label="计价类型">
-                <el-select v-model="dataForm.pricingType" placeholder="请选择计价类型" clearable style="width: 100%;">
-                  <el-option
-                    v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]"
-                    :key="index" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :sm="24" v-if="dataForm.pricingType == 'by_time'">
-              <el-form-item prop="timePrice" label="计时单价">
-                <el-input v-model="dataForm.timePrice" placeholder="请输入计时单价" />
-              </el-form-item>
-            </el-col>
-            <el-col :sm="24" v-if="dataForm.pricingType == 'by_piece'">
-              <el-form-item prop="unitPrice" label="计件单价">
-                <el-input v-model="dataForm.unitPrice" placeholder="请输入计件单价" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="analyseDialog = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
@@ -162,90 +89,69 @@
         </el-button>
       </span>
     </el-dialog>
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+
   </div>
 </template>
 
 <script>
 import { getBimProcessList, updatebimProcessPrice } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name:'processPrice',
-  components: { SuperQuery },
   mixins: [getProjectList],
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [{
+            prop: 'code',
+            symbol: 'like',
+            fixed: true
+          }, {
+            prop: 'name',
+            symbol: 'like',
+            fixed: true
+          }, {
+            prop: 'pricingType',
+            symbol: '==',
+            fixed: true
+          }],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
+        },
+      }],
       isProjectSwitch: '',
       tableDataFlag: false,
-      searchList: [
-        { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-      ],
+
       leftFlag: false,
       filterText: '',
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'code',
-          label: '工序编码',
-          type: 'input'
-        },
-        {
-          prop: 'name',
-          label: '工序名称',
-          type: 'input'
-        },
-        {
-          prop: 'pricingType',
-          label: '计价类型',
-          type: 'select',
-          options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        }
-      ],
+      superQueryJson: [{
+        prop: 'pricingType',
+        label: '计价类型',
+        type: 'select',
+        options: [{
+          label: '计时',
+          value: 'by_time'
+        }, {
+          label: '计件',
+          value: 'by_piece'
+        }]
+      }],
       columnList: ['createByName', 'createTime'],
       treeData: [],
       tableData: [],
       treeLoading: false,
       listLoading: false,
-      listQuery: {},
-      initListQuery: {
-        code: '',
-        name: '',
-        pricingType: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        processingType: '',
-        productCategoryId: ''
-      },
       defaultProps: {
         children: 'childrenList',
         label: 'name'
@@ -275,8 +181,6 @@ export default {
         ]
       },
       selectedData: [],
-      basicQuery: {},
-      superQuery: {}
     }
   },
   watch: {
@@ -287,33 +191,13 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     this.tableDataFlag = true
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-
     this.getcategoryTree()
   },
   methods: {
-    pricingTypeChange(){
-      this.initData()
-    },
-    superQuerySearch(query) {
-      this.superQuery = query
-      this.superQueryVisible = false
-      this.search('super')
-    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-    sortChange({ prop, order }) {
-      let newProp
-      if (prop === 'productCategoryIdText') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
+
     // 展开或折叠全部
     toggleExpand(expands) {
       this.refreshTree = false
@@ -333,7 +217,7 @@ export default {
       return data.name.indexOf(value) !== -1
     },
     // 获取指定树状列表
-    getcategoryTree() {
+    getcategoryTree(refreshFlag) {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
@@ -347,7 +231,7 @@ export default {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {
             this.treeLoading = false
-            this.initData()
+            if (refreshFlag) this.$refs.dataTable.queryChange(this.listQuery)
           })
         })
         .catch(() => {
@@ -355,7 +239,12 @@ export default {
           this.listLoading = false
         })
     },
-    initData() {
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
       this.listLoading = true
       if (this.isProjectSwitch === '1') {
         this.listQuery.projectId = this.userInfo.projectId
@@ -377,57 +266,12 @@ export default {
           this.listLoading = false
         })
     },
-    search(type) {
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
-      if (type === 'basic') {
-        this.basicQuery = {
-          matchLogic: 'AND',
-          condition: this.searchList
-            .filter((item) => item.fieldValue)
-            .map((item) => {
-              return {
-                ...item,
-                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-              }
-            })
-        }
-        this.listQuery.superQuery = this.basicQuery
-      }
-      if (type === 'super') {
-        this.listQuery.superQuery = this.superQuery
-      }
 
-      this.initData()
-    },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.searchList = [
-        { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        // {
-        //   field: 'pricingType',
-        //   fieldValue: 'by_time',
-        //   label: '计价类型',
-        //   symbol: 'like',
-        //   searchType: 4,
-        //   width: 120,
-        //   options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
-        // }
-      ]
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.initData()
-      this.filterText = ''
-      this.getcategoryTree()
-    },
+
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.id
-      this.search('basic')
+      this.initData()
     },
     currentChange(data) {
       this.selectedData = data
@@ -480,7 +324,7 @@ export default {
               timePrice: '',
               unitPrice: ''
             }
-            this.search()
+            this.initData()
           })
           .catch((err) => {
             this.btnLoading = false

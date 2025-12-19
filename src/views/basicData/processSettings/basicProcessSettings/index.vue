@@ -8,7 +8,7 @@
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="getcategoryTree(true)">刷新数据</el-dropdown-item>
               <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item> -->
             </el-dropdown-menu>
@@ -38,55 +38,7 @@
       </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="工序编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="工序名称" clearable />
-            </el-form-item>
-          </el-col> -->
-          <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4">
-              <el-form-item>
-                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                  @keyup.enter.native="search('basic')" />
-
-                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                  clearable>
-                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                    :value="item2.value"></el-option>
-                </el-select>
-                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                  :type="item.dateType"
-                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </template>
-          <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.processingType" placeholder="加工类别" clearable @change="processingTypeChange">
-                <el-option v-for="item in processingTypeOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">{{
-                $t("common.search")
-              }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}</el-button>
-            </el-form-item>
-          </el-col>
-          <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search" @click="moreQueries()">更多查询</el-button> -->
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="listTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <topOpts @add="addOrUpdateHandle('', 'add')">
@@ -97,10 +49,10 @@
             </el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                  @click="$refs.listTable.showSortDrawer()" />
+              </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -109,19 +61,19 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          :hasNO="true" ref="listTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_222041">
+        <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" custom-column
+          :hasNO="true" ref="listTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_222041" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="code" label="工序编码" width="120" sortable="custom">
+          <el-table-column prop="code" label="工序编码" width="120">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
                 scope.row.code
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="工序名称" width="140" sortable="custom" />
-          <el-table-column prop="productCategoryIdText" label="工序分类" width="130" sortable="custom" />
-          <el-table-column prop="processingType" label="加工类型" width="120" sortable="custom">
+          <el-table-column prop="name" label="工序名称" width="140" />
+          <el-table-column prop="productCategoryIdText" label="工序分类" width="130" />
+          <el-table-column prop="processingType" label="加工类型" width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.processingType == 'self_produced'">自制</div>
               <div v-if="scope.row.processingType == 'external_production'">外协</div>
@@ -140,10 +92,10 @@
           </el-table-column>
           <el-table-column prop="unitPrice" label="计件单价" min-width="120"></el-table-column>
           <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
-          <el-table-column prop="technicalRequirement" label="技术要求" width="130" sortable="custom" />
-          <el-table-column prop="inspectionInformation" label="检验信息" width="130" sortable="custom" />
+          <el-table-column prop="technicalRequirement" label="技术要求" width="130" />
+          <el-table-column prop="inspectionInformation" label="检验信息" width="130" />
           <el-table-column prop="createByName" label="创建人" width="180" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="remark" label="备注" width="130" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
@@ -164,15 +116,12 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="superForm.pageNum" :limit.sync="superForm.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()" />
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
       <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
@@ -210,99 +159,65 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import JNPFForm from "./Form"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'basicProcessSettings',
-  components: { JNPFForm, ExportForm, SuperQuery },
+  components: { JNPFForm, ExportForm },
   mixins: [getProjectList],
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [{
+            prop: 'code',
+            symbol: 'like',
+            fixed: true
+          }, {
+            prop: 'name',
+            symbol: 'like',
+            fixed: true
+          }, {
+            prop: 'processingType',
+            symbol: '==',
+            fixed: true
+          }],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "createTime"
+          }]
+        },
+      }],
       uploadVisib: false,
       importProjectId: '',
       isProjectSwitch: '',
       tableDataFlag: false,
-      searchList: [
-        { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-
-      ],
-      superForm: {},
-      basicQuery: {},
-      superQuery: {},
       filterText: '',
-      superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'code',
-          label: '工序编码',
-          type: 'input'
-        },
-        {
-          prop: 'name',
-          label: '工序名称',
-          type: 'input'
-        },
-        {
-          prop: 'productCategoryIdText',
-          label: '工序分类',
-          type: 'input'
-        },
-        {
-          prop: 'pricingTypeName',
-          label: '计价类型',
-          type: 'input'
-        },
-
-        {
-          prop: 'processingType',
-          label: '加工类型',
-          type: 'select',
-          options: [{ label: '自制', value: 'self_produced' }, { label: '外协', value: 'external_production' }]
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        },
-      ],
+      superQueryJson: [{
+        prop: 'processingType',
+        label: '加工类型',
+        type: 'select',
+        options: [{
+          label: '自制',
+          value: 'self_produced'
+        }, {
+          label: '外协',
+          value: 'external_production'
+        }]
+      }],
       exportFormVisible: false,
       visible: false,
       tableData: [],
       treeData: [],
       listLoading: false,
-      listQuery: {
-        name: "",
-        code: "",
-        processingType: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        pageNum: 1,
-        pageSize: 20,
-        productCategoryId: '',
-      },
+      listQuery: {},
       expands: true,
       refreshTree: true,
       total: 0,
@@ -337,8 +252,6 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     this.tableDataFlag = true
-    this.superForm = this.listQuery
-    // this.initData()
     this.getcategoryTree()
     this.getBusinessOptions()
   },
@@ -467,27 +380,12 @@ export default {
       })
       return
     },
-    superQuerySearch(query) {
-      this.superQuery = query
-      this.superQueryVisible = false
-      this.search('super')
-    },
+
 
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },
-    sortChange({ prop, order }) {
-      let newProp = ""
-      if (prop == 'steelBall' || prop == "outerCircle" || prop == "innerCircle" || prop == "createByName") {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase());
 
-      }
-      this.listQuery.orderItems[0].asc = order === "ascending";
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp;
-      this.initData();
-    },
     columnSetFun() {
       console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.listTable.showDrawer()
@@ -499,7 +397,6 @@ export default {
       columnList = columnList.map((item) => {
         return { label: item.label, prop: item.prop }
       })
-      console.log(columnList, 'columnList')
       this.$nextTick(() => {
         this.$refs.exportForm.init(columnList)
       })
@@ -528,9 +425,9 @@ export default {
       }
     },
     handleNodeClick(data, node) {
-      if (this.superForm.productCategoryId === data.id) return
-      this.superForm.productCategoryId = data.id
-      this.search('basic')
+      if (this.listQuery.productCategoryId === data.id) return
+      this.listQuery.productCategoryId = data.id
+      this.initData()
     },
     // 展开或折叠全部
     toggleExpand(expands) {
@@ -548,7 +445,7 @@ export default {
       return data.name.indexOf(value) !== -1;
     },
     // 获取指定树状列表
-    getcategoryTree() {
+    getcategoryTree(refreshFlag) {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = "" // 重置数据类型id筛选
@@ -561,7 +458,8 @@ export default {
         this.treeData = res.data
         this.$nextTick(() => {
           this.treeLoading = false
-          this.initData()
+          if (refreshFlag) this.$refs.listTable.queryChange(this.listQuery)
+
         })
       }).catch(() => {
         this.treeLoading = false
@@ -576,9 +474,6 @@ export default {
     },
     // 获取业务类型
     getBusinessOptions() {
-      // getDictionaryDataList("430351197057058245").then(res => {
-      //   this.businessOptions = res.data.list
-      // })
       this.businessOptions = [
         { fullName: "原材料", enCode: "raw_material" },
         { fullName: "半成品", enCode: "semi_finished" },
@@ -587,22 +482,18 @@ export default {
         { fullName: "其他 ", enCode: "other" }
       ]
     },
-    sortChange({ prop, order }) {
-      console.log(order);
-      let newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase())
-      this.listQuery.orderItems[0].asc = order === "ascending"
-      if (newProp === "class_attribute_text") { newProp = "baa.class_attribute" }
-      if (newProp === "product_category_id_text") { newProp = "productCategoryIdText" }
-      // this.listQuery.orderItems[0].column = newProp
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
-      this.initData()
-    },
-    initData() {
+
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
       this.listLoading = true
       if (this.isProjectSwitch === '1') {
-        this.superForm.projectId = this.userInfo.projectId
+        this.listQuery.projectId = this.userInfo.projectId
       }
-      getBimProcessList(this.superForm)
+      getBimProcessList(this.listQuery)
         .then((res) => {
           console.log(res);
           this.tableData = res.data.records
@@ -620,66 +511,11 @@ export default {
           this.listLoading = false
         })
     },
-    search(type) {
-      Object.keys(this.listQuery).forEach(key => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
-      if (type === 'basic') {
-        this.basicQuery = {
-          matchLogic: 'AND',
-          condition: this.searchList
-            .filter((item) => item.fieldValue)
-            .map((item) => {
-              return {
-                ...item,
-                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-              }
-            })
-        }
-        this.superForm.superQuery = this.basicQuery
-        this.superForm.processingType = this.listQuery.processingType
-      }
-      if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
-      }
+    refresh() {
+      this.formVisible = false
       this.initData()
     },
 
-    refresh() {
-      this.formVisible = false
-      this.reset()
-    },
-    reset() {
-      this.$refs['listTable'].$refs.JNPFTable.clearSort()
-      this.listQuery = {
-        name: "",
-        code: "",
-        processingType: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        pageNum: 1,
-        pageSize: 20,
-        productCategoryId: '',
-      }
-      this.searchList = [
-        { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-
-      ]
-      this.superForm = JSON.parse(JSON.stringify(this.listQuery))
-      this.$refs.SuperQuery.conditionList = []
-      this.filterText = ''
-      this.getcategoryTree()
-      // this.initData()
-    },
     addOrUpdateHandle(id, type) {
       console.log("132,", id, type);
       this.formVisible = true

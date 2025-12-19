@@ -1,30 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center  JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item label="">
-              <el-input v-model="listQuery.name" placeholder="分类名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item label="">
-              <el-input v-model="listQuery.code" placeholder="分类编码" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">
-                {{ $t('common.reset') }}
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable" />
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
           <topOpts @add="addOrUpdateHandle">
@@ -34,10 +11,10 @@
             </el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                  @click="$refs.dataTable.showSortDrawer()" />
+              </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -47,12 +24,12 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" v-if="refreshTable" fixedNO
-          :setColumnDisplayList="columnList" :default-expand-all="expands" @sort-change="sortChange" ref="dataTable"
-          custom-column customKey="JNPFTableKey_619371">
-          <el-table-column prop="name" label="分类名称" min-width="200" sortable="custom"></el-table-column>
-          <el-table-column prop="code" label="分类编码" min-width="120" sortable="custom" />
+          :setColumnDisplayList="columnList" :default-expand-all="expands" ref="dataTable"
+          custom-column customKey="JNPFTableKey_619371" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          <el-table-column prop="name" label="分类名称" min-width="200"></el-table-column>
+          <el-table-column prop="code" label="分类编码" min-width="120" />
 
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="createByName" label="创建人" width="180" />
           <el-table-column prop="remark" label="备注" min-width="200" />
 
@@ -68,9 +45,6 @@
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeDepForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -79,87 +53,52 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getcategoryList, deleteCategory, productPlmSync } from '@/api/basicData/materialSettings'
 import DepForm from './depForm'
-import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
-  components: { DepForm, ExportForm, SuperQuery },
+  components: { DepForm, ExportForm },
   data() {
     return {
-      superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'name',
-          label: '分类名称',
-          type: 'input'
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            // {
+            //   prop: 'createTime', // 属性*
+            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
+            //   symbol: 'between', // 比较符*
+            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+            //   fixed: true // 是否在搜索栏显示
+            // },
+            { prop: 'name', symbol: 'like', fixed: true },
+            { prop: 'code', symbol: 'like', fixed: true },
+          ],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
         },
-        {
-          prop: 'code',
-          label: '分类编码',
-          type: 'input'
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        }
-      ],
+      }],
+      superQueryJson: [],
       exportFormVisible: false,
       listQuery: {
         type: 'process',
-        orderItems: [
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
       },
       treeList: [],
       expands: true,
       refreshTable: true,
       btnLoading: false,
-      listLoading: true,
+      listLoading: false,
       depFormVisible: false,
       columnList: ['createByName', 'createTime']
     }
   },
-  created() {
-    this.initData()
-  },
   methods: {
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
-    sortChange({ prop, order }) {
-      let newProp = ''
-      if (prop == 'steelBall' || prop == 'outerCircle' || prop == 'innerCircle' || prop == 'createByName') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
     columnSetFun() {
-      console.log('this.$refs.dataTable', this.$refs.dataTable)
       this.$refs.dataTable.showDrawer()
     },
     // 导出
@@ -197,7 +136,12 @@ export default {
           .catch(() => { })
       }
     },
-    initData() {
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
+      this.listLoading = true
       this.loading = true
       getcategoryList(this.listQuery)
         .then((res) => {
@@ -210,14 +154,7 @@ export default {
           this.btnLoading = false
         })
     },
-    search() {
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      this.initData()
-    },
+
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
       arr.forEach((item, key) => {
@@ -230,26 +167,7 @@ export default {
         }
       })
     },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = {
-        type: 'process',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      }
-      this.$refs.SuperQuery.conditionList = []
-      this.initData()
-    },
+
     addOrUpdateHandle(id, parentId) {
       this.addOrUpdateDep(id, parentId)
     },

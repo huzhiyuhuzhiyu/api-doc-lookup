@@ -97,29 +97,21 @@ export function getColumns() {
       prop: "name",
       label: "机型",
       minWidth: 180,
-      align: 'left',
-      sortable: 'custom',
     },
     {
       prop: "cooperativePartnerCode",
       label: "客户编码",
       minWidth: 200,
-      align: "left",
-      sortable: 'custom',
     },
     {
       prop: "cooperativePartnerName",
       label: "客户名称",
       minWidth: 160,
-      align: 'left',
-      sortable: 'custom'
     },
     {
       prop: "remark",
       label: "备注",
       minWidth: 220,
-      align: "left",
-      sortable: 'custom'
     },
   ]
 }

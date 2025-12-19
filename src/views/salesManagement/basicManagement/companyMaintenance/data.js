@@ -29,7 +29,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       maxlength: 100,
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
       sm: 12
     },
     {
@@ -38,7 +38,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       itemRules: [
-        {required: true, trigger: "blur"},
+        { required: true, trigger: "blur" },
         {
           validator: context.formValidate('iphone', '联系电话格式错误', () => {
           }),
@@ -84,43 +84,31 @@ export function getColumns() {
       prop: "name",
       label: "公司抬头",
       minWidth: 200,
-      align: 'left',
-      sortable: 'custom',
     },
     {
       prop: "address",
       label: "地址",
       minWidth: 200,
-      align: "left",
-      sortable: 'custom',
     },
     {
       prop: "contactNumber",
       label: "联系电话",
       minWidth: 120,
-      align: 'left',
-      sortable: 'custom'
     },
     {
       prop: "fax",
       label: "传真",
       minWidth: 120,
-      align: 'left',
-      sortable: 'custom'
     },
     {
       prop: "taxNumber",
       label: "信用代码",
       minWidth: 120,
-      align: 'left',
-      sortable: 'custom'
     },
     {
       prop: "remark",
       label: "备注",
       minWidth: 220,
-      align: "left",
-      sortable: 'custom'
     },
   ]
 }

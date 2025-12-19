@@ -720,7 +720,7 @@ export function formatListQuery(queryConfigData) {
 
 /**
  * 获取表格合计行数据
- * @param {Object} param - table 的 summary 方法参数
+ * @param {Object} param - table 的 summary 方法参数，包含columns和data
  * @param {Object} context - 上下文对象，包含汇总配置和数据
  * @returns {Array} 合计行数据数组
  */
@@ -729,12 +729,27 @@ export function getSummaries(param, context) {
   const sums = [];
 
   if (!context || !context.apiTotalData) {
-    // 如果没有提供汇总数据，返回空数组
     return sums;
   }
 
+  let totalLabelIndex = 0;
+
+  const hasSelection = columns.some(col => col.type === 'selection');
+  if (hasSelection) {
+    totalLabelIndex = 1;
+  }
   columns.forEach((column, index) => {
-    if (index === 0) {
+    if (column.type === 'selection' || column.property === 'action' || column.property === 'operate' || column.property === 'handle' || column.property === 'options') {
+      sums[index] = '';
+      return;
+    }
+
+    if (column.width === 0 || column.minWidth === 0 || column.hidden === true) {
+      sums[index] = '';
+      return;
+    }
+
+    if (index === totalLabelIndex) {
       sums[index] = '合计';
       return;
     }
@@ -750,9 +765,9 @@ export function getSummaries(param, context) {
  * 获取映射后的接口汇总值
  */
 export function getMappedSummaryValue(displayProp, context) {
-  const { summaryMapping = {}, apiTotalData = {} } = context;
+  if (!displayProp) return '';
 
-  if (!displayProp) return '--';
+  const { summaryMapping = {}, apiTotalData = {} } = context;
 
   try {
     const dataProp = summaryMapping[displayProp] || displayProp;
@@ -760,9 +775,16 @@ export function getMappedSummaryValue(displayProp, context) {
       ? dataProp.split('.').reduce((obj, key) => (obj && obj[key] !== undefined ? obj[key] : undefined), apiTotalData)
       : apiTotalData[dataProp];
 
-    return value !== undefined ? value : '--';
-  } catch ( error ) {
-    return '--';
+    if (value !== undefined) {
+      if (typeof value === 'number') {
+        return value;
+      }
+      return value;
+    }
+    return '';
+  } catch (error) {
+    console.warn('获取汇总数据失败:', displayProp, error);
+    return '';
   }
 }
 

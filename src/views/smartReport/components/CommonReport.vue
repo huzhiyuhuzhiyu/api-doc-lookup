@@ -25,7 +25,6 @@ const RecursiveColumn = {
         label: column.label,
         minWidth: column.minWidth,
         align: props.handleTableAlign(column.align),
-        sortable: column.sortable || false,
         fixed: column.fixed
       }
     }, [
@@ -242,7 +241,6 @@ export default {
                 :prop="column.prop"
                 :label="column.label"
                 :min-width="column.minWidth"
-                :sortable="column.sortable"
                 :fixed="column.fixed"
                 :align="handleTableAlign(column.align)"
                 :formatter="!column.slot && column.formatter"

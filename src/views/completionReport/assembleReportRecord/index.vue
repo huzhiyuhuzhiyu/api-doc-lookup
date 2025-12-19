@@ -3,45 +3,7 @@
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
-        <el-row class="JNPF-common-search-box" :gutter="16">
-          <el-form @submit.native.prevent>
-
-            <!-- <el-col :span="6">
-              <el-form-item>
-                <el-date-picker v-model="reportDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                  :picker-options="pickerOptions" start-placeholder="报工开始日期" end-placeholder="报工结束日期">
-                </el-date-picker>
-              </el-form-item>
-            </el-col> -->
-            <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 3">
-                <el-form-item>
-                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                    @keyup.enter.native="search('basic')" />
-
-                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                    clearable>
-                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                      :value="item2.value"></el-option>
-                  </el-select>
-                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                    :type="item.dateType"
-                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-                </el-form-item>
-              </el-col>
-            </template>
-            <el-col :span="6">
-              <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
-                  {{ $t('common.search') }}</el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                </el-button>
-              </el-form-item>
-            </el-col>
-
-          </el-form>
-        </el-row>
+        <JNPF-tableQuery :listQuery="orderForm" :systemSearchView="systemSearchView" tableRef="dataTable" />
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
@@ -50,13 +12,11 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
                 导出
               </el-button>
-
-
             </div>
             <div class="JNPF-common-head-right">
-              <el-tooltip content="高级查询" placement="top" v-if="true">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+              <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                  @click="$refs.dataTable.showSortDrawer()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -67,39 +27,38 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
-             @sort-change="sortChange" custom-column @selection-change="handleSelectionChange" hasC
-            :setColumnDisplayList="columnList" customKey="JNPFTableKey_620215">
-            <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="220" sortable="custom" />
-            <el-table-column prop="workNo" label="工单单号" min-width="220" sortable="custom"></el-table-column>
-            <el-table-column prop="orderNo" label="报工单号" min-width="220" sortable="custom"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+          <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag" custom-column @selection-change="handleSelectionChange" hasC
+            :setColumnDisplayList="columnList" customKey="JNPFTableKey_620215" show-summary :summary-method="getSummaries" :listQuery="orderForm" @queryChange="initData" :queryJson="superQueryJson">
+            <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="220" />
+            <el-table-column prop="workNo" label="工单单号" min-width="220"></el-table-column>
+            <el-table-column prop="orderNo" label="报工单号" min-width="220"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="140" />
+            <el-table-column prop="productName" label="产品名称" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
-            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" min-width="120"
             v-if="isProjectSwitch == 1" />
-            <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
-            <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
-            <el-table-column prop="reportingTime" label="报工时间" min-width="180" sortable="custom" />
-            <el-table-column prop="producerName" label="生产人" min-width="120" sortable="custom" />
+            <el-table-column prop="productCategoryName" label="产品分类" min-width="120" />
+            <el-table-column prop="processName" label="工序名称" width="160" />
+            <el-table-column prop="reportingTime" label="报工时间" min-width="180" />
+            <el-table-column prop="producerName" label="生产人" min-width="120" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
-            <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" sortable="custom" />
+            <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" />
             <!-- <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
             <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" /> -->
             <!-- <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" sortable="custom" /> -->
-            <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" min-width="170" sortable="custom" />
-            <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="actualResponsibilityWasteQuantity" label="实际责废数量" min-width="170" sortable="custom" />
-            <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="170" sortable="custom" />
-            <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="170" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-            <el-table-column prop="oil" label="注脂方式" min-width="120" sortable="custom" />
-            <el-table-column prop="markingMethod" label="打标记" min-width="120" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120" sortable="custom" />
+            <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" min-width="170" />
+            <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" />
+            <el-table-column prop="actualResponsibilityWasteQuantity" label="实际责废数量" min-width="170" />
+            <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" />
+            <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="170" />
+            <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="170" />
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" />
+            <el-table-column prop="oil" label="注脂方式" min-width="120" />
+            <el-table-column prop="markingMethod" label="打标记" min-width="120" />
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120" />
             <el-table-column prop="orderStatus" label="任务状态" min-width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
@@ -107,8 +66,8 @@
                 <div v-else-if="scope.row.orderStatus == 'closed'"><el-tag type="danger">已关闭</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="createByName" label="创建人" min-width="140"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
             <el-table-column label="操作" width="200" fixed="right">
 
               <template slot-scope="scope">
@@ -120,18 +79,13 @@
             </el-table-column>
 
           </JNPF-table>
-          <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-            @pagination="initData" >
+          <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize" @pagination="initData()" >
             <span style="font-weight:500;margin-right:10px">报工数量总计：{{ totalData.reportingQuantity }}</span>
           </pagination>
         </div>
       </div>
 
     </div>
-
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 报工记录修改 -->
     <el-dialog v-if="analyseDialog" title="报工记录修改" :close-on-click-modal="false" append-to-body
@@ -234,7 +188,6 @@ import { getPrintList } from '@/api/system/printDev'
 import { getPrintBusInfo } from '@/api/system/printDev'
 
 import  InspectionDetail from '../../inspectionManagement/reportWorkInspection/inspectionFormManagementDetail.vue'
-import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -243,9 +196,10 @@ import {
 } from "@/api/masterDataManagement/index";
 import { getSalaryDetailList} from '@/api/salaryManagement'
 import userTransfer from '@/components/JNPF-userTransfer'
+import { getSummaries } from "@/utils";
 export default {
   name: 'assemblyplanManagement',
-  components: { SuperQuery, ExportForm,userTransfer,InspectionDetail,PrintBrowse,PrintDialog},
+  components: { ExportForm,userTransfer,InspectionDetail,PrintBrowse,PrintDialog},
   mixins: [getProjectList],
   props:{
     queryParams:{
@@ -255,6 +209,45 @@ export default {
   },
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [
+            {
+              prop: 'productionOrderNo',
+              symbol: 'like',
+              fixed: true
+            },
+            {
+              prop: 'orderNo',
+              symbol: 'like',
+              fixed: true
+            },
+            {
+              prop: 'processName',
+              symbol: 'like',
+              fixed: true
+            },
+            {
+              prop: 'producerName',
+              symbol: 'like',
+              fixed: true
+            }
+          ],
+          keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "createTime"
+          }]
+        },
+      }],
+      apiTotalData: null,
+      summaryMapping:{},
       workOrderData: [],
       printList: [],
       printVisible: false,
@@ -271,20 +264,8 @@ export default {
       printQuery: {
         category: 'Productionmanage'
       },
-
       inspectionDetailVisible:false,
-      superQuery: {},
-      superForm: {},
-      basicQuery: {},
-      searchList: [
-        { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
-      ],
       columnList: ["productsCode",],
-
       superQueryVisible: false,
       exportFormVisible: false,
       analyseDialog: false,
@@ -316,112 +297,34 @@ export default {
       tableData: [],
       listLoading: false,
 
-      orderForm: {},
-      orderFormlist: {
+      orderForm: {
         ...this.queryParams,
-        orderNo: "",
-        processName: "",
-        productsDrawingNo: "",
-        reportingType:'normal',  // 报工类型 正常报工
-        pageNum: 1,
-        pageSize: 20,
-        superQuery: {
-          condition: [],
-          matchLogic: ""
-        },
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        reportingType: 'normal',
         classAttribute: "finish_product",
       },
-
-
       totalData:{},
       total: 0,
       formVisible: false,
       selectArr: [],
-
       superQueryJson: [
-        {
-          prop: 'productionOrderNo',
-          label: "生产任务单号",
-          type: 'input'
-        },
-
-        {
-          prop: 'workNo',
-          label: "工单单号",
-          type: 'input'
-        },
-        {
-          prop: 'orderNo',
-          label: "报工单号",
-          type: 'input'
-        },
-        {
-          prop: 'productsCode',
-          label: "产品编码",
-          type: 'input'
-        },
-        {
-          prop: 'productDrawingNo',
-          label: "品名规格",
-          type: 'input'
-        },
-        {
-          prop: 'productCategoryName',
-          label: "产品分类",
-          type: 'input'
-        },
-        {
-          prop: 'processName',
-          label: "工序名称",
-          type: 'input'
-        },
-        {
-          prop: 'reportingTime',
-          label: '报工时间',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-        },
-        {
-          prop: 'producerName',
-          label: "生产人",
-          type: 'input'
-        },
-        {
-          prop: 'mainUnit',
-          label: "单位",
-          type: 'input'
-        },
-
-
-
         {
           prop: 'vibrationLevel',
           label: "振动等级",
           type: 'select',
           options: []
         },
-
-
-
-
         {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
+          prop: 'packagingMethod',
+          label: '包装方式',
+          type: 'select',
+          options: this.getDictDataSync('packaging'),
         },
-
+        {
+          prop: 'orderStatus',
+          label: '任务状态',
+          type: 'select',
+          options: this.global.orderStatus,
+        }
       ],
       requestArr: [
         {
@@ -465,14 +368,14 @@ export default {
         type: 'input'
       })
     }
-    this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search('basic')
   },
   mounted() {
     this.getProductClassFun()
   },
   methods: {
-
+    getSummaries(param) {
+      return getSummaries(param, this)
+    },
         handleSelectWork(val) {
       if (val.length) {
         this.workOrderData.forEach(item => {
@@ -651,44 +554,13 @@ export default {
           }
         })
       })
-
-
-
-
     },
+    initData(listQuery) {
+      if (listQuery) this.orderForm = listQuery;
+      if (!this.orderForm?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
 
-    superQuerySearch(query) {
-      this.orderForm.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
-
-
-
-
-
-
-    sortChange({ prop, order }) {
-      let newProp;
-      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'workNo' || prop == 'productDrawingNo' || prop == 'productionOrderNo' || prop == 'productCode'
-        || prop == 'productCategoryName' || prop == 'processName' || prop == 'producerName'
-      ) {
-        if (prop === 'createByName') {
-          newProp = 'create_by'
-        } else {
-          newProp = prop
-        }
-      } else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      }
-      this.orderForm.orderItems[0].asc = order !== "descending"
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp
-
-      this.initData()
-    },
-
-
-    initData() {
       this.listLoading = true
 
       // if (this.reportDate && this.reportDate.length) {
@@ -707,59 +579,13 @@ export default {
         this.tableData = res.data.page.records
         this.total = res.data.page.total
         this.totalData = res.data.total ? res.data.total : {}
+        this.apiTotalData = res.data.total ? res.data.total : {}
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
       })
 
     },
-    search(type) {
-
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
-      })
-      if (type === 'basic') {
-        this.basicQuery = {
-          matchLogic: 'AND',
-          condition: this.searchList
-            .filter((item) => item.fieldValue)
-            .map((item) => {
-              return {
-                ...item,
-                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-              }
-            })
-        }
-        this.orderForm.superQuery = this.basicQuery
-      }
-      if (type === 'super') {
-        this.orderForm.superQuery = this.superQuery
-      }
-      this.orderForm.pageNum = 1 // 重置页码
-
-      this.initData()
-    },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-
-      this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-
-      this.searchList=[
-        { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
-      ]
-      this.$refs.SuperQuery.conditionList = []
-      this.search('basic')
-    },
-
-
-
-
-
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

@@ -52,10 +52,10 @@ export default {
       if (newVal) {
         await this.fetchProductionLines()
         this.updateDataFormItems()
-        const { waitSplitQuantity, num, id } = this.formData;
+        const { waitSplitQuantity, id } = this.formData;
         this.dataForm = {
-          waitSplitQuantity: num,
-          splitQuantity: 0,
+          waitSplitQuantity,
+          splitQuantity: waitSplitQuantity,
           stockMoveWarehouseLineId: id,
           productionLineId: '',
           routingId: '',

@@ -1,10 +1,16 @@
 <script>
 import CommonReport from '@/views/smartReport/components/CommonReport.vue'
-import { getInspectionList } from "@/api/inspectionManagement";
+import { purchaseReceiveReport } from "@/api/smartReport";
 
 export default {
   name: "reInspectionReport",
   components: { CommonReport },
+  props: {
+    classAttributeList: {
+      type: Array,
+      default: () => ["finish_product", "raw_material", "semi_finished"],
+    },
+  },
   data() {
     return {
       config: {
@@ -24,20 +30,16 @@ export default {
           summaryMapping: {}, // 字段映射 （接口返回汇总字段）
         },
         columnsConfig: [
-          // { prop: "", label: '生产计划号', minWidth: 180, },
-          { prop: "orderNo", label: '检验单号', minWidth: 180, },
-          { prop: "docNo", label: '来源单号', minWidth: 180, },
-          { prop: "inspectionDate", label: '重检日期', minWidth: 180 },
-          { prop: "samplingQuantity", label: '重检数量', minWidth: 140 },
-          { prop: "drawingNo", label: '品名规格', minWidth: 160 },
-          { prop: "productCode", label: '产品编码', minWidth: 140 },
-          { prop: "productName", label: '产品名称', minWidth: 160, show: () => this.$store.getters.configData.product.enable_productName },
-          { prop: "qualifiedQuantity", label: '合格数量', minWidth: 140 },
-          { prop: "unqualifiedQuantity", label: '不合格数量', minWidth: 140 },
-          { prop: "inspectionResults", label: "检验结果", minWidth: 120, slot: true, dictType: "inspectionResultsType", },
-          { prop: "treatmentResults", label: "处理方式", minWidth: 120, slot: true, dictType: "treatmentResults", },
-          { prop: "returnReason", label: '不良原因', minWidth: 140 },
-          { prop: "source", label: '类型', minWidth: 140, slot: true, dictType: "inspectionSource", },
+          { prop: "receiveDate", label: '收货日期', minWidth: 180 },
+          { prop: "partnerCode", label: '供应商编码', minWidth: 180 },
+          { prop: "partnerName", label: '供应商名称', minWidth: 180 },
+          { prop: "productsDrawingNo", label: '品名规格', minWidth: 160 },
+          { prop: "productsCode", label: '产品编码', minWidth: 140 },
+          { prop: "productsName", label: '产品名称', minWidth: 160, show: () => this.$store.getters.configData.product.enable_productName },
+          { prop: "mainUnit", label: '单位', minWidth: 90 },
+          { prop: "price", label: '单价', minWidth: 140 },
+          { prop: "purchaseQuantity", label: '数量', minWidth: 140 },
+          { prop: "remark", label: '备注', minWidth: 180 },
         ],
         superQueryConfig: {
           superQueryJson: [],
@@ -46,7 +48,14 @@ export default {
             fullName: "默认视图",
             conditionJson: {
               condition: [
-                { prop: 'orderNo', symbol: 'like', fixed: true },
+                { prop: 'partnerName', symbol: 'like', fixed: true },
+                {
+                  prop: 'receiveDate', // 属性*
+                  // value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')],
+                  symbol: 'between', // 比较符*
+                  timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+                  fixed: true // 是否在搜索栏显示
+                },
               ],
               keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
               pageSize: 20,
@@ -58,15 +67,18 @@ export default {
           }],
         },
         rowKey: 'id',
-        initQuery: {},
+        initQuery: {
+          classAttributeList: this.classAttributeList,
+          totalRowFlag: true,
+        },
         exportConfig: {
           enable: true,
-          exportType: '1097',
-          exportName: '重检报表',
+          exportType: '1266',
+          exportName: '采购收货记录',
           exportHidden: false,
           fetchApi: null,
         },
-        fetchApi: getInspectionList,
+        fetchApi: purchaseReceiveReport,
       },
     }
   }

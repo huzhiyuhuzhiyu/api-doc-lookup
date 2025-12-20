@@ -29,7 +29,12 @@ export function getButtonList(type = 'default') {
 
 export function getSearchList(type = 'default') {
   // 默认列配置
-  const defaultSearch = [];
+  const defaultSearch = [
+    {
+      prop: 'orderNo',
+      symbol: 'like',
+    },
+  ];
 
   // 定义各业务类型的列配置
   const searchConfig = {

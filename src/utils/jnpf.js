@@ -492,9 +492,18 @@ const jnpf = {
     //   .replaceAll('?', '%3F').replaceAll('.', '%2E').replaceAll(':', '%3A')
     // return formatted;
   },
-  // 获取当天
-  getToday(dateFormat = 'YYYY-MM-DD') {
-    return dayjs(new Date()).format(dateFormat)
+  // 获取当天或指定的时间
+  getToday(dateFormat = 'YYYY-MM-DD', date = 'today') {
+    let _date
+    let now = new Date();
+    if (date === 'today') _date = new Date(); // 今天(此时)
+    else if (date === 'firstDayOfMounth') _date = new Date(now.getFullYear(), now.getMonth(), 1).setHours(0, 0, 0, 0); // 本月第一天(00:00:00)
+    else if (date === 'lastDayOfMounth') _date = new Date(now.getFullYear(), now.getMonth() + 1, 0).setHours(23, 59, 59, 999); // 本月最后一天(23:59:59)
+    else if (date === 'todayFirstMoment') _date = new Date().setHours(0, 0, 0, 0); // 今天(00:00:00)
+    else if (date === 'todayLastMoment') _date = new Date().setHours(23, 59, 59, 999); // 今天(23:59:59)
+    else if (date.indexOf('today-') !== -1) _date = new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * date.match(/today-(.*)/)[1])).setHours(0, 0, 0, 0) // today-6 向后推6天(00:00:00)
+    else if (date.indexOf('today+') !== -1) _date = new Date(new Date().setTime(new Date().getTime() + 3600 * 1000 * 24 * date.match(/today+(.*)/)[1])).setHours(23, 59, 59, 999) // today+6 向前推6天(23:59:59)
+    return dayjs(_date).format(dateFormat)
   },
   // 聚焦元素（参数为dom元素，目前支持输入框和文本域）
   focusItem(el) {

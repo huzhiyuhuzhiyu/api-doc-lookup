@@ -90,7 +90,7 @@ export default {
     businessTypeConfig() {
       const classAttr = this.classAttributeList;
       return {
-        // 生产领料入库
+        // 生产领料出库
         outbound_pick_out: {
           api: WithdrawalList,
           initListQuery: {
@@ -216,7 +216,7 @@ export default {
     },
     // 出库
     isOutboundOperation() {
-      return ['outbound_purchase', 'outbound_external_send', 'outbound_external', 'finished_product_picking_send']
+      return ['outbound_purchase', 'outbound_external_send', 'outbound_external', 'finished_product_picking_send','outbound_pick_out']
         .includes(this.activeBusinessType);
     },
     // 入库
@@ -466,6 +466,7 @@ export default {
       this.isPackingDialogVisible = false;
       this.isBatchPackingDialogVisible = false;
       this.isInboundDialogVisible = false;
+      this.isOutboundDialogVisible = false;
 
       if (!shouldReloadData) return;
       this.loadTableData();

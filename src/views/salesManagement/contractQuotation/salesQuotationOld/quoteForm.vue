@@ -26,7 +26,7 @@
                 <el-collapse-item class="productInfo" title="产品信息" name="productInfo">
                   <div class="TableForm_title">
                   </div>
-                  <TableForm-product @input="contentChanges" :value="computedLinesList" :hasToolbar="false"
+                  <TableForm-product @input="contentChanges" :value="linesList" :hasToolbar="false"
                     ref="tableForm" :tableItems="linesListItems" :btnType="btnType" :hasActionbar="false" :tableProps="{
                       is: 'JNPF-table',
                       fixedNO: true,
@@ -95,6 +95,7 @@ import { deepClone } from "@/utils";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import { getQuotationInfo } from "@/api/salesManagement/index";
 import { getEnquiryDetailList } from '@/api/enquiryManagement/enquiryDetail'
+import { addOrders, editOrders } from "@/api/salesManagement/assemblyOrders";
 
 export default {
   name: "QuoteForm",
@@ -160,14 +161,14 @@ export default {
           itemDisabled: true,
         },
         {
-          prop: "bidder2",
+          prop: "createByName",
           label: "制单人",
           value: "",
           type: "input",
           disabled: true,
         },
         {
-          prop: "bidder1",
+          prop: "purchaseUserId",
           label: "采购负责人",
           value: "",
           type: "input",
@@ -325,7 +326,6 @@ export default {
       flowTaskOperatorRecordList: [],
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
-      computedLinesList: [],
       enquiryDialog: false,
       enquiryData: [],
       enquiryObj: {
@@ -367,8 +367,8 @@ export default {
         return
       }
       // 将选中的数据添加到产品信息中
-      this.computedLinesList = [...this.computedLinesList, ...checkedRows]
-      console.log(this.computedLinesList);
+      this.linesList = [...this.linesList, ...checkedRows]
+      console.log(this.linesList);
       this.enquiryDialog = false
     },
     async init(id = '', type) {
@@ -449,7 +449,30 @@ export default {
         this.loading = false
       }
     },
-
+    fileListMap(type, fileList) {
+      if (!fileList && !fileList?.length) return
+      if (['submit', 'draft'].includes(type)) {
+        return fileList.map((item, index) => ({
+          ...item,
+          bimAttachments: {
+            businessType: '',
+            configKey: '',
+            documentId: item.id,
+            fileFlag: '',
+            sort: index
+          }
+        }))
+      } else {
+        return fileList.map((item, index) => ({
+          ...item,
+          name: item.document.fullName,
+          fileSize: item.document.fileSize,
+          filename: item.document.filePath,
+          id: item.document.id,
+          url: item.url
+        }))
+      }
+    },
     async handleSubmit(type) {
       if (!this.linesList.length) return this.$message.error('无产品信息，请添加产品！')
       // 校验表单

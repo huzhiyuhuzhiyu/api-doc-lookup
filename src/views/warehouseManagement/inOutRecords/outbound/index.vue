@@ -1,14 +1,14 @@
 <script>
-import inOutRecords from "../index.vue";
+import Index from "../index.vue";
 
 export default {
   components: {
-    inOutRecords
+    Index
   },
   name: "index"
 }
 </script>
 
 <template>
-  <inOutRecords documentType="outbound"></inOutRecords>
+  <Index :queryParams="{documentType: 'outbound'}"/>
 </template>

@@ -5,7 +5,7 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-preview-main transitionForm org-form">
             <div class="JNPF-common-page-header">
-              <el-page-header @back="goBack" :content="title" />
+              <el-page-header @back="goBack" :content="title"/>
               <div class="options">
                 <template v-if="activeType">
                   <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
@@ -24,7 +24,7 @@
             <div class="main" v-loading="loading" ref="main">
               <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
-                  <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm" :btnType="btnType" />
+                  <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm" :btnType="btnType"/>
                 </el-collapse-item>
                 <el-collapse-item class="productInfo" title="产品信息" name="productInfo">
                   <div class="TableForm_title" v-if="activeType">
@@ -54,7 +54,8 @@
                         <template slot-scope="scope">
                           <el-button type="text" @click="copyLProduct(scope)">复制</el-button>
                           <el-button type="text" class="JNPF-table-delBtn"
-                                     @click="deleteLine(scope.row, scope.$index)">删除</el-button>
+                                     @click="deleteLine(scope.row, scope.$index)">删除
+                          </el-button>
                         </template>
                       </el-table-column>
                     </template>
@@ -66,7 +67,7 @@
         </div>
       </div>
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false"
-                      @change="submitAllProduct" />
+                      @change="submitAllProduct"/>
     </div>
   </transition>
 </template>
@@ -113,6 +114,7 @@ export default {
         salesId: '',
         orderDate: '',
         deliveryDate: '',
+        inquiryTime: '',
         remark: '',
         remark1: '',
       },
@@ -242,43 +244,89 @@ export default {
           type: 'input',
           minWidth: 180,
           itemRules: [
-            { validator: this.formValidate({ type: 'noEmtry', params: ["样品报价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'noEmtry', params: ["样品报价不能为空", (errMsg, index) => {
+                  this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+                }]
+              }), trigger: 'blur'
+            },
             { required: true, trigger: 'blur' },
-            { validator: this.formValidate('positiveNumber', '样品报价必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }]
+            {
+              validator: this.formValidate('positiveNumber', '样品报价必须大于0', (errMsg, index) => {
+                this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+              }), trigger: 'blur'
+            }]
         },
         {
           prop: 'procurementAmounts',
           label: '采购价',
           type: 'input',
           minWidth: 180,
-          itemRules: [{ validator: this.formValidate({ type: 'noEmtry', params: ["采购价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          itemRules: [{
+            validator: this.formValidate({
+              type: 'noEmtry', params: ["采购价不能为空", (errMsg, index) => {
+                this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+              }]
+            }), trigger: 'blur'
+          },
             { required: true, trigger: 'blur' },
-            { validator: this.formValidate('positiveNumber', '采购价必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }]
+            {
+              validator: this.formValidate('positiveNumber', '采购价必须大于0', (errMsg, index) => {
+                this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+              }), trigger: 'blur'
+            }]
         },
         {
           prop: 'moldAmounts',
           label: '模具费',
           type: 'input',
           minWidth: 180,
-          itemRules: [{ validator: this.formValidate({ type: 'noEmtry', params: ["模具费不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          itemRules: [{
+            validator: this.formValidate({
+              type: 'noEmtry', params: ["模具费不能为空", (errMsg, index) => {
+                this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+              }]
+            }), trigger: 'blur'
+          },
             { required: true, trigger: 'blur' },
-            { validator: this.formValidate('positiveNumber', '模具费必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }]
+            {
+              validator: this.formValidate('positiveNumber', '模具费必须大于0', (errMsg, index) => {
+                this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+              }), trigger: 'blur'
+            }]
         },
         {
           prop: 'minNumStr',
           label: '起订量',
           type: 'input',
           minWidth: 180,
-          itemRules: [{ validator: this.formValidate({ type: 'noEmtry', params: ["起订量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          itemRules: [{
+            validator: this.formValidate({
+              type: 'noEmtry', params: ["起订量不能为空", (errMsg, index) => {
+                this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+              }]
+            }), trigger: 'blur'
+          },
             { required: true, trigger: 'blur' },
-            { validator: this.formValidate('positiveNumber', '起订量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }]
+            {
+              validator: this.formValidate('positiveNumber', '起订量必须大于0', (errMsg, index) => {
+                this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+              }), trigger: 'blur'
+            }]
         },
         {
           prop: 'deliveryDate',
           label: '交期',
           type: 'date',
           minWidth: 180,
-          itemRules: [{ validator: this.formValidate({ type: 'noEmtry', params: ["交期不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
+          itemRules: [{
+            validator: this.formValidate({
+              type: 'noEmtry', params: ["交期不能为空", (errMsg, index) => {
+                this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+              }]
+            }), trigger: 'change'
+          },
             { required: true, trigger: 'change' }]
         },
       ],
@@ -328,7 +376,7 @@ export default {
         }
 
         return inquiryLineList.find(line => line.quotationLineId === product.id);
-      } catch (error) {
+      } catch ( error ) {
         console.error('获取供应商报价信息失败:', error);
         return null;
       }
@@ -345,7 +393,7 @@ export default {
         }
 
         return inquiryLineList;
-      } catch (error) {
+      } catch ( error ) {
         console.error('获取供应商报价信息失败:', error);
         return [];
       }
@@ -381,7 +429,7 @@ export default {
           });
 
           if (updatedCount > 0) {
-            this.$message.success(`已加载该供应商的报价信息，成功更新${updatedCount}条产品`);
+            this.$message.success(`已加载该供应商的报价信息，成功更新${ updatedCount }条产品`);
           } else {
             this.$message.warning('未找到匹配的报价信息');
           }
@@ -435,7 +483,13 @@ export default {
           minWidth: '220px',
           options: supplierOption,
           itemRules: [
-            { validator: this.formValidate({ type: 'noEmtry', params: ["供应商不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
+            {
+              validator: this.formValidate({
+                type: 'noEmtry', params: ["供应商不能为空", (errMsg, index) => {
+                  this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
+                }]
+              }), trigger: 'change'
+            },
             { required: true, trigger: 'change' }
           ],
           change: (val, scope) => this.changeSupplier(val, scope)
@@ -446,7 +500,7 @@ export default {
         if (supplierIndex === -1) {
           this.linesListItems.splice(0, 0, supplierColumn)
         }
-      } catch (error) {
+      } catch ( error ) {
         console.error(error)
       } finally {
         this.productLoading = false
@@ -618,11 +672,11 @@ export default {
     },
 
     getTitle(type) {
-      switch (type) {
+      switch ( type ) {
         case 'edit':
           return '询价'
         case 'look':
-          return `查看${this.title}`
+          return `查看${ this.title }`
       }
     },
 
@@ -632,7 +686,9 @@ export default {
         const res = await getQuotationInfo(id)
         const { msg, data } = res
         if (msg === 'Success') {
-          this.dataForm = Object.assign(this.dataForm, data.sale)
+          this.dataForm = Object.assign(this.dataForm, data.sale, {
+            inquiryTime: this.jnpf.getToday()
+          })
           this.originalFormData = deepClone(this.dataForm)
           this.linesList = data.lines.map(item => ({
             ...item,
@@ -643,7 +699,7 @@ export default {
           await this.fetchDepartment()
           await this.fetchOrganization()
         }
-      } catch (err) {
+      } catch ( err ) {
         this.loading = false
       }
     },
@@ -676,7 +732,7 @@ export default {
           this.goBack()
         }
         this.btnLoading = false
-      } catch (error) {
+      } catch ( error ) {
         this.btnLoading = false
       }
     },

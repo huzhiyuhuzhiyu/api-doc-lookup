@@ -10,5 +10,5 @@ export default {
 </script>
 
 <template>
-  <Index :queryParams="{documentType: 'inbound'}"/>
+  <Index :queryParams="{documentType: 'inbound',classTypeList: ['forged_turning_parts']}"/>
 </template>

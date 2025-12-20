@@ -165,6 +165,7 @@ export default {
         { label: '保持架', value: 'holder' },
         { label: '密封盖', value: 'sealing_cap' },
         { label: '密封盖', value: 'sealing_cap' },
+        { label: '锻车件', value: 'forged_turning_parts' },
       ]
     }
   },

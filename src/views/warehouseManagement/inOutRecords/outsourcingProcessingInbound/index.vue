@@ -10,5 +10,5 @@ export default {
 </script>
 
 <template>
-  <Index :queryParams="{documentType: 'inbound'}"/>
+  <Index :queryParams="{documentType: 'inbound',businessType: 'inbound_out'}"/>
 </template>

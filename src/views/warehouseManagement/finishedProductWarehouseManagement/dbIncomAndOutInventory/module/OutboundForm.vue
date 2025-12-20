@@ -14,6 +14,7 @@ import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 import { getPrintBusInfo } from "@/api/system/printDev";
 import { getpurPurchaseReceiptReturnGoodsdetail } from "@/api/purchasingManagement/purchaseInquirySheet";
 import { standardizeFields } from "@/utils";
+import { detailWithdrawal } from "@/api/productOrdes";
 
 
 export default {
@@ -128,6 +129,24 @@ export default {
             ...item,
             ordersId: item.purchaseOrderId,
             noticeId: item.purchaseReceiptReturnGoodsId,
+          }),
+          showActions: { selectProduct: true, batchDelete: true },
+          print: { enabled: false, enCode: '', fullName: '' },
+          defaultForm: {}
+        },
+        // 生产领料
+        outbound_pick_out: {
+          fetchLines: detailWithdrawal,
+          dataPath: 'data.collectLineList',
+          filter: {
+            classAttribute: this.classAttributeList
+          },
+          formatter: (item) => ({
+            ...item,
+            ordersId: item.productionOrderId,
+            ordersLineId: item.materialListId,
+            noticeId: item.materialCollectId,
+            undeliveredQuantity: item.unReceiveQuantity,
           }),
           showActions: { selectProduct: true, batchDelete: true },
           print: { enabled: false, enCode: '', fullName: '' },
@@ -689,6 +708,7 @@ export default {
             if (data && data.length) { // 数据有效，进行更新
               data = data[0].all
               const flattenedData = this.linesList
+              flattenedData[index].inventoryLineId = data.id
               flattenedData[index].warehouseId = data.warehouseId
               flattenedData[index].shelfSpaceId = data.shelfSpaceId
               flattenedData[index].shelfSpaceName = data.shelfSpaceName

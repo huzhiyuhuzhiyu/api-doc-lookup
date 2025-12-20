@@ -38,7 +38,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       disabled: true,
     },
     {
-      prop: "",
+      prop: "purchaseUserId",
       label: "采购负责人",
       value: "",
       type: "input",
@@ -63,7 +63,7 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
-      prop: "quotationTime",
+      prop: "inquiryTime",
       label: "询价日期",
       minWidth: 120,
       sortable: 'custom',

@@ -15,6 +15,16 @@ export const buttonList = [
 export function getColumns() {
   return [
     {
+      prop: "createTime",
+      label: "创建时间",
+      minWidth: 180,
+    },
+    {
+      prop: "createByName",
+      label: "创建人",
+      minWidth: 120,
+    },
+    {
       prop: "orderNo",
       label: "单号",
       minWidth: 220,
@@ -63,11 +73,6 @@ export function getColumns() {
       minWidth: 160,
     },
     {
-      prop: "pairingModeName",
-      label: "配对方式",
-      minWidth: 120,
-    },
-    {
       prop: "warehouseName",
       label: "仓库名称",
       minWidth: 160,
@@ -78,11 +83,6 @@ export function getColumns() {
       minWidth: 160,
     },
     {
-      prop: "productionNumber",
-      label: "成品批号",
-      minWidth: 160,
-    },
-    {
       prop: "shelfSpaceName",
       label: "库位",
       minWidth: 160,
@@ -90,21 +90,6 @@ export function getColumns() {
     {
       prop: "mainUnit",
       label: '单位',
-      minWidth: 120,
-    },
-    {
-      prop: "weight",
-      label: "重量",
-      minWidth: 120,
-    },
-    {
-      prop: "proportion",
-      label: "比重",
-      minWidth: 120,
-    },
-    {
-      prop: "discount",
-      label: "折扣",
       minWidth: 120,
     },
     {
@@ -146,22 +131,10 @@ export function getColumns() {
       minWidth: 160,
     },
     {
-      prop: "processName",
-      label: '外协工序',
-      minWidth: 160,
-    },
-    {
       prop: "orderDate",
       label: "单据日期",
       minWidth: 160,
     },
-    // {
-    //   prop: "confirmStatus",
-    //   label: "确认状态",
-    //   minWidth: 120,
-    //   slot: true,
-    //   dictType: 'confirmationStatusList',
-    // },
     {
       prop: "documentStatus",
       label: "单据状态",
@@ -181,15 +154,5 @@ export function getColumns() {
       label: "备注",
       minWidth: 180,
     },
-    {
-      prop: "createTime",
-      label: "创建时间",
-      minWidth: 180,
-    },
-    {
-      prop: "createByName",
-      label: "创建人",
-      minWidth: 120,
-    }
   ]
 }

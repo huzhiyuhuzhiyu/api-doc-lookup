@@ -82,7 +82,7 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
-      prop: "quotationTime",
+      prop: "inquiryTime",
       label: "询价日期",
       minWidth: 120,
       sortable: 'custom',

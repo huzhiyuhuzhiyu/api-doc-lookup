@@ -161,6 +161,13 @@ export function getQuotationInfo (id) {
     method: 'get',
   })
 }
+// 销售报价-提交
+export function submitSaleQuotation (id) {
+  return request({
+    url: `/api/erp/sale/quotation/submit/${id}`,
+    method: 'get',
+  })
+}
 // 销售报价-导入产品
 export function saleUploadData(data) {
   return request({

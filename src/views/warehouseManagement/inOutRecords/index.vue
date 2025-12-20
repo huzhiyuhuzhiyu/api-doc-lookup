@@ -11,11 +11,10 @@ export default {
     PrintDialogPro
   },
   props: {
-    // 1：inbound/入库
-    // 2：outbound/出库
-    documentType: {
-      type: String,
-      default: ''
+    queryParams: {
+      type: Object,
+      default: () => {
+      }
     },
   },
   data() {
@@ -54,9 +53,7 @@ export default {
         //   options: this.getDictDataSync('warehouseBusinessType'),
         // },
       ],
-      listQuery: {
-        documentType: this.documentType,
-      },
+      listQuery: { ...this.queryParams },
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),

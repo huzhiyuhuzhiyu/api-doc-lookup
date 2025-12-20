@@ -10,5 +10,5 @@ export default {
 </script>
 
 <template>
-  <Index :queryParams="{documentType: 'inbound'}"/>
+  <Index :queryParams="{documentType: 'inbound',classTypeList: ['inner_ring_blank','outer_ring_blank']}"/>
 </template>

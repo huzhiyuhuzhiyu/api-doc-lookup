@@ -97,6 +97,12 @@
                     <el-dropdown-item @click.native="downloadOrder(row.id)">
                       下载报价单
                     </el-dropdown-item>
+                    <el-dropdown-item @click.native="quoteHandle(row.id)">
+                      报价
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="handleSubmit(row.id)">
+                      提交
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -118,13 +124,15 @@
 </template>
 
 <script>
-import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation } from '@/api/salesManagement/index'
+import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation, submitSaleQuotation } from '@/api/salesManagement/index'
 import DepForm from './depForm'
 import QuoteForm from './quoteForm'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
+import { getQueryConfirm } from "@/utils";
+import { submitStockChangePackage } from "@/api/stockChangePackage";
 export default {
   name: 'salesQuotationOld',
   components: { DepForm, SuperQuery, ExportForm, QuoteForm },
@@ -318,6 +326,19 @@ export default {
   },
 
   methods: {
+    async handleSubmit(id) {
+      try {
+        await getQueryConfirm(this, '确认提交报价单吗？')
+
+        await submitSaleQuotation(id);
+        this.$message.success('提交成功');
+        this.initData()
+      } catch ( error ) {
+        if (error !== 'cancel') {
+          this.$message.error(error.message || '提交失败');
+        }
+      }
+    },
     getAlign(align) {
       return align || 'left'
     },
@@ -402,10 +423,10 @@ export default {
         })
       }
     },
-    quoteHandle(row) {
+    quoteHandle(id) {
       this.quoteFormVisible = true
       this.$nextTick(() => {
-        this.$refs.quoteForm.init(row.id)
+        this.$refs.quoteForm.init(id)
       })
     },
     handleDel(id) {

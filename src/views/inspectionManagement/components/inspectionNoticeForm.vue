@@ -37,7 +37,7 @@
                       <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                         :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                         @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
-                        :nowNum="nowNumTwo"/>
+                        :nowNum="nowNumTwo" :badTypeList="badTypeList"/>
                     </el-row>
                   </el-collapse-item>
                 </el-collapse>
@@ -95,6 +95,7 @@ export default {
 
   data() {
     return {
+      badTypeList: [],
       isProjectSwitch: '',
       tableDataFlag: false,
       isattachmentswitch: '',
@@ -522,56 +523,59 @@ export default {
       };
 
       const inspectionHandlers = {
-        procure: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.receivedQuantity;
-          dataForm.docId = scope.purchaseReceiptReturnGoodsId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
-          dataForm.status = 'wait_confirmed';
+        procure: (scope, vm) => {
+          vm.dataForm.inspectionQuantity = scope.receivedQuantity;
+          vm.dataForm.docId = scope.purchaseReceiptReturnGoodsId;
+          vm.dataForm.docLineId = scope.id;
+          vm.dataForm.docNo = scope.orderNo;
+          vm.dataForm.status = 'wait_confirmed';
+          vm.badTypeList = ['incoming'];
         },
-        external: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.receivedQuantity;
-          dataForm.docId = scope.purchaseReceiptReturnGoodsId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
+        external: (scope, vm) => {
+          vm.dataForm.inspectionQuantity = scope.receivedQuantity;
+          vm.dataForm.docId = scope.purchaseReceiptReturnGoodsId;
+          vm.dataForm.docLineId = scope.id;
+          vm.dataForm.docNo = scope.orderNo;
         },
-        sale_back: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.deliveryQuantity;
-          dataForm.docId = scope.returnDeliveryNoticeId;
-          dataForm.inspectionMethod = 'all';
-          dataForm.samplingQuantity = dataForm.inspectionQuantity;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
+        sale_back: (scope, vm) => {
+          vm.dataForm.inspectionQuantity = scope.deliveryQuantity;
+          vm.dataForm.docId = scope.returnDeliveryNoticeId;
+          vm.dataForm.inspectionMethod = 'all';
+          vm.dataForm.samplingQuantity = vm.dataForm.inspectionQuantity;
+          vm.dataForm.docLineId = scope.id;
+          vm.dataForm.docNo = scope.orderNo;
         },
-        process: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.productionQuantity;
-          dataForm.docId = scope.productionOrderId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
-          dataForm.inspectionMethod = scope.inspectionMethod;
+        process: (scope, vm) => {
+          vm.dataForm.inspectionQuantity = scope.productionQuantity;
+          vm.dataForm.docId = scope.productionOrderId;
+          vm.dataForm.docLineId = scope.id;
+          vm.dataForm.docNo = scope.orderNo;
+          vm.dataForm.inspectionMethod = scope.inspectionMethod;
         },
-        finished: (scope, dataForm) => {
-          dataForm.inspectionQuantity = Number(scope.qualifiedQuantity) + Number(scope.unqualifiedQuantity);
-          dataForm.docId = scope.productionOrderId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
+        finished: (scope, vm) => {
+          vm.dataForm.inspectionQuantity = Number(scope.qualifiedQuantity) + Number(scope.unqualifiedQuantity);
+          vm.dataForm.docId = scope.productionOrderId;
+          vm.dataForm.docLineId = scope.id;
+          vm.dataForm.docNo = scope.orderNo;
+          vm.badTypeList = ['responsibility_fee', 'material_fee', 'rework'];
         },
-        produce: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.num;
-          dataForm.docId = scope.materialCollectId;
-          dataForm.docLineId = scope.id;
-          dataForm.docNo = scope.orderNo;
+        produce: (scope, vm) => {
+          vm.dataForm.inspectionQuantity = scope.num;
+          vm.dataForm.docId = scope.materialCollectId;
+          vm.dataForm.docLineId = scope.id;
+          vm.dataForm.docNo = scope.orderNo;
         },
-        work_report: (scope, dataForm) => {
-          dataForm.inspectionQuantity = scope.inspectionQuantity;
-          dataForm.inspectionMethod = scope.inspectionMethod;
+        work_report: (scope, vm) => {
+          vm.dataForm.inspectionQuantity = scope.inspectionQuantity;
+          vm.dataForm.inspectionMethod = scope.inspectionMethod;
         }
       };
+
       const handler = inspectionHandlers[inspectionType];
       if (handler) {
-        handler(this.scope, this.dataForm);
+        handler(this.scope, this);
       }
-
+      console.log("this.badTypeList ✈️ ", this.badTypeList)
       this.ProductListRequestObjs = {
         code: this.scope.productCode,
         drawingNo: '',

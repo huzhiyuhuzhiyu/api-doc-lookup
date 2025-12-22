@@ -46,43 +46,17 @@
     </el-form>
 
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="dialogTableItems" dialogTitle="选择不良原因"
-      :listMethod="getAdverseCausesList" :listRequestObj="dialogListRequestObj" :elementShow="false" multiple
+      :listMethod="getScrapCategoryList" :listRequestObj="dialogListRequestObj" :elementShow="false" multiple
       :renderTree="false" />
   </div>
 </template>
 
 <script>
 import FormItem from "@/components/JNPF-col-table/item"
-import { getAdverseCausesList } from '@/api/basicData/index' // 不良原因列表
+import { getAdverseCausesList, getScrapCategoryList } from '@/api/basicData' // 不良原因列表
 export default {
   components: { FormItem },
   name: 'TableForm-ware',
-  data() {
-    return {
-      selectedList: [],
-      JNPFColTableData: {
-        data: this.value
-      },
-      getAdverseCausesList,
-      dialogListRequestObj: {
-        code: "",
-        name: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        pageNum: 1,
-        pageSize: 20,
-      }, // 货位选择弹出框列表请求参数
-      dialogTableItems: [
-        { prop: 'code', label: '不良原因编码' },
-        { prop: 'name', label: '不良原因名称' },
-      ], // 选择弹出框表单展示字段
-    }
-  },
   props: {
     value: {
       type: Array,
@@ -99,6 +73,41 @@ export default {
     num: {},
     nowNum: {},
     productsId: {},
+    badTypeList: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data() {
+    return {
+      selectedList: [],
+      JNPFColTableData: {
+        data: this.value
+      },
+      getScrapCategoryList,
+      dialogListRequestObj: {
+        code: "",
+        name: "",
+        typeList: [],
+        orderItems: [
+          {
+            asc: false,
+            column: ""
+          },
+          {
+            asc: false,
+            column: "create_time"
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+      }, // 货位选择弹出框列表请求参数
+      dialogTableItems: [
+        { prop: 'code', label: '不良原因编码' },
+        { prop: 'name', label: '不良原因名称' },
+        { prop: 'type', label: '不良类型',minWidth: 160, slot: true, dictType: 'defectType' },
+      ], // 选择弹出框表单展示字段
+    }
   },
   watch: {
     value: {
@@ -148,6 +157,7 @@ export default {
       this.$emit('openSide', scope)
     },
     openSeleceWareDialog() {
+      this.dialogListRequestObj.typeList = this.badTypeList
       this.$refs['ComSelect-page'].openDialog()
     },
     isRequire(data) {

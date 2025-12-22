@@ -1,19 +1,16 @@
 <script>
-import SuperQuery from '@/components/SuperQuery/index.vue'
-
-import {buttonList, getColumns} from "../createPurchaseOrder/data";
-import {getPrintBusInfo} from "@/api/system/printDev";
+import { buttonList, getColumns } from "../createPurchaseOrder/data";
+import { getPrintBusInfo } from "@/api/system/printDev";
 import Form from '../createPurchaseOrder/index.vue'
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
-import {deletePurPurchaseOrder, purchaseOrderList} from "@/api/purchasingAndOutsourcingOrders";
+import { deletePurPurchaseOrder, purchaseOrderList } from "@/api/purchasingAndOutsourcingOrders";
 
 export default {
   name: "index",
   components: {
     BatchPrintBrowse,
     PrintDialog,
-    SuperQuery,
     Form
   },
   props: {
@@ -24,6 +21,33 @@ export default {
   },
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            // {
+            //   prop: 'createTime', // 属性*
+            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
+            //   symbol: 'between', // 比较符*
+            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+            //   fixed: true // 是否在搜索栏显示
+            // },
+            { prop: 'orderNo', symbol: 'like', fixed: true },
+            { prop: 'cooperativePartnerCode', symbol: 'like', fixed: true },
+            { prop: 'cooperativePartnerName', symbol: 'like', fixed: true },
+          ],
+          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
+        },
+      }],
       loading: false,
       visible: false,
       printVisible: false,
@@ -34,7 +58,6 @@ export default {
       enCode: '',
       tableData: [],
       total: 0,
-      superQueryVisible: false,
       superQueryJson: [
         {
           prop: 'orderType',
@@ -49,51 +72,37 @@ export default {
           options: this.global.salesOrderState
         },
       ],
-      initListQuery: {
+      listQuery: {
         ...this.queryObject,
         orderType: 'procure',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        superQuery: {},
-        pageNum: 1,
-        pageSize: 20
       },
-      listQuery: {},
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
       selectedRow: [],
     }
   },
-  created() {
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.initData()
-  },
   methods: {
-    async initData() {
+    async initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+
       this.loading = true
       try {
+        if (listLoadKey !== this.listLoadKey) return; // 请求过期
+
         const res = await purchaseOrderList(this.listQuery);
-        const {total, records} = res.data
+        const { total, records } = res.data
         this.tableData = records;
         this.total = total
       } finally {
         this.loading = false
       }
     },
-
     closePrint() {
       this.printVisible = false
     },
-
     printView(row, enCode, fullName) {
       this.selectArr = [row]
       this.enCode = enCode
@@ -103,7 +112,6 @@ export default {
         this.$refs.printTemplate.init(enCode)
       })
     },
-
     async printOrder(enCode) {
       try {
         const res = await getPrintBusInfo(enCode)
@@ -116,10 +124,9 @@ export default {
           id: id
         }))
         this.$refs.batchPrint.print(printData);
-      } catch (e) {
+      } catch ( e ) {
       }
     },
-
     validateSelectedRows() {
       if (!this.selectedRow.length) {
         this.$message.warning('请至少选择一条数据');
@@ -131,9 +138,8 @@ export default {
       }
       return true;
     },
-
     handleButtonClick(type) {
-      switch (type) {
+      switch ( type ) {
         case 'add':
           this.visible = true
           this.$nextTick(() => {
@@ -146,9 +152,8 @@ export default {
           break;
       }
     },
-
     handleColumnClick(row, type) {
-      switch (type) {
+      switch ( type ) {
         case 'look':
         case 'edit':
         case 'copy':
@@ -163,13 +168,12 @@ export default {
         default:
       }
     },
-
     handleRemove(id) {
       this.$confirm('您确定要删除这些数据吗, 是否继续？', '提示', {
         type: 'warning'
       }).then(async () => {
         const res = await deletePurPurchaseOrder(id);
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success('删除成功')
           this.initData()
@@ -177,43 +181,14 @@ export default {
       }).catch(() => {
       })
     },
-
     close(isInitData = true) {
       this.visible = false
       this.BindingVisible = false
       if (!isInitData) return
       this.initData()
     },
-
-    sortChange({prop, order}) {
-      let newProp = ''
-      if (prop === 'createTime') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
-    columnSetFun() {
-      this.$refs.dataTable.showDrawer()
-    },
     getAlign(align) {
       return align || 'left'
-    },
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
-    search() {
-      this.initData()
-    },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.search()
     },
   }
 }
@@ -222,33 +197,7 @@ export default {
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center  JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
-        <el-form @submit.native.prevent @keyup.enter.native="search()">
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerCode"
-                placeholder="供应商编码"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.cooperativePartnerName"
-                placeholder="供应商名称"
-                clearable/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search"
-                @click="search()">查询
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
           <div class="JNPF-common-head-left">
@@ -258,21 +207,22 @@ export default {
             />
           </div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true"/>
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+              <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                       @click="$refs.dataTable.showSortDrawer()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()"/>
+                       @click="$refs.dataTable.showDrawer()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()"/>
+                       @click="initData()"/>
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="hsCodes"
+        <JNPF-table
+          customKey="purchaseOrder"
           v-loading="loading"
           :data="tableData"
           :has-c="true"
@@ -280,9 +230,12 @@ export default {
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"
-          @sort-change="sortChange"
           ref="dataTable"
-          custom-column>
+          custom-column
+          :listQuery="listQuery"
+          @queryChange="initData"
+          :queryJson="superQueryJson"
+        >
           <template v-for="column in columnsConfig">
             <el-table-column
               v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
@@ -290,7 +243,6 @@ export default {
               :prop="column.prop"
               :label="column.label"
               :min-width="column.minWidth"
-              :sortable="column.sortable"
               :fixed="column.fixed"
               :align="getAlign(column.align)"
             >
@@ -309,11 +261,11 @@ export default {
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
-                @click="handleColumnClick(row, 'edit')">
+                         @click="handleColumnClick(row, 'edit')">
                 编辑
               </el-button>
               <el-button class="JNPF-table-delBtn" size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
-                @click="handleColumnClick(row, 'delete')">
+                         @click="handleColumnClick(row, 'delete')">
                 删除
               </el-button>
               <el-dropdown hide-on-click>
@@ -324,26 +276,19 @@ export default {
                   </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
-                    详情
+                    查看详情
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData"
-        />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"/>
       </div>
     </div>
-    <!-- 高级查询 -->
-    <SuperQuery partentOrChild="TransitionApplicationRecordQuery" :show="superQueryVisible" ref="SuperQuery"
-      table-ref="dataTable"
-      :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <Form ref="Form" v-if="visible" @close="close" :autoInit="false"/>
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
+                 :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
     <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
   </div>
 </template>

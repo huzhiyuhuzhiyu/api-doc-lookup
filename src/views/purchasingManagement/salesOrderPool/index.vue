@@ -94,7 +94,7 @@ export default {
         id: this.selectedRow[0].id,
       }
       try {
-        const res = await feedbackDeliveryOrderPool(params);
+        await feedbackDeliveryOrderPool(params);
         this.$message.success('反馈成功')
         await this.initData()
       } catch ( e ) {

@@ -56,6 +56,9 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier()" :addText="'生成计划'">
+              <el-button type="primary" size="mini" v-has="'btn_feedback'" @click="handleFeedbackClick">
+                交期反馈
+              </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
                          @click="exportForm('dataTable')">导出
               </el-button>
@@ -88,6 +91,7 @@
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                              v-if="isProjectSwitch == 1"/>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"/>
+            <el-table-column prop="feedbackDeliveryDate" label="交期反馈" min-width="120" sortable="custom"/>
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom"/>
             <el-table-column prop="mainUnit" label="单位" min-width="80"/>
             <el-table-column prop="num" label="订单数量" min-width="120" sortable="custom"/>
@@ -125,6 +129,10 @@
                  :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body/>
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"/>
     <LssueRequirements :visible.sync="issuePoolDialog" :issuePoolForm="issuePoolForm" @initData="initData"/>
+    <FeedbackEditDialog
+      :visible.sync="showDialog"
+      @confirm="handleConfirm"
+    />
   </div>
 </template>
 
@@ -141,10 +149,13 @@ import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import tenantMinix from "@/mixins/generator/TenantMinix";
 import LssueRequirements from "@/views/planManagement/assemblyPlan/salesOrderCreation/module/LssueRequirements.vue";
+import { feedbackDeliveryOrderPool } from "@/api/salesOrderPool";
+import FeedbackEditDialog from "@/views/purchasingManagement/salesOrderPool/feedbackEditDialog.vue";
 
 export default {
   name: 'salesOrderCreation',
   components: {
+    FeedbackEditDialog,
     LssueRequirements,
     Form, ExportForm, SuperQuery, PrintBrowse,
     PrintDialog,
@@ -153,6 +164,7 @@ export default {
 
   data() {
     return {
+      showDialog: false,
       issuePoolDialog: false,
       issuePoolForm: {},
       superQuery: {},
@@ -329,6 +341,24 @@ export default {
     this.search('basic')
   },
   methods: {
+    async handleConfirm(selectedDate) {
+      const params = {
+        feedbackDeliveryDate: selectedDate,
+        id: this.selectList[0].id,
+      }
+      try {
+        await feedbackDeliveryOrderPool(params);
+        this.$message.success('反馈成功')
+        await this.initData()
+      } catch ( e ) {
+        this.$message.error('反馈失败，请稍后再试')
+      }
+    },
+    handleFeedbackClick(){
+      if (!this.selectList.length) return this.$message.warning('请至少选择一条数据')
+      if (this.selectList.length > 1) return this.$message.warning('只能选择一条数据')
+      this.showDialog = true
+    },
     handleIssuePool(row) {
       this.issuePoolForm = row
       this.issuePoolDialog = true

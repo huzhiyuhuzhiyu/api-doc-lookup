@@ -42,6 +42,14 @@
             <el-table-column prop="productName" label="产品名称" min-width="180"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="160"/>
             <el-table-column prop="productCategoryName" label="产品分类" width="160"/>
+            <el-table-column prop="classType" label="产品类型" width="130">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="global.getDictLabelGlobal('productClassType', scope.row.classType, { withType: true }).type">{{
+                    global.getDictLabelGlobal('productClassType', scope.row.classType)
+                  }}</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="processName" label="工序" width="100"/>
             <el-table-column prop="mainUnit" label="单位" min-width="90"/>
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" />
@@ -221,6 +229,7 @@ export default {
             // },
             { prop: 'orderNo', symbol: 'like', fixed: true },
             { prop: 'cooperativePartnerName', symbol: 'like', fixed: true },
+            { prop: 'classType', symbol: '==', fixed: true },
             {
               prop: 'deliveryDate', // 属性*
               symbol: 'between', // 比较符*
@@ -282,7 +291,14 @@ export default {
           label: '已停止',
           value: 'stopped'
         }]
-      }],
+      },
+        {
+          prop: 'classType',
+          label: '产品类型',
+          type: 'select',
+          options: this.global.productClassType
+        },
+      ],
       printVisible: false,
       exportFormVisible: false,
       title: '更多查询',

@@ -56,13 +56,15 @@
                   :requestObj="requestObjTwo" :paramsObj="{}" />
               </el-form-item>
             </el-col>
-            <el-col :span="6" v-if="dataForm.inspectionMethod == 'other'">
-              <el-form-item label="检验要求" prop="inspectionBasis">
-                <el-input v-model="dataForm.inspectionBasis" placeholder="请输入检验要求" maxlength="200"
+<!--            v-if="dataForm.inspectionMethod == 'other'"-->
+            <el-col :span="6">
+              <el-form-item label="检验依据" prop="inspectionBasis">
+                <el-input v-model="dataForm.inspectionBasis" placeholder="请输入检验依据" maxlength="200"
                   :disabled="btntype ? true : false" />
               </el-form-item>
             </el-col>
-            <el-col :span="6" v-if="dataForm.inspectionMethod == 'measure'">
+<!--            v-if="dataForm.inspectionMethod == 'measure'"-->
+            <el-col :span="6">
               <el-form-item label="正常值" prop="normalValue">
                 <!-- /^[^\u4e00-\u9fa5\uF900-\uFA2D\u0020-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E\.?[0-9]*$/ -->
                 <el-input v-model="dataForm.normalValue"
@@ -70,14 +72,14 @@
                   :disabled="btntype ? true : false" />
               </el-form-item>
             </el-col>
-            <el-col :span="6" v-if="dataForm.inspectionMethod == 'measure'">
+            <el-col :span="6">
               <el-form-item label="最低值" prop="minimum">
                 <el-input v-model="dataForm.minimum" maxlength="20"
                   oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" placeholder="请输入最低值"
                   :disabled="btntype ? true : false" />
               </el-form-item>
             </el-col>
-            <el-col :span="6" v-if="dataForm.inspectionMethod == 'measure'">
+            <el-col :span="6">
               <el-form-item label="最高值" prop="maximum">
                 <el-input v-model="dataForm.maximum" maxlength="20"
                   oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" placeholder="请输入最高值"
@@ -108,13 +110,28 @@ export default {
       btnLoading: false,
       isdisabled: false,
       parentId: '',
-      wayList: [{
-        label: "测量",
-        value: "measure"
-      }, {
-        label: "其他",
-        value: "other"
-      }],
+      wayList: [
+        {
+          label: "测量",
+          value: "measure"
+        },
+        {
+          label: "是否通过",
+          value: "whether_passed"
+        },
+        {
+          label: "拍照",
+          value: "take_photo"
+        },
+        {
+          label: "记录",
+          value: "record"
+        },
+        {
+          label: "其他",
+          value: "other"
+        }
+      ],
       requestObj: {
         orderItems: [{
           asc: false,

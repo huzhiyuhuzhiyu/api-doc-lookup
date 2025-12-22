@@ -17,24 +17,31 @@
             <el-option v-for="item in abProjectList" :key="item.id" :label="item.label" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="不良编码" prop="code">
+          <template slot="label">
+            不良编码<span class="required">*</span>
+          </template>
+          <el-input v-model="dataForm.code" placeholder="请输入不良编码" maxlength="20"
+                    :disabled="btntype ? true : !codeConfig.modifyFlag == true ? false : true" />
+        </el-form-item>
         <el-form-item label="不良名称" prop="name">
           <template slot="label">
             不良名称<span class="required">*</span>
           </template>
           <el-input v-model="dataForm.name" placeholder="请输入不良名称" maxlength="20" :disabled="btntype ? true : false" />
         </el-form-item>
-        <el-form-item label="单价" prop="price">
-          <template slot="label" v-if="!isBOOS">
-            单价<span class="required">*</span>
-          </template>
-          <el-input v-model="dataForm.price" placeholder="请输入单价" maxlength="20" />
-        </el-form-item>
+<!--        <el-form-item label="单价" prop="price">-->
+<!--          <template slot="label" v-if="!isBOOS">-->
+<!--            单价<span class="required">*</span>-->
+<!--          </template>-->
+<!--          <el-input v-model="dataForm.price" placeholder="请输入单价" maxlength="20" />-->
+<!--        </el-form-item>-->
         <el-form-item label="不良类型" prop="type">
           <template slot="label">
             不良类型<span class="required">*</span>
           </template>
           <el-select v-model="dataForm.type" placeholder="不良类型" style="width: 100%;">
-            <el-option v-for="item in typeData" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-option v-for="item in global.defectType" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -56,7 +63,7 @@
 import {
   addScrapCategoryData,
   editScrapCategoryData,
-  checkScrapCategoryName
+  checkScrapCategoryName, checkadverseCausesCode
 } from '@/api/basicData/index'
 import formValidate from '@/utils/formValidate'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
@@ -65,7 +72,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
-      
+
       visible: false,
       formLoading: false,
       btnLoading: false,
@@ -76,22 +83,9 @@ export default {
         name: '',
         price: '',
         type:'',
+        code:'',
         id: ''
       },
-      typeData: [
-        {
-          value: 'responsibility_fee',
-          label: '责废'
-        },
-        {
-          value: 'material_fee',
-          label: '料废'
-        },
-        {
-          value: 'rework',
-          label: '返工'
-        }
-      ],
       codeConfig: {},
       btntype: false,
 
@@ -130,6 +124,25 @@ export default {
             trigger: 'blur'
           }
         ],
+        code: [
+          { required: true, message: '请输入不良编码', trigger: 'blur' },
+          { validator: formValidate('enCode'), trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              console.log(value, this.dataForm.id)
+              checkadverseCausesCode(value, this.dataForm.id)
+                .then((res) => {
+                  if (res.data) {
+                    callback(new Error('不良编码重复'))
+                  } else {
+                    callback()
+                  }
+                })
+                .catch((error) => { })
+            },
+            trigger: 'blur'
+          }
+        ],
         price: this.isBOOS?[]:[
           {
             required: true,
@@ -164,7 +177,16 @@ export default {
   },
   methods: {
     handleClose() { },
-
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.code = data.number
+        }
+      } catch (error) {
+      }
+    },
     init(row) {
 
       this.visible = true
@@ -174,10 +196,11 @@ export default {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           this.dataForm = { ...row }
+          this.fetchData("BLYY", false)
         } else {
           this.dataForm.projectId = this.abProjectId
+          this.fetchData("BLYY", true)
         }
-        
       })
 
     },

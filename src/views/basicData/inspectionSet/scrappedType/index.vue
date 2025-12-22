@@ -59,13 +59,15 @@
                     @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_368745">
                     <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="abProjectSwitchVisible"></el-table-column>
+                  <el-table-column prop="code" label="不良编码" sortable="custom"></el-table-column>
                     <el-table-column prop="name" label="不良名称" sortable="custom" />
-                    <el-table-column prop="price" label="单价" sortable="custom" width="120"></el-table-column>
+<!--                    <el-table-column prop="price" label="单价" sortable="custom" width="120"></el-table-column>-->
                     <el-table-column prop="type" label="不良类型" align="center" sortable="custom" width="160">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.type == 'responsibility_fee'">责废</div>
-                            <div v-if="scope.row.type == 'material_fee'">料废</div>
-                            <div v-if="scope.row.type == 'rework'">返工</div>
+                          <el-tag
+                            :type="global.getDictLabelGlobal('defectType', scope.row.type, { withType: true }).type">{{
+                              global.getDictLabelGlobal('defectType', scope.row.type)
+                            }}</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column prop="remark" label="备注" sortable="custom"></el-table-column>
@@ -220,6 +222,7 @@ export default {
             }
         },
         initData() {
+          this.listLoading = true
             if (this.timeArr && this.timeArr.length) {
                 this.tableQuery.startTime = this.timeArr[0] + ' 00:00:00'
                 this.tableQuery.endTime = this.timeArr[1] + ' 23:59:59'

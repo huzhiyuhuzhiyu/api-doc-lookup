@@ -67,6 +67,26 @@ const global = {
     { label: "虚拟组装", value: "virtual_assemble", type: "processing" },
   ],
 
+  // 产品类型
+  productClassType: [
+    { label: '钢管', value: 'steel_pipe' },
+    { label: '包装物', value: 'packaging' },
+    { label: '内圈毛坯', value: 'inner_ring_blank' },
+    { label: '外圈毛坯', value: 'outer_ring_blank' },
+    { label: '内圈', value: 'inner_ring' },
+    { label: '外圈', value: 'outer_ring' },
+    { label: '磨料', value: 'abrasive' },
+    { label: '油料', value: 'oil' },
+    { label: '配件', value: 'accessory' },
+    { label: '周转箱', value: 'turnover_box' },
+    { label: '保持架', value: 'holder' },
+    { label: '密封盖', value: 'sealing_cap' },
+    { label: '密封盖', value: 'sealing_cap' },
+    { label: '锻车件', value: 'forged_turning_parts' },
+    { label: '消耗品', value: 'consumables' },
+    { label: '机器设备', value: 'machinery_equipment' },
+  ],
+
   // 工艺类型
   craftType: [
     { label: '生产', value: 'production', },
@@ -177,6 +197,14 @@ const global = {
   packagingType: [
     { label: '包装管理', value: 'packing_manage', type: 'info' },
     { label: '仓库管理', value: 'warehouse_manage', type: 'info' },
+  ],
+
+  // 不良类型
+  defectType: [
+    { label: '责废', value: 'responsibility_fee', type: 'danger' },
+    { label: '料废', value: 'material_fee', type: 'warning' },
+    { label: '来料', value: 'incoming', type: 'info' },
+    { label: '返工', value: 'rework', type: 'warning' },
   ],
 
   // 检验状态

@@ -1,5 +1,10 @@
 @import "./font.scss";
 
+.custom-row {
+  display: flex;
+  flex-wrap: wrap
+}
+
 .el-tooltip__popper {
   max-width: 300px;
 }

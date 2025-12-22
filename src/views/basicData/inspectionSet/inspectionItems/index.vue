@@ -99,7 +99,7 @@
           <el-table-column prop="name" label="检验项目名称" sortable="custom" width="150"  />
           <el-table-column prop="equipmentName" label="检验工具" min-width="140" />
           <el-table-column prop="inspectionMethod" label="检验方式" sortable="custom" width="120" />
-          <el-table-column prop="inspectionBasis" label="检验要求" width="120" />
+          <el-table-column prop="inspectionBasis" label="检验依据" width="120" />
           <el-table-column prop="normalValue" label="正常值" />
           <el-table-column prop="minimum" label="最低值" />
           <el-table-column prop="maximum" label="最高值" />
@@ -186,7 +186,7 @@ export default {
         },
         {
           prop: 'inspectionBasis',
-          label: '检验要求',
+          label: '检验依据',
           type: 'input'
         },
         {
@@ -238,12 +238,24 @@ export default {
       tableDataList: [],
       wayList: [
         {
-          label: '测量',
-          value: 'measure'
+          label: "测量",
+          value: "measure"
         },
         {
-          label: '其他',
-          value: 'other'
+          label: "是否通过",
+          value: "whether_passed"
+        },
+        {
+          label: "拍照",
+          value: "take_photo"
+        },
+        {
+          label: "记录",
+          value: "record"
+        },
+        {
+          label: "其他",
+          value: "other"
         }
       ],
       listLoading: false,
@@ -251,7 +263,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         orderItems: [
-        
+
           {
             asc: false,
             column: ''

@@ -45,7 +45,7 @@
         </el-form-item>
         <el-form-item label="类型" prop="classType">
           <el-select v-model="dataForm.classType" placeholder="请选择类型" clearable style="width: 100%;">
-            <el-option v-for="(item, index) in classTypelist" :key="index" :label="item.label"
+            <el-option v-for="(item, index) in global.productClassType" :key="index" :label="item.label"
               :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -151,22 +151,6 @@ export default {
         ],
         classAttribute: [{ required: true, message: '请输入类别属性', trigger: 'blur' }]
       },
-      classTypelist: [
-        { label: '钢管', value: 'steel_pipe' },
-        { label: '包装物', value: 'packaging' },
-        { label: '内圈毛坯', value: 'inner_ring_blank' },
-        { label: '外圈毛坯', value: 'outer_ring_blank' },
-        { label: '内圈', value: 'inner_ring' },
-        { label: '外圈', value: 'outer_ring' },
-        { label: '磨料', value: 'abrasive' },
-        { label: '油料', value: 'oil' },
-        { label: '配件', value: 'accessory' },
-        { label: '周转箱', value: 'turnover_box' },
-        { label: '保持架', value: 'holder' },
-        { label: '密封盖', value: 'sealing_cap' },
-        { label: '密封盖', value: 'sealing_cap' },
-        { label: '锻车件', value: 'forged_turning_parts' },
-      ]
     }
   },
   created() {

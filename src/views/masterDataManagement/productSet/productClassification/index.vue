@@ -51,7 +51,10 @@
 
           <el-table-column prop="classType" label="类型" min-width="100">
             <template slot-scope="scope">
-              {{ $getLabel(classTypelist, scope.row.classType, 'value', 'label') }}
+              <el-tag
+                :type="global.getDictLabelGlobal('productClassType', scope.row.classType, { withType: true }).type">{{
+                  global.getDictLabelGlobal('productClassType', scope.row.classType)
+                }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="sort" label="排序" width="100" align="center">
@@ -123,19 +126,6 @@ export default {
       listQuery: {
         type: 'material',
       },
-      classTypelist: [
-        { label: '包装物', value: 'packaging' },
-        { label: '内圈毛坯', value: 'inner_ring_blank' },
-        { label: '外圈毛坯', value: 'outer_ring_blank' },
-        { label: '内圈', value: 'inner_ring' },
-        { label: '外圈', value: 'outer_ring' },
-        { label: '磨料', value: 'abrasive' },
-        { label: '油料', value: 'oil' },
-        { label: '配件', value: 'accessory' },
-        { label: '周转箱', value: 'turnover_box' },
-        { label: '保持架', value: 'holder' },
-        { label: '密封盖', value: 'sealing_cap' },
-      ],
       treeList: [],
       treeDataAll: [],
       expands: true,

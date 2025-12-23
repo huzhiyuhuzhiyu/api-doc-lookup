@@ -51,8 +51,8 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="产品名称" prop="productsName" v-if="isProductNameSwitch == 1">
+                      <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
+                        <el-form-item label="产品名称" prop="productsName">
                           <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
                           </el-input>
                         </el-form-item>
@@ -112,7 +112,7 @@
                       <el-col :sm="6" :xs="24" v-if="true"><!-- 原dataForm.taskMethod == 'appoint' -->
                         <el-form-item label="产线" prop="productionLineId">
                           <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
-                            @change="selectLine">
+                            @change="selectLine" disabled>
                             <el-option v-for="(item, index) in productionLineList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
                           </el-select>

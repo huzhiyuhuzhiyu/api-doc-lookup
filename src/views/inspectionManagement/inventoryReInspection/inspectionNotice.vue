@@ -1,20 +1,14 @@
 <script>
-import SuperQuery from '@/components/SuperQuery/index.vue'
 import { buttonList, getColumns } from "./data";
-import { getInspectionList } from "@/api/inspectionManagement";
-import Form from "@/views/inspectionManagement/components/inspectionNoticeForm.vue";
+import Form from '@/views/inspectionManagement/components/inspectionNoticeForm.vue'
+
+import { inventorySpaceList } from "@/api/warehouseManagement/inventory";
+import { purPurchaseReceiptReturnGoodsDetailList } from "@/api/purchasingManagement/purchaseInquirySheet";
 
 export default {
   name: "index",
   components: {
     Form,
-    SuperQuery,
-  },
-  props: {
-    inspectionMethod: {
-      type: String,
-      default: ''
-    }
   },
   data() {
     return {
@@ -31,31 +25,26 @@ export default {
             //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
             //   fixed: true // 是否在搜索栏显示
             // },
-            { prop: 'saleOrderNo', symbol: 'like', fixed: true },
           ],
           keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
-          orderItems: [
-            {
-              asc: false,
-              column: 'createTime'
-            }
-          ]
+          orderItems: []
         },
       }],
       loading: false,
       visible: false,
-      btnList: buttonList,
-      superQueryJson: [],
-      listQuery: {
-        inspectionMethod: this.inspectionMethod,
-        notificationType: 'work_report',
-        inspectStatus: 'wait_confirmed'
-      },
+      scanLoading: false,
+      showScanDialog: false,
       tableData: [],
       total: 0,
+      superQueryJson: [],
+      listQuery: {
+        inventoryFlag: true,
+      },
+      btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
+      selectedRow: [],
     }
   },
   methods: {
@@ -63,12 +52,12 @@ export default {
       if (listQuery) this.listQuery = listQuery;
       if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
       const listLoadKey = this.listLoadKey = +new Date();
-      if (listLoadKey !== this.listLoadKey) return; // 请求过期
 
       this.loading = true
       try {
-        const res = await getInspectionList(this.listQuery);
-        const { total, records } = res.data
+        if (listLoadKey !== this.listLoadKey) return; // 请求过期
+        const res = await inventorySpaceList(this.listQuery);
+        const { total, records } = res.data.whPage
         this.tableData = records;
         this.total = total
       } finally {
@@ -91,7 +80,7 @@ export default {
         case 'inspection':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(row, false, 'work_report', 'notice', 'QCDH')
+            this.$refs.Form.init(row, false, 'library', 'notice', 'QCDH')
           })
           break;
         default:
@@ -99,10 +88,26 @@ export default {
     },
     handleButtonClick(type) {
       switch ( type ) {
-        case 'inspection':
-
+        case 'scanInspection':
+          this.showScanDialog = true
           break;
         default:
+      }
+    },
+    async handleScanSubmit(scanCode) {
+      try {
+        this.scanLoading = true
+        const res = await purPurchaseReceiptReturnGoodsDetailList({ productCode: scanCode, pageNum: 1, pageSize: 20, })
+        const product = res.data.records[0]
+        if (!product) return this.$message.warning('未找到匹配的产品信息')
+        this.visible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(product, false, 'library', '', 'QCDH')
+        })
+      } catch ( e ) {
+        this.$message.error('扫码处理失败')
+      } finally {
+        this.scanLoading = false
       }
     },
     close(isInitData = true) {
@@ -147,14 +152,21 @@ export default {
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table customKey="hsCodes"
-                    v-loading="loading"
-                    :data="tableData"
-                    :row-key="'id'"
-                    fixedNO
-                    :setColumnDisplayList="columnList"
-                    ref="dataTable"
-                    custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+        <JNPF-table
+          customKey="inventoryReInspection"
+          v-loading="loading"
+          :data="tableData"
+          :has-c="true"
+          @selection-change="(val) => selectedRow = val"
+          :row-key="'id'"
+          fixedNO
+          :setColumnDisplayList="columnList"
+          ref="dataTable"
+          custom-column
+          :listQuery="listQuery"
+          @queryChange="initData"
+          :queryJson="superQueryJson"
+        >
           <template v-for="column in columnsConfig">
             <el-table-column
               v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
@@ -162,7 +174,6 @@ export default {
               :prop="column.prop"
               :label="column.label"
               :min-width="column.minWidth"
-              :sortable="column.sortable"
               :fixed="column.fixed"
               :align="getAlign(column.align)"
             >
@@ -178,11 +189,23 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" width="120" fixed="right">
+          <el-table-column label="操作" width="90" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text" @click="handleColumnClick(row, 'inspection')">
-                确认
+                检验
               </el-button>
+              <!--              <el-dropdown hide-on-click>-->
+              <!--                  <span class="el-dropdown-link">-->
+              <!--                    <el-button type="text" size="mini">-->
+              <!--                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+              <!--                    </el-button>-->
+              <!--                  </span>-->
+              <!--                <el-dropdown-menu slot="dropdown">-->
+              <!--                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">-->
+              <!--                    查看详情-->
+              <!--                  </el-dropdown-item>-->
+              <!--                </el-dropdown-menu>-->
+              <!--              </el-dropdown>-->
             </template>
           </el-table-column>
         </JNPF-table>
@@ -190,6 +213,14 @@ export default {
         />
       </div>
     </div>
-    <Form v-if="visible" ref="Form" @close="close"/>
+    <Form ref="Form" v-if="visible" @close="close"/>
+    <ScanInputDialog
+      :visible.sync="showScanDialog"
+      :loading="scanLoading"
+      title="扫码检验"
+      tipText="扫产品码会自动匹配需要检验的产品"
+      @close="showScanDialog  = false"
+      @submit="handleScanSubmit"
+    />
   </div>
 </template>

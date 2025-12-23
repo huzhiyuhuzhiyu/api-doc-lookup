@@ -215,9 +215,9 @@ const global = {
 
   // 检验方式
   inspectionMethod: [
-    { label: '全检', value: 'all', type: 'info' },
-    { label: '抽检', value: 'spot_check', type: 'info' },
-    { label: '免检', value: 'exempt', type: 'info' },
+    { label: '全检', value: 'all', type: 'primary' },
+    { label: '抽检', value: 'spot_check', type: 'warning' },
+    { label: '免检', value: 'exempt', type: 'success' }
   ],
 
   // 检验结果
@@ -226,6 +226,13 @@ const global = {
     { label: '不合格', value: 'unqualified', type: 'danger' },
     { label: '全检', value: 'full_inspection', type: 'info' },
     { label: '退货', value: 'back', type: 'warning' },
+  ],
+
+  // 检验 处理状态
+  processingStatusType: [
+    { label: '未处理', value: 'untreated', type: 'info' },
+    { label: '处理中', value: 'processing', type: 'warning' },
+    { label: '已处理', value: 'processed', type: 'success' },
   ],
 
   // 处理方式

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="扫码录入"
+    :title="title"
     append-to-body
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -15,11 +15,11 @@
         <el-input
           v-model="scanResult"
           ref="inputRef"
-          placeholder="请扫产品码"
+          :placeholder="placeholder"
           @keyup.enter.native="handleSubmit"
           class="scan-dialog__input">
         </el-input>
-        <div class="scan-dialog__tip">说明：根据产品码自动添加对应的产品</div>
+        <div class="scan-dialog__tip">说明：{{ tipText }}</div>
       </div>
     </div>
   </el-dialog>
@@ -36,6 +36,18 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    },
+    title: {
+      type: String,
+      default: '扫码录入'
+    },
+    placeholder: {
+      type: String,
+      default: '请扫产品码'
+    },
+    tipText: {
+      type: String,
+      default: '根据产品码自动添加对应的产品'
     }
   },
   data() {

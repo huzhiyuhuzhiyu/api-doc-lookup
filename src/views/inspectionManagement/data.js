@@ -7,6 +7,7 @@ export const inspectionTypeList = [
   { label: '生产巡检', value: 'process' },
   { label: '生产成品', value: 'finished' },
   { label: '包装报工', value: 'work_report' },
+  { label: '库存重检', value: 'library' }
 ]
 export const documentStatusList = [
   { label: "草稿", value: "draft" },

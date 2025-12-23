@@ -221,7 +221,8 @@ export default {
           column: "create_time"
         }],
         classAttribute: "finish_product",
-        documentStatus:'submit',
+        documentStatus: 'submit',
+        planType: 'normal',
       },
       urgentFlagList: [
         { label: "是", value: true },

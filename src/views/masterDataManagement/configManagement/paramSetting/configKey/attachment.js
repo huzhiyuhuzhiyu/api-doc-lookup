@@ -129,6 +129,11 @@ export default {
       description: '开启后，在报工检验新建、编辑、查看都会显示附件操作。',
       mainModule: '质量管理'
     },
+    fj_libraryjyd: {
+      configKeyLabel: '启用库存检验附件',
+      description: '开启后，在库存检验新建、编辑、查看都会显示附件操作。',
+      mainModule: '质量管理'
+    },
     fj_qgd: {
         configKeyLabel: '启用请购单附件',
         description: '开启后，在请购单新建、编辑、查看都会显示附件操作。',

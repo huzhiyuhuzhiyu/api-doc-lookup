@@ -118,6 +118,24 @@ export default {
           print: { enabled: false, enCode: '', fullName: '' },
           defaultForm: {}
         },
+        // 外协发料
+        outbound_external_send: {
+          fetchLines: getQuotationsendlist,
+          dataPath: 'data.noticeLineList',
+          filter: {
+            classAttribute: this.classAttributeList,
+            undeliveredQuantity: val => val > 0
+          },
+          formatter: (item) => ({
+            ...item,
+            ordersLineId: item.outShipmentListId,
+            noticeId: item.returnDeliveryNoticeId,
+            undeliveredQuantity: item.unReceiveQuantity,
+          }),
+          showActions: { selectProduct: true, batchDelete: true },
+          print: { enabled: false, enCode: '', fullName: '' },
+          defaultForm: {}
+        },
         // 采购退货
         outbound_purchase: {
           fetchLines: getpurPurchaseReceiptReturnGoodsdetail,
@@ -169,7 +187,7 @@ export default {
       return config.enabled && this.activeType;
     },
     outboundLabel() {
-      if (['outbound_sale_send', 'outbound_sale_exchange'].includes(this.businessType)) {
+      if (['outbound_sale_exchange'].includes(this.businessType)) {
         return '发货'
       }
       if (this.businessType === 'outbound_external_send') {
@@ -211,6 +229,7 @@ export default {
     },
 
     async defaultInit(prefillData) {
+      this.loading = true
       this.dataForm = _.merge({}, this.dataForm, _.isArray(prefillData) ? prefillData[0] : prefillData);
       this.dataForm.sourceNo = _.isArray(prefillData) ? prefillData[0].orderNo : prefillData.orderNo;
       this.dataForm.businessType = this.businessType
@@ -289,6 +308,8 @@ export default {
       } catch ( error ) {
         console.error(`[${ this.businessType }] 数据处理失败:`, error);
         this.linesList = [];
+      } finally {
+        this.loading = false
       }
     },
 
@@ -388,7 +409,7 @@ export default {
           label: "供应商/客户",
           value: "",
           type: "input",
-          render: ['outbound_sale_send', 'outbound_external_send', 'outbound_purchase', 'outbound_external'].includes(this.businessType)
+          render: ['outbound_external_send', 'outbound_purchase', 'outbound_external'].includes(this.businessType)
         },
         {
           prop: "supplierPartnerName",
@@ -715,7 +736,7 @@ export default {
               this.$set(flattenedData[index], 'availableBatchNumber', data.inventoryQuantity) // 用$set防止合计行不计算
               flattenedData[index].batchNumber = data.batchNumber
               // 如果批次数量小于待出库数量，则把出库数量设为批次数量，反之则为待出库数量
-              if (['outbound_sale_send', 'outbound_external_send', 'outbound_pick_out'].includes(this.businessType)) {
+              if (['outbound_external_send', 'outbound_pick_out'].includes(this.businessType)) {
                 const newNum = Math.min(data.inventoryQuantity, flattenedData[index].undeliveredQuantity)
                 if (newNum !== Number(flattenedData[index].num)) {
                   this.$message.success(`产品信息第${ index + 1 }行：自动更新${ this.outboundLabel }数量成功`)

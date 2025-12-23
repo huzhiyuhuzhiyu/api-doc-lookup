@@ -36,8 +36,8 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="产品名称" prop="productsName" v-if="isProductNameSwitch == 1">
+                      <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
+                        <el-form-item label="产品名称" prop="productsName">
                           <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
                           </el-input>
                         </el-form-item>

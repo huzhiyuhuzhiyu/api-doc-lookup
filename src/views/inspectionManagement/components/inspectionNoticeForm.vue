@@ -68,7 +68,7 @@
 
 <script>
 import {
-  addInspectionData,
+  addInspectionData, confirmedInspectionWorkReport,
   detailInspectionData,
   detailInspectionDataByBizid,
   getInspectionItem,
@@ -568,14 +568,20 @@ export default {
         work_report: (scope, vm) => {
           vm.dataForm.inspectionQuantity = scope.inspectionQuantity;
           vm.dataForm.inspectionMethod = scope.inspectionMethod;
-        }
+        },
+        library: (scope, vm) => {
+          vm.dataForm.inspectionQuantity = scope.inventoryQuantity;
+          vm.dataForm.docId = scope.id;
+          vm.dataForm.docLineId = scope.id;
+          vm.dataForm.docNo = '';
+          vm.dataForm.status = 'wait_confirmed';
+        },
       };
 
       const handler = inspectionHandlers[inspectionType];
       if (handler) {
         handler(this.scope, this);
       }
-      console.log("this.badTypeList ✈️ ", this.badTypeList)
       this.ProductListRequestObjs = {
         code: this.scope.productCode,
         drawingNo: '',
@@ -772,10 +778,11 @@ export default {
         }
 
         let modifyFlag = dataObj.inspection.submitMethod !== 'add'
-        let formMethod = modifyFlag ? updateInspectionData : addInspectionData
-        if (this.inspectionType === 'work_report'){
-          formMethod = treatmentData
-        }
+        const addApi = this.inspectionType === 'work_report' ? confirmedInspectionWorkReport : addInspectionData
+        let formMethod = modifyFlag ? updateInspectionData : addApi
+        // if (this.inspectionType === 'work_report'){
+        //   formMethod = treatmentData
+        // }
         // dataObj.documentStatus = submitModel
         // dataObj.businessCode = this.businessCode
         // dataObj.approvalCompletionDate = ''

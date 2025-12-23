@@ -8,6 +8,7 @@ import { getQuotationdatasendlist } from "@/api/orderFollow";
 import { purPurchaseReceiptReturnGoodsList } from "@/api/purchasingAndOutsourcingOrders";
 import { getStockPickedPage } from "@/api/batchPacking";
 import { getStockPlanPalletPage } from "@/api/PackagingPalletPlan";
+import { ordershengchanList, WithdrawalList } from "@/api/productOrdes";
 
 // 组件导入
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
@@ -18,7 +19,7 @@ import PackingForm from './module/PackingForm.vue'
 import AutoRecBatchPacking from "./module/components/AutoRecBatchPacking.vue";
 import InboundForm from "./module/InboundForm.vue";
 import OutboundForm from "./module/OutboundForm.vue";
-import { WithdrawalList } from "@/api/productOrdes";
+
 
 export default {
   name: "WarehouseBusinessProcess",
@@ -90,6 +91,16 @@ export default {
     businessTypeConfig() {
       const classAttr = this.classAttributeList;
       return {
+        // 生产产品入库
+        inbound_order_production: {
+          api: ordershengchanList,
+          initListQuery: {
+            approvalStatus: 'ok',
+            stockFlag: true,
+            progressFlag: true,
+            classAttributeList: classAttr
+          },
+        },
         // 生产领料出库
         outbound_pick_out: {
           api: WithdrawalList,
@@ -216,12 +227,12 @@ export default {
     },
     // 出库
     isOutboundOperation() {
-      return ['outbound_purchase', 'outbound_external_send', 'outbound_external', 'finished_product_picking_send','outbound_pick_out']
+      return ['outbound_purchase', 'outbound_external_send', 'outbound_external', 'finished_product_picking_send', 'outbound_pick_out']
         .includes(this.activeBusinessType);
     },
     // 入库
     isInboundOperation() {
-      return ['inbound_purchase', 'inbound_sale_return', 'inbound_external_return', 'inbound_external', 'inbound_finished_package']
+      return ['inbound_purchase', 'inbound_sale_return', 'inbound_external_return', 'inbound_external', 'inbound_finished_package', 'inbound_order_production']
         .includes(this.activeBusinessType);
     },
     // 装箱
@@ -257,7 +268,6 @@ export default {
     },
 
     handleBusinessTypeChange(businessType) {
-      console.log("this.currentBusinessConfig ✈️ ", this.currentBusinessConfig)
       const config = this.currentBusinessConfig;
       if (!config) return;
 
@@ -525,8 +535,8 @@ export default {
         </div>
 
         <JNPF-table
-          :customKey="`dbIncomAndOutInventoryIndex${activeBusinessType}`"
           v-loading="loading"
+          :customKey="`dbInComAndOutInventoryIndex${activeBusinessType}`"
           :data="tableData"
           :row-key="'id'"
           :hasC="true"
@@ -546,9 +556,9 @@ export default {
               :prop="column.prop"
               :label="column.label"
               :min-width="column.minWidth"
-              :sortable="column.sortable"
               :fixed="column.fixed"
               :align="getColumnAlignment(column.align)"
+              :formatter="column.formatter"
             >
               <template v-if="column.slot" v-slot="scope">
                 <template v-if="column.prop === 'orderNo'">
@@ -557,21 +567,6 @@ export default {
                       scope.row.orderNo
                     }}
                   </el-link>
-                </template>
-                <template v-if="column.prop === 'hairExchangeGoodsFlag'">
-                  <span>
-                    {{ scope.row.exchangeGoodsFlag ? '换货发货' : '正常发货' }}
-                  </span>
-                </template>
-                <template v-if="column.prop === 'retreatExchangeGoodsFlag'">
-                  <span>
-                    {{ scope.row.exchangeGoodsFlag ? '换货' : '退货' }}
-                  </span>
-                </template>
-                <template v-if="column.prop === 'receiveType'">
-                  <span>
-                    {{ scope.row.receiveType === 'order' ? '任务物料' : '工序物料' }}
-                  </span>
                 </template>
                 <template v-if="column.dictType">
                    <span>

@@ -2,133 +2,77 @@
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
-        <el-row class="JNPF-common-search-box" :gutter="16">
-          <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.orderNo" placeholder="检验单号" @keyup.enter.native="search()" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4" v-if="isProductNameSwitch === '1'">
-              <el-form-item>
-                <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.docNo" placeholder="业务单号" @keyup.enter.native="search()" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="检验开始日期"
-                  end-placeholder="检验结束日期" value-format="yyyy-MM-dd"></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                  {{ $t('common.search') }}
-                </el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
-                  {{ $t('common.reset') }}
-                </el-button>
-              </el-form-item>
-            </el-col>
-          </el-form>
-        </el-row>
+        <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
-                <el-button    :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-              icon="iconfont-menu  icon-chehui" @click="withdrawFun" v-if="pageData.type=='procure'">撤回</el-button>
-              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-                icon="el-icon-download" @click="exportForm">
+              <el-button v-has="'inspection:withdraw'" :disabled="tableData.length<=0" size="mini" type="primary" icon="iconfont-menu icon-chehui" @click="withdrawFun">
+                撤回
+              </el-button>
+              <el-button :disabled="tableData.length<=0" size="mini" type="primary"
+                         icon="el-icon-download" @click="exportForm">
                 导出
               </el-button>
             </div>
             <div class="JNPF-common-head-right">
-              <el-tooltip content="高级查询" placement="top" v-if="true">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+              <el-tooltip effect="dark" content="数据排序设置" placement="top">
+                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                         @click="$refs.dataTable.showSortDrawer()"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                  @click="columnSetFun()" />
+                         @click="columnSetFun()"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()"/>
               </el-tooltip>
             </div>
           </div>
-          <!-- :hasC="pageData.type=='procure'"  -->
-          <JNPF-table v-if="tableDataFlag" ref="dataTable" :hasC="pageData.type=='procure'" :data="tableData" :fixedNO="true" @sort-change="sortChange"
-            custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_139872" @selection-change="handleSelectionChange">
-            <el-table-column prop="orderNo" label="检验单号" min-width="200" sortable="custom">
-              <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
-                  {{ scope.row.orderNo }}
-                </el-link>
-              </template>
-            </el-table-column>
-            <el-table-column prop="docNo" label="业务单号" min-width="200" sortable="custom" />
-            <el-table-column prop="inspectorName" label="检验人" width="100" sortable="custom" />
-            <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
-            <el-table-column prop="projectName" label="所属项目" width="120"
-              v-if="isProjectSwitch === '1'"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-              show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
-            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="60" />
-            <el-table-column prop="inspectionQuantity" label="报检数量" width="110" sortable="custom" />
-
-            <el-table-column prop="inspectionMethod" label="检验方式" width="110" sortable="custom">
-              <template slot-scope="scope">
-                <div v-if="scope.row.inspectionMethod == 'exempt'">免检</div>
-                <div v-if="scope.row.inspectionMethod == 'spot_check'">抽检</div>
-                <div v-if="scope.row.inspectionMethod == 'all'">全检</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="samplingQuantity" label="检验数量" width="110" sortable="custom" />
-            <el-table-column prop="inspectionResults" label="检验结果" width="110" sortable="custom">
-              <template slot-scope="scope">
-                <el-tag type="success" v-if="scope.row.inspectionResults == 'qualified'">合格</el-tag>
-                <el-tag type="danger" v-if="scope.row.inspectionResults == 'unqualified'">不合格</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="130" sortable="custom" />
-            <el-table-column prop="processingStatus" label="处理状态" width="110" sortable="custom">
-              <template slot-scope="scope">
-                <el-tag v-if="scope.row.processingStatus == 'untreated'">未处理</el-tag>
-                <el-tag type="warning" v-if="scope.row.processingStatus == 'processing'">处理中</el-tag>
-                <el-tag type="success" v-if="scope.row.processingStatus == 'processed'">已处理</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="documentStatus" label="单据状态" min-width="120" sortable="custom">
-              <template slot-scope="scope">
-                <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'"> 草稿</el-tag>
-                <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
-                <el-tag type="danger" v-else-if="scope.row.documentStatus == 'back'">撤回</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column v-if="pageData.type === 'procure'" prop="status" label="检验确认状态" min-width="180" sortable="custom">
-              <template slot-scope="scope">
-                <el-tag
-                  :type="global.getDictLabelGlobal('workReportInspection', scope.row.status, { withType: true }).type">{{
-                    global.getDictLabelGlobal('workReportInspection', scope.row.status)
-                  }}</el-tag>
-              </template>
-            </el-table-column>
-            <!-- <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" sortable="custom" /> -->
-            <el-table-column prop="remark" label="备注" min-width="200" />
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
-            <el-table-column label="操作" width="200" fixed="right">
+          <JNPF-table
+            v-if="tableDataFlag"
+            ref="dataTable"
+            :hasC="['inspection:withdraw']"
+            :data="tableData"
+            :fixedNO="true"
+            custom-column
+            :setColumnDisplayList="columnList"
+            customKey="JNPFTableKey_139872"
+            @selection-change="handleSelectionChange"
+            :listQuery="listQuery"
+            @queryChange="initData"
+            :queryJson="superQueryJson"
+          >
+            <template v-for="column in columnsConfig">
+              <el-table-column
+                v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
+                :key="column.prop"
+                :prop="column.prop"
+                :label="column.label"
+                :min-width="column.minWidth"
+                :fixed="column.fixed"
+                :align="getAlign(column.align)"
+              >
+                <template v-if="column.slot" v-slot="scope">
+                  <template v-if="column.prop === 'orderNo'">
+                    <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
+                      {{ scope.row.orderNo }}
+                    </el-link>
+                  </template>
+                  <template v-if="column.dictType">
+                               <span>
+                            <el-tag
+                              :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
+                                global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
+                              }}</el-tag>
+                               </span>
+                  </template>
+                </template>
+              </el-table-column>
+            </template>
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="处理" :hasEdit="false" :hasDel="false">
-                  <el-button v-if="pageData.type === 'procure'" size="mini" type="text" @click.native="handleConfirm(scope.row)">
+                  <el-button v-has="'inspection:confirm'" size="mini" type="text" @click.native="handleConfirm(scope.row)">
                     确认
                   </el-button>
                   <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'look')">
@@ -138,44 +82,34 @@
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-            @pagination="initData" />
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"/>
         </div>
       </div>
     </div>
 
-    <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="inspectionMethodList" />
+    <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="inspectionMethodList"/>
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm"
-      :inspectionMethodList="inspectionMethodList" />
+                :inspectionMethodList="inspectionMethodList"/>
     <DetailReportWorkForm v-if="detailReportWorkFormVisible" ref="DetailReportWorkForm" @close="closeForm"
-      :inspectionMethodList="inspectionMethodList" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+                          :inspectionMethodList="inspectionMethodList"/>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download"/>
   </div>
 </template>
 
 <script>
-import { getInspectionList, deleteInspectionData, getInspectionLinesList, inspectionRevoke, confirmedInspection } from '@/api/inspectionManagement/index' // 检验单
-import { documentStatusList, approvalStatusList, inspectionResultsList, inspectionMethodList } from '../data.js'
+import { confirmedInspection, deleteInspectionData, getInspectionList, inspectionRevoke } from '@/api/inspectionManagement/index' // 检验单
+import { approvalStatusList, documentStatusList, inspectionMethodList, inspectionResultsList } from '../data.js'
 import Form from './defectiveProductHandlingForm.vue'
 import DetailForm from './inspectionFormManagementDetail.vue'
 import DetailReportWorkForm from '../reportWorkInspection/inspectionFormManagementDetail.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { excelExport } from '@/api/basicData/index'
-import SuperQuery from '@/components/SuperQuery/index.vue'
+import { excelExport } from '@/api/basicData'
 import getProjectList from '@/mixins/generator/getProjectList'
-
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
 import { getQueryConfirm } from "@/utils";
-import { confirmSaleOrdersNotice } from "@/api/salesManagement";
-export default {
-  components: { Form, ExportForm, DetailForm,DetailReportWorkForm, SuperQuery },
-  mixins: [getProjectList],
 
+export default {
+  components: { Form, ExportForm, DetailForm, DetailReportWorkForm },
+  mixins: [getProjectList],
   props: {
     pageData: {
       // 页面配置
@@ -196,186 +130,205 @@ export default {
   },
   data() {
     return {
+      systemSearchView: [{
+        matchLogic: "AND", // 条件逻辑（固定）*
+        fullName: "默认视图", // 视图名称*
+        conditionJson: { // 视图内容配置*
+          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
+            // 这里放置系统原顶栏显示的查询元素，如：
+            // {
+            //   prop: 'createTime', // 属性*
+            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
+            //   symbol: 'between', // 比较符*
+            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+            //   fixed: true // 是否在搜索栏显示
+            // },
+            { prop: 'orderNo', symbol: 'like', fixed: true },
+            { prop: 'docNo', symbol: 'like', fixed: true },
+            { prop: 'status', symbol: '==', fixed: true, value: 'wait_confirmed' },
+          ],
+          keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          pageSize: 20, // 每页条数*
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            },
+            {
+              asc: false,
+              column: 'orderNo'
+            }
+          ]
+        },
+      }],
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
-      superQueryVisible: false,
       superQueryJson: [
-        {
-          prop: 'orderNo',
-          label: '检验单号',
-          type: 'input'
-        },
-        {
-          prop: 'inspectorName',
-          label: '检验人',
-          type: 'input'
-        },
-        {
-          prop: 'inspectionDate',
-          label: '检验日期',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'productCode',
-          label: '产品编码',
-          type: 'input'
-        },
-        {
-          prop: 'productDrawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-
-        {
-          prop: 'mainUnit',
-          label: '单位',
-          type: 'input'
-        },
-
         {
           prop: 'inspectionMethod',
           label: '检验方式',
           type: 'select',
-          options: [{ label: '免检', value: 'exempt' }, { label: '抽检', value: 'spot_check' }, { label: '全检', value: 'all' }]
+          options: inspectionMethodList
         },
         {
           prop: 'inspectionResults',
           label: '检验结果',
           type: 'select',
-          options: [
-            { label: '合格', value: 'qualified' },
-            { label: '不合格', value: 'unqualified' },
-            { label: '审批拒绝', value: 'rebut' },
-            { label: '审批撤回', value: 'withdrawn' }
-          ]
-        },
-           {
-          prop: 'documentStatus',
-          label: '单据状态',
-          type: 'select',
-          options: [
-            { label: '草稿', value: 'draft' },
-            { label: '提交', value: 'submit' },
-            { label: '撤回', value: 'back' },
-          ]
+          options: inspectionResultsList
         },
         {
-          prop: 'inspectionResults',
+          prop: 'processingStatus',
           label: '处理状态',
           type: 'select',
-          options: [
-            { label: '未处理', value: 'untreated' },
-            { label: '处理中', value: 'processing' },
-            { label: '已处理', value: 'processed' }
-          ]
+          options: this.global.processingStatusType
         },
         {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
+          prop: 'status',
+          label: '检验确认状态',
+          type: 'select',
+          options: this.global.workReportInspection
         },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-
       ],
-      columnList: ["remark", "productCode", "processingStatus", "createByName"],
+      columnList: [],
       visible: false,
-      activeName: 'dataTable',
       formVisible: false,
       detailFormVisible: false,
-      detailReportWorkFormVisible:false,
+      detailReportWorkFormVisible: false,
       listLoading: false,
       documentStatusList, // 单据状态
       approvalStatusList, // 审批状态
       inspectionResultsList, // 检验结果
       inspectionMethodList, // 检验方法
-      time: null,
       tableData: [],
-      listQuery: {},
-      initListQuery: {
-        orderNo: '',
-        originOrderNo: '',
-        inspectorName: '',
-        documentStatus: '',
-        approvalStatus: '',
+      listQuery: {
+        ...this.queryParams,
         notificationType: this.pageData.type,
         businessCode: this.pageData.businessCode,
-        orderItems: [
-          {
-            asc: false,
-            column: 'create_time'
-          },
-          {
-            asc: false,
-            column: 'order_no'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        createTimeArr: [],
-        inspectionDateArr: []
       },
       total: 0,
-
-      linesTableData: [],
       linesQuery: {},
       exportFormVisible: false,
-      linesTotal: 0,
-      selectArr:[],
+      selectArr: [],
+      columnsConfig: [
+        {
+          prop: "orderNo",
+          label: "检验单号",
+          minWidth: 220,
+          slot: true
+        },
+        {
+          prop: "docNo",
+          label: "业务单号",
+          minWidth: 220,
+        },
+        {
+          prop: "inspectorName",
+          label: "检验人",
+          minWidth: 120,
+        },
+        {
+          prop: "inspectionDate",
+          label: "检验日期",
+          minWidth: 120,
+        },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          minWidth: 220,
+        },
+        {
+          prop: 'productName',
+          label: '产品名称',
+          minWidth: 220,
+        },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          minWidth: 220,
+        },
+        {
+          prop: 'productCategoryName',
+          label: '产品分类',
+          minWidth: 150,
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          minWidth: 90,
+        },
+        {
+          prop: 'inspectionQuantity',
+          label: '报检数量',
+          minWidth: 120,
+        },
+        {
+          prop: 'inspectionMethod',
+          label: '检验方式',
+          minWidth: 120,
+          slot: true,
+          dictType: 'inspectionMethod'
+        },
+        {
+          prop: 'samplingQuantity',
+          label: '检验数量',
+          minWidth: 120,
+        },
+        {
+          prop: 'inspectionResults',
+          label: '检验结果',
+          minWidth: 120,
+          slot: true,
+          dictType: 'inspectionResultsType'
+        },
+        {
+          prop: 'unqualifiedQuantity',
+          label: '不合格数量',
+          minWidth: 140,
+        },
+        {
+          prop: 'processingStatus',
+          label: '处理状态',
+          minWidth: 120,
+          slot: true,
+          dictType: 'processingStatusType'
+        },
+        {
+          prop: 'status',
+          label: '检验确认状态',
+          minWidth: 160,
+          slot: true,
+          dictType: 'workReportInspection'
+        },
+        {
+          prop: "documentStatus",
+          label: "单据状态",
+          minWidth: 120,
+          slot: true,
+          dictType: 'documentStatusList',
+        },
+        {
+          prop: "remark",
+          label: "备注",
+          minWidth: 180,
+        },
+        {
+          prop: "createTime",
+          label: "创建时间",
+          minWidth: 180,
+        },
+        {
+          prop: "createByName",
+          label: "创建人",
+          minWidth: 120,
+        }
+      ],
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    if (this.isDeputyUnitSwitch === '1') {
-      this.superQueryJson.forEach(item => {
-        if (item.prop === 'mainUnit') {
-          item.label = '单位(主)'
-        }
-      })
-      this.superQueryJson.splice(7, 0, {
-        prop: 'deputyUnit',
-        label: '单位(副)',
-        type: 'input'
-      })
-
-    }
-    if (this.isProductNameSwitch === '1') {
-      this.superQueryJson.splice(4, 0, {
-        prop: 'productName',
-        label: '产品名称',
-        type: 'input'
-      })
-    }
     this.tableDataFlag = true
-    this.initListQuery = {
-      ...this.initListQuery,
-      ...this.queryParams
-    }
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.initData()
-  },
-  watch: {
-    activeName() {
-      this.initData()
-    }
   },
   methods: {
     async handleConfirm(row) {
@@ -391,11 +344,11 @@ export default {
         }
       }
     },
-    handleSelectionChange(val){
-      this.selectArr=val
+    handleSelectionChange(val) {
+      this.selectArr = val
     },
-    withdrawFun(){
-      if(!this.selectArr.length) return this.$message.error("请选择你要撤回的数据")
+    withdrawFun() {
+      if (!this.selectArr.length) return this.$message.error("请选择你要撤回的数据")
       // if(this.selectArr.length>1) return this.$message.error("只支持单条数据撤回")
       const ids = this.selectArr.map(item => item.id);
       this.$confirm("您确定撤回所选的数据吗?", "提示", {
@@ -412,13 +365,10 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
+      } catch ( error ) {
+      }
     },
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
+
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -455,18 +405,16 @@ export default {
             if (!res.data.url) return
             this.jnpf.downloadFile(res.data.url)
           })
-          .catch(() => { })
+          .catch(() => {
+          })
       }
     },
-    initData() {
+    initData(listQuery) {
+      if (listQuery) this.listQuery = listQuery;
+      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
+      const listLoadKey = this.listLoadKey = +new Date();
+      if (listLoadKey !== this.listLoadKey) return; // 请求过期
       this.listLoading = true
-      if (this.time) {
-        this.listQuery.inspectionStartDate = this.time[0]
-        this.listQuery.inspectionEndDate = this.time[1]
-      } else {
-        this.listQuery.inspectionStartDate = ''
-        this.listQuery.inspectionEndDate = ''
-      }
       if (this.isProjectSwitch === '1') {
         this.listQuery.projectId = this.userInfo.projectId
       }
@@ -479,23 +427,6 @@ export default {
         .catch(() => {
           this.listLoading = false
         })
-    },
-    search() {
-      this.visible = false
-      this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
-      this.jnpf.searchTimeFormat(this.listQuery, 'inspectionDateArr', 'inspectionStartDate', 'inspectionEndDate')
-      Object.keys(this.listQuery).forEach((key) => {
-        this.listQuery[key] = typeof this.listQuery[key] === 'string' ? this.listQuery[key].trim() : this.listQuery[key]
-      })
-      this.listQuery.pageNum = 1
-
-      this.initData()
-    },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort()
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.time = []
-      this.initData()
     },
     addOrUpdateHandle(row, btnType) {
       if (btnType === 'look') {
@@ -522,21 +453,7 @@ export default {
         })
       }
     },
-    sortChange({ prop, order }) {
-      let newProp
-      if (prop === 'inspectorName' || prop === 'productDrawingNo' || prop === 'productCode' || prop === 'createTime' ||
-        prop === 'createByName') {
-        newProp = 'inspector_id'
-      } else if ([].includes(prop)) {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order !== 'descending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
 
-      this.initData()
-    },
     closeForm(isRefresh) {
       this.formVisible = false
       this.detailFormVisible = false
@@ -557,7 +474,11 @@ export default {
             })
           })
         })
-        .catch(() => { })
+        .catch(() => {
+        })
+    },
+    getAlign(align) {
+      return align || 'left'
     },
     inspectionResultsFormatter(row) {
       let option = this.inspectionResultsList.find((item) => item.value === row.inspectionResults)

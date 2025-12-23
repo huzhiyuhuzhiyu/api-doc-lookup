@@ -117,6 +117,14 @@ export function treatmentData(data) {
     data
   })
 }
+// 不合格品处理单 确认
+export function confirmedInspectionWorkReport(data) {
+  return request({
+    url: `/api/wms/qc/inspection/workReport/confirmed`,
+    method: 'POST',
+    data
+  })
+}
 // 不合格品处理单 修改
 export function updateQcUnqualifiedData(data) {
   return request({

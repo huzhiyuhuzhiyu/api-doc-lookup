@@ -257,6 +257,7 @@ export default {
     },
 
     async defaultInit(prefillData) {
+      this.loading = true
       this.dataForm = _.merge({}, this.dataForm, _.isArray(prefillData) ? prefillData[0] : prefillData);
       this.dataForm.sourceNo = _.isArray(prefillData) ? prefillData[0].orderNo : prefillData.orderNo;
       this.dataForm.businessType = this.businessType
@@ -335,6 +336,8 @@ export default {
       } catch ( error ) {
         console.error(`[${ this.businessType }] 数据处理失败:`, error);
         this.linesList = [];
+      } finally {
+        this.loading = false
       }
     },
 

@@ -38,13 +38,21 @@ export function getSearchList(type = 'default') {
 
   // 定义各业务类型的列配置
   const searchConfig = {
+    // 生产领料出库
+    outbound_pick_out: [
+      ...defaultSearch,
+      {
+        prop: 'productionOrderNo',
+        symbol: 'like',
+      }
+    ],
+    // 生产产品入库
+    inbound_order_production: [
+      ...defaultSearch,
+    ],
     // 销售发货
     outbound_sale_send: [
       ...defaultSearch,
-      {
-        prop: 'orderNo',
-        symbol: 'like',
-      },
       {
         prop: 'partnerName',
         symbol: 'like',
@@ -58,10 +66,6 @@ export function getSearchList(type = 'default') {
     inbound_sale_return: [
       ...defaultSearch,
       {
-        prop: 'orderNo',
-        symbol: 'like',
-      },
-      {
         prop: 'partnerName',
         symbol: 'like',
       },
@@ -70,10 +74,6 @@ export function getSearchList(type = 'default') {
     finished_product_picking_send: [
       ...defaultSearch,
       {
-        prop: 'orderNo',
-        symbol: 'like',
-      },
-      {
         prop: 'partnerName',
         symbol: 'like',
       },
@@ -81,18 +81,10 @@ export function getSearchList(type = 'default') {
     // 成品包装
     inbound_finished_package: [
       ...defaultSearch,
-      {
-        prop: 'orderNo',
-        symbol: 'like',
-      },
     ],
     // 采购收货
     inbound_purchase: [
       ...defaultSearch,
-      {
-        prop: 'orderNo',
-        symbol: 'like',
-      },
       {
         prop: 'partnerName',
         symbol: 'like',
@@ -101,10 +93,6 @@ export function getSearchList(type = 'default') {
     // 采购退货
     outbound_purchase: [
       ...defaultSearch,
-      {
-        prop: 'orderNo',
-        symbol: 'like',
-      },
       {
         prop: 'partnerName',
         symbol: 'like',
@@ -154,34 +142,100 @@ export function getColumns(type = 'default') {
   ]
   const defaultColumns = [...createColumns];
 
-
   // 定义各业务类型的列配置
   const columnsConfig = {
-    // 生产领料入库
+    // 生产领料出库
     outbound_pick_out: [
+      {
+        prop: "orderNo",
+        label: "领料单号",
+        minWidth: 220,
+        slot: true,
+      },
       {
         prop: "productionOrderNo",
         label: "生产任务单号",
         minWidth: 220,
       },
       {
-        prop: "orderNo",
-        label: "领料单号",
-        minWidth: 220,
-        // slot: true
-      },
-      {
         prop: "receiveType",
         label: "领料类型",
         minWidth: 160,
-        slot: true
-      // <div v-if="scope.row.receiveType == 'order'">任务物料</div>
-      // <div v-if="scope.row.receiveType == 'process'">工序物料</div>
+        formatter: (row) => {
+          return row.receiveType === 'order' ? '任务物料' : '工序物料';
+        }
       },
       {
-        prop: "remark",
-        label: "备注",
+        prop: 'productsCode',
+        label: '产品编码',
+        minWidth: 220,
+      },
+      {
+        prop: 'productsName',
+        label: '产品名称',
+        minWidth: 220,
+      },
+      {
+        prop: 'productsDrawingNo',
+        label: '产品型号',
+        minWidth: 220,
+      },
+      // {
+      //   prop: 'personId',
+      //   label: '领料人',
+      //   minWidth: 140,
+      // },
+      ...createColumns
+    ],
+    // 生产产品入库
+    inbound_order_production: [
+      {
+        prop: "orderNo",
+        label: "任务单号",
+        minWidth: 220,
+        slot: true,
+      },
+      {
+        prop: "orderType",
+        label: "任务类型",
+        minWidth: 160,
+        slot: true,
+        dictType: 'orderType',
+      },
+      {
+        prop: 'productCode',
+        label: '产品编码',
+        minWidth: 220,
+      },
+      {
+        prop: 'productName',
+        label: '产品名称',
+        minWidth: 220,
+      },
+      {
+        prop: 'productDrawingNo',
+        label: '产品型号',
+        minWidth: 220,
+      },
+      {
+        prop: 'mainUnit',
+        label: '单位',
         minWidth: 80,
+      },
+      {
+        prop: 'productionQuantity',
+        label: '生产数量',
+        minWidth: 120,
+      },
+      {
+        prop: 'completedQuantity',
+        label: '已完成数量',
+        minWidth: 140,
+      },
+      {
+        prop: 'waitReceivedQuantity',
+        label: '待入库数量',
+        minWidth: 160,
       },
       ...createColumns
     ],
@@ -230,10 +284,12 @@ export function getColumns(type = 'default') {
         minWidth: 120,
       },
       {
-        prop: "hairExchangeGoodsFlag",
+        prop: "exchangeGoodsFlag",
         label: "发货标识",
         minWidth: 120,
-        slot: true,
+        formatter: (row) => {
+          return row.exchangeGoodsFlag ? '换货发货' : '正常发货';
+        }
       },
       {
         prop: "logisticsCompany",
@@ -287,10 +343,12 @@ export function getColumns(type = 'default') {
         minWidth: 120,
       },
       {
-        prop: "retreatExchangeGoodsFlag",
+        prop: "exchangeGoodsFlag",
         label: "退货标识",
         minWidth: 120,
-        slot: true,
+        formatter: (row) => {
+          return row.exchangeGoodsFlag ? '换货' : '退货';
+        }
       },
       ...createColumns,
     ],
@@ -307,19 +365,16 @@ export function getColumns(type = 'default') {
         prop: "sourceOrderNo",
         label: "来源单号",
         minWidth: 220,
-
       },
       {
         prop: "cooperativePartnerCode",
         label: "客户编码",
         minWidth: 180,
-
       },
       {
         prop: "cooperativePartnerName",
         label: "客户名称",
         minWidth: 180,
-
       },
       {
         prop: "warehouseName",
@@ -443,22 +498,12 @@ export function getColumns(type = 'default') {
       {
         prop: "salesman",
         label: "操作员",
+        minWidth: 140,
+      },
+      {
+        prop: "deliverDate",
+        label: "退货日期",
         minWidth: 180,
-      },
-      {
-        prop: 'productName',
-        label: '产品名称',
-        minWidth: 220,
-      },
-      {
-        prop: 'productCode',
-        label: '产品编码',
-        minWidth: 220,
-      },
-      {
-        prop: 'drawingNo',
-        label: '产品型号',
-        minWidth: 220,
       },
       {
         prop: 'remark',

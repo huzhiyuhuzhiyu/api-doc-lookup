@@ -64,8 +64,7 @@
                                             </el-col>
                                           <el-col :sm="6" :xs="24">
                                             <el-form-item label="产线" prop="productionLineId">
-                                              <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
-                                                         @change="selectLine">
+                                              <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;">
                                                 <el-option v-for="(item, index) in productionLineList" :key="index" :label="item.name"
                                                            :value="item.id"></el-option>
                                               </el-select>
@@ -616,7 +615,7 @@ export default {
                 bomId: "",
                 drawingNo: "",
                 productionLineId: "",
-                orderType:'rework'
+              source: 'rework'
             },
             dataFormTwo: {
                 data: [],
@@ -716,6 +715,7 @@ export default {
         await this.getProjectSwitch('system', 'project')
         await this.getProductNameSwitch('product', 'enable_productName')
         this.getPickingConfig()
+        this.getProductionLineListFun()
     },
     mounted() {
         this.$nextTick(() => { this.switchStyleheight() })
@@ -1287,7 +1287,7 @@ export default {
                             item.stockFlag = true
                         }
 
-                        item.orderType = "rework";
+                        item.source = "rework";
                         if (item.processingType !== "self_produced" && selectArr.length > 1) {
                             if (item.firstFlag) {
                                 selectArr[index].stockFlag = true;
@@ -1352,7 +1352,7 @@ export default {
                 if (valid) {
                     this.selectTaskMethod()
                     this.dataForm.routingId=this.dataForm.routingName?this.dataForm.routingId:''
-                    this.dataForm.orderType= 'rework'
+                    this.dataForm.source = 'rework'
                     this.dataForm.productsId = this.dataForm.id
                     this.dataForm.planStartDate = this.dataForm.planDate[0]
                     this.dataForm.planEndDate = this.dataForm.planDate[1]

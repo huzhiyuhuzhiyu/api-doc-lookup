@@ -168,6 +168,15 @@ export function submitSaleQuotation (id) {
     method: 'get',
   })
 }
+
+// 销售报价-报价
+export function quotationSale(data) {
+  return request({
+    url: '/api/erp/sale/quotation/quotation',
+    method: 'PUT',
+    data
+  })
+}
 // 销售报价-导入产品
 export function saleUploadData(data) {
   return request({

@@ -1669,11 +1669,11 @@ export default {
       }, 100)
     },
     async handleConfirm(value) {
-      console.log(this.dataForm);
       try {
         try {
           await this.$refs['dataForm'].validate()
           this.dataForm.documentStatus = value
+          this.dataForm.source = 'normal'
         } catch (e) {
           console.log('基础信息');
           console.log(e);

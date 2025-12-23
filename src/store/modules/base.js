@@ -4,7 +4,7 @@ import { getPositionListAll, getPositionSelector } from '@/api/permission/positi
 import { getRoleSelector } from '@/api/permission/role'
 import { getPrintDevSelector } from '@/api/system/printDev'
 import jnpf from '@/utils/jnpf';
-import { getBimBusinessDetail, getOrderFiledMap, getBimBusinessSwitchConfigList } from '@/api/basicData'
+import { getBimBusinessDetail, getOrderFiledMap, getBimBusinessSwitchConfigList, getProductionLineList } from '@/api/basicData'
 import { getWebCache } from '@/api/system/system'
 import { getBillRuleConfig } from '@/api/system/billRule'
 import { getbimProductAttributesListMap } from '@/api/masterDataManagement'
@@ -12,6 +12,7 @@ import { getbimProductAttributesListMap } from '@/api/masterDataManagement'
 const state = {
   dictionaryList: [],
   dictionaryMap: {},
+  productionLineList: [],
   userList: [],
   userTree: [],
   positionList: [],
@@ -38,6 +39,9 @@ const mutations = {
         },{})
         return acc
     },{})
+  },
+  SET_PRODUCTION_LINE_LIST: (state, value) => {
+    state.productionLineList = value
   },
   SET_USER_LIST: (state, userList) => {
     state.userList = userList
@@ -113,6 +117,24 @@ const actions = {
       getDictionaryAll().then(res => {
         commit('SET_DICTIONARY_LIST', res.data.list)
         resolve(res.data.list)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getProductionLineList({ commit }) {
+    return new Promise((resolve, reject) => {
+      getProductionLineList({
+        pageNum: 1,
+        pageSize: 999,
+      }).then(res => {
+        const data = res.data.records.map(item => ({
+          ...item,
+          value: item.id,
+          label: item.name,
+        }))
+        commit('SET_PRODUCTION_LINE_LIST', data)
+        resolve(data)
       }).catch(error => {
         reject(error)
       })

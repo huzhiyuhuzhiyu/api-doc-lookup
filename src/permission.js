@@ -124,6 +124,7 @@ router.beforeEach(async (to, from, next) => {
           let res = await store.dispatch('user/getInfo', type)
           const accessRoutes = await store.dispatch('permission/generateRoutes', res)
           let resField = await store.dispatch('base/getDictionaryData', {sort: 'FieldNameSet'})  // 调用数据字典
+          store.dispatch('base/getProductionLineList')  // 获取产线
           store.commit('base/SET_FIELD_NAME', resField)
           // dynamically add accessible routes
           await store.dispatch('base/refreshConfigData')

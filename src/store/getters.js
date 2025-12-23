@@ -15,6 +15,7 @@ const getters = {
     permission_routes: state => state.permission.routes,
     dictionaryList: state => state.base.dictionaryList,
     dictionaryMap: state => state.base.dictionaryMap,
+    productionLineList: state => state.base.productionLineList,  // 生产线列表
     userList: state => state.base.userList,
     positionList: state => state.base.positionList,
     roleList: state => state.base.roleList,

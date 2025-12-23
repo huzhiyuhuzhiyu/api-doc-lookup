@@ -424,7 +424,7 @@ export default {
       else if (type === 'availableFlag') { this.title = '可用数明细' }
       this.visible = true
       let tempListQuery = {
-
+        productionLineId: this.$parent.tableQuery.productionLineId,
         productsId: row.productsId,
         batchNumber: "",
         availableFlag: 0, // 可用数标识（0 否 1是）默认否

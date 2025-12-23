@@ -146,6 +146,12 @@ export default {
             { prop: 'orderNo', symbol: 'like', fixed: true },
             { prop: 'docNo', symbol: 'like', fixed: true },
             { prop: 'status', symbol: '==', fixed: true, value: 'wait_confirmed' },
+            {
+              prop: 'inspectionDate', // 属性*
+              symbol: 'between', // 比较符*
+              timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
+              fixed: true // 是否在搜索栏显示
+            },
           ],
           keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*

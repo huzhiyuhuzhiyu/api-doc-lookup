@@ -208,7 +208,7 @@ export default {
         productDrawingNo: "",
         productionPlanNo: "",
         orderNo: "",
-        orderStatus: "normal",
+        source: "normal",
         classAttribute: "semi_finished",
         pageNum: 1,
         pageSize: 20,
@@ -263,7 +263,7 @@ export default {
             { label: "正常", value: "normal" },
             { label: "暂停", value: "suspend" },
             { label: "关闭", value: "closed" },
-            { label: "已完成", value: "finish" }, 
+            { label: "已完成", value: "finish" },
           ]
         },
         {
@@ -271,7 +271,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-      
+
         {
           prop: 'routingName',
           label: "工艺路线名称",

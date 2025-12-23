@@ -50,7 +50,6 @@ export default {
       ],
       listQuery: {
         orderStatus: "normal",
-        classAttribute: "semi_finished",
       },
       btnList: buttonList,
       columnList: [],

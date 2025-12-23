@@ -166,6 +166,7 @@ export default {
         productsDrawingNo: "",
         productionPlanNo: "",
         orderNo: "",
+        source: "normal",
         finishFlag: 1,
         pageNum: 1,
         pageSize: 20,

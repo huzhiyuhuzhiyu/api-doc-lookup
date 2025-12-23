@@ -357,7 +357,7 @@ export default {
         productionPlanNo: "",
         productionLineId: "",
         orderNo: "",
-        orderStatus: "normal",
+        source: "normal",
         classAttribute: "finish_product",
         pageNum: 1,
         pageSize: 20,

@@ -58,6 +58,7 @@
       <!--eslint-disable vue/require-component-is -->
       <component is="el-table" class="TableForm table" :data="JNPFColTableData.data"
         v-bind="{ ...tableProps, ...customStyleData }" @selection-change="handleSelectionChange" border
+                 :highlight-current-row="single" @current-change="handleCurrentChange"
         v-if="tableVisible" ref="tableRef">
         <el-table-column type="selection" width="60" :fixed="fixedC ? 'left' : false" align="center"
           v-if="realOpenMode !== '只读' && hasToolbar && hasC" key="no" :selectable="checkSelectable" />
@@ -201,6 +202,10 @@ export default {
       type: Boolean,
       default: true
     },
+    single: {
+      type: Boolean,
+      default: false
+    },
     hasActionbar: {
       type: Boolean,
       default: true
@@ -330,6 +335,9 @@ export default {
       } else {
         this.selectedList = data
       }
+    },
+    handleCurrentChange(row){
+      this.$emit('currentChange', row);
     },
     async switchStyle(type) {
       await this.$nextTick();

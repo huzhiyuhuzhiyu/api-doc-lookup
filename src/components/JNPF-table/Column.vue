@@ -23,9 +23,6 @@ export default {
             if (!vnode.componentOptions.propsData.key) {
               vnode.componentOptions.propsData.key = item.prop
             }
-            if (!vnode.componentOptions.propsData.showOverflowTooltip !== false) {
-              vnode.componentOptions.propsData.showOverflowTooltip = true
-            }
           }
           vnode.key = item.prop
         }

@@ -687,7 +687,10 @@ export function formatListQuery(queryConfigData) {
     }
     if (Array.isArray(item.fieldValue)) item.fieldValue = item.fieldValue.join(',')
     if (typeof item.fieldValue === 'boolean') item.fieldValue = item.fieldValue ? 1 : 0
-    if (['in', 'notIn'].includes(item.symbol)) item.fieldValue = item.fieldValue.replace('，', ',')
+    if (item.type === 'input' && ['备注', '理由', '要求'].every(keyword => item.label.indexOf(keyword) < 0) && ['==', '<>', 'like', 'notLike'].includes(item.symbol) && /[，,]/.test(item.fieldValue)) {
+      item.symbol = ['==', 'like'].includes(item.symbol) ? 'in' : 'notIn'
+      item.fieldValue = item.fieldValue.replaceAll('，', ',')
+    }
     return { // 只保留有用内容，便于阅读
       field: item.field,
       symbol: item.symbol,
@@ -713,6 +716,16 @@ export function formatListQuery(queryConfigData) {
       queryConfigData.superQuery.keywordQuery = keywordQuery;
       delete queryConfigData.keywordQuery;
     }
+  }
+
+  // 处理customSearchQuery
+  const customSearchQuery = queryConfigData.customSearchQuery;
+  if (customSearchQuery) {
+    queryConfigData = {
+      ...queryConfigData,
+      ...customSearchQuery
+    }
+    delete queryConfigData.customSearchQuery;
   }
 
   return queryConfigData

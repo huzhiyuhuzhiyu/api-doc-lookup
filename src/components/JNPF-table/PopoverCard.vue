@@ -37,18 +37,22 @@
           <!-- 输入框 -->
           <template v-else-if="queryProps.type === 'input'">
             <el-input v-model="filterValue" v-bind="{ placeholder: `${['in', 'notIn'].includes(filterSymbol) ? '输入多条内容用逗号分隔' : '请输入'}`, maxlength: 100, clearable: true }"
-                      @keyup.enter.native="confirmFilter"
+              @keyup.enter.native="confirmFilter"
             />
           </template>
           <!-- 输入框-数值 -->
           <template v-else-if="queryProps.type === 'number'">
             <el-input v-model.number="filterValue"
-                      v-bind="{ placeholder: `请输入`, maxlength: 100, clearable: true, ...fieldCache }" @keyup.enter.native="confirmFilter" />
+              v-bind="{ placeholder: `请输入`, maxlength: 100, clearable: true, ...fieldCache }" @keyup.enter.native="confirmFilter" />
+          </template>
+          <!-- 输入框-联想输入 -->
+          <template v-else-if="queryProps.type === 'autocomplete'">
+            <el-autocomplete v-model="filterValue" v-bind="{ placeholder: `请输入`, maxlength: 100, clearable: true, ...fieldCache }" @keyup.enter.native="confirmFilter" />
           </template>
           <!-- 下拉选择器 -->
           <template v-else-if="queryProps.type === 'select'">
             <el-select v-model="filterValue"
-                       v-bind="{ placeholder: `请选择`, clearable: true, multiple: ['in', 'notIn'].includes(filterSymbol), ...fieldCache }">
+              v-bind="{ placeholder: `请选择`, clearable: true, multiple: ['in', 'notIn'].includes(filterSymbol), ...fieldCache }">
               <el-option v-for="(o, i) in queryProps.options" :key="i" v-bind="o"></el-option>
             </el-select>
           </template>
@@ -93,7 +97,7 @@
           </template>
         </div>
         <div class="filter-btn-row">
-          <el-button size="mini" @click="clearFilter">清除筛选条件</el-button>
+          <el-button size="mini" @click="clearFilter" :disabled="fieldCache.clearable === false">清除筛选条件</el-button>
           <el-button size="mini" type="primary" @click="confirmFilter">确认</el-button>
         </div>
       </div>

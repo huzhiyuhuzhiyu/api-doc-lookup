@@ -1,6 +1,6 @@
 <template>
   <el-dialog :title="dialogTitle" :visible.sync="visible" width="600px" append-to-body lock-scroll
-             class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" @close="$emit('cancel')">
+    class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" @close="$emit('cancel')">
     <el-form :model="dataForm" :rules="rules" ref="dataForm" label-position="top" @submit.native.prevent>
       <el-form-item label="" prop="keywordFieldList">
         <el-alert title="注意：为保证查询效率，请勿关联过多属性" type="warning" :closable="false" show-icon style="margin-bottom: 10px;" />
@@ -18,7 +18,7 @@
     <div slot="footer" class="dialog-footer">
       <el-button @click="$emit('cancel')">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" @click="onConfirm()" :loading="saveBtnLoading">{{ $t('common.confirmButton')
-        }}</el-button>
+      }}</el-button>
     </div>
   </el-dialog>
 </template>

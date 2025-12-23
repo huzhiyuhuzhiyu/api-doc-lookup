@@ -1,6 +1,6 @@
 <template>
   <el-drawer title="数据排序优先级设置" :visible.sync="drawerVisible" :wrapperClosable="false" size="320px" append-to-body
-             class="JNPF-common-drawer columnSettings-drawer">
+    class="JNPF-common-drawer columnSettings-drawer">
     <div class="JNPF-flex-main" :class="classObj">
       <!-- <div class="columnSetting-head">
         <div></div>
@@ -10,7 +10,7 @@
         <template v-if="list.length">
           <draggable :list="list" :animation="340" handle=".column-item-icon">
             <div class="column-item" v-for="item in list" :key="item.prop"
-                 @click.self="item.columnVisible = !item.columnVisible">
+              @click.self="item.columnVisible = !item.columnVisible">
               <div class="column-item-left">
                 <i class="icon-ym icon-ym-darg column-item-icon"></i>
                 <!-- <el-checkbox class="check-box" v-model="item.columnVisible"
@@ -21,22 +21,22 @@
               </div>
               <div class="column-item-right">
                 <i class="el-icon-close" title="删除" @click="handleRemove(item)" style="padding-right: 10px;cursor: pointer;"></i>
-                <!--                <el-tooltip content="固定到左侧" placement="top"-->
-                <!--                  :class="['system-icon', item.fixed === '' || item.fixed === 'left' ? 'active' : '']"-->
-                <!--                  :enterable="false"-->
-                <!--                >-->
-                <!--                  <i class="ym-custom ym-custom-format-horizontal-align-left"-->
-                <!--                    @click.stop="handleFixed(item, 'left')"-->
-                <!--                  ></i>-->
-                <!--                </el-tooltip>-->
-                <!--                <span class="line"></span>-->
-                <!--                <el-tooltip content="固定到右侧" placement="top"-->
-                <!--                  :class="['system-icon', item.fixed === 'right' ? 'active' : '']" :enterable="false"-->
-                <!--                >-->
-                <!--                  <i class="ym-custom ym-custom-format-horizontal-align-right"-->
-                <!--                    @click.stop="handleFixed(item, 'right')"-->
-                <!--                  ></i>-->
-                <!--                </el-tooltip>-->
+<!--                <el-tooltip content="固定到左侧" placement="top"-->
+<!--                  :class="['system-icon', item.fixed === '' || item.fixed === 'left' ? 'active' : '']"-->
+<!--                  :enterable="false"-->
+<!--                >-->
+<!--                  <i class="ym-custom ym-custom-format-horizontal-align-left"-->
+<!--                    @click.stop="handleFixed(item, 'left')"-->
+<!--                  ></i>-->
+<!--                </el-tooltip>-->
+<!--                <span class="line"></span>-->
+<!--                <el-tooltip content="固定到右侧" placement="top"-->
+<!--                  :class="['system-icon', item.fixed === 'right' ? 'active' : '']" :enterable="false"-->
+<!--                >-->
+<!--                  <i class="ym-custom ym-custom-format-horizontal-align-right"-->
+<!--                    @click.stop="handleFixed(item, 'right')"-->
+<!--                  ></i>-->
+<!--                </el-tooltip>-->
               </div>
             </div>
           </draggable>

@@ -1,22 +1,23 @@
 import global from '@/utils/global'
 import store from '@/store'
+import { getCooperativeData } from "@/api/basicData";
 
 export const symbolOptions = Object.freeze([{
   label: '等于',
   value: '==',
-  effectType: ['input', 'number', 'select', 'date', 'datetime', 'month']
+  effectType: ['input', 'number', 'autocomplete', 'select', 'date', 'datetime', 'month']
 }, {
   label: '不等于',
   value: '<>',
-  effectType: ['input', 'number', 'select', 'date', 'datetime', 'month']
+  effectType: ['input', 'number', 'autocomplete', 'select', 'date', 'datetime', 'month']
 }, {
   label: '包含',
   value: 'like',
-  effectType: ['input']
+  effectType: ['input', 'autocomplete']
 }, {
   label: '不包含',
   value: 'notLike',
-  effectType: ['input']
+  effectType: ['input', 'autocomplete']
 }, {
   label: '存在于',
   value: 'in',
@@ -48,7 +49,7 @@ export const symbolOptions = Object.freeze([{
 }, {
   label: '是否为空',
   value: 'empty',
-  effectType: ['input', 'number', 'select']
+  effectType: ['input', 'number', 'autocomplete', 'select']
 }])
 
 export const getQueryProps = (column, queryJson = []) => {
@@ -56,6 +57,31 @@ export const getQueryProps = (column, queryJson = []) => {
   // const column = this.columnProps
   if (queryJson.some(item => item.prop === column.prop)) {
     props = queryJson.find(item => item.prop === column.prop)
+  } else if (column.label === '客户名称') {
+    props = {
+      type: 'autocomplete',
+      triggerOnFocus: false,
+      fetchSuggestions: (queryString, cb) => {
+        getCooperativeData({
+          name: queryString,
+          type: 'customer',
+          salesPersonFlag: store.getters.configData.sale.salesPersonFlag
+        }).then(res => {
+          const result = res.data.records.map((item, index) => {
+            return {
+              value: item.name
+            }
+          })
+          cb(result)
+        })
+        .catch(res => {
+          this.$message({
+            type: 'error',
+            message: '获取数据失败'
+          })
+        })
+      }
+    }
   } else if (getLabelKeyword(column.label, ['起', '止']).endsWith('日期')) {
     props = {
       type: 'date',
@@ -76,6 +102,18 @@ export const getQueryProps = (column, queryJson = []) => {
       pickerOptionsRange: global.timePickerOptions,
       timeOffset: false
     }
+  } else if (['月份', '年月', '年份'].some(keyword =>
+    getLabelKeyword(column.label, ['起', '止']).endsWith(keyword)
+  )) {
+    props = {
+      type: 'month',
+      valueFormat: 'yyyy-MM',
+      startPlaceholder: column.label + '开始',
+      endPlaceholder: column.label + '结束',
+      pickerOptions: global.monthPicker,
+      pickerOptionsRange: global.monthPickerOptions,
+      timeOffset: false
+    }
   } else if (column.label === '单据状态') {
     props = {
       type: 'select',
@@ -85,6 +123,11 @@ export const getQueryProps = (column, queryJson = []) => {
     props = {
       type: 'select',
       options: global.approvalStateList
+    }
+  } else if (column.label === '结算货币') {
+    props = {
+      type: 'select',
+      options: global.currencyCodeList
     }
   } else if (column.label === '税率') {
     props = {

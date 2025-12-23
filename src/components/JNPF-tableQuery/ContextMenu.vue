@@ -14,7 +14,7 @@
 
     <!-- 重命名对话框 - 使用HandleViewDialog -->
     <HandleViewDialog v-if="renameDialogVisible" :curr-menu-id="currMenuId" :list-query="listQuery" mode="rename"
-                      :rename-item="selectedItem" @cancel="cancelRename" @confirm="handleRenameConfirm" />
+      :rename-item="selectedItem" @cancel="cancelRename" @confirm="handleRenameConfirm" />
   </div>
 </template>
 

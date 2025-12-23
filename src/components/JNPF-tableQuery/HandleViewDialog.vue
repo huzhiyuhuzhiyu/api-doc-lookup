@@ -1,16 +1,16 @@
 <template>
   <el-dialog :title="dialogTitle" :visible.sync="visible" width="600px" append-to-body lock-scroll
-             class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" @close="$emit('cancel')">
+    class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" @close="$emit('cancel')">
     <el-form :model="dataForm" :rules="rules" ref="dataForm" label-position="top" @submit.native.prevent>
       <el-form-item label="视图名称" prop="fullName">
         <el-input v-model="dataForm.fullName" autocomplete="off" maxlength="50" :placeholder="placeholder"
-                  @keyup.enter.native="onConfirm()" autofocus></el-input>
+          @keyup.enter.native="onConfirm()" autofocus></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="$emit('cancel')">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" @click="onConfirm()" :loading="saveBtnLoading">{{ $t('common.confirmButton')
-        }}</el-button>
+      }}</el-button>
     </div>
   </el-dialog>
 </template>

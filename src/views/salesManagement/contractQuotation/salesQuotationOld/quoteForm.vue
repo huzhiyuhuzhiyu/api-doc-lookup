@@ -1,5 +1,5 @@
 <script>
-import { deepClone, standardizeFields } from "@/utils";
+import { standardizeFields } from "@/utils";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import { getQuotationInfo, quotationSale } from "@/api/salesManagement";
 import { getEnquiryDetailList } from '@/api/enquiryManagement/enquiryDetail'
@@ -139,6 +139,39 @@ export default {
           label: '报价',
           type: 'input',
           minWidth: 180,
+          itemRules: [
+            {
+              validator: this.formValidate('noZero', '报价不能为0', (errMsg) => {
+                this.$message.error(errMsg)
+              }), trigger: ['blur', 'change']
+            },
+            {
+              validator: this.formValidate({
+                type: 'noEmtry', params: ['报价不能为空', (errMsg) => {
+                  this.$message.error(`	报价不能为空`)
+                }]
+              }), trigger: 'blur',
+            },
+            {
+              validator: this.formValidate({
+                type: 'decimal', params: [20, 4, null, (errMsg) => {
+                  this.$message.error(errMsg)
+                }]
+              }),
+              trigger: ['blur', 'change'],
+            },
+            { required: true, message: '报价不能为空', trigger: ['blur', 'change'], },
+          ]
+        },
+        {
+          prop: 'taxRate',
+          label: '税率',
+          type: 'select',
+          options: this.getDictDataSync('taxrate'),
+          minWidth: 160,
+          itemRules: [
+            { required: true, message: '税率不能为空', trigger: 'change', },
+          ]
         },
         {
           prop: 'sampleAmounts',
@@ -149,7 +182,7 @@ export default {
         {
           prop: 'excludingTaxAmounts',
           label: '未税价',
-          type: 'input',
+          type: 'view',
           minWidth: 180,
         },
         {
@@ -158,12 +191,12 @@ export default {
           type: 'input',
           minWidth: 180,
         },
-        {
-          prop: 'moldAmounts11',
-          label: '采购报模具费',
-          type: 'input',
-          minWidth: 180,
-        },
+        // {
+        //   prop: 'moldAmounts11',
+        //   label: '采购报模具费',
+        //   type: 'input',
+        //   minWidth: 180,
+        // },
         {
           prop: 'deliveryDate',
           label: '交货日期',
@@ -172,6 +205,12 @@ export default {
           itemRules: [
             { required: true, message: '交货日期不能为空', trigger: 'change', },
           ]
+        },
+        {
+          prop: 'material',
+          label: '材质',
+          type: 'input',
+          minWidth: 180,
         },
         {
           prop: 'remark2',
@@ -189,6 +228,8 @@ export default {
       linesTableHeight: 0,
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
+      currentSelectedProduct: null,
+      currentSelectedIndex: -1,
       addProductProps: {
         title: '采购询价信息',
         activeType: '',
@@ -199,7 +240,7 @@ export default {
           { prop: 'supplierCode', label: '供应商', minWidth: 180, sortable: 'custom' },
           { prop: 'productsName', label: '产品名称', minWidth: 180, sortable: 'custom' },
           { prop: 'productsCode', label: '产品编码', minWidth: 180, sortable: 'custom' },
-          { prop: 'drawingNo', label: '品名规格', minWidth: 180, sortable: 'custom' },
+          { prop: 'productsDrawingNo', label: '品名规格', minWidth: 180, sortable: 'custom' },
           { prop: 'mainUnit', label: '单位', minWidth: 90, sortable: 'custom' },
           { prop: 'numStr', label: '数量', minWidth: 120, sortable: 'custom' },
           { prop: 'sampleNumStr', label: '样品量', minWidth: 120, sortable: 'custom' },
@@ -212,6 +253,7 @@ export default {
         ],
         listRequestObj: {
           quotationId: '',
+          productsId: '',
           pageNum: 1,
           pageSize: 20,
           orderItems: [
@@ -226,7 +268,7 @@ export default {
           ]
         },
         beforeSubmit: (data, paramsObj) => {
-          if (!data || !data.length) {
+          if (!data) {
             this.$message.error(`请进行询价信息选择！`)
             return false
           }
@@ -243,8 +285,24 @@ export default {
         productsCode: ['productsCode', 'productCode'],
         drawingNo: ['productsDrawingNo', 'productDrawingNo', 'drawingNo'],
         productsId: ['productsId', 'productId'],
+        lineId: ['id'],
+        taxRate: { value: '13' },
       },
     }
+  },
+  computed: {
+    computedLinesList() {
+      return this.linesList.map(item => {
+        // 计算未税价 = 报价 / (1 + 税率)
+        const excludingTaxAmounts = this.jnpf.numberFormat(
+          this.calcExcludingTaxAmounts(item.amounts, item.taxRate), 2);
+
+        return {
+          ...item,
+          excludingTaxAmounts,
+        };
+      });
+    },
   },
   methods: {
     async init(id = '', type) {
@@ -256,13 +314,51 @@ export default {
         this.refreshTableHeight()
       })
     },
-    handleCurrentChange(val) {
-      console.log("val ✈️ ", val)
+    calcExcludingTaxAmounts(amounts, taxRate) {
+      if (!amounts || !taxRate) return 0;
+      const rate = parseFloat(taxRate) / 100 || 0;
+      return amounts / (1 + rate);
+    },
+    handleCurrentChange(row) {
+      if (row) {
+        this.currentSelectedProduct = row;
+        this.currentSelectedIndex = this.linesList.findIndex(item => item.productsId === row.productsId);
+      }
     },
     selectProductRefOpenDialog() {
-      this.addProductProps.listRequestObj.quotationId = this.dataForm.id
-      this.$refs.ComSelectProductRef.openDialog()
+      this.addProductProps.listRequestObj.quotationId = this.dataForm.id;
+      this.addProductProps.listRequestObj.productsId = this.currentSelectedProduct.productsId;
+
+      this.$refs.ComSelectProductRef.openDialog();
     },
+    async submitAllProduct(id, data) {
+      if (!this.currentSelectedProduct || this.currentSelectedIndex === -1) {
+        this.$message.error('未找到对应的产品，请重新选择产品');
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        this.$message.error('未选择任何采购询价信息');
+        return;
+      }
+
+      const enquiryData = data[0].all;
+
+      const updatedProduct = {
+        ...this.linesList[this.currentSelectedIndex],
+        procurementAmounts: enquiryData.procurementAmounts,
+        sampleAmounts: enquiryData.sampleAmounts,
+        moldAmounts: enquiryData.moldAmounts,
+        moldAmounts11: enquiryData.moldAmounts,
+        deliveryDate: enquiryData.deliveryDate,
+        remark2: enquiryData.remark,
+      };
+
+      this.linesList.splice(this.currentSelectedIndex, 1, updatedProduct);
+
+      this.$message.success('采购询价信息已应用');
+    },
+
     async refreshTableHeight(...args) {
       if (args.length) await new Promise(resolve => setTimeout(resolve, 500))
       const mainRef = this.$refs.main
@@ -285,18 +381,6 @@ export default {
         this.linesList[dataOrIndex][prop] = value
       }
     },
-    async submitAllProduct(id, data) {
-      const newData = data.map(item => ({
-        ...this.createdObj(),
-        ...item.all,
-        productName: item.name,
-        productCode: item.code,
-        productsDrawingNo: item.drawingNo,
-        productsId: item.id,
-        cooperativePartnerProductId: item?.productsId || '',
-      }))
-      this.linesList = [...this.linesList, ...newData]
-    },
     async getDetail(id) {
       this.loading = true
       try {
@@ -314,26 +398,20 @@ export default {
         this.loading = false
       }
     },
-    async handleSubmit(type) {
+    async handleSubmit() {
       if (!this.linesList.length) return this.$message.error('无产品信息，请添加产品！')
       // 校验表单
       this.btnLoading = true
       const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
       const valid_2 = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
       if (!valid_1 || !valid_2) return this.btnLoading = false
-      this.dataForm.documentStatus = type
-      const deepParams = deepClone(this.dataForm)
-      const params = {
-        order: deepParams,
-        orderLineList: this.linesList,
-      }
-      let MSG = '提交成功'
+
       try {
         const apiMethod = quotationSale
-        const res = await apiMethod(params)
+        const res = await apiMethod(this.computedLinesList)
         const { msg } = res
         if (msg === 'Success') {
-          this.$message.success(MSG)
+          this.$message.success('报价成功')
           this.goBack()
         }
         this.btnLoading = false
@@ -343,7 +421,7 @@ export default {
     },
     goBack() {
       this.$emit('close', this.activeType);
-    }
+    },
   }
 }
 </script>
@@ -355,7 +433,7 @@ export default {
         <el-page-header @back="goBack" :content="title"/>
         <div class="options">
           <template>
-            <el-button type="success" :loading="btnLoading" @click="handleSubmit('submit')">
+            <el-button type="success" :loading="btnLoading" @click="handleSubmit">
               报价
             </el-button>
           </template>
@@ -375,7 +453,7 @@ export default {
             </div>
             <TableForm-product
               @input="contentChanges"
-              :value="linesList"
+              :value="computedLinesList"
               :hasToolbar="false"
               ref="tableForm"
               :tableItems="linesListItems"
@@ -398,9 +476,17 @@ export default {
                 <div class="tableTopContainer">
                   <div class="left">
                     <template>
-                      <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog">
+                      <el-button
+                        type="text"
+                        icon="el-icon-plus"
+                        @click="selectProductRefOpenDialog"
+                        :disabled="!currentSelectedProduct"
+                      >
                         选择采购询价
                       </el-button>
+                      <div v-if="currentSelectedProduct" class="selected-product-info">
+                        <span>已选中: {{ currentSelectedProduct.productsCode }} - {{ currentSelectedProduct.productsName }}</span>
+                      </div>
                     </template>
                   </div>
                   <div class="right">
@@ -420,3 +506,23 @@ export default {
     </div>
   </transition>
 </template>
+
+<style scoped>
+.selected-product-info {
+  display: inline-block;
+  margin-right: 15px;
+  padding: 5px 10px;
+  background-color: #f0f9ff;
+  border: 1px solid #c6e2ff;
+  border-radius: 4px;
+  color: #409eff;
+  font-size: 14px;
+}
+
+.tableTopContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+</style>

@@ -49,7 +49,7 @@ export default {
         }
       ],
       listQuery: {
-        orderStatus: "normal",
+        source: "rework",
       },
       btnList: buttonList,
       columnList: [],

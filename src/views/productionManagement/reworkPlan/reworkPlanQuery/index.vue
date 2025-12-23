@@ -19,8 +19,8 @@ export default {
             //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
             //   fixed: true // 是否在搜索栏显示
             // },
-            { prop: 'productionPlanNo', symbol: 'like', fixed: true },
             { prop: 'orderNo', symbol: 'like', fixed: true },
+            { prop: 'productionOrderNo', symbol: 'like', fixed: true },
           ],
           keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
@@ -39,8 +39,7 @@ export default {
         }
       ],
       listQuery: {
-        orderStatus: "normal",
-        classAttribute: "semi_finished",
+        source: "rework",
       },
       btnList: buttonList,
       columnList: [],

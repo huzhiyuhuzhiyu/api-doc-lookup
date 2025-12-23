@@ -97,7 +97,10 @@
                     <el-dropdown-item @click.native="downloadOrder(row.id)">
                       下载报价单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="quoteHandle(row.id)">
+                    <el-dropdown-item @click.native="handleAgainQuotation(row.id)" :disabled="row.quotationStatus === 'not_submit'">
+                      重新询价
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="quoteHandle(row.id)" :disabled="row.quotationStatus !== 'feedback_received'">
                       报价
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="handleSubmit(row.id)">
@@ -124,7 +127,7 @@
 </template>
 
 <script>
-import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation, submitSaleQuotation } from '@/api/salesManagement/index'
+import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation, submitSaleQuotation, saleAgainQuotation } from '@/api/salesManagement/index'
 import DepForm from './depForm'
 import QuoteForm from './quoteForm'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
@@ -326,6 +329,19 @@ export default {
   },
 
   methods: {
+    async handleAgainQuotation(id) {
+      try {
+        await getQueryConfirm(this, '确认重新询价吗？')
+
+        await saleAgainQuotation(id);
+        this.$message.success('重新询价成功');
+        this.initData()
+      } catch ( error ) {
+        if (error !== 'cancel') {
+          this.$message.error(error.message || '重新询价失败');
+        }
+      }
+    },
     async handleSubmit(id) {
       try {
         await getQueryConfirm(this, '确认提交报价单吗？')

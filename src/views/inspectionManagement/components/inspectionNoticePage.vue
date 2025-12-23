@@ -70,12 +70,12 @@
               </el-table-column>
             </template>
             <el-table-column label="操作" width="180" fixed="right">
-              <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="处理" :hasEdit="false" :hasDel="false">
-                  <el-button v-has="'inspection:confirm'" size="mini" type="text" @click.native="handleConfirm(scope.row)">
+              <template slot-scope="{row}">
+                <tableOpts @edit="addOrUpdateHandle(row, 'add')" editText="处理" :hasEdit="false" :hasDel="false">
+                  <el-button :disabled="row.status !== 'wait_confirmed'" v-has="'inspection:confirm'" size="mini" type="text" @click.native="handleConfirm(row)">
                     确认
                   </el-button>
-                  <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'look')">
+                  <el-button size="mini" type="text" @click.native="addOrUpdateHandle(row, 'look')">
                     查看详情
                   </el-button>
                 </tableOpts>

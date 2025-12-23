@@ -26,7 +26,12 @@ export function getColumns() {
       minWidth: 180
     },
     {
-      prop: "orderStatus",
+      prop: "productionOrderNo",
+      label: "生产订单号",
+      minWidth: 180
+    },
+    {
+      prop: "prodOrderStatus",
       label: "任务状态",
       minWidth: 160,
       slot: true,
@@ -58,9 +63,19 @@ export function getColumns() {
       minWidth: 160
     },
     {
-      prop: "completedQuantity",
+      prop: "completionQuantity",
       label: "已完成数量",
       minWidth: 160
+    },
+    {
+      prop: "processCode",
+      label: "工序编码",
+      minWidth: 120
+    },
+    {
+      prop: "processName",
+      label: "工序名称",
+      minWidth: 120
     },
     {
       prop: "routingName",

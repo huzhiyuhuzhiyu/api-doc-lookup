@@ -96,3 +96,29 @@ export function updateTaxFlag(data,taxFlag) {
     data
   })
 }
+
+// 采购物流对账 - 新增
+export function addLogisticsReceivable(data) {
+  return request({
+    url: `/api/erp/fin/logistics/accounts/receivable/add`,
+    method: 'post',
+    data
+  })
+}
+
+// 采购物流对账 - 删除
+export function deleteLogisticsReceivable(id) {
+  return request({
+    url: `/api/erp/fin/logistics/accounts/receivable/delete/${id}`,
+    method: 'delete'
+  })
+}
+
+// 采购物流对账 - 列表
+export function getLogisticsReceivableList(data) {
+  return request({
+    url: `/api/erp/fin/logistics/accounts/receivable/list`,
+    method: 'post',
+    data
+  })
+}

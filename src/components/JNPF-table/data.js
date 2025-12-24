@@ -151,6 +151,11 @@ export const getQueryProps = (column, queryJson = []) => {
       customEffectType: ['==', '<>'],
       options: global.booleanOptions
     }
+  } else if (column.label === '产线') {
+    props = {
+      type: 'select',
+      options: store.getters.productionLineList
+    }
   } else if (['数量', '数', '价', '库存', '金额', '成本', '毛利', '合计', '率'].some(item => getLabelKeyword(column.label, ['(主)', '(副)', '(含税)', '(不含税)', '(件)']).endsWith(item))) {
     props = {
       type: 'number',

@@ -53,7 +53,7 @@ export function getColumns() {
       minWidth: 160
     },
     {
-      prop: "stockGoodsShelvesName",
+      prop: "shelfSpaceName",
       label: "库位",
       minWidth: 160
     },

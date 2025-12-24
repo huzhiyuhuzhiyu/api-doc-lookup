@@ -6,21 +6,21 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <el-row class="JNPF-common-search-box" :gutter="16" v-if="!$store.getters.configData.warehouse.inventorySearcheListFlag">
             <el-form @submit.native.prevent>
-              <el-col :span="6">
+              <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="listQuery.batchNumber" placeholder="批次号" clearable
+                  <el-input v-model="listQuery.batchNumber" placeholder="请输入批次号" clearable
                     @keyup.enter.native="search()" />
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="4">
                 <el-form-item>
                   <el-input @keyup.native.enter="search()" v-model="listQuery.partnerName" placeholder="请输入供应商名称"
                     clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="6" v-if="productNameFlag == 1">
+              <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="listQuery.productName" placeholder="产品名称" clearable
+                  <el-input v-model="listQuery.shelfSpaceName" placeholder="请输入库位名称" clearable
                     @keyup.enter.native="search()" />
                 </el-form-item>
               </el-col>
@@ -68,7 +68,7 @@
               </el-col>
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="listQuery.stockGoodsShelvesName" placeholder="库位名称" clearable
+                  <el-input v-model="listQuery.shelfSpaceName" placeholder="库位名称" clearable
                     @keyup.enter.native="search()" />
                 </el-form-item>
               </el-col>
@@ -132,7 +132,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
-              <el-table-column prop="stockGoodsShelvesName" label="库位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
               <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
               <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
@@ -514,7 +514,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productCode' || prop == 'partnerCode' || prop == 'partnerName' || prop == 'productDrawingNo' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName' || prop == 'stockGoodsShelvesName' || prop == 'warehouseName') { newProp = prop }
+      if (prop === 'productCode' || prop == 'partnerCode' || prop == 'partnerName' || prop == 'productDrawingNo' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName' || prop == 'shelfSpaceName' || prop == 'warehouseName') { newProp = prop }
       else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp

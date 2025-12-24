@@ -1,24 +1,14 @@
 <script>
-import { buttonList, getColumns } from "../createPurchaseOrder/data";
+import { buttonList, getColumns } from "./data";
+import processCardForm from "../modules/processCardForm.vue";
+import { ordershengchanList } from "@/api/productOrdes";
 import { getPrintBusInfo } from "@/api/system/printDev";
-import Form from '../createPurchaseOrder/index.vue'
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
-import { deletePurPurchaseOrder, purchaseOrderList } from "@/api/purchasingAndOutsourcingOrders";
 
 export default {
   name: "index",
-  components: {
-    BatchPrintBrowse,
-    PrintDialog,
-    Form
-  },
-  props: {
-    queryObject: {
-      type: Object,
-      default: () => ({})
-    }
-  },
+  components: { processCardForm, PrintDialog, BatchPrintBrowse },
   data() {
     return {
       systemSearchView: [{
@@ -27,18 +17,10 @@ export default {
         conditionJson: { // 视图内容配置*
           condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
             // 这里放置系统原顶栏显示的查询元素，如：
-            // {
-            //   prop: 'createTime', // 属性*
-            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
-            //   symbol: 'between', // 比较符*
-            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
-            //   fixed: true // 是否在搜索栏显示
-            // },
             { prop: 'orderNo', symbol: 'like', fixed: true },
-            { prop: 'cooperativePartnerCode', symbol: 'like', fixed: true },
-            { prop: 'cooperativePartnerName', symbol: 'like', fixed: true },
+            { prop: 'productionPlanNo', symbol: 'like', fixed: true },
           ],
-          // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
+          keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
           orderItems: [
             {
@@ -48,33 +30,24 @@ export default {
           ]
         },
       }],
-      loading: false,
-      visible: false,
       printVisible: false,
-      printQuery: {
-        category: ''
-      },
+      printQuery: {},
       fullName: '',
       enCode: '',
+      loading: false,
       tableData: [],
       total: 0,
       superQueryJson: [
         {
           prop: 'orderType',
-          label: "订单类型",
+          label: "任务类型",
           type: 'select',
-          options: this.global.salesOrderType
-        },
-        {
-          prop: 'orderState',
-          label: "订单状态",
-          type: 'select',
-          options: this.global.salesOrderState
-        },
+          options: this.global.orderType
+        }
       ],
       listQuery: {
-        ...this.queryObject,
-        orderType: 'procure',
+        source: "normal",
+        classAttribute: "finish_product",
       },
       btnList: buttonList,
       columnList: [],
@@ -91,9 +64,8 @@ export default {
       this.loading = true
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
-
-        const res = await purchaseOrderList(this.listQuery);
-        const { total, records } = res.data
+        const res = await ordershengchanList(this.listQuery);
+        const { records, total } = res.data
         this.tableData = records;
         this.total = total
       } finally {
@@ -103,8 +75,9 @@ export default {
     closePrint() {
       this.printVisible = false
     },
-    printView(row, enCode, fullName) {
-      this.selectArr = [row]
+    printView(enCode, fullName) {
+      if (!this.selectedRow.length) return this.$message.error("请选择您要打印的数据!")
+      if (![1].includes(this.selectedRow.length)) return this.$message.error("打印只支持单条数据操作！")
       this.enCode = enCode
       this.fullName = fullName
       this.printVisible = true
@@ -113,13 +86,15 @@ export default {
       })
     },
     async printOrder(enCode) {
+      if (!this.selectedRow.length) return this.$message.error('请选择您要打印的数据!')
+      if (![1].includes(this.selectedRow.length)) return this.$message.error("打印只支持单条数据操作！")
       try {
         const res = await getPrintBusInfo(enCode)
         if (!res.data) {
           return this.$message.warning('未找到相应打印模版')
         }
         const id = res.data.id
-        const printData = this.selectArr.map(item => ({
+        const printData = this.selectedRow.map(item => ({
           formId: item.id,
           id: id
         }))
@@ -140,52 +115,25 @@ export default {
     },
     handleButtonClick(type) {
       switch ( type ) {
-        case 'add':
-          this.visible = true
-          this.$nextTick(() => {
-            this.$refs.Form.init('', type, this.listQuery.sourceList)
-          })
-          break;
         case 'print':
-          if (!this.validateSelectedRows()) return;
-          this.printView(this.selectedRow[0], 'p006', '打印');
-          break;
-      }
-    },
-    handleColumnClick(row, type) {
-      switch ( type ) {
-        case 'look':
-        case 'edit':
-        case 'copy':
-          this.visible = true
-          this.$nextTick(() => {
-            this.$refs.Form.init(row.id, type)
-          })
-          break;
-        case 'delete':
-          this.handleRemove(row.id)
+          this.printView('p048', '装配流转卡')
           break;
         default:
       }
     },
-    handleRemove(id) {
-      this.$confirm('您确定要删除这些数据吗, 是否继续？', '提示', {
-        type: 'warning'
-      }).then(async () => {
-        const res = await deletePurPurchaseOrder(id);
-        const { msg } = res
-        if (msg === 'Success') {
-          this.$message.success('删除成功')
-          this.initData()
-        }
-      }).catch(() => {
-      })
+    handleColumnClick(row, type) {
+      switch ( type ) {
+        case '':
+          break;
+        default:
+      }
     },
     close(isInitData = true) {
-      this.visible = false
-      this.BindingVisible = false
       if (!isInitData) return
       this.initData()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
     },
     getAlign(align) {
       return align || 'left'
@@ -213,7 +161,7 @@ export default {
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                       @click="$refs.dataTable.showDrawer()"/>
+                       @click="columnSetFun()"/>
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
@@ -222,7 +170,7 @@ export default {
           </div>
         </div>
         <JNPF-table
-          customKey="purchaseOrder"
+          customKey="purchaseProcessCard"
           v-loading="loading"
           :data="tableData"
           :has-c="true"
@@ -258,35 +206,10 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" width="180" fixed="right">
-            <template slot-scope="{ row }">
-              <el-button size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
-                         @click="handleColumnClick(row, 'edit')">
-                编辑
-              </el-button>
-              <el-button class="JNPF-table-delBtn" size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
-                         @click="handleColumnClick(row, 'delete')">
-                删除
-              </el-button>
-              <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
-                    查看详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </template>
-          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"/>
       </div>
     </div>
-    <Form ref="Form" v-if="visible" @close="close" :autoInit="false"/>
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
                  :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
     <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>

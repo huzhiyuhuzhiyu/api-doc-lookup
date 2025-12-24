@@ -38,6 +38,7 @@ export default {
                 paymentDateArr: [],
                 createTimeArr: [],
                 prePayFlag: 1,           //预收付款标识
+                sourceList: ['sale_order_finished_product','sale_order_material','sale_order_finished_material','procure'],
             },
             tableItems: [
                 { prop: 'partnerCode', label: '供应商编码',minWidth: '180', sortable: 'custom' },

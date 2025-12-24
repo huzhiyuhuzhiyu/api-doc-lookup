@@ -1,12 +1,20 @@
 <template>
-  <paymentIndex :reconciliationType="listRequestObj.reconciliationType" :listMethod="getfinAccountsReport"
-    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList" :searchListMore="searchListMore"
-    :superQueryJson="superQueryJson" :columnList="columnList" />
+  <paymentIndex
+    :reconciliationType="listRequestObj.reconciliationType"
+    :listMethod="getfinAccountsReport"
+    :listRequestObj="listRequestObj"
+    :tableItems="tableItems"
+    :searchList="searchList"
+    :searchListMore="searchListMore"
+    :superQueryJson="superQueryJson"
+    :columnList="columnList"
+  />
 </template>
 
 <script>
-import { getfinAccountList, getfinAccountDetail, getfinAccountsReport } from '@/api/ReconciliaRePayments/index'
+import { getfinAccountsReport } from '@/api/ReconciliaRePayments'
 import paymentIndex from '@/views/financialManagement/components/collect/index.vue'
+
 export default {
   name: 'purchasePayment',
   components: { paymentIndex },
@@ -44,7 +52,7 @@ export default {
         startUpdateTime: "",
         totalRowFlag: false,
         reconciliationDateArr: [],
-        sourceList: ['sale_order_finished_product','sale_order_material','sale_order_finished_material','procure'],
+        sourceList: ['factory', 'mrp', 'sale'],
       },
       tableItems: [
         { prop: 'orderNo', label: '对账流水号', minWidth: '180' },

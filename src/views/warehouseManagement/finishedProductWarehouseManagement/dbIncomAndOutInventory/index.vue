@@ -9,6 +9,7 @@ import { purPurchaseReceiptReturnGoodsList } from "@/api/purchasingAndOutsourcin
 import { getStockPickedPage } from "@/api/batchPacking";
 import { getStockPlanPalletPage } from "@/api/PackagingPalletPlan";
 import { ordershengchanList, WithdrawalList } from "@/api/productOrdes";
+import { waitChange } from "@/utils";
 
 // 组件导入
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
@@ -19,7 +20,6 @@ import PackingForm from './module/PackingForm.vue'
 import AutoRecBatchPacking from "./module/components/AutoRecBatchPacking.vue";
 import InboundForm from "./module/InboundForm.vue";
 import OutboundForm from "./module/OutboundForm.vue";
-
 
 export default {
   name: "WarehouseBusinessProcess",
@@ -66,6 +66,8 @@ export default {
       ],
 
       loading: false,
+      isSwitching: false,
+
       isBatchPackingDialogVisible: false,
       isPackingDialogVisible: false,
       isPrintDialogVisible: false,
@@ -90,15 +92,14 @@ export default {
   computed: {
     businessTypeConfig() {
       const classAttr = this.classAttributeList;
-      return {
-        // 生产产品入库
+
+      const baseConfigs = {
         inbound_order_production: {
           api: ordershengchanList,
           initListQuery: {
             approvalStatus: 'ok',
             stockFlag: true,
             progressFlag: true,
-            classAttributeList: classAttr
           },
         },
         // 生产领料出库
@@ -109,7 +110,6 @@ export default {
             approvalStatus: 'ok',
             notifyType: 'picking',
             pickingFlag: 1,
-            productClassAttributeList: classAttr
           },
         },
         // 销售发货出库 （销售发货出库 功能：装箱单&推荐批次）
@@ -164,7 +164,6 @@ export default {
             receiptInboundFlag: true,
             documentStatus: 'submit',
             approvalStatus: 'ok',
-            classAttributeList: classAttr
           },
         },
         // 采购退货出库
@@ -179,7 +178,6 @@ export default {
         outbound_external_send: {
           api: getQuotationdatasendlist,
           initListQuery: {
-            classAttributeList: classAttr,
             approvalStatus: 'ok',
           },
         },
@@ -188,7 +186,6 @@ export default {
           api: getQuotationdatasendlist,
           initListQuery: {
             inspectionStatus: 'inspected',
-            classAttributeList: classAttr,
             receiptReturnType: "back",
             approvalStatus: 'ok',
           },
@@ -211,10 +208,38 @@ export default {
             documentStatus: 'submit',
             approvalStatus: 'ok',
             receivingStatus: 'not_finished',
-            classAttributeList: classAttr,
           },
         },
+      };
+
+      // 特殊属性名配置
+      // key: 配置名称
+      // value: false 表示不需要添加 | string 表示使用特殊属性名 | 不配置表示使用默认的 'classAttributeList'
+      const attrConfig = {
+        outbound_pick_out: 'productClassAttributeList',
+        inbound_finished_package: false,
+      };
+
+      const result = {};
+      for (const [key, config] of Object.entries(baseConfigs)) {
+        const attrSetting = attrConfig[key];
+
+        if (attrSetting === false) {
+          result[key] = config;
+          continue;
+        }
+
+        const attrName = typeof attrSetting === 'string' ? attrSetting : 'classAttributeList';
+        result[key] = {
+          ...config,
+          initListQuery: {
+            ...config.initListQuery,
+            [attrName]: classAttr
+          }
+        };
       }
+
+      return result;
     },
     currentBusinessConfig() {
       return this.businessTypeConfig[this.activeBusinessType] || {};
@@ -242,9 +267,37 @@ export default {
     // 已装箱
     isRowPacked() {
       return (row) => row.packingStatus === 'boxed' && row.deliveryStatus === 'arranged';
-    }
+    },
   },
   methods: {
+    async loadTableData(customQuery) {
+      if (customQuery) this.listQuery = customQuery;
+
+      if (!this.listQuery?.pageSize) {
+        this.$message.error('请先等待视图加载完成！');
+        return;
+      }
+      const loadIdentifier = +new Date();
+      this.currentLoadIdentifier = loadIdentifier;
+
+      this.loading = true;
+      try {
+        if (!this.isPageInitialized) {
+          await this.initializePageData();
+        }
+
+        if (loadIdentifier !== this.currentLoadIdentifier) return;
+        const response = await this.currentBusinessConfig.api(this.listQuery);
+        const { total, records } = response.data;
+
+        this.tableData = records;
+        this.totalCount = total;
+      } finally {
+        this.loading = false;
+        this.isSwitching = false;
+      }
+    },
+
     async initializePageData() {
       await this.loadClassAttributes();
       await this.loadBusinessProcesses();
@@ -271,6 +324,9 @@ export default {
       const config = this.currentBusinessConfig;
       if (!config) return;
 
+      this.isSwitching = true;
+      this.tableData = [];
+
       this.updateInterfaceConfiguration(businessType);
       this.initializeQueryParameters(config);
       this.adjustTableLayout();
@@ -286,7 +342,11 @@ export default {
       this.listQuery = structuredClone(config.initListQuery);
     },
 
-    adjustTableLayout() {
+    async adjustTableLayout() {
+      await waitChange(() => {
+        return this.tableData.length > 0
+      })
+
       this.calculateOperationButtonsWidth();
       this.$nextTick(() => {
         this.$refs.dataTable.doLayout();
@@ -304,33 +364,6 @@ export default {
           this.operationButtonsWidth = totalWidth + (buttons.length * 10) + 20;
         }
       });
-    },
-
-    async loadTableData(customQuery) {
-      if (customQuery) this.listQuery = customQuery;
-
-      if (!this.listQuery?.pageSize) {
-        this.$message.error('请先等待视图加载完成！');
-        return;
-      }
-      const loadIdentifier = +new Date();
-      this.currentLoadIdentifier = loadIdentifier;
-
-      this.loading = true;
-      try {
-        if (!this.isPageInitialized) {
-          await this.initializePageData();
-        }
-
-        if (loadIdentifier !== this.currentLoadIdentifier) return;
-        const response = await this.currentBusinessConfig.api(this.listQuery);
-        const { total, records } = response.data;
-
-        this.tableData = records;
-        this.totalCount = total;
-      } finally {
-        this.loading = false;
-      }
     },
 
     validateRowSelection() {
@@ -497,9 +530,9 @@ export default {
 
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center  JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="business-process-container JNPF-common-search-box">
-        <el-radio-group v-model="activeBusinessType" @change="handleBusinessTypeChange">
+        <el-radio-group v-model="activeBusinessType" @change="handleBusinessTypeChange" :disabled="isSwitching">
           <template v-for="(process, index) in availableBusinessTypes">
             <el-badge :value="process.pendingCount" :max="99" :key="index" :hidden="!process.pendingCount">
               <el-radio-button :label="process.businessType">
@@ -509,7 +542,7 @@ export default {
           </template>
         </el-radio-group>
       </div>
-      <JNPF-tableQuery :key="`search-${activeBusinessType}`" :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
+      <JNPF-tableQuery :key="`search-${activeBusinessType}`" ref="tableQuery" :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
           <div class="JNPF-common-head-left">

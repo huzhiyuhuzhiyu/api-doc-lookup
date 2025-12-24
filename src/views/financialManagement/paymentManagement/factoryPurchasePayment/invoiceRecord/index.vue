@@ -1,15 +1,21 @@
 <template>
-  <paymentIndex :reconciliationType="listRequestObj.reconciliationType" :listMethod="getfinInvoiceReport"
-    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList" :superQueryJson="superQueryJson"
-    :columnList="columnList" />
+  <paymentIndex
+    :reconciliationType="listRequestObj.reconciliationType"
+    :listMethod="getfinInvoiceReport"
+    :listRequestObj="listRequestObj"
+    :tableItems="tableItems"
+    :searchList="searchList"
+    :superQueryJson="superQueryJson"
+    :columnList="columnList"
+  />
 </template>
 
 <script>
-import { getfinAccountList, getfinAccountDetail, getfinAccountsReport } from '@/api/ReconciliaRePayments/index'
-import { getfinInvoiceReport } from '@/api/financialManagement/index'
+import { getfinInvoiceReport } from '@/api/financialManagement'
 import paymentIndex from '@/views/financialManagement/components/collect/invoiceRecord.vue'
+
 export default {
-  name: 'purchasePayment',
+  name: 'invoiceRecord',
   components: { paymentIndex },
   data() {
     return {
@@ -46,7 +52,7 @@ export default {
         startUpdateTime: "",
         totalRowFlag: false,
         reconciliationDateArr: [],
-        sourceList: ['sale_order_finished_product','sale_order_material','sale_order_finished_material','procure'],
+        sourceList: ['factory', 'mrp', 'sale'],
       },
       tableItems: [
         { prop: 'orderNo', label: '对账单号', minWidth: '180', sortable: true },
@@ -56,7 +62,14 @@ export default {
         { prop: 'invoiceDate', label: '开票日期', width: '120', sortable: true },
         { prop: 'invoiceCode', label: '发票代码', width: '120', sortable: true },
         { prop: 'invoiceNumber', label: '发票号码', width: '120', sortable: true },
-        { prop: 'inventoryStatus', label: '入账状态', width: '120', type: 'select', sortable: true, options: [{ label: '已入账', value: 'already_credited' }, { label: '未入账', value: 'not_credited' }] },
+        {
+          prop: 'inventoryStatus',
+          label: '入账状态',
+          width: '120',
+          type: 'select',
+          sortable: true,
+          options: [{ label: '已入账', value: 'already_credited' }, { label: '未入账', value: 'not_credited' }]
+        },
         { prop: 'remark', label: '备注' },
         { prop: 'createTime', label: '创建时间', minWidth: '180', sortable: true },
         { prop: 'createByName', label: '创建人', sortable: true, width: 100 },

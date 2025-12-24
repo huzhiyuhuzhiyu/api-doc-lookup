@@ -1,13 +1,20 @@
 <template>
-  <paymentIndex :reconciliationType="listRequestObj.reconciliationType" :listMethod="getfinAccountsReport"
-    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList" :searchListMore="searchListMore" />
+  <paymentIndex
+    :reconciliationType="listRequestObj.reconciliationType"
+    :listMethod="getfinAccountsReport"
+    :listRequestObj="listRequestObj"
+    :tableItems="tableItems"
+    :searchList="searchList"
+    :searchListMore="searchListMore"
+  />
 </template>
 
 <script>
-import { getfinAccountList, getfinAccountDetail, getfinAccountsReport } from '@/api/ReconciliaRePayments/index'
+import { getfinAccountsReport } from '@/api/ReconciliaRePayments'
 import paymentIndex from '@/views/financialManagement/components/pay/index.vue'
+
 export default {
-  name: 'purchasePayment',
+  name: 'factoryPayment',
   components: { paymentIndex },
   data() {
     return {
@@ -44,22 +51,18 @@ export default {
         startUpdateTime: "",
         totalRowFlag: false,
         reconciliationDateArr: [],
-        sourceList: ['sale_order_finished_product','sale_order_material','sale_order_finished_material','procure'],
+        sourceList: ['factory', 'mrp', 'sale'],
       },
       tableItems: [
         { prop: 'orderNo', label: '对账流水号', minWidth: '180', sortable: 'custom' },
-        { prop: 'cooperativePartnerName', label: '供应商名称',minWidth: '160', sortable: 'custom' },
-        { prop: 'cooperativePartnerCode', label: '供应商编码',minWidth: '160', sortable: 'custom' },
+        { prop: 'cooperativePartnerName', label: '供应商名称', minWidth: '160', sortable: 'custom' },
+        { prop: 'cooperativePartnerCode', label: '供应商编码', minWidth: '160', sortable: 'custom' },
         { prop: 'reconciliationDate', label: '对账日期', minWidth: '180', sortable: 'custom' },
-        { prop: 'includingTaxAmount', label: '出入库金额',minWidth: '160', sortable: 'custom' },
+        { prop: 'includingTaxAmount', label: '出入库金额', minWidth: '160', sortable: 'custom' },
         { prop: 'totalReconciliationAmount', label: '应付金额', sortable: 'custom' },
-        { prop: 'totalPaymentAmount', label: '已付款金额',minWidth: '160', sortable: 'custom' },
-        { prop: 'totalUnpaidAmount', label: '未付款金额',minWidth: '160', sortable: 'custom' },
-        // { prop: 'totalInvoicingAmount', label: '已收票金额' },
-        // { prop: 'totalNotInvoicedAmount', label: '未收票金额' },
+        { prop: 'totalPaymentAmount', label: '已付款金额', minWidth: '160', sortable: 'custom' },
+        { prop: 'totalUnpaidAmount', label: '未付款金额', minWidth: '160', sortable: 'custom' },
         { prop: 'remark', label: '备注' },
-        // { prop: 'createTime', label: '创建时间', minWidth: '180' },
-        // { prop: 'createByName', label: '创建人' },
       ],
       searchList: [
         { prop: 'paymentStatus', label: '付款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
@@ -76,9 +79,6 @@ export default {
       ],
     }
   },
-  created() {
-  },
-
 }
 </script>
 

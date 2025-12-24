@@ -482,6 +482,38 @@ export default {
             }
           ]
         },
+        {
+          prop: 'responsibilityWasteQuantity',
+          label: '责废数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.isFinished,
+        },
+        {
+          prop: 'materialWasteQuantity',
+          label: '料废数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.isFinished,
+        },
+        {
+          prop: 'reworkQuantity',
+          label: '返工数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.isFinished,
+        },
+        {
+          prop: 'lossQuantity',
+          label: '散失数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.isFinished,
+        },
         // {
         //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 6, multiple: true,
         //   render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
@@ -1123,6 +1155,10 @@ export default {
         return this.title === '生产巡检' ? '新建' : '只读'
       }
       return this.title.substr(0, 2) == '检验' ? '新建' : '只读'
+    },
+    // 是否为完工检验
+    isFinished() {
+      return this.inspectionType === 'finished'
     },
     ...mapGetters(['userInfo'])
   }

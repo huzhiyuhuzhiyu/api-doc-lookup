@@ -341,12 +341,12 @@ export default {
     this.autoInit && this.init('', 'add')
   },
   methods: {
-    async init(id = '', type, source) {
+    async init(id = '', type, sourceList) {
       this.btnType = type
       this.title = this.getTitle(type)
       this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
       this.otherFormSchema = getOtherFormSchema(this.$refs.dataForm, this)
-      this.dataForm.source = source
+      this.dataForm.source = sourceList[0] || ''
       // this.paymentFormSchema = getPaymentFormSchema(this.$refs.dataForm, this)
       this.getBusInfo('b009')
       if (id && this.actions[type]) {

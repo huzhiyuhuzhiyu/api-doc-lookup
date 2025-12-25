@@ -43,7 +43,7 @@ export default {
     }
   },
   async created() {
-    await this.loadApprovalConfig('b064');
+    await this.loadApprovalConfig(['b064']);
   },
   methods: {
     async initData(listQuery) {

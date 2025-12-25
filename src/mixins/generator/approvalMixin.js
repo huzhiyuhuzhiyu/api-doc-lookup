@@ -12,15 +12,40 @@ export const approvalMixin = {
   },
   methods: {
     /**
-     * 加载审批配置
-     * @param {string} businessCode - 业务编码，默认为 ''
+     * 加载审批配置（支持多个编码）
+     * @param {Array<string>} businessCodes - 业务编码数组
      */
-    async loadApprovalConfig(businessCode = '') {
+    async loadApprovalConfig(businessCodes = []) {
       try {
-        const res = await this.jnpf.getBusInfo(businessCode);
-        console.log("res ✈️ ", res)
-        this.isApprovalEnabled = res?.enabledMark || false;
-      } catch ( error ) {
+        if (!businessCodes || businessCodes.length === 0) {
+          this.isApprovalEnabled = false;
+          return;
+        }
+
+        const uniqueCodes = [...new Set(businessCodes.filter(code => code))];
+
+        if (uniqueCodes.length === 0) {
+          this.isApprovalEnabled = false;
+          return;
+        }
+
+        const promises = uniqueCodes.map(code => this.jnpf.getBusInfo(code));
+        const results = await Promise.all(promises);
+
+        this.isApprovalEnabled = results.every(res => res?.enabledMark === true);
+
+        console.log("审批配置检查结果:", {
+          codes: uniqueCodes,
+          results: results.map((r, i) => ({
+            code: uniqueCodes[i],
+            enabled: r?.enabledMark,
+            data: r
+          })),
+          isApprovalEnabled: this.isApprovalEnabled
+        });
+
+      } catch (error) {
+        console.error("加载审批配置失败:", error);
         this.isApprovalEnabled = false;
       }
     },

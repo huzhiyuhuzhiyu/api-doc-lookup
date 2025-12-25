@@ -11,24 +11,26 @@
       <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading" @click="submit()">
         {{ $t('common.submitButton') }}</el-button>
     </span>
-    <PrintDialogPro ref="PrintDialogPro" />
   </el-dialog>
 </template>
 <script>
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue' // 附带产品多选的表格表单组件
 import { getCooperativeData, getGroupDataInfo } from '@/api/basicData/index.js'
-import { splitCardTaskExec, splitCardTaskListBy } from '@/api/productOrdes/index.js'
-import PrintDialogPro from '@/components/no_mount/PrintDialogPro/index.vue'
 import { getcategoryTrees } from "@/api/salesManagement/assemblyOrders";
+import { addLogisticsReceivable } from "@/api/ReconciliaRePayments";
 
 export default {
-  components: { TableFormProduct, PrintDialogPro },
+  components: { TableFormProduct },
   data() {
     return {
       formLoading: false,
       btnType: 'add',
       btnLoading: false,
-      dataForm: {},
+      dataForm: {
+        pickMaterial: '',
+        deliveryMaterial: '',
+        freight: '',
+      },
       dataFormItems: [
         {
           prop: "cooperatorPartnerName",
@@ -89,17 +91,30 @@ export default {
           },
           render: true
         },
-        { prop: 'logisticsMode', label: '物流方式', type: 'input' },
-        { prop: 'weight', label: "重量", type: 'input' },
-        { prop: 'pickMaterial', label: "提货", type: 'input' },
-        { prop: 'deliveryMaterial', label: "送货", type: 'input' },
-        { prop: 'freight', label: "运费", type: 'input' },
-        { prop: 'date', label: "日期", type: 'date' },
+        { prop: 'logisticsMode', label: '物流方式', value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }], },
+        { prop: 'weight', label: "重量", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }], },
+        { prop: 'pickMaterial', label: "提货费", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }, { validator: this.formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }], },
+        { prop: 'deliveryMaterial', label: "送货费", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }, { validator: this.formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }], },
+        { prop: 'freight', label: "运费", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }, { validator: this.formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }], },
+        { prop: 'date', label: "日期", value: this.jnpf.getToday(), type: 'date', itemRules: [{ required: true, trigger: 'change' }], },
+        { prop: 'totalAmount', label: "总金额", value: 0, type: 'input', itemDisabled: true },
       ],
     }
   },
+  watch: {
+    'dataForm.pickMaterial'() { this.updateTotalAmount() },
+    'dataForm.deliveryMaterial'() { this.updateTotalAmount() },
+    'dataForm.freight'() { this.updateTotalAmount() }
+  },
   methods: {
     init() {
+    },
+    updateTotalAmount() {
+      this.dataForm.totalAmount = this.jnpf.math('+', [
+        this.dataForm.pickMaterial,
+        this.dataForm.deliveryMaterial,
+        this.dataForm.freight
+      ])
     },
     // 提交
     async submit() {
@@ -116,8 +131,8 @@ export default {
 
       // 判断条件后发送请求
       if (submitFlag) {
-        const _data = {}
-        splitCardTaskExec(_data).then(res => {
+        const _data = this.dataForm
+        addLogisticsReceivable(_data).then(res => {
           this.$message.success('操作成功')
           setTimeout(() => {
             this.$emit('close', true)

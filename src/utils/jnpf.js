@@ -479,9 +479,11 @@ const jnpf = {
   },
   // 数值格式化 numberFormat(<格式化的数值>, <保留的小数位>)
   numberFormat(number, decimalDigits = 2) {
-    var formatted = parseFloat(number).toFixed(decimalDigits).replace(/\.?0+$/, "");
-    formatted = isNaN(formatted) ? 0 : Number(formatted)
-    return formatted;
+    const pow = Math.pow(10, decimalDigits)
+    let formatted = Math.round(parseFloat(number).toFixed(decimalDigits + 2) * pow) / pow;
+    if (!isNaN(formatted)) return Number(formatted)
+    console.error('numberFormat 格式化数值错误', number, decimalDigits)
+    return 0
   },
   // 特定特殊字符转码，用于浏览器解析
   specialCodeUrl(str) {

@@ -8,5 +8,5 @@ export default {
 </script>
 
 <template>
-  <purReconciliation :query-object="{ sourceList: ['procure'] }"/>
+  <purReconciliation :query-object="{ sourceList: ['procure'], reconciliationType: 'payable_logistics' }"/>
 </template>

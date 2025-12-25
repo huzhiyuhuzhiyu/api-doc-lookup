@@ -74,7 +74,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange" 
+          <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange"
           :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_978684">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
@@ -416,7 +416,7 @@ export default {
         pageSize: 20,
         receiptReturnType: 'receipt',
         // receivingStatus: 'finished', //收货状态
-        classAttribute: 'other',
+        // classAttribute: 'other',
         salesman: '', // 业务员
         orderItems: [
           {
@@ -649,7 +649,7 @@ export default {
     handleBatch() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条检验数据')
 
-    
+
       this.btnLoading = false
       this.analyseDialog = true
     },

@@ -32,27 +32,9 @@ export function getColumns() {
       minWidth: 120,
     },
     {
-      prop: "orderDate",
-      label: "单据日期",
+      prop: "deliverDate",
+      label: "收货日期",
       minWidth: 160,
-    },
-    {
-      prop: "businessType",
-      label: "业务类型",
-      minWidth: 120,
-      slot: true,
-      dictType: 'warehouseBusinessType',
-    },
-    {
-      prop: "orderNo",
-      label: "单号",
-      minWidth: 180,
-      slot: true,
-    },
-    {
-      prop: "sourceNo",
-      label: "来源单号",
-      minWidth: 180,
     },
     {
       prop: "productCode",
@@ -65,7 +47,7 @@ export function getColumns() {
       minWidth: 220
     },
     {
-      prop: "drawingNo",
+      prop: "productDrawingNo",
       label: "产品型号",
       minWidth: 220
     },
@@ -75,12 +57,12 @@ export function getColumns() {
       minWidth: 80
     },
     {
-      prop: "batchNumber",
+      prop: "saleOrderNo",
       label: "批次号",
       minWidth: 160
     },
     {
-      prop: "num",
+      prop: "purchaseQuantity",
       label: "数量",
       minWidth: 160
     },
@@ -88,16 +70,6 @@ export function getColumns() {
       prop: "waitSplitQuantity",
       label: "可分卡数量",
       minWidth: 160
-    },
-    {
-      prop: "warehouseName",
-      label: "仓库名称",
-      minWidth: 160,
-    },
-    {
-      prop: "shelfSpaceName",
-      label: "库位",
-      minWidth: 160,
     },
     {
       prop: "documentStatus",

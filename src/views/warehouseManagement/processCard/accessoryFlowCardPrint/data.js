@@ -32,13 +32,6 @@ export function getColumns() {
       minWidth: 120,
     },
     {
-      prop: "businessType",
-      label: "业务类型",
-      minWidth: 180,
-      slot: true,
-      dictType: "warehouseBusinessType"
-    },
-    {
       prop: "productCode",
       label: "产品编码",
       minWidth: 220

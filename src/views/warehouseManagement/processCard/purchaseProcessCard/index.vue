@@ -1,7 +1,7 @@
 <script>
 import { buttonList, getColumns } from "./data";
-import { getInventorySummaryData } from "@/api/warehouseManagement/inventory";
 import processCardForm from "../modules/processCardForm.vue";
+import { purPurchaseReceiptReturnGoodsDetailList } from "@/api/purchasingManagement/purchaseInquirySheet";
 
 export default {
   name: "index",
@@ -37,8 +37,6 @@ export default {
       loading: false,
       processCardFormVisible: false,
       processCardFormData: {},
-      apiTotalData: {},
-      summaryMapping: {},
       tableData: [],
       total: 0,
       superQueryJson: [
@@ -50,7 +48,11 @@ export default {
         }
       ],
       listQuery: {
-        businessType: 'inbound_purchase'
+        receiptReturnType: "receipt",
+        notificationType: "procure",
+        sourceList: ["factory", "mrp", "sale"],
+        classTypeList: ["outer_ring_blank", "inner_ring_blank"],
+        transferCardFlag: true
       },
       btnList: buttonList,
       columnList: [],
@@ -67,11 +69,10 @@ export default {
       this.loading = true
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
-        const res = await getInventorySummaryData(this.listQuery);
-        const { page, total } = res.data
-        this.tableData = page.records;
-        this.total = page.total
-        this.apiTotalData = total
+        const res = await purPurchaseReceiptReturnGoodsDetailList(this.listQuery);
+        const { records, total } = res.data
+        this.tableData = records;
+        this.total = total
       } finally {
         this.loading = false
       }

@@ -292,7 +292,7 @@ export function insertOutOrder(data) {
 // 流转卡分卡(采购收货)
 export function divideTransferCard(data) {
   return request({
-    url: `/api/wms/stock/move/transfer/card/dividing`,
+    url: `/api/erp/purPurchaseReceiptReturnGoods/transfer/card/dividing`,
     method: 'post',
     data
   })

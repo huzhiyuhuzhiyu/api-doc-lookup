@@ -54,9 +54,9 @@ export default {
         this.updateDataFormItems()
         const { waitSplitQuantity, id } = this.formData;
         this.dataForm = {
+          id,
           waitSplitQuantity,
           splitQuantity: waitSplitQuantity,
-          stockMoveWarehouseLineId: id,
           productionLineId: '',
           routingId: '',
           routingName: '',

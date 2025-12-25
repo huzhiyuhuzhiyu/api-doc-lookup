@@ -58,11 +58,11 @@
               rowKey: 'id',
               defaultExpandAll: true,
               customColumn: true,
-              customKey: 'typingEditTable'}"
+              customKey: 'typingEditTable'
+        }"
       >
         <template slot="actions">
-          <el-table-column label="操作" width="100" fixed="right" key="actions"
-          >
+          <el-table-column label="操作" width="100" fixed="right" key="actions">
             <template slot-scope="{row}">
               <el-button size="mini" type="text" @click="toggleTyping(row)">
                 {{ row.noTyping ? '恢复打字' : '不打字' }}
@@ -85,7 +85,7 @@
 import TableFormProduct from "@/components/no_mount/TableForm-product/index.vue";
 
 export default {
-  components: {TableFormProduct},
+  components: { TableFormProduct },
   props: {
     visible: {
       type: Boolean,
@@ -175,26 +175,37 @@ export default {
   watch: {
     visible(newVal) {
       this.dialogVisible = newVal
+      if (newVal) {
+        this.updateLinesList('init')
+      }
       this.$nextTick(() => {
         this.refreshTableHeight()
-        this.updateLinesList('init')
       })
     }
   },
   methods: {
+    extractBatchNumber(fullString) {
+      const quotedContent = fullString.match(/"([^"]+)"/)?.[1];
+      if (!quotedContent) return '';
+
+      const parts = quotedContent.split(' ');
+      return parts.length > 0 ? parts[parts.length - 1] : '';
+    },
     updateLinesList(type) {
       const template = this.templates.find(t => t.value === this.selectedTemplate);
       this.linesList = (type === 'init' ? this.linesFormList : this.linesList).map(item => {
+        const sealingCoverTyping = this.extractBatchNumber(item.sealingCoverTyping)
         const content = item.noTyping
           ? '不打字'
-          : `"${ template.prefix } ${ template.model } ${ template.batch } ${ item.sealingCoverTyping }"${ item.sealingCoverTyping ? '四等分' : '三等分' }`;
+          : `"${ template.prefix } ${ template.model } ${ template.batch } ${ sealingCoverTyping }"${ sealingCoverTyping ? '四等分' : '三等分' }`;
         return {
           ...item,
           content1: template.prefix,
           content2: template.model,
           content3: template.batch,
           noTyping: item.sealingCoverTyping === '',
-          content: content
+          sealingCoverTyping,
+          content
         };
       });
     },
@@ -220,6 +231,7 @@ export default {
       row.noTyping = !row.noTyping;
       if (row.noTyping) {
         row.content = '不打字';
+        row.sealingCoverTyping = ''
       } else {
         this.updateRowContent(row);
       }
@@ -240,15 +252,10 @@ export default {
     },
 
     handleConfirm() {
-      const confirmedList = this.linesList.map(item => {
-        if (item.noTyping) {
-          return {
-            ...item,
-            sealingCoverTyping: ''
-          };
-        }
-        return item;
-      });
+      const confirmedList = this.linesList.map(item => ({
+        ...item,
+        sealingCoverTyping: item.noTyping ? '' : item.content
+      }));
 
       this.$emit('update:visible', false);
       this.$emit('confirm', confirmedList);

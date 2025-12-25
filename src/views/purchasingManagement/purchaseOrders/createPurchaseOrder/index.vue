@@ -344,7 +344,16 @@ export default {
     async init(id = '', type, sourceList) {
       this.btnType = type
       this.title = this.getTitle(type)
+      const cooperativePartnerType = sourceList.includes('factory') ? 'factory_supplier' : 'supplier';
       this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
+        .map(item => item.prop === 'cooperativePartnerName'
+          ? {
+            ...item,
+            methodArr: { ...item.methodArr, requestObj: { ...item.methodArr.requestObj, type: cooperativePartnerType } },
+            listRequestObj: { ...item.listRequestObj, type: cooperativePartnerType }
+          }
+          : item
+        );
       this.otherFormSchema = getOtherFormSchema(this.$refs.dataForm, this)
       this.dataForm.source = sourceList[0] || ''
       // this.paymentFormSchema = getPaymentFormSchema(this.$refs.dataForm, this)

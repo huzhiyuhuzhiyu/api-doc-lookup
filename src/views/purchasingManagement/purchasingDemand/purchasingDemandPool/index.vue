@@ -436,6 +436,11 @@ export default {
       bimProductAttributesList:{}
     }
   },
+  computed: {
+    isFactory() {
+      return this.listQuery.sourceList.includes('factory')
+    }
+  },
   mounted() {
     this.getProductClassFun()
   },
@@ -796,7 +801,7 @@ export default {
       console.log("this.selectData ✈️ ", this.selectData)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool')
+        this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool', this.isFactory)
       })
     },
 

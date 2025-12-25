@@ -134,27 +134,27 @@
                       v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
                     <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
-                    <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"
-                      v-if="isProportionSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                          v-model="scope.row.weight" placeholder="重量"></el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="proportion" label="比重" min-width="140" :key="727"
-                      v-if="isProportionSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                          v-model="scope.row.proportion" placeholder="比重"></el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"
-                      v-if="isProportionSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                          v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
-                      </template>
-                    </el-table-column>
+<!--                    <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"-->
+<!--                      v-if="isProportionSwitch === '1'">-->
+<!--                      <template slot-scope="scope">-->
+<!--                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"-->
+<!--                          v-model="scope.row.weight" placeholder="重量"></el-input>-->
+<!--                      </template>-->
+<!--                    </el-table-column>-->
+<!--                    <el-table-column prop="proportion" label="比重" min-width="140" :key="727"-->
+<!--                      v-if="isProportionSwitch === '1'">-->
+<!--                      <template slot-scope="scope">-->
+<!--                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"-->
+<!--                          v-model="scope.row.proportion" placeholder="比重"></el-input>-->
+<!--                      </template>-->
+<!--                    </el-table-column>-->
+<!--                    <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"-->
+<!--                      v-if="isProportionSwitch === '1'">-->
+<!--                      <template slot-scope="scope">-->
+<!--                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"-->
+<!--                          v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>-->
+<!--                      </template>-->
+<!--                    </el-table-column>-->
                     <el-table-column prop="receivedQuantity" label="收货数量" min-width="170"
                       v-if="!dataForm.exchangeGoodsFlag" key="789">
                       <template slot="header">

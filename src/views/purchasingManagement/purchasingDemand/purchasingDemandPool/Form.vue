@@ -1243,10 +1243,13 @@ export default {
         goBack() {
             this.$emit('close')
         },
-        init(data, classAttributeFlag, type) {
+        init(data, classAttributeFlag, type, isFactory) {
             this.formLoading = true
             this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
             this.purchasingType = type
+            const partnerType = isFactory ? 'factory_supplier' : 'supplier'
+            this.PartnerListRequestObj.type = partnerType
+            this.PartnerMethodArr.requestObj.type = partnerType
             data.forEach((item) => {
                 if (item.productDrawingNo) {
                     item.productDrawingNo = item.productDrawingNo

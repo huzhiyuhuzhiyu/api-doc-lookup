@@ -1,5 +1,5 @@
-import {getcategoryTree} from "@/api/basicData/materialSettings";
-import {getHsProductsList} from "@/api/shipmentNote/hsCodes";
+import { getcategoryTree } from "@/api/basicData/materialSettings";
+import { getHsProductsList } from "@/api/shipmentNote/hsCodes";
 
 /**
  * @description 成品型号表单数据
@@ -12,7 +12,8 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       itemDisabled: true,
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
+      maxlength: 999,
       sm: 12
     },
     {
@@ -20,7 +21,8 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "产品名称",
       value: "",
       type: "input",
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
+      maxlength: 999,
       sm: 12
     },
     {
@@ -28,7 +30,8 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "型号",
       value: "",
       type: "input",
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
+      maxlength: 999,
       sm: 12
     },
     {
@@ -37,9 +40,9 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "custom",
       customComponent: "ComSelect-list",
-      itemRules: [{required: true, message: "请选择产品分类", trigger: "no"}],
+      itemRules: [{ required: true, message: "请选择产品分类", trigger: "no" }],
       method: getcategoryTree,
-      requestObj: {classAttribute: context.dataForm.classAttribute},
+      requestObj: { classAttribute: context.dataForm.classAttribute },
       change: (val, data) => {
         // dom更新后重新校验此元素
         context.$nextTick(() => {
@@ -60,7 +63,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       type: "select",
       options: context.$store.getters.productionLineList,
       sm: 12,
-      itemRules: [{required: true, trigger: "change"}],
+      itemRules: [{ required: true, trigger: "change" }],
     },
     {
       prop: "productSource",
@@ -69,7 +72,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       type: "select",
       options: context.global.productSource,
       sm: 12,
-      itemRules: [{required: true, trigger: "change"}],
+      itemRules: [{ required: true, trigger: "change" }],
     },
     {
       prop: "hsProductsName",
@@ -83,9 +86,9 @@ export function getBasicFormSchema(dataFormRef, context) {
       clearable: true,
       listMethod: getHsProductsList,
       tableItems: [
-        {prop: 'code', label: 'HS编码', minWidth: '220px', sortable: 'custom'},
-        {prop: 'name', label: '商品名称', sortable: 'custom'},
-        {prop: 'type', label: '类型', sortable: 'custom'},
+        { prop: 'code', label: 'HS编码', minWidth: '220px', sortable: 'custom' },
+        { prop: 'name', label: '商品名称', sortable: 'custom' },
+        { prop: 'type', label: '类型', sortable: 'custom' },
       ],
       listRequestObj: {
         pageNum: 1,
@@ -102,7 +105,7 @@ export function getBasicFormSchema(dataFormRef, context) {
         ]
       },
       searchList: [
-        {prop: 'code', label: 'HS编码', type: 'input'},
+        { prop: 'code', label: 'HS编码', type: 'input' },
       ],
       change: (id, data) => {
         // dom更新后重新校验此元素
@@ -195,7 +198,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       type: "select",
       options: [],
       sm: 12,
-      itemRules: [{required: true, trigger: "change"}],
+      itemRules: [{ required: true, trigger: "change" }],
     },
     {
       prop: "sealingCoverTyping",

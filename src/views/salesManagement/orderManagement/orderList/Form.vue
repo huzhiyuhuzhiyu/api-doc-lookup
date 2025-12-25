@@ -248,7 +248,7 @@ export default {
           prop: 'sealingCoverTyping',
           label: '打字内容',
           type: 'view',
-          minWidth: 180,
+          minWidth: 220,
         },
         {
           prop: 'packagingMethod',

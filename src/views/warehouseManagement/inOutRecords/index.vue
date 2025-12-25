@@ -46,12 +46,12 @@ export default {
       tableData: [],
       total: 0,
       superQueryJson: [
-        // {
-        //   prop: 'businessType',
-        //   label: '业务类型',
-        //   type: 'select',
-        //   options: this.getDictDataSync('warehouseBusinessType'),
-        // },
+        {
+          prop: 'businessType',
+          label: '业务类型',
+          type: 'select',
+          options: this.getDictDataSync('warehouseBusinessType'),
+        },
       ],
       listQuery: { ...this.queryParams },
       btnList: buttonList,

@@ -793,7 +793,7 @@ export default {
       if (maxDate) {
         demandDelivery = maxDate.toISOString().split('T')[0]
       }
-
+      console.log("this.selectData ✈️ ", this.selectData)
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool')

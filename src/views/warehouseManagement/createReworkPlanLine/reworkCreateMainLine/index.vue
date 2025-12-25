@@ -1,14 +1,23 @@
 <script>
 import { buttonList, getColumns } from "./data";
-import { ordershengchanList } from "@/api/productOrdes";
-import Form from '@/views/productionManagement/ringPlan/ringTaskManagement/reworkForm.vue'
-import PrintFlowCard from './components/PrintFlowCard.vue'
+
+import quickCreateForm from "../modules/quickCreateForm.vue"
+import PrintFlowCard from '../components/PrintFlowCard.vue'
+import { getInspectionList } from "@/api/inspectionManagement";
+import DetailForm from "@/views/inspectionManagement/components/inspectionFormManagementDetail.vue";
 
 export default {
   name: "index",
   components: {
-    Form,
+    DetailForm,
+    quickCreateForm,
     PrintFlowCard
+  },
+  props: {
+    productionLineName: {
+      type: String,
+      default: '大线'
+    }
   },
   data() {
     return {
@@ -30,30 +39,56 @@ export default {
           ],
           keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
-          orderItems: []
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            },
+          ]
         },
       }],
       loading: false,
       visible: false,
+      detailFormVisible: false,
       printFlowCardVisible: false,
+      quickCreateFormVisible: false,
+      quickCreateFormData: {},
       tableData: [],
       total: 0,
       superQueryJson: [
         {
-          prop: 'orderType',
-          label: '任务类型',
+          prop: 'inspectionMethod',
+          label: '检验方式',
           type: 'select',
-          options: this.global.orderType
-        }
+          options: this.global.inspectionMethod
+        },
+        {
+          prop: 'inspectionResults',
+          label: '检验结果',
+          type: 'select',
+          options: this.global.inspectionResultsType
+        },
+        {
+          prop: 'processingStatus',
+          label: '处理状态',
+          type: 'select',
+          options: this.global.processingStatusType
+        },
+        {
+          prop: 'status',
+          label: '检验确认状态',
+          type: 'select',
+          options: this.global.workReportInspection
+        },
       ],
       listQuery: {
-        source: "rework",
+        productionLineName: this.productionLineName,
+        notificationType: 'finished',
       },
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
       selectedRow: [],
-      // 打印相关参数
       printQuery: {
         categoryId: 'p023'
       }
@@ -70,7 +105,7 @@ export default {
       this.loading = true
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
-        const res = await ordershengchanList(this.listQuery);
+        const res = await getInspectionList(this.listQuery);
         const { total, records } = res.data
         this.tableData = records;
         this.total = total
@@ -91,11 +126,10 @@ export default {
     },
     handleButtonClick(type) {
       switch ( type ) {
-        case 'reworkTask':
-          this.visible = true
-          this.$nextTick(() => {
-            this.$refs.Form.init('', 'add')
-          })
+        case 'quickCreate':
+          if (!this.validateSelectedRows()) return;
+          this.quickCreateFormData = this.selectedRow[0]
+          this.quickCreateFormVisible = true
           break;
         case 'transferCardPrint':
           if (this.validateSelectedRows()) {
@@ -107,13 +141,18 @@ export default {
     },
     handleColumnClick(row, type) {
       switch ( type ) {
-        case '':
+        case 'look':
+          this.detailFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.DetailForm.init(row.id, type, false, 'finished')
+          })
           break;
         default:
       }
     },
     close(isInitData = true) {
       this.visible = false
+      this.detailFormVisible = false
       if (!isInitData) return
       this.initData()
     },
@@ -161,7 +200,7 @@ export default {
           customKey="createReworkPlan"
           v-loading="loading"
           :data="tableData"
-          :has-c="['btn_transferCard_print']"
+          :has-c="['btn_transferCard_print','btn_quickCreate']"
           @selection-change="(val) => selectedRow = val"
           :row-key="'id'"
           fixedNO
@@ -184,8 +223,10 @@ export default {
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
-                <template v-if="column.prop === 'prodSchedule'">
-                  <el-progress :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
+                <template v-if="column.prop === 'orderNo'">
+                  <el-link type="primary" @click.native="handleColumnClick(scope.row, 'look')">
+                    {{ scope.row.orderNo }}
+                  </el-link>
                 </template>
                 <template v-if="column.dictType">
                    <span>
@@ -198,13 +239,13 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <AttributeColumns :isSlot="false" btnType="look" :dataType="'line'" :moduleConfig="'produce'"/>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
         />
       </div>
     </div>
-    <Form ref="Form" v-if="visible" @close="close"/>
+    <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="close" :inspectionMethodList="global.inspectionMethod"/>
+    <quickCreateForm :visible.sync="quickCreateFormVisible" :formData="quickCreateFormData" @initData="initData"/>
     <PrintFlowCard
       :visible.sync="printFlowCardVisible"
       :selected-rows="selectedRow"

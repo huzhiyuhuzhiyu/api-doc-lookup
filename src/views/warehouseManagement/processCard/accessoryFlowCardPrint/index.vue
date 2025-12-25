@@ -1,15 +1,14 @@
 <script>
 import { buttonList, getColumns } from "./data";
-import { ordershengchanList } from "@/api/productOrdes";
-import Form from '@/views/productionManagement/ringPlan/ringTaskManagement/reworkForm.vue'
-import PrintFlowCard from './components/PrintFlowCard.vue'
+import processCardForm from "../modules/processCardForm.vue";
+import { getPrintBusInfo } from "@/api/system/printDev";
+import PrintDialog from '@/components/no_mount/printDialog/index.vue';
+import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
+import { purPurchaseReceiptReturnGoodsDetailList } from "@/api/purchasingManagement/purchaseInquirySheet";
 
 export default {
   name: "index",
-  components: {
-    Form,
-    PrintFlowCard
-  },
+  components: { processCardForm, PrintDialog, BatchPrintBrowse },
   data() {
     return {
       systemSearchView: [{
@@ -18,48 +17,44 @@ export default {
         conditionJson: { // 视图内容配置*
           condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
             // 这里放置系统原顶栏显示的查询元素，如：
-            // {
-            //   prop: 'createTime', // 属性*
-            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
-            //   symbol: 'between', // 比较符*
-            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
-            //   fixed: true // 是否在搜索栏显示
-            // },
-            { prop: 'productionPlanNo', symbol: 'like', fixed: true },
-            { prop: 'orderNo', symbol: 'like', fixed: true },
+            { prop: 'partnerName', symbol: 'like', fixed: true },
           ],
           keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
-          orderItems: []
+          orderItems: [
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ]
         },
       }],
+      printVisible: false,
+      printQuery: {},
+      fullName: '',
+      enCode: '',
       loading: false,
-      visible: false,
-      printFlowCardVisible: false,
       tableData: [],
       total: 0,
       superQueryJson: [
         {
-          prop: 'orderType',
-          label: '任务类型',
+          prop: 'businessType',
+          label: '业务类型',
           type: 'select',
-          options: this.global.orderType
-        }
+          options: this.getDictDataSync('warehouseBusinessType'),
+        },
       ],
       listQuery: {
-        source: "rework",
+        receiptReturnType: "receipt",
+        notificationType: "procure",
+        sourceList: ["factory", "mrp", "sale"],
+        classAttributeList: ["accessories"]
       },
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
       selectedRow: [],
-      // 打印相关参数
-      printQuery: {
-        categoryId: 'p023'
-      }
     }
-  },
-  created() {
   },
   methods: {
     async initData(listQuery) {
@@ -70,12 +65,42 @@ export default {
       this.loading = true
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
-        const res = await ordershengchanList(this.listQuery);
-        const { total, records } = res.data
+        const res = await purPurchaseReceiptReturnGoodsDetailList(this.listQuery);
+        const { records, total } = res.data
         this.tableData = records;
         this.total = total
       } finally {
         this.loading = false
+      }
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    printView(enCode, fullName) {
+      if (!this.selectedRow.length) return this.$message.error("请选择您要打印的数据!")
+      if (![1].includes(this.selectedRow.length)) return this.$message.error("打印只支持单条数据操作！")
+      this.enCode = enCode
+      this.fullName = fullName
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
+    async printOrder(enCode) {
+      if (!this.selectedRow.length) return this.$message.error('请选择您要打印的数据!')
+      if (![1].includes(this.selectedRow.length)) return this.$message.error("打印只支持单条数据操作！")
+      try {
+        const res = await getPrintBusInfo(enCode)
+        if (!res.data) {
+          return this.$message.warning('未找到相应打印模版')
+        }
+        const id = res.data.id
+        const printData = this.selectedRow.map(item => ({
+          formId: item.id,
+          id: id
+        }))
+        this.$refs.batchPrint.print(printData);
+      } catch ( e ) {
       }
     },
     validateSelectedRows() {
@@ -91,16 +116,8 @@ export default {
     },
     handleButtonClick(type) {
       switch ( type ) {
-        case 'reworkTask':
-          this.visible = true
-          this.$nextTick(() => {
-            this.$refs.Form.init('', 'add')
-          })
-          break;
-        case 'transferCardPrint':
-          if (this.validateSelectedRows()) {
-            this.printFlowCardVisible = true
-          }
+        case 'print':
+          this.printView('p048', '装配流转卡')
           break;
         default:
       }
@@ -113,12 +130,8 @@ export default {
       }
     },
     close(isInitData = true) {
-      this.visible = false
       if (!isInitData) return
       this.initData()
-    },
-    handlePrintFlowCardClose() {
-      this.printFlowCardVisible = false
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -158,10 +171,10 @@ export default {
           </div>
         </div>
         <JNPF-table
-          customKey="createReworkPlan"
+          customKey="purchaseProcessCard"
           v-loading="loading"
           :data="tableData"
-          :has-c="['btn_transferCard_print']"
+          :has-c="true"
           @selection-change="(val) => selectedRow = val"
           :row-key="'id'"
           fixedNO
@@ -179,14 +192,10 @@ export default {
               :prop="column.prop"
               :label="column.label"
               :min-width="column.minWidth"
-              :sortable="column.sortable"
               :fixed="column.fixed"
               :align="getAlign(column.align)"
             >
               <template v-if="column.slot" v-slot="scope">
-                <template v-if="column.prop === 'prodSchedule'">
-                  <el-progress :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
-                </template>
                 <template v-if="column.dictType">
                    <span>
                 <el-tag
@@ -198,19 +207,12 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <AttributeColumns :isSlot="false" btnType="look" :dataType="'line'" :moduleConfig="'produce'"/>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
-        />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"/>
       </div>
     </div>
-    <Form ref="Form" v-if="visible" @close="close"/>
-    <PrintFlowCard
-      :visible.sync="printFlowCardVisible"
-      :selected-rows="selectedRow"
-      :print-query="printQuery"
-      :en-code="'p023'"
-      @close="handlePrintFlowCardClose"
-    />
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
+                 :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
+    <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
   </div>
 </template>

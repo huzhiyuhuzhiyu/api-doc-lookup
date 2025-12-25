@@ -35,6 +35,7 @@ export default {
         hoseOd: '',
         grossWeight: '',
         mainUnit: '',
+        productionLineId: '',
         productCategoryId: '',
         productCategoryName: '',
         hsProductsId: '',

@@ -54,6 +54,15 @@ export function getBasicFormSchema(dataFormRef, context) {
       sm: 12
     },
     {
+      prop: "productionLineId",
+      label: "产线",
+      value: "",
+      type: "select",
+      options: context.$store.getters.productionLineList,
+      sm: 12,
+      itemRules: [{required: true, trigger: "change"}],
+    },
+    {
       prop: "productSource",
       label: "获取方式",
       value: "",

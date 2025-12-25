@@ -53,6 +53,14 @@ export function confirmedInspection(id) {
     method: 'GET'
   })
 }
+// 检验单-完工分卡
+export function cardInspectionCompletion(data) {
+  return request({
+    url: '/api/wms/qc/inspection/completion/card',
+    method: 'POST',
+    data
+  })
+}
 // 检验单 通过通知单获取检验单详情
 export function detailInspectionDataByBizid(bizId) {
   return request({

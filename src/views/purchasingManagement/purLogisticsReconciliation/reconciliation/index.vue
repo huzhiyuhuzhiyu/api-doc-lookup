@@ -33,8 +33,8 @@
           <el-table-column prop="partnerCode" label="供应商编码" min-width="180" />
           <el-table-column prop="logisticsMode" label="物流方式" min-width="180" />
           <el-table-column prop="weight" label="重量" min-width="180" />
-          <el-table-column prop="pickMaterial" label="提货" min-width="180" />
-          <el-table-column prop="deliveryMaterial" label="送货" min-width="180" />
+          <el-table-column prop="pickMaterial" label="提货费" min-width="180" />
+          <el-table-column prop="deliveryMaterial" label="送货费" min-width="180" />
           <el-table-column prop="freight" label="运费" min-width="180" />
           <el-table-column prop="totalAmount" label="金额" width="90">
             <template slot-scope="scope">
@@ -43,7 +43,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="" label="日期" min-width="180" />
+          <el-table-column prop="date" label="日期" min-width="180" />
           <!--          <el-table-column prop="checkStatus" label="核对状态" min-width="140"-->
           <!--              :showOverflowTooltip="false" align="center">-->
           <!--              <template slot-scope="scope">-->

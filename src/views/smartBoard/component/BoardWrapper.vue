@@ -23,17 +23,41 @@ export default {
     isPlay:{
       type: Boolean,
       default: true
+    },
+    // 按1k分辨率(1920*1080)等比缩放看板
+    scaleBoard: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
     return {
       isFullScreen: false,
       dialogVisible:false,
+      // 定义基准分辨率
+      baseWidth: 1920,
+      baseHeight: 1080
     }
   },
   computed:{
     fullPath(){
       return `${location.href}/full`
+    },
+    // 动态计算 wrapper 的样式
+    wrapperStyle() {
+      if (this.scaleBoard) {
+        return {
+          '--wrapperBgWidth': `${this.baseWidth}px`,
+          '--wrapperBgHeight': `${this.baseHeight}px`,
+          // 缩放模式下，强制使用 flex 居中，且 transform-origin 设为中心
+          'transform-origin': 'center center',
+          // 'transition': 'transform 0.3s ease-out' // 可选：增加一点平滑过渡
+        }
+      }
+      return {
+        '--wrapperBgWidth': '100%',
+        '--wrapperBgHeight': '100%'
+      }
     }
   },
   methods: {
@@ -76,27 +100,46 @@ export default {
       }
 
     },
+    // 处理缩放逻辑
+    handleResize() {
+      if (!this.scaleBoard || !this.$refs.board) return;
+
+      // const currentWidth = window.innerWidth;
+      // const currentHeight = window.innerHeight;
+      const currentWidth = this.$refs.layout.clientWidth;
+      const currentHeight = this.$refs.layout.clientHeight;
+
+      const scaleX = currentWidth / this.baseWidth;
+      const scaleY = currentHeight / this.baseHeight;
+
+      // 取较小值，保证内容全部在视野内（contain 模式）
+      const scale = Math.min(scaleX, scaleY);
+
+      this.$refs.board.style.transform = `scale(${scale})`;
+    }
 
   },
   mounted() {
-    // const resizeApp=()=> {
-    //   console.log(window.innerWidth,window.innerHeight)
-    //   const scaleX = window.innerWidth / 1920;
-    //   const scaleY = window.innerHeight / 1080;
-    //   // 按比例缩放，保证不裁切
-    //   const scale = Math.min(scaleX, scaleY);
-    //   this.$refs.board.style.transform = `scale(${scale})`;
-    // }
-    // resizeApp()
-    // window.addEventListener('resize', resizeApp);
+    console.log(this)
+    // 如果开启了缩放，初始化并监听 resize
+    if (this.scaleBoard) {
+      this.handleResize();
+      window.addEventListener('resize', this.handleResize);
+    }
+  },
+  // 销毁监听，防止内存泄漏
+  beforeDestroy() {
+    if (this.scaleBoard) {
+      window.removeEventListener('resize', this.handleResize);
+    }
   }
 }
 </script>
 
 <template>
   <div :class="['layout']" ref="layout">
-    <div class="wrapper-cover" ref="wrapperCover" :style="!isFull ? 'width: 100%;height:100%;' : ''">
-      <div class="wrapper" ref="board" id="wrapper">
+    <div class="wrapper-cover" ref="wrapperCover">
+      <div class="wrapper" ref="board" id="wrapper" :style="wrapperStyle">
         <div class="right-button">
           <i :title="isPlay ?'点击暂停滚动':'点击开启滚动'" @click="$emit('scroll-change', $emit('update:isPlay',!isPlay))" :class="[isPlay?'el-icon-video-pause' :'el-icon-video-play' ,'icon']"/>
           <i title="点击以复制全屏链接" v-if="!$route.path.endsWith('/full')" @click="copyLink" class="el-icon-s-promotion icon"/>
@@ -123,8 +166,9 @@ export default {
 
         <BoardTitle :name="boardTitle"/>
         <div class="center-wrapper">
-
-          <slot/>
+          <div class="board-content">
+            <slot/>
+          </div>
           <BoardDateTime v-if="needDateTime"/>
           <div class="legend">
             <slot name="legend">
@@ -155,15 +199,18 @@ export default {
 .layout {
   width: 100%;
   height: 100%;
-  overflow: auto;
+  //overflow: auto;
+  overflow: hidden; // 如果有问题那么可能需要通过scaleBoard判断auto或hidden
 
   .wrapper-cover {
     --wrapperBgWidth: 100%;
     --wrapperBgHeight: 100%;
-    width: 100vw;
-    height: 100vh;
-    min-width: var(--wrapperBgWidth);
-    min-height: var(--wrapperBgHeight);
+    //width: 100vw;
+    //height: 100vh;
+    //min-width: var(--wrapperBgWidth);
+    //min-height: var(--wrapperBgHeight);
+    width: var(--wrapperBgWidth);
+    height: var(--wrapperBgHeight);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -199,6 +246,14 @@ export default {
         overflow-y: auto;
         box-sizing: border-box;
         padding-top: 5px;
+
+        .board-content {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          background: #ee550077;
+        }
+
         .legend {
           position: absolute;
           left: var(--tip-left);

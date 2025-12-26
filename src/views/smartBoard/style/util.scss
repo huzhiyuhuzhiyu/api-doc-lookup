@@ -1,0 +1,54 @@
+$gradient-color: #30e4d9;
+
+@mixin gradient-text($percent:30%) {
+  font-family: 微软雅黑, serif;
+  color: transparent;
+  background: linear-gradient(#fff $percent, #30e4d9);
+  background-clip: text;
+}
+
+@function getImportant($important: true) {
+  @return if($important, '!important', '');
+}
+
+
+@mixin tag-color($color: #30e4d9,$important: true) {
+  $imp: getImportant($important);
+  color: #fff #{$imp};
+  background-color: $color #{$imp};
+  border-color: $color #{$imp};
+}
+
+@mixin tag-each($tags,$important: true,$no-radius: true) {
+  @if type-of($tags) != 'list' {
+    @error "tag-each expects a list of maps, but got #{type-of($tags)}.";
+  }
+  @each $tag in $tags {
+    @if type-of($tag) == 'map' {
+      $name: map-get($tag, 'name');
+      $color: map-get($tag, 'color');
+      @if $name and $color {
+        .el-tag--#{$name} {
+          @include tag-color($color,$important);
+        }
+      } @else {
+        @error "Each tag must have a 'name' and 'color'.";
+      }
+    } @else {
+      @error "Each item in the list must be a map.";
+    }
+  }
+  @if $no-radius{
+    $imp: getImportant($important);
+    .el-tag{
+      border-radius: unset #{$imp};
+    }
+  }
+
+}
+
+:export {
+  gradient-text: gradient-text;
+  $gradient-color: $gradient-color;
+  tag-each: tag-each;
+}

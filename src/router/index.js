@@ -59,6 +59,11 @@ export const constantRoutes = [{
         component: (resolve) => require(['@/views/login/auth-redirect'], resolve),
         hidden: true
     },
+  {
+    path: '/smartBoard/bigLineAssemblyWorkshop/full',
+    component: (resolve) => require(['@/views/smartBoard/bigLineAssemblyWorkshop'], resolve),
+    hidden: true
+  },
 ]
 
 const createRouter = () => new Router({

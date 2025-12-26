@@ -3,10 +3,11 @@ import { addComma, getLineIfEmpty, getZeroIfEmpty } from '@/utils'
 import BoardWrapper from '@/views/smartBoard/component/BoardWrapper.vue'
 import store from '@/store'
 import AutoScrollMixin from '@/views/smartBoard/util/AutoScrollMixin'
+import TopLeft1 from './components/TopLeft1.vue'
 import {} from '@/api/smartBoard'
 
 export default {
-  components: { BoardWrapper },
+  components: { BoardWrapper, TopLeft1 },
   mixins: [AutoScrollMixin],
   methods: {
     async getData() {
@@ -26,7 +27,7 @@ export default {
     board-title="大线装配车间"
     :scale-board="true"
   >
-    <div style="width: 100px; height: 100px; background: #000; position: absolute; top: 50px; left: 50px;"></div>
+    <TopLeft1 title="安全" style="width: 300px; height: 200px; position: absolute; top: 10px; left: 10px;" />
   </BoardWrapper>
 </template>
 

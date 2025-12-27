@@ -1,12 +1,10 @@
 <script>
-import FrameLayout from '@/views/smartBoard/component/FrameLayout.vue'
-// import LoadingMixin from '@/views/smartBoard/util/LoadingMixin'
+import FrameLayout from '@/views/smartBoard/scaleBoardLayout/component/FrameLayout.vue'
 import { getScreenSafeData } from '@/api/smartBoard'
 import Bus from '@/views/smartBoard/util/Bus.js'
 
 export default {
   components: { FrameLayout },
-  // mixins: [LoadingMixin],
   props: {
     title: {
       type: String,

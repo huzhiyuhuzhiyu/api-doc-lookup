@@ -53,6 +53,12 @@ export default {
     background-image: url("~@/assets/images/board/frame_title_left.png");
     background-repeat: round;
     font-family: "YouSheBiaoTiHei", serif;
+
+    .title-text {
+      background-image: linear-gradient(#fff 30%, #30e4d9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
   }
 
   .right {

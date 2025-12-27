@@ -1,5 +1,5 @@
 <script>
-import BoardLayout from '@/views/smartBoard/scaleBoardLayout/Layout_1.vue'
+import BoardLayout from '@/views/smartBoard/scaleBoardLayout/BoardLayout_1.vue'
 
 export default {
   components: { BoardLayout },

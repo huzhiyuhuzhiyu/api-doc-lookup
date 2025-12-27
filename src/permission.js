@@ -3,15 +3,18 @@ import store from './store'
 import {message as $message} from '@/utils/message'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken, removeToken, setAccessToken, setToken } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
-import {injectTenantMinix, removeTenantMinix} from "@/mixins/generator/TenantMinix";
 import {windowOpen} from "echarts/lib/util/format";
 import {workspacePath} from "@/utils/define";
+import {injectTenantMinix, removeTenantMinix, tenantIdKey} from "@/mixins/generator/TenantMinix";
+import {getTenantId} from "@/utils";
 
 NProgress.configure({showSpinner: false}) // NProgress Configuration
 
-const whiteList = ['/login', '/auth-redirect', '/jump'] // no redirect whitelist
+const smartBoard = [
+  '/smartBoard/bigLineAssemblyWorkshop/full',
+]
 
 // 获取地址栏参数
 function getQueryParams() {
@@ -75,6 +78,7 @@ function synchronousSystemTheme(themes) {
 
   return Promise.all(dispatchPromises)
 }
+const whiteList = ['/login', '/auth-redirect', '/jump','/purchasingManagement/supplierCollaboration',...smartBoard] // no redirect whitelist
 
 router.beforeEach(async (to, from, next) => {
   // 路由跳转前先查看地址栏是否携带token参数
@@ -155,6 +159,14 @@ router.beforeEach(async (to, from, next) => {
     removeTenantMinix()
     /* has no token*/
     if (whiteList.indexOf(to.path) !== -1) {
+      if(smartBoard.includes(to.path)){
+        const tenant = getTenantId()
+        const tenantId = localStorage.getItem(tenantIdKey)
+        if(tenant !== tenantId){
+          localStorage.setItem(tenantIdKey, tenant)
+        }
+        injectTenantMinix()
+      }
       // in the free login whitelist, go directly
       next()
     } else {

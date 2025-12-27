@@ -1,6 +1,8 @@
 import {deepClone} from "@/utils";
 import Vue from "vue";
 
+export const tenantIdKey = 'sys'
+
 export const tenant = {
   mosheng: ['mosheng'], // 示例：配置别名到实际租户标识
   yongshun: ['yongshun'], // 示例：配置别名到实际租户标识
@@ -16,7 +18,7 @@ const tenantSymbol = Symbol('tenant')
 
 const minix = {
   beforeCreate(){
-    this[tenantSymbol] = localStorage.getItem('sys')
+    this[tenantSymbol] = localStorage.getItem(tenantIdKey)
   },
   data(){
     return {

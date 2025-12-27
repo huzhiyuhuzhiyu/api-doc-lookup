@@ -33,7 +33,7 @@ export default {
       },
       dataFormItems: [
         {
-          prop: "cooperatorPartnerName",
+          prop: "cooperativePartnerName",
           label: '供应商',
           value: "",
           type: "custom",
@@ -77,11 +77,11 @@ export default {
           change: (id, data) => {
             // dom更新后重新校验此元素
             this.$nextTick(() => {
-              this.$refs.dataForm.$refs.main.validateField('cooperatorPartnerName');
+              this.$refs.dataForm.$refs.main.validateField('cooperativePartnerName');
             });
-            this.dataForm.cooperatorPartnerId = data[0].all.id;
-            this.dataForm.cooperatorPartnerCode = data[0].all.code;
-            this.dataForm.cooperatorPartnerName = data[0].all.name;
+            this.dataForm.cooperativePartnerId = data[0].all.id;
+            this.dataForm.cooperativePartnerCode = data[0].all.code;
+            this.dataForm.cooperativePartnerName = data[0].all.name;
           },
           treeNodeClick: (data, node, listQuery) => {
             if (listQuery.partnerCategoryId === data.id) return listQuery
@@ -93,23 +93,19 @@ export default {
         },
         { prop: 'logisticsMode', label: '物流方式', value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }], },
         { prop: 'weight', label: "重量", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }], },
-        { prop: 'pickMaterial', label: "提货费", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }, { validator: this.formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }], },
-        { prop: 'deliveryMaterial', label: "送货费", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }, { validator: this.formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }], },
-        { prop: 'freight', label: "运费", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }, { validator: this.formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }], },
-        { prop: 'date', label: "日期", value: this.jnpf.getToday(), type: 'date', itemRules: [{ required: true, trigger: 'change' }], },
+        { prop: 'pickMaterial', label: "提货费", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }, { validator: this.formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }], input: this.updateTotalAmount },
+        { prop: 'deliveryMaterial', label: "送货费", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }, { validator: this.formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }], input: this.updateTotalAmount },
+        { prop: 'freight', label: "运费", value: '', type: 'input', itemRules: [{ required: true, trigger: 'blur' }, { validator: this.formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }], input: this.updateTotalAmount },
+        // { prop: 'date', label: "日期", value: this.jnpf.getToday(), type: 'date', itemRules: [{ required: true, trigger: 'change' }], },
         { prop: 'totalAmount', label: "总金额", value: 0, type: 'input', itemDisabled: true },
       ],
     }
   },
-  watch: {
-    'dataForm.pickMaterial'() { this.updateTotalAmount() },
-    'dataForm.deliveryMaterial'() { this.updateTotalAmount() },
-    'dataForm.freight'() { this.updateTotalAmount() }
-  },
   methods: {
     init() {
     },
-    updateTotalAmount() {
+    async updateTotalAmount() {
+      await this.$nextTick()
       this.dataForm.totalAmount = this.jnpf.math('+', [
         this.dataForm.pickMaterial,
         this.dataForm.deliveryMaterial,

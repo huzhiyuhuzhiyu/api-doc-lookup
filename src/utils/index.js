@@ -1,5 +1,6 @@
 import moment from "moment";
-import { Message } from "element-ui";
+import {deleteBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+import {Message, MessageBox} from "element-ui";
 import store from '@/store'
 
 
@@ -44,6 +45,31 @@ export function getPromise() {
     reject
   }
 }
+export function getZeroIfEmpty(value) {
+  if (isEmpty(value)) {
+    return 0;
+  }
+  return value;
+}
+export function getLineIfEmpty(value) {
+  if (isEmpty(value)) {
+    return "-";
+  }
+  return value;
+}
+export function addComma(str) {
+  return String(str).replace(/(?=(\d{3})+(?!\d))/g, ',').replace(/^,/,'')
+}
+
+export function getTenantId(){
+  const host = location.hostname
+  const tenantId = location.hostname.split('.')[0]
+  if(host === 'localhost' || !isNaN(+tenantId)){
+    return localStorage.getItem('sys')
+  }
+  return tenantId
+
+}
 
 export const elFullScreen = ((() => {
   const arr = ['requestFullscreen', 'mozRequestFullScreen', 'webkitRequestFullscreen', 'msRequestFullScreen']
@@ -52,6 +78,18 @@ export const elFullScreen = ((() => {
     el[fullScreenFnName] && el[fullScreenFnName]()
   };
 })());
+export const fullScreen = elFullScreen
+export function exitFullScreen(doc = document) {
+  if (doc.exitFullscreen) {
+    doc.exitFullscreen()
+  } else if (doc.mozCancelFullScreen) {
+    doc.mozCancelFullScreen()
+  } else if (doc.webkitExitFullscreen) {
+    doc.webkitExitFullscreen()
+  } else if (doc.msExitFullscreen) {
+    doc.msExitFullscreen()
+  }
+}
 
 
 /** * 获取字典数据

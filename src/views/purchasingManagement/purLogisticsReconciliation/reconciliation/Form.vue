@@ -534,6 +534,7 @@ export default {
       this.$emit('close')
     },
     init(data) {
+      console.log({data})
       this.dataFormTwo.data = []
       // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
 

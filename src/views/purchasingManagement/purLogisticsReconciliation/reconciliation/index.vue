@@ -29,13 +29,13 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable" customKey="JNPFTableKey_472519"
           :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
-          <el-table-column prop="partnerName" label="供应商名称" min-width="180" />
-          <el-table-column prop="partnerCode" label="供应商编码" min-width="180" />
+          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" />
+          <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" />
           <el-table-column prop="logisticsMode" label="物流方式" min-width="180" />
-          <el-table-column prop="weight" label="重量" min-width="180" />
-          <el-table-column prop="pickMaterial" label="提货费" min-width="180" />
-          <el-table-column prop="deliveryMaterial" label="送货费" min-width="180" />
-          <el-table-column prop="freight" label="运费" min-width="180" />
+          <el-table-column prop="weight" label="重量" min-width="120" />
+          <el-table-column prop="pickMaterial" label="提货费" min-width="90" />
+          <el-table-column prop="deliveryMaterial" label="送货费" min-width="90" />
+          <el-table-column prop="freight" label="运费" min-width="90" />
           <el-table-column prop="totalAmount" label="金额" width="90">
             <template slot-scope="scope">
               <div style="color:red">
@@ -43,7 +43,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="date" label="日期" min-width="180" />
+<!--          <el-table-column prop="date" label="日期" min-width="180" />-->
           <!--          <el-table-column prop="checkStatus" label="核对状态" min-width="140"-->
           <!--              :showOverflowTooltip="false" align="center">-->
           <!--              <template slot-scope="scope">-->
@@ -102,7 +102,7 @@ export default {
         conditionJson: { // 视图内容配置*
           condition: [
             {
-              prop: 'partnerName',
+              prop: 'cooperativePartnerName',
               symbol: 'like',
               fixed: true
             },
@@ -162,11 +162,14 @@ export default {
         this.$refs.AddForm.init()
       })
     },
-    closeFun() {
+    closeFun(refreshFlag) {
       this.orderVisible = false
       this.deliveryNoteVisible = false
       this.addVisible = false
       this.purchaseTHVisible = false
+      if (refreshFlag) {
+        this.initData()
+      }
     },
     orderDetailFun(id, type) {
       this.orderVisible = true

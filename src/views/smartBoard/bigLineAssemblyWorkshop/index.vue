@@ -27,7 +27,16 @@ export default {
     board-title="大线装配车间"
     :scale-board="true"
   >
-    <TopLeft1 title="安全" style="width: 300px; height: 200px; position: absolute; top: 10px; left: 10px;" />
+    <TopLeft1 title="安全1" style="width: 400px; height: 215px; position: fixed; top: 131px; left: 32px;" />
+    <TopLeft1 title="安全2" style="width: 400px; height: 215px; position: fixed; top: 362px; left: 32px;" />
+    <TopLeft1 title="安全3" style="width: 400px; height: 215px; position: fixed; top: 593px; left: 32px;" />
+    <TopLeft1 title="安全4" style="width: 400px; height: 215px; position: fixed; top: 824px; left: 32px;" />
+    <TopLeft1 title="安全5" style="width: 1024px; height: 566px; position: fixed; top: 131px; left: 448px;" />
+    <TopLeft1 title="安全6" style="width: 1024px; height: 326px; position: fixed; top: 713px; left: 448px;" />
+    <TopLeft1 title="安全1" style="width: 400px; height: 215px; position: fixed; top: 131px; left: 1488px;" />
+    <TopLeft1 title="安全2" style="width: 400px; height: 215px; position: fixed; top: 362px; left: 1488px;" />
+    <TopLeft1 title="安全3" style="width: 400px; height: 215px; position: fixed; top: 593px; left: 1488px;" />
+    <TopLeft1 title="安全4" style="width: 400px; height: 215px; position: fixed; top: 824px; left: 1488px;" />
   </BoardWrapper>
 </template>
 

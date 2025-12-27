@@ -20,6 +20,7 @@ export default {
 @use "~@/views/smartBoard/style/util";
 
 .boardTitle {
+  //font-family: "YouSheBiaoTiHei", serif !important;
   @include util.gradient-text(50%);
   font-size: 30px;
   position: absolute;

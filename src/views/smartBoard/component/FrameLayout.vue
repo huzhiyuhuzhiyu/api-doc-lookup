@@ -15,15 +15,19 @@ export default {
       <div class="left">
         <span class="title-text">{{ title }}</span>
       </div>
-      <div class="right"></div>
+      <div class="right">
+        <slot name="title-right" />
+      </div>
     </div>
     <div class="frame-content">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+@use "~@/views/smartBoard/style/util";
+
 .frame-layout {
   width: 100%;
   height: 100%;
@@ -36,17 +40,19 @@ export default {
 }
 
 .frame-title {
-  font-weight: bold;
+  //font-weight: bold;
   display: flex;
-  height: 18px;
-  font-size: 12px;
-  line-height: 18px;
-  text-indent: 14px;
+  height: 36px;
+  font-size: 22px;
+  line-height: 36px;
+  text-indent: 24px;
+  color: #fff;
 
   .left {
     width: 230px;
     background-image: url("~@/assets/images/board/frame_title_left.png");
     background-repeat: round;
+    font-family: "YouSheBiaoTiHei", serif;
   }
 
   .right {

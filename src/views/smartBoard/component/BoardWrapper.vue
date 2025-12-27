@@ -182,6 +182,15 @@ export default {
 </template>
 
 <style scoped lang="scss">
+@font-face {
+  font-family: "YouSheBiaoTiHei";
+  src: url("~@/views/smartBoard/assets/fonts/YouSheBiaoTiHei-2.ttf");
+}
+
+@font-face {
+  font-family: "D-DIN";
+  src: url("~@/views/smartBoard/assets/fonts/D-DIN.ttf");
+}
 
 .right-button{
   .icon{
@@ -251,7 +260,7 @@ export default {
           width: 100%;
           height: 100%;
           position: relative;
-          background: #ee550077;
+          //background: #ee550077;
         }
 
         .legend {

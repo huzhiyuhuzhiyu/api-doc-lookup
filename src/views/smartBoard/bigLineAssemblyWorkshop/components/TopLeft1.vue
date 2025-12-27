@@ -1,8 +1,5 @@
 <script>
 import FrameLayout from '@/views/smartBoard/component/FrameLayout.vue'
-// import dateFormat from "@/utils/dateFormat.js";
-// import { addLoading, subLoading, eventBus } from '@/utils/index.js';
-// import { getprodQcTotal } from "@/api/produceQc.js";
 export default {
   components: {
     FrameLayout
@@ -12,10 +9,6 @@ export default {
       type: String,
       default: ''
     },
-    dateRang: {
-      type: String,
-      default: 'month'
-    }
   },
   data() {
     return {

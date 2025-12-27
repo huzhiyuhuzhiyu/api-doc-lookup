@@ -42,7 +42,7 @@
           </template>
           <!-- 输入框-数值 -->
           <template v-else-if="queryProps.type === 'number'">
-            <el-input v-model.number="filterValue"
+            <el-input v-model="filterValue"
               v-bind="{ placeholder: `请输入`, maxlength: 100, clearable: true, ...fieldCache }" @keyup.enter.native="confirmFilter" />
           </template>
           <!-- 输入框-联想输入 -->

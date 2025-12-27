@@ -104,7 +104,7 @@
               </template>
               <!-- 输入框-数值 -->
               <template v-else-if="queryProps.type === 'number'">
-                <el-input v-model.number="queryProps.tempFieldValue" @keyup.enter.native="search"
+                <el-input v-model="queryProps.tempFieldValue" @keyup.enter.native="search"
                   v-bind="{ placeholder: `${queryProps.label} ${symbolToText(queryProps.symbol)}`, maxlength: 100, clearable: true, ...fieldCache[queryProps.field] }" />
               </template>
               <!-- 输入框-联想输入 -->

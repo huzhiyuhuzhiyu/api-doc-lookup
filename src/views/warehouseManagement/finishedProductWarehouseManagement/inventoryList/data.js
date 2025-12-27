@@ -26,7 +26,6 @@ export function getColumns() {
       prop: "orderNo",
       label: "单号",
       minWidth: 220,
-      align: "left",
       slot: true,
     },
     {
@@ -40,31 +39,28 @@ export function getColumns() {
       prop: "sourceType",
       label: "来源类型",
       minWidth: 180,
-      align: "left",
+      slot: true,
+      dictType: "sourceType"
     },
     {
       prop: "supplierPartnerName",
       label: "供应商",
       minWidth: 160,
-      align: "left",
     },
     {
       prop: "supplierPartnerCode",
       label: "供应商编码",
       minWidth: 160,
-      align: "left",
     },
     {
       prop: "cooperativePartnerName",
       label: "客户",
       minWidth: 160,
-      align: "left",
     },
     {
       prop: "cooperativePartnerCode",
       label: "客户编码",
       minWidth: 160,
-      align: "left",
     },
     {
       prop: "inspectionResults",
@@ -96,7 +92,6 @@ export function getColumns() {
       prop: "remark",
       label: "备注",
       minWidth: 180,
-      align: "left",
     },
     {
       prop: "createTime",

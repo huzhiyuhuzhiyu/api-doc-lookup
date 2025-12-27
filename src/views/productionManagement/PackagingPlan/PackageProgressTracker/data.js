@@ -19,7 +19,6 @@ export function getColumns() {
       prop: "orderNo",
       label: "订单号",
       minWidth: 220,
-      align: "left"
     },
     {
       prop: "orderType",
@@ -37,19 +36,16 @@ export function getColumns() {
       prop: "productDrawingNo",
       label: "产品型号",
       minWidth: 220,
-      align: "left",
     },
     {
       prop: "category",
       label: "类型",
       minWidth: 120,
-      align: "left"
     },
     {
       prop: "customer",
       label: "客户",
       minWidth: 160,
-      align: "left"
     },
     {
       prop: "factoryNo",

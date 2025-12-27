@@ -158,7 +158,8 @@ export default {
           fetchLines: getpurPurchaseReceiptReturnGoodsdetail,
           dataPath: 'data.noticeLineList',
           filter: {
-            classAttribute: this.classAttributeList
+            classAttribute: this.classAttributeList,
+            requiredReceivedQuantity: val => val > 0
           },
           formatter: (item) => ({
             ...item,
@@ -194,6 +195,26 @@ export default {
           defaultForm: {
             sourceType: 'notice'
           }
+        },
+        // 生产产品入库
+        inbound_order_production: {
+          fetchLines: false,
+          dataPath: '',
+          filter: {
+            waitReceivedQuantity: val => val > 0
+          },
+          formatter: (item) => ({
+            ...item,
+            ordersId: item.id,
+            undeliveredQuantity: item.waitReceivedQuantity,
+          }),
+          print: {
+            enabled: true,
+            enCode: '',
+            fullName: '',
+          },
+          showActions: { selectProduct: false, batchDelete: false },
+          defaultForm: {}
         },
       }
     },
@@ -261,9 +282,11 @@ export default {
       this.dataForm = _.merge({}, this.dataForm, _.isArray(prefillData) ? prefillData[0] : prefillData);
       this.dataForm.sourceNo = _.isArray(prefillData) ? prefillData[0].orderNo : prefillData.orderNo;
       this.dataForm.businessType = this.businessType
+      this.dataForm.supplierPartnerId = this.dataForm?.cooperativePartnerId || ''
       await this.fetchAndSetWarehouseInfo();
 
-      if (_.isArray(prefillData)) {
+      const needsApiCall = !this.businessConfig.fetchLines && !Array.isArray(prefillData)
+      if (needsApiCall) {
         await this.processLinesData({
           lines: prefillData,
           config: {
@@ -294,26 +317,26 @@ export default {
           excludingTaxCostPrice: {
             compute: (item) => {
               if (item.price && item.taxRate !== null) {
-                return this.jnpf.math('divide', [item.price, 1 + item.taxRate / 100], 6);
+                return this.jnpf.math('divide', [item.price, 1 + item.taxRate / 100], 2);
               }
               return item.price || 0;
             }
           },
-          totalAmount: {
-            compute: (item) => this.jnpf.math('multiply', [item.num || 0, item.price || 0], 2)
-          },
-          taxAmount: {
-            compute: (item) => {
-              const taxPerUnit = this.jnpf.math(
-                'subtract',
-                [item.price || 0, item.excludingTaxCostPrice || 0]
-              );
-              return this.jnpf.math('multiply', [item.num || 0, taxPerUnit], 2);
-            }
-          },
-          excludingTaxTotalAmount: {
-            compute: (item) => this.jnpf.math('subtract', [item.totalAmount || 0, item.taxAmount || 0], 2)
-          }
+          // totalAmount: {
+          //   compute: (item) => this.jnpf.math('multiply', [item.num || 0, item.price || 0], 2)
+          // },
+          // taxAmount: {
+          //   compute: (item) => {
+          //     const taxPerUnit = this.jnpf.math(
+          //       'subtract',
+          //       [item.price || 0, item.excludingTaxCostPrice || 0]
+          //     );
+          //     return this.jnpf.math('multiply', [item.num || 0, taxPerUnit], 2);
+          //   }
+          // },
+          // excludingTaxTotalAmount: {
+          //   compute: (item) => this.jnpf.math('subtract', [item.totalAmount || 0, item.taxAmount || 0], 2)
+          // }
         };
 
         lines = standardizeFields(lines, standardizationRules);
@@ -326,10 +349,23 @@ export default {
           ? lines.map(item => config.formatter(item))
           : lines;
 
-        formattedLines = formattedLines.map(item => ({
-          ...item,
-          num: item.undeliveredQuantity,
-        }));
+        formattedLines = formattedLines.map(item => {
+          const taxPerUnit = this.jnpf.math(
+            'subtract',
+            [item.price || 0, item.excludingTaxCostPrice || 0]
+          );
+          const num = item.undeliveredQuantity;
+          const totalAmount = this.jnpf.math('multiply', [num || 0, item.price || 0], 2);
+          const taxAmount = this.jnpf.math('multiply', [num || 0, taxPerUnit], 2);
+          const excludingTaxTotalAmount = this.jnpf.math('subtract', [totalAmount || 0, taxAmount|| 0], 2);
+          return {
+            ...item,
+            num,
+            taxAmount,
+            totalAmount,
+            excludingTaxTotalAmount,
+          }
+        });
 
         this.linesList = formattedLines;
 
@@ -437,126 +473,127 @@ export default {
           label: "供应商/客户",
           value: "",
           type: "input",
-          render: ['inbound_purchase'].includes(this.businessType)
+          disabled: true,
+          render: ['inbound_purchase','inbound_finished_package'].includes(this.businessType)
         },
-        {
-          prop: "supplierPartnerName",
-          label: "供应商名称",
-          value: "",
-          type: "custom",
-          customComponent: "ComSelect-page",
-          itemRules: [{ required: true, trigger: "change" }],
-          title: '选择供应商',
-          treeTitle: '供应商分类',
-          renderTree: true,
-          multiple: false,
-          clearable: true,
-          methodArr: { method: getcategoryTrees, requestObj: { type: 'supplier' } },
-          listMethod: getCooperativeData,
-          tableItems: [
-            { prop: 'code', label: '供应商编码' },
-            { prop: 'name', label: '供应商名称' },
-            { prop: 'nameEn', label: '英文名称' },
-            { prop: 'taxId', label: '税号' }
-          ],
-          listRequestObj: {
-            code: '',
-            name: '',
-            type: 'supplier',
-            partnerCategoryId: '',
-            pageNum: 1,
-            pageSize: 20,
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ]
-          },
-          searchList: [
-            { prop: 'code', label: '供应商编码', type: 'input' },
-            { prop: 'name', label: '供应商名称', type: 'input' }
-          ],
-          change: (id, data) => {
-            // dom更新后重新校验此元素
-            this.$nextTick(() => {
-              this.$refs.dataForm.$refs.main.validateField('supplierPartnerName');
-            });
-            this.dataForm.supplierPartnerId = data[0].all.id;
-            this.dataForm.supplierPartnerCode = data[0].all.code;
-            this.dataForm.supplierPartnerName = data[0].all.name;
-          },
-          treeNodeClick: (data, node, listQuery) => {
-            if (listQuery.partnerCategoryId === data.id) return listQuery
-            listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-            listQuery.classAttribute = data.classAttribute
-            return listQuery
-          },
-          render: ['inbound_finished_package', 'inbound_purchase'].includes(this.businessType)
-        },
-        {
-          prop: "cooperativePartnerName",
-          label: "客户名称",
-          value: "",
-          type: "custom",
-          customComponent: "ComSelect-page",
-          itemRules: [{ required: true, trigger: "change" }],
-          title: '选择客户',
-          treeTitle: '客户分类',
-          renderTree: true,
-          multiple: false,
-          clearable: true,
-          methodArr: { method: getcategoryTrees, requestObj: { type: 'customer' } },
-          listMethod: getCooperativeData,
-          tableItems: [
-            { prop: 'code', label: '供应商编码' },
-            { prop: 'name', label: '供应商名称' },
-            { prop: 'nameEn', label: '英文名称' },
-            { prop: 'taxId', label: '税号' }
-          ],
-          listRequestObj: {
-            code: '',
-            name: '',
-            type: 'customer',
-            partnerCategoryId: '',
-            pageNum: 1,
-            pageSize: 20,
-            orderItems: [
-              {
-                asc: false,
-                column: ''
-              },
-              {
-                asc: false,
-                column: 'create_time'
-              }
-            ]
-          },
-          searchList: [
-            { prop: 'code', label: '供应商编码', type: 'input' },
-            { prop: 'name', label: '供应商名称', type: 'input' }
-          ],
-          change: (id, data) => {
-            // dom更新后重新校验此元素
-            this.$nextTick(() => {
-              this.$refs.dataForm.$refs.main.validateField('cooperativePartnerName');
-            });
-            this.dataForm.cooperativePartnerId = data[0].all.id;
-            this.dataForm.cooperativePartnerCode = data[0].all.code;
-            this.dataForm.cooperativePartnerName = data[0].all.name;
-          },
-          treeNodeClick: (data, node, listQuery) => {
-            if (listQuery.partnerCategoryId === data.id) return listQuery
-            listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-            listQuery.classAttribute = data.classAttribute
-            return listQuery
-          },
-          render: ['inbound_finished_package'].includes(this.businessType)
-        },
+        // {
+        //   prop: "supplierPartnerName",
+        //   label: "供应商名称",
+        //   value: "",
+        //   type: "custom",
+        //   customComponent: "ComSelect-page",
+        //   itemRules: [{ required: true, trigger: "change" }],
+        //   title: '选择供应商',
+        //   treeTitle: '供应商分类',
+        //   renderTree: true,
+        //   multiple: false,
+        //   clearable: true,
+        //   methodArr: { method: getcategoryTrees, requestObj: { type: 'supplier' } },
+        //   listMethod: getCooperativeData,
+        //   tableItems: [
+        //     { prop: 'code', label: '供应商编码' },
+        //     { prop: 'name', label: '供应商名称' },
+        //     { prop: 'nameEn', label: '英文名称' },
+        //     { prop: 'taxId', label: '税号' }
+        //   ],
+        //   listRequestObj: {
+        //     code: '',
+        //     name: '',
+        //     type: 'supplier',
+        //     partnerCategoryId: '',
+        //     pageNum: 1,
+        //     pageSize: 20,
+        //     orderItems: [
+        //       {
+        //         asc: false,
+        //         column: ''
+        //       },
+        //       {
+        //         asc: false,
+        //         column: 'create_time'
+        //       }
+        //     ]
+        //   },
+        //   searchList: [
+        //     { prop: 'code', label: '供应商编码', type: 'input' },
+        //     { prop: 'name', label: '供应商名称', type: 'input' }
+        //   ],
+        //   change: (id, data) => {
+        //     // dom更新后重新校验此元素
+        //     this.$nextTick(() => {
+        //       this.$refs.dataForm.$refs.main.validateField('supplierPartnerName');
+        //     });
+        //     this.dataForm.supplierPartnerId = data[0].all.id;
+        //     this.dataForm.supplierPartnerCode = data[0].all.code;
+        //     this.dataForm.supplierPartnerName = data[0].all.name;
+        //   },
+        //   treeNodeClick: (data, node, listQuery) => {
+        //     if (listQuery.partnerCategoryId === data.id) return listQuery
+        //     listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+        //     listQuery.classAttribute = data.classAttribute
+        //     return listQuery
+        //   },
+        //   render: ['inbound_finished_package', 'inbound_purchase'].includes(this.businessType)
+        // },
+        // {
+        //   prop: "cooperativePartnerName",
+        //   label: "客户名称",
+        //   value: "",
+        //   type: "custom",
+        //   customComponent: "ComSelect-page",
+        //   itemRules: [{ required: true, trigger: "change" }],
+        //   title: '选择客户',
+        //   treeTitle: '客户分类',
+        //   renderTree: true,
+        //   multiple: false,
+        //   clearable: true,
+        //   methodArr: { method: getcategoryTrees, requestObj: { type: 'customer' } },
+        //   listMethod: getCooperativeData,
+        //   tableItems: [
+        //     { prop: 'code', label: '供应商编码' },
+        //     { prop: 'name', label: '供应商名称' },
+        //     { prop: 'nameEn', label: '英文名称' },
+        //     { prop: 'taxId', label: '税号' }
+        //   ],
+        //   listRequestObj: {
+        //     code: '',
+        //     name: '',
+        //     type: 'customer',
+        //     partnerCategoryId: '',
+        //     pageNum: 1,
+        //     pageSize: 20,
+        //     orderItems: [
+        //       {
+        //         asc: false,
+        //         column: ''
+        //       },
+        //       {
+        //         asc: false,
+        //         column: 'create_time'
+        //       }
+        //     ]
+        //   },
+        //   searchList: [
+        //     { prop: 'code', label: '供应商编码', type: 'input' },
+        //     { prop: 'name', label: '供应商名称', type: 'input' }
+        //   ],
+        //   change: (id, data) => {
+        //     // dom更新后重新校验此元素
+        //     this.$nextTick(() => {
+        //       this.$refs.dataForm.$refs.main.validateField('cooperativePartnerName');
+        //     });
+        //     this.dataForm.cooperativePartnerId = data[0].all.id;
+        //     this.dataForm.cooperativePartnerCode = data[0].all.code;
+        //     this.dataForm.cooperativePartnerName = data[0].all.name;
+        //   },
+        //   treeNodeClick: (data, node, listQuery) => {
+        //     if (listQuery.partnerCategoryId === data.id) return listQuery
+        //     listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+        //     listQuery.classAttribute = data.classAttribute
+        //     return listQuery
+        //   },
+        //   render: ['inbound_finished_package'].includes(this.businessType)
+        // },
         {
           prop: 'warehouseName',
           label: '仓库',
@@ -1144,7 +1181,8 @@ export default {
                             选择产品
                           </el-button>
                           <span v-if="businessConfig.showActions.selectProduct && businessConfig.showActions.batchDelete">|</span>
-                          <el-button v-if="businessConfig.showActions.batchDelete" type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.linesForm.batchDelete()">
+                          <el-button v-if="businessConfig.showActions.batchDelete" type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
+                                     @click="$refs.linesForm.batchDelete()">
                             批量删除
                           </el-button>
                         </template>

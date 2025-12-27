@@ -172,7 +172,7 @@
                       </el-form-item>
                     </el-col>
 
-                   
+
                      <el-col :sm="6" :xs="24" v-if="isBOOS">
                       <el-form-item label="板数：" prop="plates" class="iptLabel responsibility"
                         :style="{ marginBottom: iptLabelMargin }">
@@ -240,7 +240,7 @@
                       <el-input v-model="currentProcess.processingTimes" placeholder="合格数量" class="ipt"  />
                     </el-form-item>
                   </el-col>
-                 
+
                   <el-col :sm="24" :xs="24" v-if="isXY||isJR">
                     <el-form-item label="规值:" prop="standardValue" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -259,24 +259,67 @@
                             </el-select>
                     </el-form-item>
                   </el-col>
-           
+
 
                   <el-col :sm="12" :xs="24" v-if="currentProcess.processType !== 'boxing'">
                     <el-form-item label="责废数量:" class="iptLabel responsibility">
-                      <el-input v-model="currentProcess.responsibilityWasteQuantity" disabled placeholder="责废数量"
-                        @blur="handleBlur2" class="ipt materialWaste" />
-                        <el-button type="primary"
-                        style="float: right;height: 50px;width: 50%;" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
+                      <scrap-reason-selector
+                        v-model="responsWasteDataList"
+                        keyword="责废"
+                        reason-type="responsibility_fee"
+                        button-text="设置责废原因"
+                        @change="responsWasteData"
+                      />
+<!--                      <el-input v-model="currentProcess.responsibilityWasteQuantity" disabled placeholder="责废数量"-->
+<!--                        @blur="handleBlur2" class="ipt materialWaste" />-->
+<!--                        <el-button type="primary"-->
+<!--                        style="float: right;height: 50px;width: 50%;" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>-->
                     </el-form-item>
                   </el-col>
                   <el-col :sm="12" :xs="24" v-if="currentProcess.processType !== 'boxing'">
                     <el-form-item label="料废数量:" class="iptLabel responsibility" >
-                      <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量"
-                        class="ipt materialWaste" />
-                      <el-button type="primary"
-                        style="float: right;height: 50px;width: 50%;" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>
+                      <scrap-reason-selector
+                        v-model="materialWasteDataList"
+                        keyword="料废"
+                        reason-type="material_fee"
+                        button-text="设置料废原因"
+                        :showResponsiblePerson="false"
+                        @change="materialWasteData"
+                      />
+<!--                      <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量"-->
+<!--                        class="ipt materialWaste" />-->
+<!--                      <el-button type="primary"-->
+<!--                        style="float: right;height: 50px;width: 50%;" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>-->
                     </el-form-item>
-                  </el-col> 
+                  </el-col>
+                  <el-col :sm="12" :xs="24" v-if="currentProcess.processType !== 'boxing'">
+                    <el-form-item label="返工数量:" class="iptLabel responsibility" >
+                      <scrap-reason-selector
+                        v-model="reworkQuantityWasteDataList"
+                        keyword="返工"
+                        reason-type="rework"
+                        button-text="设置返工原因"
+                        :showResponsiblePerson="false"
+                        @change="(result,quantity)=>{
+                          currentProcess.reworkQuantity = quantity;
+                        }"
+                      />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="12" :xs="24" v-if="currentProcess.processType !== 'boxing'">
+                    <el-form-item label="利用数量:" class="iptLabel responsibility" >
+                      <scrap-reason-selector
+                        v-model="utilizationQuantityWasteDataList"
+                        keyword="利用"
+                        reason-type="utilization"
+                        button-text="设置利用原因"
+                        :showResponsiblePerson="false"
+                        @change="(result,quantity)=>{
+                          currentProcess.utilizeQuantity = quantity;
+                        }"
+                      />
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcess.processType == 'grinding'">
                     <el-form-item label="孔径" :prop="aperture">
                       <el-select v-model="currentProcess.aperture" placeholder="孔径" style="width: 100%;" class="ipt">
@@ -284,7 +327,7 @@
                           :value="item.name"></el-option>
                       </el-select>
                     </el-form-item>
-                  </el-col> 
+                  </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="报工时间" class="iptLabel">
                       <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd"
@@ -414,10 +457,12 @@ import { detailProductionToOutSouring } from '@/api/productOrdes/index.js'
 import tenantMinix from "@/mixins/generator/TenantMinix";
 
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import ScrapReasonSelector from "@/views/completionReport/components/ScrapReasonSelector.vue";
 export default {
   mixins: [tenantMinix],
 
   components: {
+    ScrapReasonSelector,
     recordForm, OutForm, MaterialWasteForm,responsWaste,PrintBrowse,
     PrintDialog, TransitionRemake, TransitionRemakeRecord,OutSouringForm
   },
@@ -501,6 +546,8 @@ export default {
       producerMargin: '30px',
       materialList: [],
       materialWasteDataList: [],
+      reworkQuantityWasteDataList: [],
+      utilizationQuantityWasteDataList: [],
       responsWasteDataList:[],
       copyCurrentProcess: {},
       remakeUnqualifiedQuantity:0,
@@ -540,7 +587,7 @@ export default {
       }else{
       let  cases=this.jnpf.numberFormat(this.jnpf.math('multiply', [2,this.currentProcess.cases]), 6) //箱数*2
       let complaReult=this.jnpf.numberFormat(this.jnpf.math('multiply', [this.currentProcess.bagNumber,0.5]), 6)//袋子个数*袋子重量（车加工0.25 磨加工0.5）
-      
+
       let numtotal= this.jnpf.numberFormat(this.jnpf.math('subtract', [this.currentProcess.totalWeight,this.currentProcess.trayTotalWeight,cases,complaReult]), 6)
         this.currentProcess.qualifiedQuantity=this.jnpf.numberFormat(this.jnpf.math('multiply', [numtotal,this.currentProcess.productWeight,1000]), 4)
         //  plates 板数
@@ -789,7 +836,7 @@ export default {
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
       this.remakeUnqualifiedQuantity = item.autoUnqualifiedQuantity
-      this.$set(this.currentProcess, 'reportingQuantity', 0) 
+      this.$set(this.currentProcess, 'reportingQuantity', 0)
       if(this.currentProcess.processingType=='self_produced') this.currentProcess.qualifiedQuantity =  this.currentProcess.waitReportNum
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
@@ -931,7 +978,7 @@ export default {
           console.log(this.totalReportNum)
           if (this.currentProcess.processType !== 'boxing') {
              if(this.currentProcess.pickingWay=='production_order'&&this.$store.getters.configData.produce.work_exceed_report){
-     
+
                  let totalNum=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.waitReportNum, this.overChargeNum]), 6)
               if (this.totalReportNum > totalNum) {
                 this.submitFlag = false
@@ -996,7 +1043,7 @@ export default {
           obj.standardValue = this.currentProcess.standardValue
           obj.productionOrderId = this.currentProcess.productionOrderId
           obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
-          obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity,this.utilizeQuantity]), 6)
+          obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity,this.currentProcess.utilizeQuantity]), 6)
           obj.reportingType = "normal"
           obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
           obj.aperture = this.currentProcess.aperture
@@ -1006,7 +1053,7 @@ export default {
           obj.processingTimes = this.currentProcess.processingTimes
 
 
-          
+
           obj.plates=this.currentProcess.plates
           obj.plateNumber=this.currentProcess.plateNumber
           obj.totalWeight=this.currentProcess.totalWeight

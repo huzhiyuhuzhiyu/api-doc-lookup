@@ -46,6 +46,7 @@ export default {
       processList: [],
       dataForm: {
         approvalFlag: false,
+        sourceType: 'direct'
       },
       basicFormSchema: [],
       linesList: [],
@@ -101,9 +102,7 @@ export default {
         // 成品包装入库
         inbound_finished_package: {
           print: { enabled: true, enCode: '', fullName: '' },
-          defaultForm: {
-            sourceType: 'notice'
-          }
+          defaultForm: {}
         },
       }
     },

@@ -254,11 +254,14 @@ const global = {
     { label: '在库重检', value: 'stock_inspection', type: 'info' },
   ],
 
-  // 任务类型
+// 任务类型
   orderType: [
     { label: '正常任务', value: 'normal', type: 'warning' },
     { label: '返工任务', value: 'rework', type: 'info' },
     { label: '翻库任务', value: 'flipping', type: 'success' },
+    { label: '新建任务', value: 'manually', type: 'primary' },
+    { label: '换包装任务', value: 'change_packaging', type: 'danger' },
+    { label: '包装任务', value: 'packaging', type: 'success' },
   ],
   // 任务状态
   orderStatus: [
@@ -285,6 +288,15 @@ const global = {
   paymentMethodType: [
     { label: '转账', value: 'transfer_accounts' },
     { label: '汇票', value: 'draft' },
+  ],
+
+  // 来源类型
+  sourceType: [
+    { label: '订单', value: 'order', type: 'primary' },
+    { label: '通知单', value: 'notice', type: 'success' },
+    { label: '直接出入库', value: 'direct', type: 'warning' },
+    { label: '其他', value: 'io_other', type: 'info' },
+    { label: '复制', value: 'copy', type: 'info' },
   ],
 
   // 字典数据映射方法

@@ -454,7 +454,7 @@ export default {
           type: 'select',
           options: [{label: '全检', value: 'full_inspection'}, {label: '退货', value: 'back'}],
           itemRules: [{required: true, trigger: 'change'}],
-          render: this.dataForm.inspectionResults === 'unqualified',
+          render: this.isWorkReport && this.dataForm.inspectionResults === 'unqualified',
           sm: 6
         },
         {
@@ -1159,6 +1159,10 @@ export default {
     // 是否为完工检验
     isFinished() {
       return this.inspectionType === 'finished'
+    },
+    // 是否为报工检验确认
+    isWorkReport(){
+      return this.inspectionType === 'work_report'
     },
     ...mapGetters(['userInfo'])
   }

@@ -147,19 +147,19 @@ export default {
           },
           {
             prop: 'column_1',
-            label: '8.18~8.24',
+            label: '12.08~12.14',
           },
           {
             prop: 'column_2',
-            label: '8.25~8.31',
+            label: '12.15~12.21',
           },
           {
             prop: 'column_3',
-            label: '9.01~9.07',
+            label: '12.22~12.28',
           },
           {
             prop: 'column_4',
-            label: '9.08~9.14',
+            label: '12.29~01.04',
           },
         ]
       } else if (this.title === '成本') {

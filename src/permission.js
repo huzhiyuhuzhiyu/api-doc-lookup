@@ -3,7 +3,7 @@ import store from './store'
 import {message as $message} from '@/utils/message'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken, removeToken } from '@/utils/auth'
+import { getToken, removeToken, setAccessToken, setToken } from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
 import {windowOpen} from "echarts/lib/util/format";
 import {workspacePath} from "@/utils/define";

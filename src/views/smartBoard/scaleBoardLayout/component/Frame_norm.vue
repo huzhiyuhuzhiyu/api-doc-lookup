@@ -97,15 +97,6 @@ export default {
       if (this.title === '产量') {
         this.tableColumns = [
           {
-            prop: 'norm',
-            label: '指标',
-            width: '180px'
-          },
-          {
-            prop: 'target',
-            label: '目标',
-          },
-          {
             prop: 'monday',
             label: '周一',
           },
@@ -137,15 +128,6 @@ export default {
       } else if (this.title === '质量') {
         this.tableColumns = [
           {
-            prop: 'norm',
-            label: '指标',
-            width: '180px'
-          },
-          {
-            prop: 'target',
-            label: '目标',
-          },
-          {
             prop: 'column_1',
             label: '12.08~12.14',
           },
@@ -164,15 +146,6 @@ export default {
         ]
       } else if (this.title === '成本') {
         this.tableColumns = [
-          {
-            prop: 'norm',
-            label: '指标',
-            width: '180px'
-          },
-          {
-            prop: 'target',
-            label: '目标',
-          },
           {
             prop: 'monday',
             label: '周一',
@@ -203,6 +176,17 @@ export default {
           }
         ]
       }
+      this.tableColumns.unshift(
+        {
+          prop: 'norm',
+          label: '指标',
+          width: '70px',
+        },
+        {
+          prop: 'target',
+          label: '目标',
+          width: '35px',
+        })
     }
   }
 }
@@ -210,9 +194,14 @@ export default {
 
 <template>
   <FrameLayout :title="title" :subTitle="subTitle">
-    <ScreenTable :data="viewData" :columns="tableColumns" />
+    <div class="container">
+      <ScreenTable :data="viewData" :columns="tableColumns" />
+    </div>
   </FrameLayout>
 </template>
 
 <style lang="scss" scoped>
+.container {
+  padding: 10px;
+}
 </style>

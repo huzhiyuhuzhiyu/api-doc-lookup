@@ -17,17 +17,10 @@ export default {
   },
   data() {
     return {
-      viewData: {},
-      days: [
-        null, null, 1, 2, 3, null, null,
-        null, null, 4, 5, 6, null, null,
-        7, 8, 9, 10, 11, 12, 13,
-        14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27,
-        null, null, 28, 29, 30, null, null,
-        null, null, 31, 32, '', null, null,
-      ],
-      // days: []
+      viewData: {
+        safeCalenderList: [],
+      },
+      days: [],
     }
   },
   mounted() {
@@ -37,6 +30,15 @@ export default {
   },
   methods: {
     generateCalendarDays() {
+      this.days = [
+        null, null, 1, 2, 3, null, null,
+        null, null, 4, 5, 6, null, null,
+        7, 8, 9, 10, 11, 12, 13,
+        14, 15, 16, 17, 18, 19, 20,
+        21, 22, 23, 24, 25, 26, 27,
+        null, null, 28, 29, 30, null, null,
+        null, null, 31, '', '', null, null,
+      ]
       const maxDay = Number(getDaysInCurrentMonth())
       const target = this.days.findIndex(item => item === maxDay)
       for (let i = target + 1; i < this.days.length; i++) {

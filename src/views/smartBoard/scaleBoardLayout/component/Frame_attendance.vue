@@ -1,6 +1,6 @@
 <script>
 import FrameLayout from '@/views/smartBoard/scaleBoardLayout/component/FrameLayout.vue'
-import { getScreenSafeData } from '@/api/smartBoard'
+import { getMockScreenSafeData } from '@/api/smartBoard'
 import Bus from '@/views/smartBoard/util/Bus.js'
 
 export default {
@@ -28,7 +28,7 @@ export default {
     async getData(loadingFlag = false) {
       if (loadingFlag) Bus.$emit('addLoading')
       // let date = await dateFormat.getDateRang(this.dateRang) // 获取本月的时间区间
-      getScreenSafeData({
+      getMockScreenSafeData({
         // tenantId: dateFormat.tenantId,
         _title: this.title,
         // startDate: date[0],

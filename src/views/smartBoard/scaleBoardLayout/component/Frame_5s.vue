@@ -1,6 +1,6 @@
 <script>
 import FrameLayout from '@/views/smartBoard/scaleBoardLayout/component/FrameLayout.vue'
-import { getScreenSafeData } from '@/api/smartBoard'
+import { getMockScreenSafeData } from '@/api/smartBoard'
 import Bus from '@/views/smartBoard/util/Bus.js'
 import echarts from 'echarts'
 
@@ -44,7 +44,7 @@ export default {
       this.myChart = echarts.init(chartDom);
 
       // let date = await dateFormat.getDateRang(this.dateRang) // 获取本月的时间区间
-      getScreenSafeData({
+      getMockScreenSafeData({
         // tenantId: dateFormat.tenantId,
         _title: this.title,
         // startDate: date[0],
@@ -53,36 +53,28 @@ export default {
         this.viewData = res.data || []
         const option = {
           title: {
-            text: 'Referer of a Website',
-            subtext: 'Fake Data',
-            left: 'center'
-          },
-          tooltip: {
-            trigger: 'item'
-          },
-          legend: {
-            orient: 'vertical',
-            left: 'left'
+            text: '总得分90',
+            left: 'center',
+            top: 10,
+            textStyle: {
+              color: '#fff',
+              fontSize: 18,
+            }
           },
           series: [
             {
               name: 'Access From',
               type: 'pie',
               radius: '50%',
+              label: {
+                // 普通状态下的标签样式
+                color: '#ffffff', // 白色字体
+                fontSize: 14,
+              },
               data: [
-                { value: 1048, name: 'Search Engine' },
-                { value: 735, name: 'Direct' },
-                { value: 580, name: 'Email' },
-                { value: 484, name: 'Union Ads' },
-                { value: 300, name: 'Video Ads' }
+                { value: 40, name: '生产车间 得分40' },
+                { value: 50, name: '人身安全 得分50' },
               ],
-              emphasis: {
-                itemStyle: {
-                  shadowBlur: 10,
-                  shadowOffsetX: 0,
-                  shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-              }
             }
           ]
         };

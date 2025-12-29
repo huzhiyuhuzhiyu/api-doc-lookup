@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-      viewData: [],
+      viewData: 0,
       tableColumns: []
     }
   },
@@ -34,7 +34,7 @@ export default {
         _title: this.title,
         productionLineName: '大线装配车间',
       }).then(res => {
-        this.viewData = res.data || []
+        this.viewData = Number(res.data)
       }).finally(err => {
         if (loadingFlag) Bus.$emit('subLoading')
       })
@@ -45,13 +45,26 @@ export default {
 
 <template>
   <FrameLayout :title="title" :subTitle="subTitle">
-    <div class="container"></div>
+    <div class="container" v-if="title === '士气'">
+      <el-progress type="circle" text-color="#fff" :percentage="100" :show-text="true" :format="(percentage) => `目标10个`"></el-progress>
+      <div>本月提案</div>
+      <el-progress type="circle" text-color="#fff" :percentage="100 / 10 * viewData" :show-text="true" :format="(percentage) => `实际${viewData}个`"></el-progress>
+    </div>
+    <div class="container" v-else-if="title === '交期'">
+      <el-progress type="circle" text-color="#fff" :percentage="99" :show-text="true" :format="(percentage) => `目标99%`"></el-progress>
+      <div>计划完成率</div>
+      <el-progress type="circle" text-color="#fff" :percentage="100 / 10 * viewData" :show-text="true" :format="(percentage) => `实际${96}%`"></el-progress>
+    </div>
   </FrameLayout>
 </template>
 
 <style lang="scss" scoped>
 .container {
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+  margin: auto;
   height: 100%;
   //background-image: url("~@/assets/images/board/two_circle.svg");
   background-repeat: no-repeat;

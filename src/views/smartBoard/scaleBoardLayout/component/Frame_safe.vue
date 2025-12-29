@@ -69,8 +69,7 @@ export default {
           ...res.data,
           safeCalenderList: res.data.safeCalenderList.map(dayInfo => ({
             ...dayInfo,
-            accidentGrade: dayInfo.accidentGrade,
-            day: Number(dayInfo.day.split('-')[2])
+            day: Number(dayInfo.date.split('-')[2])
           }))
         }
       }).finally(err => {
@@ -80,7 +79,8 @@ export default {
     getDayClass(i) {
       const result = { 'cell': i !== null }
       const target = this.viewData.safeCalenderList.find(item => item.day === i)
-      if (!target && !!i && i <= new Date().getDate()) result['bg-success'] = true
+      // if (!target && !!i && i <= new Date().getDate()) result['bg-success'] = true
+      if (target && target.accidentGrade === 'none') result['bg-success'] = true
       if (target && target.accidentGrade === 'minor_injury') result['bg-warning'] = true
       if (target && target.accidentGrade === 'major_accident') result['bg-danger'] = true
       return result

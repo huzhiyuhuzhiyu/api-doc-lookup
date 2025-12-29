@@ -203,5 +203,6 @@ export default {
 <style lang="scss" scoped>
 .container {
   padding: 10px;
+  background-color: transparent;
 }
 </style>

@@ -69,5 +69,6 @@ export default {
   //background-image: url("~@/assets/images/board/two_circle.svg");
   background-repeat: no-repeat;
   background-size: cover; /* 或者使用contain */
+  background-color: transparent;
 }
 </style>

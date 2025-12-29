@@ -47,7 +47,7 @@ export default {
   <FrameLayout :title="title" :subTitle="subTitle">
     <div class="contain">
       <div class="left">
-        <el-progress type="circle" :percentage="100"></el-progress>
+        <el-progress type="circle" :percentage="100" :stroke-width="10" text-color="#fff"></el-progress>
       </div>
       <div class="right">
         <div class="item text-primary">
@@ -101,7 +101,7 @@ $success: #00CB62;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 10px 0;
+      margin: 5px 0;
     }
   }
 }

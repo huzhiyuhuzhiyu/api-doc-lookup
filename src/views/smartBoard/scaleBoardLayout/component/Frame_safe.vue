@@ -30,6 +30,11 @@ export default {
   },
   methods: {
     generateCalendarDays() {
+      const getDaysInCurrentMonth = () => {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      };
+
       this.days = [
         null, null, 1, 2, 3, null, null,
         null, null, 4, 5, 6, null, null,
@@ -38,24 +43,15 @@ export default {
         21, 22, 23, 24, 25, 26, 27,
         null, null, 28, 29, 30, null, null,
         null, null, 31, '', '', null, null,
-      ]
-      const maxDay = Number(getDaysInCurrentMonth())
-      const target = this.days.findIndex(item => item === maxDay)
+      ];
+
+      const maxDay = getDaysInCurrentMonth();
+      const target = this.days.findIndex(item => item === maxDay);
+
       for (let i = target + 1; i < this.days.length; i++) {
-        if (isNumeric(this.days[i])) this.days[i] = ''
-      }
-
-      function getDaysInCurrentMonth() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth(); // 注意：getMonth() 返回 0-11（0 表示一月）
-
-        // 创建下个月的第 0 天，即当前月的最后一天
-        const lastDay = new Date(year, month + 1, 0);
-        return lastDay.getDate();
-      }
-      function isNumeric(value) {
-        return typeof value === 'number' && isFinite(value);
+        if (typeof this.days[i] === 'number') {
+          this.days[i] = '';
+        }
       }
     },
     async getData(loadingFlag = false) {

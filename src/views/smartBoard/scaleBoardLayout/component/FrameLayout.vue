@@ -41,6 +41,7 @@ export default {
   flex-direction: column;
   background-image: url("~@/assets/images/board/frame_layout.png");
   border-image: url("~@/assets/images/board/frame_border.png") 30 / 19px round;
+  background-color: #001B5999;
   background-repeat: no-repeat;
   background-size: cover; /* 或者使用contain */
 }

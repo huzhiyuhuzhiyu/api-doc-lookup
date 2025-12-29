@@ -19,7 +19,13 @@ export default {
   data() {
     return {
       viewData: 0,
-      tableColumns: []
+      tableColumns: [],
+      progressProps: {
+        width: 88,
+        strokeWidth: 8,
+        type: "circle",
+        textColor: "#fff"
+      }
     }
   },
   mounted() {
@@ -46,14 +52,14 @@ export default {
 <template>
   <FrameLayout :title="title" :subTitle="subTitle">
     <div class="container" v-if="title === '士气'">
-      <el-progress type="circle" text-color="#fff" :percentage="100" :show-text="true" :format="(percentage) => `目标10个`"></el-progress>
-      <div>本月提案</div>
-      <el-progress type="circle" text-color="#fff" :percentage="100 / 10 * viewData" :show-text="true" :format="(percentage) => `实际${viewData}个`"></el-progress>
+      <el-progress :percentage="100" :format="(percentage) => `目标10个`" v-bind="progressProps"></el-progress>
+      <div class="title">本月提案</div>
+      <el-progress :percentage="100 / 10 * viewData" :format="(percentage) => `实际${viewData}个`" v-bind="progressProps"></el-progress>
     </div>
     <div class="container" v-else-if="title === '交期'">
-      <el-progress type="circle" text-color="#fff" :percentage="99" :show-text="true" :format="(percentage) => `目标99%`"></el-progress>
-      <div>计划完成率</div>
-      <el-progress type="circle" text-color="#fff" :percentage="100 / 10 * viewData" :show-text="true" :format="(percentage) => `实际${96}%`"></el-progress>
+      <el-progress :percentage="99" :format="(percentage) => `目标99%`" v-bind="progressProps"></el-progress>
+      <div class="title">计划完成率</div>
+      <el-progress :percentage="100 / 10 * viewData" :format="(percentage) => `实际${96}%`" v-bind="progressProps"></el-progress>
     </div>
   </FrameLayout>
 </template>
@@ -64,11 +70,21 @@ export default {
   justify-content: center;
   align-items: center;
   width: 300px;
-  margin: auto;
-  height: 100%;
-  //background-image: url("~@/assets/images/board/two_circle.svg");
+  height: 100px;
+  margin: 40px auto;
+  padding: 6px;
+  box-sizing: border-box;
+  background-image: url("~@/assets/images/board/two_circle.svg");
   background-repeat: no-repeat;
-  background-size: cover; /* 或者使用contain */
+  background-size: contain; /* 或者使用contain */
   background-color: transparent;
+
+  .title {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    top: 15px;
+    font-size: 20px;
+  }
 }
 </style>

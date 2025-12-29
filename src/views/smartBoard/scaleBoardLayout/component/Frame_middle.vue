@@ -119,7 +119,7 @@ export default {
         </div>
 
         <!-- 分割线 -->
-        <hr class="divider" />
+<!--        <hr class="divider" />-->
 
         <!-- 底部信息 -->
         <div class="footer-info">
@@ -184,18 +184,21 @@ export default {
   }
 
   .card {
-    background-color: #003366;
+    //background-color: #003366;
     color: #fff;
     width: 320px;
     height: 230px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    border: 1px solid #0077cc;
+    //border-radius: 8px;
+    //box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    //border: 1px solid #0077cc;
     padding: 12px;
     box-sizing: border-box;
     overflow: hidden;
     font-size: 14px;
     line-height: 1.5;
+    background-image: url("~@/assets/images/board/frame_middle_card.png");
+    background-repeat: no-repeat;
+    background-size: cover; /* 或者使用contain */
   }
 
   .top-tags {
@@ -227,7 +230,7 @@ export default {
   }
 
   .footer-info {
-    margin-top: 10px;
+    margin-top: 50px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;

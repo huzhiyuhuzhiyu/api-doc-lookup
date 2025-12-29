@@ -141,7 +141,7 @@ export default {
     <div class="wrapper-cover" ref="wrapperCover">
       <div class="wrapper" ref="board" id="wrapper" :style="wrapperStyle">
         <div class="right-button">
-          <i :title="isPlay ?'点击暂停滚动':'点击开启滚动'" @click="$emit('scroll-change', $emit('update:isPlay',!isPlay))" :class="[isPlay?'el-icon-video-pause' :'el-icon-video-play' ,'icon']"/>
+          <i :title="isPlay ?'点击暂停滚动':'点击开启滚动'" v-if="!scaleBoard" @click="$emit('scroll-change', $emit('update:isPlay',!isPlay))" :class="[isPlay?'el-icon-video-pause' :'el-icon-video-play' ,'icon']"/>
           <i title="点击以复制全屏链接" v-if="!$route.path.endsWith('/full')" @click="copyLink" class="el-icon-s-promotion icon"/>
           <el-dialog
             v-if="!$route.path.endsWith('/full')"
@@ -155,7 +155,7 @@ export default {
               <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
             </span>
           </el-dialog>
-          <i title="点击以刷新" @click="$emit('refresh')" class="el-icon-refresh icon"/>
+          <i title="点击以刷新" @click="$emit('refresh')" v-if="!scaleBoard" class="el-icon-refresh icon"/>
           <i v-if="!isFullScreen" title="点击以进入全屏" @click="iconClick" class="el-icon-full-screen icon"/>
           <i v-else  @click="iconClick" title="点击以退出全屏">
             <svg  t="1755758181696" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2310" width="24" height="24">

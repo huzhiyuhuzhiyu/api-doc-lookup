@@ -24,7 +24,10 @@ export default {
   },
   mounted() {
     this.getData(true)
-// eventBus.on('refreshViewData', getData)
+    Bus.$on('refreshViewData', this.getData)
+  },
+  beforeDestroy() {
+    Bus.$off('refreshViewData', this.getData)
   },
   beforeDestroy() {
     // 组件销毁前释放 echarts 实例，避免内存泄漏

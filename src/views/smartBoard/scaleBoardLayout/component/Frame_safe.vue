@@ -26,7 +26,10 @@ export default {
   mounted() {
     this.getData(true)
     this.generateCalendarDays()
-// eventBus.on('refreshViewData', getData)
+    Bus.$on('refreshViewData', this.getData)
+  },
+  beforeDestroy() {
+    Bus.$off('refreshViewData', this.getData)
   },
   methods: {
     generateCalendarDays() {

@@ -20,15 +20,19 @@ export default {
 @use "~@/views/smartBoard/style/util";
 
 .boardTitle {
-  //font-family: "YouSheBiaoTiHei", serif !important;
+  font-family: "YouSheBiaoTiHei", serif !important;
+  top: 40px;
+  font-size: 40px;
+  color: #fff;
+
   @include util.gradient-text(50%);
-  font-size: 30px;
+  //font-size: 30px;
   position: absolute;
   width: 450px;
   height: 44px;
-  top: 3.5%;
+  //top: 3.5%;
   left: calc(50% - 225px);
-  font-weight: 700;
+  //font-weight: 700;
   text-align: center;
 }
 </style>

@@ -30,7 +30,10 @@ export default {
   },
   mounted() {
     this.getData(true)
-// eventBus.on('refreshViewData', getData)
+    Bus.$on('refreshViewData', this.getData)
+  },
+  beforeDestroy() {
+    Bus.$off('refreshViewData', this.getData)
   },
   methods: {
     async getData(loadingFlag = false) {
@@ -84,7 +87,7 @@ export default {
     text-align: center;
     position: relative;
     top: 15px;
-    font-size: 20px;
+    font-size: 18px;
   }
 }
 </style>

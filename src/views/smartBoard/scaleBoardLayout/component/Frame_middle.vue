@@ -28,7 +28,10 @@ export default {
   },
   mounted() {
     this.getData(true)
-// eventBus.on('refreshViewData', getData)
+    Bus.$on('refreshViewData', this.getData)
+  },
+  beforeDestroy() {
+    Bus.$off('refreshViewData', this.getData)
   },
   methods: {
     async getData(loadingFlag = false) {
@@ -53,6 +56,7 @@ export default {
         // month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
       }).then(res => {
         this.viewData = res.data.page
+        if (Number(this.viewData.pages) < 1) this.viewData.pages = 1
         this.statusMap = res.data.statusList.reduce((acc, cur) => {
           acc[cur.name] = cur.targetValue
           return acc
@@ -72,15 +76,15 @@ export default {
         <div>共计：{{ viewData.total || 0 }}</div>
         <div class="text-danger">
           <span class="title">● 待处理</span>
-          <span class="number">{{ statusMap.wait_processed || 0 }}</span>
+          <span class="number">&nbsp;{{ statusMap.wait_processed || 0 }}</span>
         </div>
         <div class="text-success">
           <span class="title">● 进行中</span>
-          <span class="number">{{ statusMap.in_progress || 0 }}</span>
+          <span class="number">&nbsp;{{ statusMap.in_progress || 0 }}</span>
         </div>
         <div class="text-warning">
           <span class="title">● 待确认</span>
-          <span class="number">{{ statusMap.wait_confirmed || 0 }}</span>
+          <span class="number">&nbsp;{{ statusMap.wait_confirmed || 0 }}</span>
         </div>
       </div>
     </template>

@@ -22,7 +22,10 @@ export default {
   },
   mounted() {
     this.getData(true)
-// eventBus.on('refreshViewData', getData)
+    Bus.$on('refreshViewData', this.getData)
+  },
+  beforeDestroy() {
+    Bus.$off('refreshViewData', this.getData)
   },
   methods: {
     async getData(loadingFlag = false) {
@@ -47,7 +50,7 @@ export default {
   <FrameLayout :title="title" :subTitle="subTitle">
     <div class="contain">
       <div class="left">
-        <el-progress type="circle" :percentage="100" :stroke-width="10" text-color="#fff"></el-progress>
+        <el-progress type="circle" :percentage="100" :stroke-width="14" text-color="#fff"></el-progress>
       </div>
       <div class="right">
         <div class="item text-primary">

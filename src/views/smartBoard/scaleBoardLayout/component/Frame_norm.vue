@@ -25,7 +25,10 @@ export default {
   mounted() {
     this.generateTableColumns()
     this.getData(true)
-// eventBus.on('refreshViewData', getData)
+    Bus.$on('refreshViewData', this.getData)
+  },
+  beforeDestroy() {
+    Bus.$off('refreshViewData', this.getData)
   },
   methods: {
     async getData(loadingFlag = false) {
@@ -186,6 +189,7 @@ export default {
           prop: 'target',
           label: '目标',
           width: '35px',
+          color: '#8FA1FF',
         })
     }
   }

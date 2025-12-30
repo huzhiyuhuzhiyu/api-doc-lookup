@@ -2,7 +2,7 @@
  * @Author: Carrey 2954831281@qq.com
  * @Date: 2025-12-29 10:09:59
  * @LastEditors: Carrey 2954831281@qq.com
- * @LastEditTime: 2025-12-29 16:04:04
+ * @LastEditTime: 2025-12-30 09:17:23
  * @FilePath: src/views/smartBoard/scaleBoardLayout/component/ScreenTable.vue
  * @Description: 这是默认设置,可以在设置》工具》File Description中进行配置
  -->
@@ -28,9 +28,10 @@ export default {
       <th v-for="column in columns" :key="column.prop" :style="{ width: column.width, textAlign: column.textAlign }">{{ column.label }}</th>
     </tr>
     </thead>
+    <!--    <div class="split-line" />-->
     <tbody>
     <tr v-for="row in data">
-      <td v-for="column in columns" :key="column.prop" :style="{ width: column.width, textAlign: column.textAlign }">{{ row[column.prop] }}</td>
+      <td v-for="column in columns" :key="column.prop" :style="{ width: column.width, textAlign: column.textAlign, color: column.color }">{{ row[column.prop] }}</td>
     </tr>
     </tbody>
   </table>
@@ -56,6 +57,20 @@ export default {
     text-align: left;
     overflow: hidden; /* 防止内容溢出 */
     white-space: nowrap; /* 确保内容不换行 */
+    transform: scaleX(0.95);
+  }
+
+  thead {
+    position: relative;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 1px;
+      position: absolute;
+      background-color: #268EFF88;
+    }
   }
 }
 </style>

@@ -78,7 +78,7 @@ export default {
         }).finally(err => {
           if (loadingFlag) Bus.$emit('subLoading')
         })
-      } else if (this.title === '质量') {
+      } else if (this.title === '质量' || this.title === '成本') {
         getScreenReworkData({
           tenantId: 'nm',
           _title: this.title,

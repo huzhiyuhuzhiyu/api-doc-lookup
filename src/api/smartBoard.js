@@ -2,7 +2,7 @@
  * @Author: Carrey 2954831281@qq.com
  * @Date: 2025-12-26 15:30:12
  * @LastEditors: Carrey 2954831281@qq.com
- * @LastEditTime: 2025-12-30 14:20:14
+ * @LastEditTime: 2025-12-30 15:07:14
  * @FilePath: src/api/smartBoard.js
  * @Description: 这是默认设置,可以在设置》工具》File Description中进行配置
  */
@@ -92,6 +92,14 @@ export function getScreenSiteManageData(data) {
 export function getScreenReworkData(data) {
   return request({
     url: '/api/screen/data/rework',
+    method: 'POST',
+    data: data
+  })
+}
+
+export function getScreenDayQualifiedData(data) {
+  return request({
+    url: '/api/screen/data/day/qualified',
     method: 'POST',
     data: data
   })

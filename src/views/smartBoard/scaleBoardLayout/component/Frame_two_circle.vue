@@ -50,7 +50,7 @@ export default {
           if (loadingFlag) Bus.$emit('subLoading')
         })
       } else if (this.title === '士气') {
-        getScreenDeliverData({
+        getScreenKnowledgeCaseCount({
           tenantId: 'zsk',
           _title: this.title,
           productionLineName: '大线装配车间',

@@ -18,7 +18,7 @@ export default {
     <div class="frame-title">
       <div class="left">
         <span class="title-text">{{ title }}</span>
-        <span class="sub-title-text" v-if="subTitle">&nbsp;{{ subTitle }}</span>
+        <span class="sub-title-text" v-if="subTitle">&nbsp;&nbsp;{{ subTitle }}</span>
       </div>
       <div class="right">
         <slot name="title-right" />
@@ -71,8 +71,10 @@ export default {
     .sub-title-text {
       font-family: "微软雅黑", serif;
       font-size: 14px;
-      //font-weight: bold;
+      font-weight: bold;
       color: #29FBD888;
+      position: relative;
+      top: -2px;
     }
   }
 

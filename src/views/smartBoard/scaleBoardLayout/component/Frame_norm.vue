@@ -1,6 +1,6 @@
 <script>
 import FrameLayout from '@/views/smartBoard/scaleBoardLayout/component/FrameLayout.vue'
-import { getScreenProdAchievementData } from '@/api/smartBoard'
+import { getScreenProdAchievementData, getScreenReworkData } from '@/api/smartBoard'
 import Bus from '@/views/smartBoard/util/Bus.js'
 import ScreenTable from "@/views/smartBoard/scaleBoardLayout/component/ScreenTable.vue";
 
@@ -23,7 +23,6 @@ export default {
     }
   },
   mounted() {
-    this.generateTableColumns()
     this.getData(true)
     Bus.$on('refreshViewData', this.getData)
   },
@@ -33,15 +32,15 @@ export default {
   methods: {
     async getData(loadingFlag = false) {
       if (loadingFlag) Bus.$emit('addLoading')
-      getScreenProdAchievementData({
-        tenantId: 'nm',
-        _title: this.title,
-        productionLineName: '大线装配车间',
-        startDate: this.jnpf.getToday('YYYY-MM-DD', 'today-7'),
-        endDate: this.jnpf.getToday('YYYY-MM-DD', 'today-1'),
-      }).then(res => {
-        this.viewData = res.data || []
-        if (this.title === '产量') {
+      if (this.title === '产量') {
+        getScreenProdAchievementData({
+          tenantId: 'nm',
+          _title: this.title,
+          productionLineName: '大线装配车间',
+          startDate: this.jnpf.getToday('YYYY-MM-DD', 'today-7'),
+          endDate: this.jnpf.getToday('YYYY-MM-DD', 'today-1'),
+        }).then(res => {
+          this.viewData = res.data || []
           this.tableColumns = res.data.map(item => ({
             prop: item.name,
             label: item.name,
@@ -75,114 +74,57 @@ export default {
               width: '35px',
               color: '#8FA1FF',
             })
-        } else if (this.title === '质量') {
-          this.viewData = [
-            {
-              norm: '产量合格率',
-              target: '98%',
-              column_1: '98%',
-              column_2: '98%',
-              column_3: '98%',
-              column_4: '98%',
-            },
-          ]
-        } else if (this.title === '成本') {
-          this.viewData = [
-            {
-              norm: '责废率',
-              target: '1.5%',
-              monday: '2.5%',
-              tuesday: '0.5%',
-              wednesday: '0.5%',
-              thursday: '0.5%',
-              friday: '0.5%',
-              saturday: '0.5%',
-              sunday: '0.5%'
-            },
-            {
-              norm: '粗磨报废率',
-              target: '0%',
-              monday: '0%',
-              tuesday: '0%',
-              wednesday: '0%',
-              thursday: '0.2%',
-              friday: '0.1%',
-              saturday: '0%',
-              sunday: '1%'
-            },
-          ]
-        }
-      }).finally(err => {
-        if (loadingFlag) Bus.$emit('subLoading')
-      })
-    },
-    generateTableColumns() {
-      if (this.title === '产量') {
 
-      } else if (this.title === '质量') {
-        this.tableColumns = [
-          {
-            prop: 'column_1',
-            label: '12.08~12.14',
-          },
-          {
-            prop: 'column_2',
-            label: '12.15~12.21',
-          },
-          {
-            prop: 'column_3',
-            label: '12.22~12.28',
-          },
-          {
-            prop: 'column_4',
-            label: '12.29~01.04',
-          },
-        ]
-      } else if (this.title === '成本') {
-        this.tableColumns = [
-          {
-            prop: 'monday',
-            label: '周一',
-          },
-          {
-            prop: 'tuesday',
-            label: '周二',
-          },
-          {
-            prop: 'wednesday',
-            label: '周三',
-          },
-          {
-            prop: 'thursday',
-            label: '周四',
-          },
-          {
-            prop: 'friday',
-            label: '周五',
-          },
-          {
-            prop: 'saturday',
-            label: '周六',
-          },
-          {
-            prop: 'sunday',
-            label: '周日',
-          }
-        ]
-      }
-      this.tableColumns.unshift(
-        {
-          prop: 'norm',
-          label: '指标',
-          width: '70px',
-        },
-        {
-          prop: 'target',
-          label: '目标',
-          width: '35px',
-          color: '#8FA1FF',
+        }).finally(err => {
+          if (loadingFlag) Bus.$emit('subLoading')
         })
-    }
+      } else if (this.title === '质量') {
+        getScreenReworkData({
+          tenantId: 'nm',
+          _title: this.title,
+          productionLineName: '大线装配车间',
+          startDate: this.jnpf.getToday('YYYY-MM-DD', 'today-7'),
+          endDate: this.jnpf.getToday('YYYY-MM-DD', 'today-1'),
+        }).then(res => {
+          this.viewData = res.data || []
+          this.tableColumns = res.data.map(item => ({
+            prop: item.name,
+            label: item.name,
+            color: (row) => {
+              const value = Number(row[item.name].replace('%', ''))
+              const targetValue = Number(row.target.replace('%', ''))
+              if (targetValue * 0.9 < value) return '#dc3545'
+              if (targetValue * 0.95 < value) return '#FCAA47'
+              return '#fff'
+            },
+          }))
+          this.viewData = [
+            res.data.reduce((prev, cur) => ({
+              ...prev,
+              [cur.name]: this.jnpf.numberFormat(cur.targetValue, 2) + '%',
+            }), {
+              norm: '返工率',
+              target: '2%',
+            })
+          ]
+
+          this.tableColumns.unshift(
+            {
+              prop: 'norm',
+              label: '指标',
+              width: '70px',
+            },
+            {
+              prop: 'target',
+              label: '目标',
+              width: '35px',
+              color: '#8FA1FF',
+            })
+        }).finally(err => {
+          if (loadingFlag) Bus.$emit('subLoading')
+        })
+      }
+    },
   }
 }
 </script>

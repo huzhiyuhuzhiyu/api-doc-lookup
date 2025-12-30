@@ -1,6 +1,6 @@
 <script>
 import FrameLayout from '@/views/smartBoard/scaleBoardLayout/component/FrameLayout.vue'
-import { getMockScreenSafeData } from '@/api/smartBoard'
+import { getMockScreenSafeData, getScreenSiteManageData } from '@/api/smartBoard'
 import Bus from '@/views/smartBoard/util/Bus.js'
 import echarts from 'echarts'
 
@@ -28,8 +28,6 @@ export default {
   },
   beforeDestroy() {
     Bus.$off('refreshViewData', this.getData)
-  },
-  beforeDestroy() {
     // 组件销毁前释放 echarts 实例，避免内存泄漏
     if (this.myChart) {
       this.myChart.dispose();
@@ -47,39 +45,45 @@ export default {
       this.myChart = echarts.init(chartDom);
 
       // let date = await dateFormat.getDateRang(this.dateRang) // 获取本月的时间区间
-      getMockScreenSafeData({
-        // tenantId: dateFormat.tenantId,
+      getScreenSiteManageData({
+        tenantId: 'zsk',
         _title: this.title,
-        // startDate: date[0],
-        // endDate: date[1]
+        productionLineName: '大线装配车间',
+        month: this.jnpf.getToday('YYYY-MM'),
       }).then(res => {
         this.viewData = res.data || []
         const option = {
-          title: {
-            text: '总得分90',
-            left: 'center',
-            top: 10,
-            textStyle: {
-              color: '#fff',
-              fontSize: 18,
-            }
-          },
           series: [
             {
-              name: 'Access From',
               type: 'pie',
               radius: '50%',
+              center: ['50%', '40%'], // 默认是 50%，改为 45% 上移一点
               label: {
                 // 普通状态下的标签样式
                 color: '#ffffff', // 白色字体
                 fontSize: 14,
               },
-              data: [
-                { value: 40, name: '生产车间 得分40' },
-                { value: 50, name: '人身安全 得分50' },
-              ],
+              data: res.data.map(item=>({
+                value: Number(item.targetValue),
+                name: `${item.name}\n得分${item.targetValue}${item.targetValue !== item.value ? ` 扣分${item.value - item.targetValue}` : ''}`,
+              }))
             }
-          ]
+          ],
+          graphic: {
+            elements: [
+              {
+                type: 'text',
+                left: 'center',      // 水平居中
+                bottom: 10,          // 距离容器底部 20px
+                style: {
+                  text: `累计扣分：${res.data.reduce((acc, cur) => acc + (cur.targetValue !== cur.value ? cur.value - cur.targetValue : 0), 0)}分`,
+                  fill: '#fff',
+                  fontSize: 14,
+                  textAlign: 'center'
+                }
+              }
+            ]
+          }
         };
 
         this.myChart.setOption(option);

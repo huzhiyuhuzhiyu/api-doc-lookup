@@ -1,6 +1,6 @@
 <script>
 import FrameLayout from '@/views/smartBoard/scaleBoardLayout/component/FrameLayout.vue'
-import { getScreenKnowledgeCaseCount } from '@/api/smartBoard'
+import { getScreenKnowledgeCaseCount, getScreenDeliverData } from '@/api/smartBoard'
 import Bus from '@/views/smartBoard/util/Bus.js'
 import ScreenTable from "@/views/smartBoard/scaleBoardLayout/component/ScreenTable.vue";
 
@@ -38,15 +38,28 @@ export default {
   methods: {
     async getData(loadingFlag = false) {
       if (loadingFlag) Bus.$emit('addLoading')
-      getScreenKnowledgeCaseCount({
-        tenantId: 'zsk',
-        _title: this.title,
-        productionLineName: '大线装配车间',
-      }).then(res => {
-        this.viewData = Number(res.data)
-      }).finally(err => {
-        if (loadingFlag) Bus.$emit('subLoading')
-      })
+      if (this.title === '交期') {
+        getScreenDeliverData({
+          tenantId: 'nm',
+          _title: this.title,
+          productionLineName: '大线装配车间',
+          month: this.jnpf.getToday('YYYY-MM'),
+        }).then(res => {
+          this.viewData = this.jnpf.numberFormat(res.data)
+        }).finally(err => {
+          if (loadingFlag) Bus.$emit('subLoading')
+        })
+      } else if (this.title === '士气') {
+        getScreenDeliverData({
+          tenantId: 'zsk',
+          _title: this.title,
+          productionLineName: '大线装配车间',
+        }).then(res => {
+          this.viewData = Number(res.data)
+        }).finally(err => {
+          if (loadingFlag) Bus.$emit('subLoading')
+        })
+      }
     },
   }
 }
@@ -60,9 +73,9 @@ export default {
       <el-progress :percentage="100 / 10 * viewData" :format="(percentage) => `实际${viewData}个`" v-bind="progressProps"></el-progress>
     </div>
     <div class="container" v-else-if="title === '交期'">
-      <el-progress :percentage="99" :format="(percentage) => `目标99%`" v-bind="progressProps"></el-progress>
+      <el-progress :percentage="98" :format="(percentage) => `目标98%`" v-bind="progressProps"></el-progress>
       <div class="title">计划完成率</div>
-      <el-progress :percentage="100 / 10 * viewData" :format="(percentage) => `实际${96}%`" v-bind="progressProps"></el-progress>
+      <el-progress :percentage="Number(viewData)" :format="(percentage) => `实际${this.viewData}%`" v-bind="progressProps"></el-progress>
     </div>
   </FrameLayout>
 </template>

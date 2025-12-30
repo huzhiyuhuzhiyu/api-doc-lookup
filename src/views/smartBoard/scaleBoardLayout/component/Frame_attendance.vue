@@ -14,6 +14,10 @@ export default {
       type: String,
       default: ''
     },
+    query: {
+      type: Object,
+      default: () => ({})
+    },
   },
   data() {
     return {
@@ -36,6 +40,7 @@ export default {
         _title: this.title,
         // startDate: date[0],
         // endDate: date[1]
+        ...this.query,
       }).then(res => {
         this.viewData = res.data || []
       }).finally(err => {

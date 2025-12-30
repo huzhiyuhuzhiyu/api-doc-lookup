@@ -15,6 +15,10 @@ export default {
       type: String,
       default: ''
     },
+    query: {
+      type: Object,
+      default: () => ({})
+    },
   },
   data() {
     return {
@@ -49,10 +53,10 @@ export default {
       getScreenTrackingData({
         tenantId: 'zsk',
         _title: this.title,
-        productionLineName: '大线装配车间',
         mattersGradeList: this.title === '及时跟踪' ? ["sim_1", "sim_2"] : ["sim_3"],
         pageSize: this.title === '及时跟踪' ? 6 : 3,
         pageNum: this.pageNum,
+        ...this.query,
         // month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
       }).then(res => {
         this.viewData = res.data.page

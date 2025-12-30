@@ -13,7 +13,12 @@ import {getTenantId} from "@/utils";
 NProgress.configure({showSpinner: false}) // NProgress Configuration
 
 const smartBoard = [
+  '/smartBoard/bigLineWorkshop/full',
   '/smartBoard/bigLineAssemblyWorkshop/full',
+  '/smartBoard/littleLineWorkshop/full',
+  '/smartBoard/littleLineAssemblyWorkshop/full',
+  '/smartBoard/finishedWarehouseDailyManagement/full',
+  '/smartBoard/dailyManagement/full',
 ]
 
 // 获取地址栏参数

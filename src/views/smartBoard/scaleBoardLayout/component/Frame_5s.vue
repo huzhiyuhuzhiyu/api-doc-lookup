@@ -15,6 +15,10 @@ export default {
       type: String,
       default: ''
     },
+    query: {
+      type: Object,
+      default: () => ({})
+    },
   },
   data() {
     return {
@@ -48,8 +52,9 @@ export default {
       getScreenSiteManageData({
         tenantId: 'zsk',
         _title: this.title,
-        productionLineName: '大线装配车间',
         month: this.jnpf.getToday('YYYY-MM'),
+        // productionLineName: '大线装配车间',
+        ...this.query,
       }).then(res => {
         this.viewData = res.data || []
         const option = {

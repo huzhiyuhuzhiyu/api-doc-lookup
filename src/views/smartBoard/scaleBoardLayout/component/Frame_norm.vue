@@ -15,6 +15,10 @@ export default {
       type: String,
       default: ''
     },
+    query: {
+      type: Object,
+      default: () => ({})
+    },
   },
   data() {
     return {
@@ -36,9 +40,10 @@ export default {
         getScreenProdAchievementData({
           tenantId: 'nm',
           _title: this.title,
-          productionLineName: '大线装配车间',
           startDate: this.jnpf.getToday('YYYY-MM-DD', 'today-7'),
           endDate: this.jnpf.getToday('YYYY-MM-DD', 'today-1'),
+          // productionLineName: '大线装配车间',
+          ...this.query,
         }).then(res => {
           this.viewData = res.data || []
           this.tableColumns = res.data.map(item => ({
@@ -82,9 +87,10 @@ export default {
         getScreenReworkData({
           tenantId: 'nm',
           _title: this.title,
-          productionLineName: '大线装配车间',
           startDate: this.jnpf.getToday('YYYY-MM-DD', 'today-7'),
           endDate: this.jnpf.getToday('YYYY-MM-DD', 'today-1'),
+          // productionLineName: '大线装配车间',
+          ...this.query,
         }).then(res => {
           this.viewData = res.data || []
           this.tableColumns = res.data.map(item => ({

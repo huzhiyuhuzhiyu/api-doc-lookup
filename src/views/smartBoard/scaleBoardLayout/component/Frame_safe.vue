@@ -14,6 +14,10 @@ export default {
       type: String,
       default: ''
     },
+    query: {
+      type: Object,
+      default: () => ({})
+    },
   },
   data() {
     return {
@@ -63,10 +67,11 @@ export default {
       getScreenSafeData({
         tenantId: 'zsk',
         _title: this.title,
-        productionLineName: '大线装配车间',
         month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
         // startDate: date[0],
         // endDate: date[1]
+        // productionLineName: '大线装配车间',
+        ...this.query,
       }).then(res => {
         this.viewData = {
           ...res.data,

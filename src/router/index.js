@@ -60,8 +60,33 @@ export const constantRoutes = [{
         hidden: true
     },
   {
+    path: '/smartBoard/bigLineWorkshop/full',
+    component: (resolve) => require(['@/views/smartBoard/bigLineWorkshop'], resolve),
+    hidden: true
+  },
+  {
     path: '/smartBoard/bigLineAssemblyWorkshop/full',
     component: (resolve) => require(['@/views/smartBoard/bigLineAssemblyWorkshop'], resolve),
+    hidden: true
+  },
+  {
+    path: '/smartBoard/littleLineWorkshop/full',
+    component: (resolve) => require(['@/views/smartBoard/littleLineWorkshop'], resolve),
+    hidden: true
+  },
+  {
+    path: '/smartBoard/littleLineAssemblyWorkshop/full',
+    component: (resolve) => require(['@/views/smartBoard/littleLineAssemblyWorkshop'], resolve),
+    hidden: true
+  },
+  {
+    path: '/smartBoard/finishedWarehouseDailyManagement/full',
+    component: (resolve) => require(['@/views/smartBoard/finishedWarehouseDailyManagement'], resolve),
+    hidden: true
+  },
+  {
+    path: '/smartBoard/dailyManagement/full',
+    component: (resolve) => require(['@/views/smartBoard/dailyManagement'], resolve),
     hidden: true
   },
 ]

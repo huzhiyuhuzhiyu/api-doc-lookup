@@ -28,8 +28,14 @@ export default {
         width: 88,
         strokeWidth: 8,
         type: "circle",
-        textColor: "#fff"
-      }
+        textColor: "#fff",
+        color: [
+          // {color: '#f56c6c', percentage: 20},
+          {color: '#e6a23c', percentage: 40},
+          {color: '#1989fa', percentage: 80},
+          {color: '#5cb87a', percentage: 100}
+        ]
+      },
     }
   },
   mounted() {

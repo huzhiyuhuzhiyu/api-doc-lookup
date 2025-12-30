@@ -93,39 +93,4 @@ export default {
   box-sizing: border-box;
 }
 
-$primary-color: #0b80e0;
-.text-primary {
-  color: $primary-color;
-}
-
-.bg-primary {
-  background-color: $primary-color;
-}
-
-$success: #00CB62;
-.text-success {
-  color: $success;
-}
-
-.bg-success {
-  background-color: $success;
-}
-
-$warning: #FCAA47;
-.text-warning {
-  color: $warning;
-}
-
-.bg-warning {
-  background-color: $warning;
-}
-
-$danger: #dc3545;
-.text-danger {
-  color: $danger;
-}
-
-.bg-danger {
-  background-color: $danger;
-}
 </style>

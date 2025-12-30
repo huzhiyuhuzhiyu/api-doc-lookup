@@ -42,9 +42,8 @@ export default {
     initInterval() {
       clearInterval(this.interval)
       this.interval = setInterval(() => {
-        this.$message.success('定时刷新')
         this.refresh()
-      }, 1000 * 60)
+      }, 1000 * 60 * 15)
     }
   }
 }
@@ -66,4 +65,40 @@ export default {
 
 <style scoped lang="scss">
 @use "~@/views/smartBoard/style/util" as util;
+
+$primary-color: #0b80e0;
+.text-primary {
+  color: $primary-color;
+}
+
+.bg-primary {
+  background-color: $primary-color;
+}
+
+$success: #00CB62;
+.text-success {
+  color: $success;
+}
+
+.bg-success {
+  background-color: $success;
+}
+
+$warning: #FCAA47;
+.text-warning {
+  color: $warning;
+}
+
+.bg-warning {
+  background-color: $warning;
+}
+
+$danger: #dc3545;
+.text-danger {
+  color: $danger;
+}
+
+.bg-danger {
+  background-color: $danger;
+}
 </style>

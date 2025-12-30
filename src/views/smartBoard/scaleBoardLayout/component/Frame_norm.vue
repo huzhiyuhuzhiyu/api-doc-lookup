@@ -1,6 +1,6 @@
 <script>
 import FrameLayout from '@/views/smartBoard/scaleBoardLayout/component/FrameLayout.vue'
-import { getMockScreenSafeData } from '@/api/smartBoard'
+import { getScreenProdAchievementData } from '@/api/smartBoard'
 import Bus from '@/views/smartBoard/util/Bus.js'
 import ScreenTable from "@/views/smartBoard/scaleBoardLayout/component/ScreenTable.vue";
 
@@ -33,28 +33,48 @@ export default {
   methods: {
     async getData(loadingFlag = false) {
       if (loadingFlag) Bus.$emit('addLoading')
-      // let date = await dateFormat.getDateRang(this.dateRang) // 获取本月的时间区间
-      getMockScreenSafeData({
-        // tenantId: dateFormat.tenantId,
+      getScreenProdAchievementData({
+        tenantId: 'nm',
         _title: this.title,
-        // startDate: date[0],
-        // endDate: date[1]
+        productionLineName: '大线装配车间',
+        startDate: this.jnpf.getToday('YYYY-MM-DD', 'today-7'),
+        endDate: this.jnpf.getToday('YYYY-MM-DD', 'today-1'),
       }).then(res => {
         this.viewData = res.data || []
         if (this.title === '产量') {
+          this.tableColumns = res.data.map(item => ({
+            prop: item.name,
+            label: item.name,
+            color: (row) => {
+              const value = Number(row[item.name].replace('%', ''))
+              const targetValue = Number(row.target.replace('%', ''))
+              if (targetValue * 0.9 > value) return '#dc3545'
+              if (targetValue * 0.95 > value) return '#FCAA47'
+              return '#fff'
+            },
+          }))
           this.viewData = [
-            {
+            res.data.reduce((prev, cur) => ({
+              ...prev,
+              [cur.name]: this.jnpf.numberFormat(cur.targetValue, 2) + '%',
+            }), {
               norm: '产量达成率',
               target: '98%',
-              monday: '98%',
-              tuesday: '98%',
-              wednesday: '98%',
-              thursday: '98%',
-              friday: '98%',
-              saturday: '98%',
-              sunday: '98%'
-            },
+            })
           ]
+
+          this.tableColumns.unshift(
+            {
+              prop: 'norm',
+              label: '指标',
+              width: '70px',
+            },
+            {
+              prop: 'target',
+              label: '目标',
+              width: '35px',
+              color: '#8FA1FF',
+            })
         } else if (this.title === '质量') {
           this.viewData = [
             {
@@ -98,36 +118,7 @@ export default {
     },
     generateTableColumns() {
       if (this.title === '产量') {
-        this.tableColumns = [
-          {
-            prop: 'monday',
-            label: '周一',
-          },
-          {
-            prop: 'tuesday',
-            label: '周二',
-          },
-          {
-            prop: 'wednesday',
-            label: '周三',
-          },
-          {
-            prop: 'thursday',
-            label: '周四',
-          },
-          {
-            prop: 'friday',
-            label: '周五',
-          },
-          {
-            prop: 'saturday',
-            label: '周六',
-          },
-          {
-            prop: 'sunday',
-            label: '周日',
-          }
-        ]
+
       } else if (this.title === '质量') {
         this.tableColumns = [
           {

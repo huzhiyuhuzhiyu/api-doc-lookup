@@ -2,7 +2,7 @@
  * @Author: Carrey 2954831281@qq.com
  * @Date: 2025-12-26 15:30:12
  * @LastEditors: Carrey 2954831281@qq.com
- * @LastEditTime: 2025-12-29 15:00:45
+ * @LastEditTime: 2025-12-30 10:19:31
  * @FilePath: src/api/smartBoard.js
  * @Description: 这是默认设置,可以在设置》工具》File Description中进行配置
  */
@@ -60,6 +60,14 @@ export function getScreenTrackingData(data) {
 export function getScreenKnowledgeCaseCount(data) {
   return request({
     url: '/api/screen/data/knowledge/case/count',
+    method: 'POST',
+    data: data
+  })
+}
+
+export function getScreenProdAchievementData(data) {
+  return request({
+    url: '/api/screen/data/prod/achievement',
     method: 'POST',
     data: data
   })

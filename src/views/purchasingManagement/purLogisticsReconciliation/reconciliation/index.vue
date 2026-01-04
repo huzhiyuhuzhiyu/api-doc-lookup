@@ -131,6 +131,7 @@ export default {
       listQuery: {
         ...this.queryObject,
         businessType: 'purchase_delivery_return',
+        billStatus: 'no_billing',
       },
       deliveryDate: [],
       selectData: [], // 选中的数据 带到form页

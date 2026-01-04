@@ -67,7 +67,7 @@ export default {
       getScreenSafeData({
         tenantId: 'zsk',
         _title: this.title,
-        month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
+        month: this.jnpf.getToday('YYYY-MM'),
         // startDate: date[0],
         // endDate: date[1]
         // productionLineName: '大线装配车间',

@@ -63,7 +63,6 @@ export function getBasicFormSchema(dataFormRef, context) {
       type: "select",
       options: context.$store.getters.productionLineList,
       sm: 12,
-      itemRules: [{ required: true, trigger: "change" }],
     },
     {
       prop: "productSource",

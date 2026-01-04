@@ -1165,7 +1165,7 @@ export default {
                   :tableProps="{
                         is: 'JNPF-table',
                         fixedNO: true,
-                        hasC: btnType,
+                        hasC: activeType,
                         height: linesTableHeight,
                         rowKey: 'id',
                         defaultExpandAll: true,

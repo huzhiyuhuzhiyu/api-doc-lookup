@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div class="JNPF-common-page-header">
-          <el-page-header @back="goBack" content="生成采购对账单" />
+          <el-page-header @back="goBack" content="生成采购物流对账单" />
           <div class="options">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
@@ -34,11 +34,11 @@
                             style="width: 100%;" placeholder="请选择对账日期"></el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6">
-                        <el-form-item label="订单金额" prop="includingTaxAmount">
-                          <el-input disabled v-model="includingTaxAmount" placeholder="订单金额"></el-input>
-                        </el-form-item>
-                      </el-col>
+<!--                      <el-col :span="6">-->
+<!--                        <el-form-item label="订单金额" prop="includingTaxAmount">-->
+<!--                          <el-input disabled v-model="includingTaxAmount" placeholder="订单金额"></el-input>-->
+<!--                        </el-form-item>-->
+<!--                      </el-col>-->
                       <el-col :span="6">
                         <el-form-item label="对账金额" prop="totalReconciliationAmount">
                           <el-input v-model="dataForm.totalReconciliationAmount" disabled
@@ -56,10 +56,10 @@
                 </el-collapse-item>
                 <el-collapse-item title="产品信息" name="productInfo">
                   <div v-if="type !== 'look'">
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      icon="el-icon-plus" @click="addAdjustmentBtn()">
-                      增加调价行
-                    </el-button>
+<!--                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"-->
+<!--                      icon="el-icon-plus" @click="addAdjustmentBtn()">-->
+<!--                      增加调价行-->
+<!--                    </el-button>-->
                     <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-delete"
               @click="batchDelete">批量删除</el-button>| -->
                   </div>
@@ -69,141 +69,17 @@
                       :data="dataFormTwo.data" id="table">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                      <el-table-column prop="orderNo" label="出入库单号" width="190" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'orderNo'">
-                            <div class="viewData">
-                              <span>{{ scope.row.orderNo }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="projectName" label="所属项目" width="120"
-                        v-if="isProjectSwitch === '1'"></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productDrawingNo }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" width="160"
-                        v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productCode ? scope.row.productCode : '调价' }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="receiptReturnType" label="收/退货类型" width="110" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptReturnType'">
-                            <div class="viewData">
-                              <span>
-                                {{
-                                  scope.row.receiptReturnType === 'outbound_purchase'
-                                    ? '退货'
-                                    : scope.row.receiptReturnType === 'inbound_purchase'
-                                      ? '收货'
-                                      : ''
-                                }}
-                              </span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="reconciliationUnitPrice" label="数量" width="100">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
-                            <div class="viewData">
-                              <span>{{ scope.row.reconciliationUnitPrice }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
 
-                      <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" min-width="140">
+                      <el-table-column prop="logisticsMode" label="物流方式" min-width="180" />
+                      <el-table-column prop="weight" label="重量" min-width="120" />
+                      <el-table-column prop="pickMaterial" label="提货费" min-width="90" />
+                      <el-table-column prop="deliveryMaterial" label="送货费" min-width="90" />
+                      <el-table-column prop="freight" label="运费" min-width="90" />
+                      <el-table-column prop="totalAmount" label="金额" width="90">
                         <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'"
-                            :rules="productFormRules.excludingTaxAmount">
-                            <div :class="[
-                              'viewData',
-                              scope.row.receiptReturnType === 'inbound_purchase' ? 'green' : 'red'
-                            ]">
-                              <span v-if="scope.row.receiptReturnType === 'inbound_purchase'">
-                                +{{ scope.row.excludingTaxAmount }}
-                              </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'outbound_purchase'">
-                                {{ scope.row.excludingTaxAmount }}
-                              </span>
-                              <el-input v-if="!scope.row.receiptReturnType" disabled
-                                v-model="scope.row.excludingTaxAmount">
-                                {{ scope.row.excludingTaxAmount }}
-                              </el-input>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="taxAmount" label="税额" min-width="140">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'"
-                            :rules="productFormRules.taxAmount">
-                            <div :class="[
-                              'viewData',
-                              scope.row.receiptReturnType === 'inbound_purchase' ? 'green' : 'red'
-                            ]">
-                              <span v-if="scope.row.receiptReturnType === 'inbound_purchase'">
-                                +{{ scope.row.taxAmount }}
-                              </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'outbound_purchase'">
-                                {{ scope.row.taxAmount }}
-                              </span>
-
-                              <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.taxAmount" disabled>
-                                {{ scope.row.taxAmount }}
-                              </el-input>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="includingTaxAmount" label="总金额(含税)" min-width="140">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'"
-                            :rules="productFormRules.includingTaxAmount">
-                            <div :class="[
-                              'viewData',
-                              scope.row.receiptReturnType === 'inbound_purchase' ? 'green' : 'red'
-                            ]">
-                              <span v-if="scope.row.receiptReturnType === 'inbound_purchase'">
-                                +{{ scope.row.includingTaxAmount }}
-                              </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'outbound_purchase'">
-                                {{ scope.row.includingTaxAmount }}
-                              </span>
-                              <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.includingTaxAmount">
-                                {{ scope.row.includingTaxAmount }}
-                              </el-input>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-input v-model="scope.row.remark" maxlength="20" placeholder="备注">
-                            {{ scope.row.remark }}
-                          </el-input>
+                          <div style="color:red">
+                            -{{ scope.row.totalAmount }}
+                          </div>
                         </template>
                       </el-table-column>
 
@@ -218,35 +94,35 @@
                       </el-table-column>
                     </el-table>
                   </el-form>
-                  <div class="text" style="height: 40px; line-height: 40px; background: #f5f7fa;">
-                    <span style="font-weight:500;margin-right:10px">
-                      收货合计金额：
-                      <span class="green">+{{ receiptComputedValue }}</span>
-                    </span>
-                    <span style="font-weight:500;margin-right:10px">
-                      退货合计金额：
-                      <span class="red">{{ backComputedValue }}</span>
-                    </span>
-                    <span style="font-weight:500;margin-right:10px">
-                      不含税金额：
-                      <span :class="computedValue > 0 ? 'green' : 'red'">
-                        {{ computedValue > 0 ? '+' + computedValue : computedValue }}
-                      </span>
-                    </span>
-                    <span style="font-weight:500;margin-right:10px">
-                      税额：
-                      <span :class="computedValue2 > 0 ? 'green' : 'red'">
-                        {{ computedValue2 > 0 ? '+' + computedValue2 : computedValue2 }}
-                      </span>
-                    </span>
-                    <!-- <span style="font-weight:500;margin-right:10px">价税合计：{{ computedValue3 }}</span> -->
-                    <span style="font-weight:500;margin-right:10px">
-                      合计金额：
-                      <span :class="brComputedValue > 0 ? 'green' : 'red'">
-                        {{ brComputedValue > 0 ? '+' + brComputedValue : brComputedValue }}
-                      </span>
-                    </span>
-                  </div>
+<!--                  <div class="text" style="height: 40px; line-height: 40px; background: #f5f7fa;">-->
+<!--                    <span style="font-weight:500;margin-right:10px">-->
+<!--                      收货合计金额：-->
+<!--                      <span class="green">+{{ receiptComputedValue }}</span>-->
+<!--                    </span>-->
+<!--                    <span style="font-weight:500;margin-right:10px">-->
+<!--                      退货合计金额：-->
+<!--                      <span class="red">{{ backComputedValue }}</span>-->
+<!--                    </span>-->
+<!--                    <span style="font-weight:500;margin-right:10px">-->
+<!--                      不含税金额：-->
+<!--                      <span :class="computedValue > 0 ? 'green' : 'red'">-->
+<!--                        {{ computedValue > 0 ? '+' + computedValue : computedValue }}-->
+<!--                      </span>-->
+<!--                    </span>-->
+<!--                    <span style="font-weight:500;margin-right:10px">-->
+<!--                      税额：-->
+<!--                      <span :class="computedValue2 > 0 ? 'green' : 'red'">-->
+<!--                        {{ computedValue2 > 0 ? '+' + computedValue2 : computedValue2 }}-->
+<!--                      </span>-->
+<!--                    </span>-->
+<!--                     <span style="font-weight:500;margin-right:10px">价税合计：{{ computedValue3 }}</span> -->
+<!--                    <span style="font-weight:500;margin-right:10px">-->
+<!--                      合计金额：-->
+<!--                      <span :class="brComputedValue > 0 ? 'green' : 'red'">-->
+<!--                        {{ brComputedValue > 0 ? '+' + brComputedValue : brComputedValue }}-->
+<!--                      </span>-->
+<!--                    </span>-->
+<!--                  </div>-->
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
@@ -299,7 +175,7 @@ export default {
         cooperativePartnerId: '',
         cooperativePartnerName: '', //供应商名称
         reconciliationDate: '', //交货日期.
-        reconciliationType: 'payable',
+        reconciliationType: 'payable_logistics',
         reasonRejection: '',
         id: null,
         documentStatus: 'submit',
@@ -430,58 +306,6 @@ export default {
       return this.dataForm.includingTaxAmount
     }
   },
-  watch: {
-    'dataFormTwo.data': {
-      // immediate:true,
-      handler: function (newVal, oldVal) {
-        newVal.forEach((item) => {
-          if (item.receiptReturnType === 'outbound_purchase') {
-            if (item.includingTaxAmount) {
-              if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
-                item.excludingTaxAmount = item.excludingTaxAmount
-              } else {
-                item.excludingTaxAmount = this.jnpf.numberFormat(
-                  item.includingTaxAmount / (1 + newVal[0].taxRate / 100),
-                  2
-                )
-                item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
-              }
-            }
-          } else if (item.receiptReturnType === 'inbound_purchase') {
-            if (item.includingTaxAmount) {
-              if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
-                item.excludingTaxAmount = item.excludingTaxAmount
-              } else {
-                item.excludingTaxAmount = this.jnpf.numberFormat(
-                  item.includingTaxAmount / (1 + newVal[0].taxRate / 100),
-                  2
-                )
-                item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
-              }
-            }
-          } else {
-            if (item.includingTaxAmount) {
-              item.excludingTaxAmount = this.jnpf.numberFormat(
-                item.includingTaxAmount / (1 + newVal[0].taxRate / 100),
-                2
-              )
-              item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
-            } else {
-              item.excludingTaxAmount = ''
-              item.taxAmount = ''
-            }
-          }
-        })
-      },
-      deep: true
-    },
-    'dataForm.includingTaxAmount': {
-      handler: function (newVal, oldVal) {
-        this.dataForm.totalReconciliationAmount = newVal
-      },
-      immediate: true
-    }
-  },
   methods: {
     async getProductNameSwitch(code, type) {
       try {
@@ -540,84 +364,71 @@ export default {
 
       let _data = JSON.parse(JSON.stringify(data))
       _data.forEach((item) => {
-        let excludingTaxAmount =
-          item.businessType === 'inbound_purchase'
-            ? this.jnpf.numberFormat(
-              item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
-              2
-            )
-            : -this.jnpf.numberFormat(
-              item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100))
-            )
-        let includingTaxAmount =
-          item.businessType === 'outbound_purchase'
-            ? this.jnpf.numberFormat(Math.abs(excludingTaxAmount) * (1 + (item.taxRate * 1) / 100))
-            : this.jnpf.numberFormat(excludingTaxAmount * (1 + (item.taxRate * 1) / 100))
+        // item.businessType = 'inbound_purchase'
+        // let excludingTaxAmount =
+        //   item.businessType === 'inbound_purchase'
+        //     ? this.jnpf.numberFormat(
+        //       item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
+        //       2
+        //     )
+        //     : -this.jnpf.numberFormat(
+        //       item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100))
+        //     )
+        // let includingTaxAmount =
+        //   item.businessType === 'outbound_purchase'
+        //     ? this.jnpf.numberFormat(Math.abs(excludingTaxAmount) * (1 + (item.taxRate * 1) / 100))
+        //     : this.jnpf.numberFormat(excludingTaxAmount * (1 + (item.taxRate * 1) / 100))
+
         this.dataFormTwo.data.push({
-          accountsReceivableId: '',
-          orderNo: item.orderNo,
-          projectName: item.projectName,
-          calculationDirection: item.calculationDirection,
-          confirmReceiptRecordsId: item.id,
-          confirmReceiptRecordsLineId: item.noticeLineId,
-          deputyUnit: item.deputyUnit,
+          ...item,
           id: null,
-          includingTaxAmount: includingTaxAmount,
-          receiptReturnType: item.businessType,
-          mainUnit: item.mainUnit,
-          ordersLineId: item.ordersLineId,
-          ordersId: item.ordersId,
-          moveId: item.moveId,
+          // includingTaxAmount: includingTaxAmount,
+          // receiptReturnType: item.businessType,
+          // mainUnit: item.mainUnit,
+          // ordersLineId: item.ordersLineId,
+          // ordersId: item.ordersId,
+          // moveId: item.moveId,
           moveLineId: item.id,
-          productsId: item.productsId,
-          productName: item.productName,
-          productCode: item.productCode,
-          productDrawingNo: item.drawingNo,
-          ratio: item.ratio,
-          reconciliationUnitPrice: item.num,
-          remark: item.remark,
-          excludingTaxPrice: this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
-          excludingTaxAmount: excludingTaxAmount,
-          taxAmount:
-            item.businessType === 'inbound_purchase'
-              ? this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount)
-              : this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount),
-          taxRate: item.taxRate,
-          price: item.costPrice,
-          adjustmentLineFlag: false
+          // productsId: item.productsId,
+          // productName: item.productName,
+          // productCode: item.productCode,
+          // productDrawingNo: item.drawingNo,
+          // ratio: item.ratio,
+          // reconciliationUnitPrice: item.num,
+          // remark: item.remark,
+          // excludingTaxPrice: this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
+          // excludingTaxAmount: excludingTaxAmount,
+          // taxAmount:
+          //   item.businessType === 'inbound_purchase'
+          //     ? this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount)
+          //     : this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount),
+          // taxRate: item.taxRate,
+          // price: item.costPrice,
+          // adjustmentLineFlag: false,
           // totalAmount: this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.actualQuantity * item.excludingTaxAmount),
         })
       })
       this.listLoading = false
 
-      this.dataFormTwo.data.forEach((item, index) => {
-        if (item.receiptReturnType === 'inbound_purchase') {
-          item.includingTaxAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
-          this.includingTaxAmount += this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
-        } else {
-          item.includingTaxAmount = -this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
-          this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount + item.taxAmount)
-        }
-      })
+      // this.dataFormTwo.data.forEach((item, index) => {
+      //   if (item.receiptReturnType === 'inbound_purchase') {
+      //     item.includingTaxAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
+      //     this.includingTaxAmount += this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
+      //   } else {
+      //     item.includingTaxAmount = -this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
+      //     this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount + item.taxAmount)
+      //   }
+      // })
 
-      this.dataForm.cooperativePartnerName = data[0].partnerName
+      this.dataForm.cooperativePartnerName = data[0].cooperativePartnerName
       this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-      this.dataForm.source = data[0].source
-      // 获取当前日期
-      const currentDate = new Date()
+      // this.dataForm.source = data[0].source
+      this.dataForm.excludingTaxAmount = this.dataFormTwo.data.reduce((prev, cur) => this.jnpf.math('add', [prev, cur.totalAmount]), 0)
+      this.dataForm.totalReconciliationAmount = this.dataForm.excludingTaxAmount
+      this.dataForm.taxAmount = 0
 
-      // 获取年份
-      const year = currentDate.getFullYear()
+      this.dataForm.reconciliationDate = this.jnpf.getToday()
 
-      // 获取月份（注意月份从0开始，所以要加1）
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0')
-
-      // 获取日期
-      const date = String(currentDate.getDate()).padStart(2, '0')
-
-      // 拼接为YYYY-MM-DD格式
-      const formattedDate = `${year}-${month}-${date}`
-      this.dataForm.reconciliationDate = formattedDate
       // // 审批
       this.$nextTick(() => {
         this.getBusInfo()

@@ -52,7 +52,7 @@ export default {
         startUpdateTime: "",
         totalRowFlag: false,
         reconciliationDateArr: [],
-        sourceList: ['factory', 'mrp', 'sale'],
+        // sourceList: ['factory', 'mrp', 'sale'],
       },
       tableItems: [
         { prop: 'orderNo', label: '对账流水号', minWidth: '180' },

@@ -141,7 +141,8 @@
           :limit.sync="listQuery.pageSize" @pagination="initData()" />
       </div>
     </div>
-    <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
+    <PayableLogisticsForm v-if="formVisible && queryObject.reconciliationType === 'payable_logistics'" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
+    <JNPF-Form v-else-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
   </div>
 </template>
@@ -151,12 +152,13 @@ import { getbuyInquirySheetList, deletebuyInquirySheet } from '@/api/purchasingM
 
 import { getfinAccountList, getfinAccountDetail } from '@/api/ReconciliaRePayments/index'
 import JNPFForm from './Form'
+import PayableLogisticsForm from './PayableLogisticsForm'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import withdrawnForm from './withranForm'
 export default {
   name: 'purchaseInquirySheet',
-  components: { JNPFForm, SuperQuery, withdrawnForm },
+  components: { JNPFForm, SuperQuery, withdrawnForm, PayableLogisticsForm },
   props: {
     queryObject: {
       type: Object,

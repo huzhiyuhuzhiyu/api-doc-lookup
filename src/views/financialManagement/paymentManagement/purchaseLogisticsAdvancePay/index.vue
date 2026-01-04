@@ -48,7 +48,7 @@ export default {
         paymentDateArr: [],
         createTimeArr: [],
         prePayFlag: 1,           //预收付款标识
-        sourceList: ['factory', 'mrp', 'sale'],
+        // sourceList: ['factory', 'mrp', 'sale'],
       },
       tableItems: [
         { prop: 'partnerCode', label: '供应商编码', minWidth: '180', sortable: 'custom' },

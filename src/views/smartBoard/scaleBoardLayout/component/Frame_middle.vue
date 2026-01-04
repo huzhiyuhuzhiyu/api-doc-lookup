@@ -57,7 +57,7 @@ export default {
         pageSize: this.title === '及时跟踪' ? 6 : 3,
         pageNum: this.pageNum,
         ...this.query,
-        // month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
+        // month: this.jnpf.getToday('YYYY-MM'),
       }).then(res => {
         this.viewData = res.data.page
         if (Number(this.viewData.pages) < 1) this.viewData.pages = 1

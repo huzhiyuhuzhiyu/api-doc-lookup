@@ -17,6 +17,10 @@ export default {
     boardTitle: {
       type: String,
       required: true
+    },
+    boardSubTitle: {
+      type: String,
+      required: false
     }
   },
   data() {
@@ -52,6 +56,7 @@ export default {
 <template>
   <BoardWrapper
     :board-title="boardTitle"
+    :board-sub-title="boardSubTitle"
     :scale-board="true"
     v-loading="loading"
     @refresh="refresh"

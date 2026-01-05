@@ -5,6 +5,10 @@ export default {
     name: {
       type: String,
       default: '智能线车间智能化看板'
+    },
+    subName: {
+      type: String,
+      default: ''
     }
   }
 }
@@ -13,6 +17,7 @@ export default {
 <template>
   <div class="boardTitle">
     {{ name }}
+    <span v-if="subName" class="boardSubTitle">{{ subName }}</span>
   </div>
 </template>
 
@@ -34,5 +39,11 @@ export default {
   left: calc(50% - 225px);
   //font-weight: 700;
   text-align: center;
+
+  .boardSubTitle {
+    font-size: 28px;
+    font-weight: normal;
+    font-family: "微软雅黑", serif !important;
+  }
 }
 </style>

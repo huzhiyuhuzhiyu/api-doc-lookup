@@ -83,7 +83,7 @@ export default {
         }).finally(err => {
           if (loadingFlag) Bus.$emit('subLoading')
         })
-      } if (this.title === '质量' && this.query.productionLineName === '成品仓库日常管理看板') {
+      } if (this.title === '质量' && this.query.productionLineName === '成品仓库') {
         getScreenDayQualifiedData({
           tenantId: 'nm',
           _title: this.title,

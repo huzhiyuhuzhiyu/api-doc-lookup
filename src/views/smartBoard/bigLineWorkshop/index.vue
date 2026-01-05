@@ -21,7 +21,7 @@ export default {
 </script>
 
 <template>
-  <ScaleBoardLayout board-title="大线车间">
+  <ScaleBoardLayout board-title="大线车间" board-sub-title="SIM1">
     <Frame_safe title="安全" subTitle="Safety" :query="query" style="width: 400px; height: 215px; position: fixed; top: 131px; left: 32px;" />
     <Frame_norm title="产量" subTitle="Production" :query="query" style="width: 400px; height: 215px; position: fixed; top: 362px; left: 32px;" />
     <Frame_norm title="质量" subTitle="Quality" :query="query" style="width: 400px; height: 215px; position: fixed; top: 593px; left: 32px;" />

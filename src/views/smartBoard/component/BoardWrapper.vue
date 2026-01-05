@@ -12,6 +12,10 @@ export default {
       type: String,
       default: ''
     },
+    boardSubTitle: {
+      type: String,
+      default: ''
+    },
     needDateTime: {
       type: Boolean,
       default: true
@@ -164,7 +168,7 @@ export default {
           </i>
         </div>
 
-        <BoardTitle :name="boardTitle"/>
+        <BoardTitle :name="boardTitle" :subName="boardSubTitle"/>
         <div class="center-wrapper">
           <div class="board-content">
             <slot/>

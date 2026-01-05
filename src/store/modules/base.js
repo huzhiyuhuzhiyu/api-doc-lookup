@@ -5,7 +5,7 @@ import { getRoleSelector } from '@/api/permission/role'
 import { getPrintDevSelector } from '@/api/system/printDev'
 import jnpf from '@/utils/jnpf';
 import { getBimBusinessDetail, getOrderFiledMap, getBimBusinessSwitchConfigList, getProductionLineList } from '@/api/basicData'
-import { getWebCache } from '@/api/system/system'
+import { getWebCache, saveWebCache } from '@/api/system/system'
 import { getBillRuleConfig } from '@/api/system/billRule'
 import { getbimProductAttributesListMap } from '@/api/masterDataManagement'
 
@@ -348,8 +348,15 @@ const actions = {
   // 刷新用户表格自定义配置
   refreshTableColumnConfigData({ commit }) {
     return new Promise((resolve, reject) => {
-      getWebCache().then(res => { // 获取表格配置
-        delete res.data.tableColumn // 已废弃的字段
+      getWebCache().then(async res => { // 获取表格配置
+        if (res.data.tableColumn) { // 兼容旧版tableColumn表格配置，一年后可以删除
+          const tableColumn = JSON.parse(res.data.tableColumn)
+          for (let key in tableColumn) {
+            res.data[key] = tableColumn[key]
+          }
+          await saveWebCache({ tableColumn: '' })
+          delete res.data.tableColumn // 已废弃的字段
+        }
         // 删除所有JNPF-table的key
         for (let i = 0; i < localStorage.length; i++) {
           let key = localStorage.key(i)

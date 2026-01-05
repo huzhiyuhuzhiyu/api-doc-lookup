@@ -294,6 +294,7 @@ import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSett
 import { mapGetters } from 'vuex'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getProjectList } from '@/api/system/projectManagement'
+import { deepClone } from "@/utils";
 export default {
   components: { Form, ExportForm },
   name: 'productCom',
@@ -324,7 +325,6 @@ export default {
           customerQueryFields: [],
           createTimeArr: [],
           classAttribute: 'raw_material',
-          customerProductFlag: true
         }
       }
     },
@@ -576,7 +576,9 @@ export default {
       treeLoading: false,
       listLoading: false,
       loadingText: false,
-      listQuery: {},
+      listQuery: {
+        customerProductFlag: true
+      },
       total: 0,
       formVisible: false,
       expands: true,
@@ -602,7 +604,7 @@ export default {
     this.getProductClassFun()
   },
   async created() {
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.listQuery = {...this.listQuery,...deepClone(this.initListQuery)}
     await this.getProjectSwitch()
     await this.getProductNameSwitch('product', 'enable_productName')
     this.getcategoryTree()

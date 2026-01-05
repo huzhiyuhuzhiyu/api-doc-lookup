@@ -240,10 +240,8 @@ export default {
         customerProductNo: "",
         drawingNo: "",
         partnerName: "",
-          historyFlag: false,
-          zeroTaxFlag:false,
-
-
+        historyFlag: false,
+          // zeroTaxFlag:false,
         pageNum: 1,
         pageSize: 20,
       },

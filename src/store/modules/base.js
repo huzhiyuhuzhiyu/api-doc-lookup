@@ -358,12 +358,12 @@ const actions = {
           delete res.data.tableColumn // 已废弃的字段
         }
         // 删除所有JNPF-table的key
-        for (let i = 0; i < localStorage.length; i++) {
-          let key = localStorage.key(i)
-          if (/^jnpf_\d{18}[0-9a-fA-F]*/.test(key)) {
-            localStorage.removeItem(key)
-          }
-        }
+        // for (let i = 0; i < localStorage.length; i++) {
+        //   let key = localStorage.key(i)
+        //   if (/^jnpf_\d{18}[0-9a-fA-F]*/.test(key)) {
+        //     localStorage.removeItem(key)
+        //   }
+        // }
         // 保存新的表格配置
         for (let key in res.data) {
           localStorage.setItem(key, res.data[key])

@@ -127,6 +127,8 @@
               <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
             </template>
           </el-table-column>
+          <el-table-column prop="productionLineName" label="产线" min-width="120"/>
+          <el-table-column prop="customerProductDrawingNo" label="客户型号" min-width="220"/>
           <el-table-column prop="brand" label="品牌" width="120"/>
           <el-table-column prop="model" label="型号" width="120"/>
           <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120"/>
@@ -420,7 +422,8 @@ export default {
       loadingText: false,
       leftFlag: false,
       listQuery: {
-        classAttribute: 'finish_product'
+        classAttribute: 'finish_product',
+        customerProductFlag: true
       },
       productStatusList: [{label: '启用', value: 'enable'}, {label: '禁用', value: 'disabled'}], // 产品状态
       productSourceList: [

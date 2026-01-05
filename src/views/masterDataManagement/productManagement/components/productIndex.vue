@@ -112,6 +112,8 @@
               <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
             </template>
           </el-table-column>
+          <el-table-column prop="productionLineName" label="产线" min-width="120"/>
+          <el-table-column prop="customerProductDrawingNo" label="客户型号" min-width="220"/>
           <el-table-column prop="brand" label="品牌" width="120" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" />
           <el-table-column prop="createByName" label="创建人" />
@@ -321,7 +323,8 @@ export default {
           productStatus: '', // 产品状态
           customerQueryFields: [],
           createTimeArr: [],
-          classAttribute: 'raw_material'
+          classAttribute: 'raw_material',
+          customerProductFlag: true
         }
       }
     },

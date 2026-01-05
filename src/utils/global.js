@@ -299,6 +299,18 @@ const global = {
     { label: '复制', value: 'copy', type: 'info' },
   ],
 
+  // 指标目标比较符
+  targetComparatorList: [
+    { label: "大于", value: "gt", type: "primary" },
+    { label: "小于", value: "lt", type: "warning" },
+    { label: "小于等于", value: "le", type: "warning" },
+    { label: "大于等于", value: "ge", type: "primary" }
+  ],
+  targetColorList: [
+    { label: "绿色", value: "green", type: "success" },
+    { label: "黄色", value: "yellow", type: "warning" },
+    { label: "红色", value: "red", type: "danger" }
+  ],
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {
     // 先从本地获取字典

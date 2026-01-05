@@ -349,16 +349,22 @@ const actions = {
   refreshTableColumnConfigData({ commit }) {
     return new Promise((resolve, reject) => {
       getWebCache().then(res => { // 获取表格配置
-        if (res.data.tableColumn) {
-          const tableColumn = JSON.parse(res.data.tableColumn)
-          for (const key in tableColumn) {
-            if (!key.includes('jnpf_')) return
-            const value = tableColumn[key]
-            localStorage.setItem(key, value)
+        delete res.data.tableColumn // 已废弃的字段
+        // 删除所有JNPF-table的key
+        for (let i = 0; i < localStorage.length; i++) {
+          let key = localStorage.key(i)
+          if (/^jnpf_\d{18}[0-9a-fA-F]*/.test(key)) {
+            localStorage.removeItem(key)
           }
         }
+        // 保存新的表格配置
+        for (let key in res.data) {
+          localStorage.setItem(key, res.data[key])
+        }
+        resolve()
+      }).catch(error => {
+        reject(error)
       })
-      resolve()
     }).catch(error => {
       reject(error)
     })

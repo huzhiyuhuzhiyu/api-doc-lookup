@@ -624,15 +624,7 @@ export default {
       if (!this.$store.getters.configData.system.web_cache_way) return
       clearTimeout(this.timeout)
       this.timeout = setTimeout(() => {
-        // 获取本地localStorage中JNPF-table的配置
-        let tableColumn = {}
-        for (let i = 0; i < localStorage.length; i++) {
-          let key = localStorage.key(i)
-          if (/^jnpf_(\d{18}|[0-9a-fA-F]{32})/.test(key)) {
-            tableColumn[key] = localStorage.getItem(key)
-          }
-        }
-        saveWebCache({ tableColumn: JSON.stringify(tableColumn) })
+        saveWebCache({ ['jnpf_' + this.menuId + this._customKey]: localStorage.getItem('jnpf_' + this.menuId + this._customKey) })
       }, 0)
     },
     // 过滤列指定属性后返回cacheList

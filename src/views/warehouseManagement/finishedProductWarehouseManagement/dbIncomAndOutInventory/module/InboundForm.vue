@@ -9,7 +9,7 @@ import { getcategoryTrees, getsaleOrderDetailList } from "@/api/salesManagement/
 import { getCooperativeData, getWarehouseInfo, getWarehouseList } from "@/api/basicData";
 import { dataProcessor } from "./data";
 import { getStockPlanPallet } from "@/api/PackagingPalletPlan";
-import { addWarehouseData, updateWarehouseData } from "@/api/warehouseManagement/inboundAndOutbound";
+import { addWarehouseData, detailWarehouseData, getDakeReceiveDetail, updateWarehouseData } from "@/api/warehouseManagement/inboundAndOutbound";
 import PrintDialog from "@/components/no_mount/printDialog/index.vue";
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 import { getPrintBusInfo } from "@/api/system/printDev";
@@ -215,6 +215,29 @@ export default {
           },
           showActions: { selectProduct: false, batchDelete: false },
           defaultForm: {}
+        },
+        // 生产产品入库
+        inbound_dake_receive: {
+          fetchLines: getDakeReceiveDetail,
+          dataPath: 'data.lines',
+          filter: (item) => {
+            const flag1 = true || this.classAttributeList.includes(item.classAttribute)
+            const flag2 = (Number(item.num) - Number(item.receivedQuantity)) > 0
+            return flag1 && flag2
+          },
+          formatter: (item) => ({
+            ...item,
+            id: null,
+            moveId: null,
+            noticeLineId: item.id,
+            receivedQuantity: Number(item.receivedQuantity),
+            undeliveredQuantity: this.jnpf.math('-', [item.num, item.receivedQuantity]),
+          }),
+          showActions: { selectProduct: false, batchDelete: true },
+          print: {},
+          defaultForm: {
+            sourceType: 'move'
+          }
         },
       }
     },

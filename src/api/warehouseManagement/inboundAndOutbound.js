@@ -211,7 +211,7 @@ export function packExportData(data) {
   })
 }
 
-//  仓库出入库单-箱条码列表 
+//  仓库出入库单-箱条码列表
 export function packBarCodeData(id) {
   return request({
     url: `/api/wms/stock/move/barcode/list/${id}`,
@@ -237,7 +237,7 @@ export function getlistOutBatchStock(id) {
   return request({
     url: `/api/wms/stock/inventory/line/listOutBatchStock?ordersLineId=${id}`,
     method: 'get',
-    
+
   })
 }
 
@@ -271,4 +271,20 @@ export function stockWarehouseBusinessTypeBatchAdd(warehouseId,businessTypes){
             warehouseIds:[warehouseId]
         }
     })
+}
+
+// 达克收货入库（内贸发货出库后数据）
+export function getDakeReceiveList (data) {
+  return request({
+    url: `/api/wms/stock/move/dake/receive/list`,
+    method: 'post',
+    data
+  })
+}
+// 达克收货入库（内贸发货出库后数据使用的出库单详情）
+export function getDakeReceiveDetail (id) {
+  return request({
+    url: `/api/wms/stock/move/dake/receive/detail/${id}`,
+    method: 'get'
+  })
 }

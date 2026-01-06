@@ -297,6 +297,7 @@ const global = {
     { label: '直接出入库', value: 'direct', type: 'warning' },
     { label: '其他', value: 'io_other', type: 'info' },
     { label: '复制', value: 'copy', type: 'info' },
+    { label: '达克收货', value: 'move', type: 'success' },
   ],
 
   // 指标目标比较符

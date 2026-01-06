@@ -20,6 +20,7 @@ import PackingForm from './module/PackingForm.vue'
 import AutoRecBatchPacking from "./module/components/AutoRecBatchPacking.vue";
 import InboundForm from "./module/InboundForm.vue";
 import OutboundForm from "./module/OutboundForm.vue";
+import { getDakeReceiveList } from "@/api/warehouseManagement/inboundAndOutbound";
 
 export default {
   name: "WarehouseBusinessProcess",
@@ -210,6 +211,12 @@ export default {
             receivingStatus: 'not_finished',
           },
         },
+        // 外协退货出库
+        inbound_dake_receive: {
+          api: getDakeReceiveList,
+          initListQuery: {
+          },
+        },
       };
 
       // 特殊属性名配置
@@ -257,7 +264,7 @@ export default {
     },
     // 入库
     isInboundOperation() {
-      return ['inbound_purchase', 'inbound_sale_return', 'inbound_external_return', 'inbound_external', 'inbound_finished_package', 'inbound_order_production']
+      return ['inbound_purchase', 'inbound_sale_return', 'inbound_external_return', 'inbound_external', 'inbound_finished_package', 'inbound_order_production', 'inbound_dake_receive']
         .includes(this.activeBusinessType);
     },
     // 装箱

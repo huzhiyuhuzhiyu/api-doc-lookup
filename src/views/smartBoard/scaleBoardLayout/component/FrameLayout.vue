@@ -73,8 +73,8 @@ export default {
       font-size: 14px;
       font-weight: bold;
       color: #29FBD888;
-      position: relative;
-      top: -2px;
+      //position: relative;
+      //top: -2px;
     }
   }
 

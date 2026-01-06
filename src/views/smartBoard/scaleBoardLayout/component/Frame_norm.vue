@@ -23,7 +23,20 @@ export default {
   data() {
     return {
       viewData: [],
-      tableColumns: []
+      tableColumns: [],
+      staticColumns: [
+        {
+          prop: 'norm',
+          label: '指标',
+          width: '70px',
+        },
+        {
+          prop: 'target',
+          label: '目标',
+          width: '35px',
+          color: '#8FA1FF',
+        },
+      ],
     }
   },
   mounted() {
@@ -46,39 +59,26 @@ export default {
           ...this.query,
         }).then(res => {
           this.viewData = res.data || []
-          this.tableColumns = res.data.map(item => ({
+          this.tableColumns = res.data[0].list.map(item => ({
             prop: item.name,
             label: item.name,
             color: (row) => {
-              const value = Number(row[item.name].replace('%', ''))
-              const targetValue = Number(row.target.replace('%', ''))
+              const value = Number(row[item.name].toString().replace('%', ''))
+              const targetValue = Number(row.target.toString().replace('%', ''))
               if (targetValue * 0.9 > value) return '#dc3545'
               if (targetValue * 0.95 > value) return '#FCAA47'
               return '#fff'
             },
           }))
-          this.viewData = [
-            res.data.reduce((prev, cur) => ({
-              ...prev,
-              [cur.name]: this.jnpf.numberFormat(cur.targetValue, 2) + '%',
-            }), {
-              norm: '产量达成率',
-              target: '98%',
-            })
-          ]
 
-          this.tableColumns.unshift(
-            {
-              prop: 'norm',
-              label: '指标',
-              width: '70px',
-            },
-            {
-              prop: 'target',
-              label: '目标',
-              width: '35px',
-              color: '#8FA1FF',
-            })
+          this.viewData = res.data.map(item => ({
+            norm: item.name,
+            target: item.targetValue,
+            ...item.list.reduce((prev, cur) => ({
+              ...prev,
+              [cur.name]: this.jnpf.numberFormat(cur.targetValue, 2),
+            }), {}),
+          }))
 
         }).finally(err => {
           if (loadingFlag) Bus.$emit('subLoading')
@@ -114,19 +114,6 @@ export default {
             })
           ]
 
-          this.tableColumns.unshift(
-            {
-              prop: 'norm',
-              label: '指标',
-              width: '70px',
-            },
-            {
-              prop: 'target',
-              label: '目标',
-              width: '35px',
-              color: '#8FA1FF',
-            })
-
         }).finally(err => {
           if (loadingFlag) Bus.$emit('subLoading')
         })
@@ -161,18 +148,6 @@ export default {
             })
           ]
 
-          this.tableColumns.unshift(
-            {
-              prop: 'norm',
-              label: '指标',
-              width: '70px',
-            },
-            {
-              prop: 'target',
-              label: '目标',
-              width: '35px',
-              color: '#8FA1FF',
-            })
         }).finally(err => {
           if (loadingFlag) Bus.$emit('subLoading')
         })
@@ -185,7 +160,7 @@ export default {
 <template>
   <FrameLayout :title="title" :subTitle="subTitle">
     <div class="container">
-      <ScreenTable :data="viewData" :columns="tableColumns" />
+      <ScreenTable :data="viewData" :columns="staticColumns.concat(tableColumns)" />
     </div>
   </FrameLayout>
 </template>

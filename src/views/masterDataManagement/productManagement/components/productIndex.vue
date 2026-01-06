@@ -90,7 +90,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="name" label="产品名称" min-width="140" />
-          <el-table-column prop="drawingNo" label="品名规格" min-width="300" />
+          <el-table-column prop="drawingNo" label="型号" min-width="300" />
           <el-table-column prop="productCategoryName" label="产品分类" width="120" />
           <el-table-column prop="mainUnit" label="主单位" width="120" />
           <el-table-column prop="productSource" label="产品来源" width="120">
@@ -114,7 +114,6 @@
           </el-table-column>
           <el-table-column prop="productionLineName" label="产线" min-width="120"/>
           <el-table-column prop="customerProductDrawingNo" label="客户型号" min-width="220"/>
-          <el-table-column prop="brand" label="品牌" width="120" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" />
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="200" fixed="right">

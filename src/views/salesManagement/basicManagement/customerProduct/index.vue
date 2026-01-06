@@ -803,12 +803,12 @@ export default {
       if (row.classAttribute == 'finish_product') {
         this.finshVisible = true
         this.$nextTick(() => {
-          this.$refs.finshForm.init(row.productsId, true)
+          this.$refs.finshForm.init(row.productsId, type)
         })
       } else {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(row.productsId, true)
+          this.$refs.Form.init(row.productsId, type)
         })
       }
 
@@ -887,11 +887,13 @@ export default {
       this.initData()
     },
     // 关闭新建、编辑页面
-    closeForm(isRefresh) {
+    closeForm(isRefresh = true) {
       this.formVisible = false
       this.finshVisible = false
       this.depFormVisible = false
-      this.initData()
+      if (isRefresh) {
+        this.initData()
+      }
     },
 
     // 获取打字内容等

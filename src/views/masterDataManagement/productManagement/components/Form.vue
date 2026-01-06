@@ -236,7 +236,7 @@ export default {
     },
 
     addLineForm() {
-      this.linesList.push(createEmptyObject(this.linesListItems),);
+      this.linesList.push(createEmptyObject(this.linesListItems));
     },
 
     contentChanges(dataOrIndex, prop, value) {

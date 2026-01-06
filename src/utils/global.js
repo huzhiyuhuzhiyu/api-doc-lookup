@@ -137,7 +137,8 @@ const global = {
     { label: '已有库存', value: 'existing_inventory' },
     { label: '无需采购', value: 'no_need_purchase' },
     { label: '需要采购', value: 'need_purchase' },
-    { label: '待生产', value: 'need_production' },
+    { label: '无需生产', value: 'no_need_produce' },
+    { label: '需要生产', value: 'need_produce' },
   ],
 
   // 交期状态

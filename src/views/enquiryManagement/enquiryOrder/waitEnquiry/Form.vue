@@ -337,6 +337,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        quotationId: "",
         quotationNo: "",
         cooperativePartnerIdText: "",
         deliver: "",
@@ -689,6 +690,7 @@ export default {
           this.dataForm = Object.assign(this.dataForm, data.sale, {
             inquiryTime: this.jnpf.getToday()
           })
+          this.formData.quotationId = data.sale.id
           this.originalFormData = deepClone(this.dataForm)
           this.linesList = data.lines.map(item => ({
             ...item,

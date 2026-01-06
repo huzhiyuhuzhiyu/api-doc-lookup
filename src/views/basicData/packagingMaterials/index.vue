@@ -98,7 +98,6 @@ export default {
       switch ( type ) {
         case 'look':
         case 'edit':
-        case 'copy':
           this.visible = true
           this.$nextTick(() => {
             this.$refs.Form.init(row.id, type)
@@ -236,11 +235,8 @@ export default {
                     </el-button>
                   </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleColumnClick(row, 'copy')">
-                    复制
-                  </el-dropdown-item>
                   <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
-                    详情
+                    查看详情
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>

@@ -372,12 +372,12 @@ export default {
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <Form ref="Form" v-if="visible" @close="close"/>
     <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct">
-      <template #hsProductsCode="row">
+      <template #hsProductsCode="{row}">
         <el-input
-          v-model="row.row.hsProductsCode"
+          v-model="row.hsProductsCode"
           placeholder="请选择HS编码"
           clearable
-          @click.native.stop="openHSCodeComSelect(row.row)"
+          @click.native.stop="openHSCodeComSelect(row)"
           readonly
         />
       </template>

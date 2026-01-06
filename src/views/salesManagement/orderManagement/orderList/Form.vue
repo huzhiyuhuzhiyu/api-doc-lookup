@@ -1,23 +1,23 @@
 <script>
-import {deepClone} from "@/utils";
-import {getBasicFormSchema} from "./data";
-import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import TypingEditorDialog from './typingEditDialog.vue'
-import {getcategoryTree} from "@/api/basicData/materialSettings";
-import {getOrganization} from "@/api/permission/user";
-import {getOrganizeInfo} from "@/api/permission/organize";
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import moment from "moment";
+import { createEmptyObject, deepClone } from "@/utils";
+import { getBasicFormSchema } from "./data";
+import { getcategoryTree } from "@/api/basicData/materialSettings";
+import { getOrganization } from "@/api/permission/user";
+import { getOrganizeInfo } from "@/api/permission/organize";
+import { addOrders, editOrders, getcooperativeProduct, getOrderDetail, uploadProduct } from "@/api/salesManagement/assemblyOrders";
+import { getProducts } from "@/api/masterDataManagement";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
-import {addOrders, editOrders, getcooperativeProduct, getOrderDetail, uploadProduct} from "@/api/salesManagement/assemblyOrders";
-import {getProducts} from "@/api/masterDataManagement";
+import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
+import TypingEditorDialog from './typingEditDialog.vue'
 import RecordList from "@/views/workFlow/components/RecordList.vue";
 import Process from "@/components/Process/index.vue";
 
 export default {
   name: "Form",
-  components: {Process, RecordList, TableFormProduct, TypingEditorDialog},
+  components: { Process, RecordList, TableFormProduct, TypingEditorDialog },
   mixins: [flowMixin, busFlow],
   props: {
     fromPage: {
@@ -76,10 +76,13 @@ export default {
           minWidth: 200,
         },
         {
-          prop: 'contractNo',
-          label: '客户合同号',
+          prop: 'drawingNo',
+          label: '型号',
           type: 'input',
-          minWidth: 180,
+          remote: true,
+          minWidth: 160,
+          remoteMethod: this.drawingNoFetchSuggestions,
+          select: (item, scope) => this.drawingSelect(item, scope),
         },
         {
           prop: 'productName',
@@ -92,15 +95,6 @@ export default {
           label: '产品编码',
           type: 'view',
           minWidth: 150,
-        },
-        {
-          prop: 'drawingNo',
-          label: '型号',
-          type: 'input',
-          remote: true,
-          minWidth: 160,
-          remoteMethod: this.drawingNoFetchSuggestions,
-          select: (item, scope) => this.drawingSelect(item, scope),
         },
         {
           prop: 'productCategoryName',
@@ -140,7 +134,7 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
-            {required: true, message: '数量不能为空', trigger: ['blur', 'change'],},
+            { required: true, message: '数量不能为空', trigger: ['blur', 'change'], },
           ]
         },
         {
@@ -169,7 +163,7 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
-            {required: true, message: '单价(含税)不能为空', trigger: ['blur', 'change'],},
+            { required: true, message: '单价(含税)不能为空', trigger: ['blur', 'change'], },
           ]
         },
         {
@@ -179,7 +173,7 @@ export default {
           options: this.getDictDataSync('taxrate'),
           minWidth: 160,
           itemRules: [
-            {required: true, message: '税率不能为空', trigger: 'change',},
+            { required: true, message: '税率不能为空', trigger: 'change', },
           ]
         },
         {
@@ -232,7 +226,7 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
-            {required: true, message: '目标价不能为空', trigger: ['blur', 'change'],},
+            { required: true, message: '目标价不能为空', trigger: ['blur', 'change'], },
           ]
         },
         {
@@ -241,7 +235,7 @@ export default {
           type: 'date',
           minWidth: 180,
           itemRules: [
-            {required: true, message: '交货日期不能为空', trigger: 'change',},
+            { required: true, message: '交货日期不能为空', trigger: 'change', },
           ]
         },
         {
@@ -326,12 +320,6 @@ export default {
           minWidth: 200,
         },
         {
-          prop: 'contractNo',
-          label: '客户合同号',
-          type: 'view',
-          minWidth: 180,
-        },
-        {
           prop: 'productCategoryName',
           label: '产品分类',
           type: 'view',
@@ -399,11 +387,11 @@ export default {
         },
         listMethod: getcooperativeProduct,
         tableItems: [
-          {prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-          {prop: 'code', label: '产品编码', sortable: 'custom'},
-          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-          {prop: 'createTime', label: '创建时间', sortable: 'custom'}
+          { prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom' },
+          { prop: 'code', label: '产品编码', sortable: 'custom' },
+          { prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
+          { prop: 'mainUnit', label: '单位', sortable: 'custom' },
+          { prop: 'createTime', label: '创建时间', sortable: 'custom' }
         ],
         listRequestObj: {
           productCode: "",
@@ -430,15 +418,12 @@ export default {
           return true
         },
         searchList: [
-          {prop: 'productName', label: '产品名称', type: 'input'},
-          {prop: 'productCode', label: '产品编码', type: 'input'},
+          { prop: 'productName', label: '产品名称', type: 'input' },
+          { prop: 'productCode', label: '产品编码', type: 'input' },
         ]
       },
 
       approvalFlag: false,
-      flowData: {},
-      flowTemplateJson: {},
-      flowTaskOperatorRecordList: [],
 
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
@@ -536,7 +521,7 @@ export default {
     },
 
     updateLinesListItems() {
-      const {formLinesListItems, confLinesListItems, fromPage} = this
+      const { formLinesListItems, confLinesListItems, fromPage } = this
       this.linesListItems = fromPage === 'form' ? formLinesListItems : confLinesListItems
       this.$nextTick(() => {
         this.$refs.tableForm.setDefaultValue()
@@ -598,7 +583,7 @@ export default {
       if (this.linesList.length) {
         const hasExistingProducts = this.linesList.some(item => item.id);
         if (hasExistingProducts) {
-          this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, {type: 'warning'})
+          this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' })
             .then(() => {
               this.uploadVisible = true
             })
@@ -633,7 +618,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', {style: 'font-size:14px;'}, '导入成功，存在产品标准工时相关信息错误！'),
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在产品标准工时相关信息错误！'),
             h(
               'el-button',
               {
@@ -712,14 +697,14 @@ export default {
           ...item
         }))
         cb(suggestions)
-      } catch (error) {
+      } catch ( error ) {
         console.error('Error fetching suggestions:', error)
         cb([])
       }
     },
 
     async getOrderNoConfig() {
-      const {number} = await this.$store.dispatch('base/getOrderNoConfig', 'SHDD')
+      const { number } = await this.$store.dispatch('base/getOrderNoConfig', 'SHDD')
       this.dataForm.orderNo = `${ number }D`
       this.dataForm.orderDate = moment(new Date()).format('YYYY-MM-DD')
     },
@@ -760,15 +745,8 @@ export default {
       this.linesTableHeight = maxHeight
     },
 
-    createdObj() {
-      return this.linesListItems.reduce((acc, item) => {
-        acc[item.prop] = '';
-        return acc;
-      }, {});
-    },
-
     addLineForm() {
-      this.linesList.push(this.createdObj());
+      this.linesList.push(createEmptyObject(this.linesListItems));
     },
 
     selectProductRefOpenDialog(type) {
@@ -779,14 +757,14 @@ export default {
           ...this.addProductProps,
           renderTree: false,
           tableItems: [
-            {prop: 'customerProductNo', label: ' 客户料号', fixed: 'left'},
-            {prop: 'customerProductName', label: ' 客户产品名称', fixed: 'left'},
-            {prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom'},
-            {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-            {prop: 'productCode', label: '产品编码', sortable: 'custom'},
-            {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-            {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-            {prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom'}
+            { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
+            { prop: 'customerProductName', label: ' 客户产品名称', fixed: 'left' },
+            { prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom' },
+            { prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom' },
+            { prop: 'productCode', label: '产品编码', sortable: 'custom' },
+            { prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
+            { prop: 'mainUnit', label: '单位', sortable: 'custom' },
+            { prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom' }
           ],
           listRequestObj: {
             ...this.addProductProps.listRequestObj,
@@ -799,11 +777,11 @@ export default {
           ...this.addProductProps,
           renderTree: true,
           tableItems: [
-            {prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-            {prop: 'code', label: '产品编码', sortable: 'custom'},
-            {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-            {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-            {prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom'}
+            { prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom' },
+            { prop: 'code', label: '产品编码', sortable: 'custom' },
+            { prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
+            { prop: 'mainUnit', label: '单位', sortable: 'custom' },
+            { prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom' }
           ],
           listRequestObj: {
             ...this.addProductProps.listRequestObj,
@@ -828,20 +806,20 @@ export default {
 
     async submitAllProduct(id, data) {
       const newData = data.map(item => ({
-        ...this.createdObj(),
+        ...createEmptyObject(this.linesListItems),
         ...item.all,
         productName: item.all.name,
         productCode: item.all.code,
         productsDrawingNo: item.all.drawingNo,
         productsId: this.productRefType === 'customer' ? item.all.productsId : item.all.id,
-        ...(this.productRefType === 'customer' && {cooperativePartnerProductId: item.all.id})
+        ...(this.productRefType === 'customer' && { cooperativePartnerProductId: item.all.id })
       }));
 
       this.linesList = [...this.linesList, ...newData]
     },
 
     getTitle(type) {
-      switch (type) {
+      switch ( type ) {
         case 'add':
         case 'copy':
           return `创建${ this.title }`
@@ -856,7 +834,7 @@ export default {
       this.loading = true
       try {
         const res = await getOrderDetail(id)
-        const {msg, data} = res
+        const { msg, data } = res
         if (msg === 'Success') {
           this.dataForm = Object.assign(this.dataForm, data.order)
           this.originalFormData = deepClone(this.dataForm)
@@ -865,7 +843,7 @@ export default {
           await this.fetchDepartment()
           await this.fetchOrganization()
         }
-      } catch (err) {
+      } catch ( err ) {
         this.loading = false
       }
     },
@@ -919,13 +897,13 @@ export default {
       try {
         const apiMethod = params.order.id ? editOrders : addOrders
         const res = await apiMethod(params)
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success(MSG)
           this.goBack()
         }
         this.btnLoading = false
-      } catch (error) {
+      } catch ( error ) {
         this.btnLoading = false
       }
     },
@@ -965,16 +943,19 @@ export default {
                 <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
                           :btnType="btnType"/>
               </el-collapse-item>
-              <el-collapse-item class="productInfo"
-                                title="产品信息"
-                                name="productInfo">
+              <el-collapse-item
+                class="productInfo"
+                title="产品信息"
+                name="productInfo"
+              >
                 <div class="TableForm_title">
                 </div>
                 <TableForm-product
                   @input="contentChanges"
                   :value="computedLinesList"
                   :hasToolbar="false"
-                  ref="tableForm" :tableItems="linesListItems"
+                  ref="tableForm"
+                  :tableItems="linesListItems"
                   :btnType="btnType"
                   @deleteth="deleteLines"
                   :tableProps="{
@@ -1060,7 +1041,7 @@ export default {
       />
       <!--  导入-->
       <UploadImportData ref="uploadRef" v-if="uploadVisible" :extraFormData="extraFormData" :uploadApi="uploadProduct" @success="importDataSuccess"
-        @close="uploadVisible = false" templateDownLoadPath="/static/销售订单导入模板.xlsx"/>
+                        @close="uploadVisible = false" templateDownLoadPath="/static/销售订单导入模板.xlsx"/>
     </div>
   </transition>
 </template>

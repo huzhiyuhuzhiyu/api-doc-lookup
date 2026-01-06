@@ -33,7 +33,7 @@ export const buttonList = [
  * @description 表单数据
  */
 export function getBasicFormSchema(dataFormRef, context) {
-  function executeCustomerChange(context, data, isClear) {
+  async function executeCustomerChange(context, data, isClear) {
     // dom更新后重新校验此元素
     context.$nextTick(() => {
       context.$refs.dataForm.$refs.main.validateField(['cooperativePartnerName', 'cooperativePartnerCode']);
@@ -42,6 +42,10 @@ export function getBasicFormSchema(dataFormRef, context) {
     context.dataForm.cooperativePartnerId = data[0].all.id;
     context.dataForm.cooperativePartnerCode = data[0].all.code;
     context.dataForm.cooperativePartnerName = data[0].all.name;
+    context.dataForm.departmentId = data[0].all.departmentId;
+
+    await context.fetchOrganization()
+    context.dataForm.salesId = data[0].all.salespersonId;
     context.originalFormData = deepClone(context.dataForm);
 
     if (isClear) {
@@ -144,23 +148,23 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
     },
-    {
-      prop: "departments",
-      label: "所属部门",
-      value: "",
-      type: "custom",
-      customComponent: "ComSelect",
-      itemRules: [{ required: true, trigger: "blur" }],
-      change: async (val) => {
-        context.dataForm.salesId = ""
-        if (!val || !val.length) return context.dataForm.departmentId = ''
-        context.dataForm.departmentId = val[val.length - 1]
-        context.$nextTick(() => {
-          context.$refs.dataForm.$refs.main.clearValidate('departments')
-        })
-        await context.fetchOrganization()
-      }
-    },
+    // {
+    //   prop: "departments",
+    //   label: "所属部门",
+    //   value: "",
+    //   type: "custom",
+    //   customComponent: "ComSelect",
+    //   itemRules: [{ required: true, trigger: "blur" }],
+    //   change: async (val) => {
+    //     context.dataForm.salesId = ""
+    //     if (!val || !val.length) return context.dataForm.departmentId = ''
+    //     context.dataForm.departmentId = val[val.length - 1]
+    //     context.$nextTick(() => {
+    //       context.$refs.dataForm.$refs.main.clearValidate('departments')
+    //     })
+    //     await context.fetchOrganization()
+    //   }
+    // },
     {
       prop: "salesId",
       label: "所属销售",
@@ -169,6 +173,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       get options() {
         return context.salesList
       },
+      disabled: true,
       itemRules: [{ required: true, trigger: "change" }],
     },
     {
@@ -184,6 +189,12 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "date",
       itemRules: [{ required: true, trigger: "blur" }],
+      change: () => {
+        if (!context.linesList.length) return
+        context.linesList.forEach(item => {
+          item.deliveryDate = context.dataForm.deliveryDate || ''
+        })
+      }
     },
     {
       prop: "remark",

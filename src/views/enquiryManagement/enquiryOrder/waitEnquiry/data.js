@@ -11,7 +11,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       disabled: true,
     },
     {
-      prop: "cooperativePartnerId",
+      prop: "cooperativePartnerCode",
       label: "客户编码",
       value: "",
       type: "input",
@@ -56,7 +56,7 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
-      prop: "cooperativePartnerId",
+      prop: "cooperativePartnerCode",
       label: "客户编码",
       minWidth: 200,
       align: "left",

@@ -573,9 +573,9 @@ export default {
         </el-tabs>
       </div>
       <ComSelect-page v-bind="recommendProps" ref="ComSelectRecommendRef" :element-show="false" @change="recommendSubmit">
-        <template #outboundQuantity="row">
+        <template #outboundQuantity="{row}">
           <el-input
-            v-model="row.row.outboundQuantity"
+            v-model="row.outboundQuantity"
             placeholder="请输入出库数量"
             clearable
           />

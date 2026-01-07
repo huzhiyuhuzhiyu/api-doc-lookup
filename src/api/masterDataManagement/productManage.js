@@ -1,9 +1,9 @@
 /*
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-12 16:30:33
- * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-17 14:31:36
- * @FilePath: \os-web-zgt4.0\src\api\masterDataManagement\productManage.js
+ * @LastEditors: Carrey 2954831281@qq.com
+ * @LastEditTime: 2026-01-07 13:59:04
+ * @FilePath: src/api/masterDataManagement/productManage.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import request from '@/utils/request'
@@ -139,3 +139,30 @@ export function setHSProducts(data) {
     data
   })
 }
+
+// 新增汇率
+export function addExchangeRate(data) {
+  return request({
+    url: `/api/erp/foreign/exchange/add`,
+    method: 'post',
+    data
+  })
+}
+
+// 获取汇率列表
+export function getExchangeRateList(data) {
+  return request({
+    url: `/api/erp/foreign/exchange/list`,
+    method: 'post',
+    data
+  })
+}
+
+// 删除汇率
+export function delExchangeRate(id) {
+  return request({
+    url: `/api/erp/foreign/exchange/del/${id}`,
+    method: 'delete'
+  })
+}
+

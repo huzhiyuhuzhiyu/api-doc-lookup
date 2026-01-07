@@ -165,7 +165,7 @@ export default {
           sortable: 'custom',
         },
         {
-          prop: "cooperativePartnerId",
+          prop: "supplierCode",
           label: "供应商编号",
           minWidth: 220,
           align: "left",

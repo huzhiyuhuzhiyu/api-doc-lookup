@@ -452,6 +452,7 @@ export default {
     }
   },
   async created() {
+    this.listLoading = true
     await this.getProductClassFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -788,9 +789,9 @@ export default {
     },
 
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
+   async getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
+     await getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesObj = res.data
       })
 

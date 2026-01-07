@@ -48,9 +48,7 @@
                 </div>
 
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" v-bind="customStyleData">
-                    <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType === 'add'" key="1"/>
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed='left'/>
+                  <JNPF-table customKey="customerProduct" ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" v-bind="customStyleData" fixedNO :has-c="btnType === 'add'"  custom-column>
                     <el-table-column prop="customerProductNo" label=" 客户料号" min-width="160">
                       <template slot="header">
                         <span class="required">*</span> 客户料号（编码）
@@ -176,7 +174,7 @@
                       </template>
                     </el-table-column>
 
-                  </el-table>
+                  </JNPF-table>
                   <!-- <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin:0 10px">总数量：{{ totalNum }}</span>
                     <span style="font-weight:500;margin:0 10px">总金额：{{ totalAmount }}</span>

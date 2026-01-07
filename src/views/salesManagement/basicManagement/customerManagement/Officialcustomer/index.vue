@@ -67,13 +67,18 @@
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')" :isJudgePer="true" :addPerCode="'btn_add'">
-              <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parter')">导入客户档案</el-button>
-              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterContacts')">导入客户联系人</el-button>
-              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入客户收货地址</el-button>
-              <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
-            </topOpts>
+            <div class="JNPF-common-head-left">
+              <el-button size="mini" type="primary" icon="el-icon-plus" v-has="'btn_add'" @click.native="addSupplier('', 'add')">
+                {{ isCustomer ? '新建' : '新建客户产品' }}
+              </el-button>
+              <template v-if="isCustomer">
+                <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
+                <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parter')">导入客户档案</el-button>
+                <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterContacts')">导入客户联系人</el-button>
+                <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入客户收货地址</el-button>
+                <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
+              </template>
+            </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -114,7 +119,7 @@
             <el-table-column prop="paymentMethodText" label="付款方式" width="120" />
             <el-table-column prop="remark" label="备注" width="160" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right" v-if="isCustomer">
               <template slot-scope="scope">
                 <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, 'edit')" @del="handleDel(scope.row.id)">
                   <el-dropdown>
@@ -158,6 +163,8 @@
     </el-dialog>
     <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @superQuery="superQuerySearch" v-show="false"></programme>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
+    <CustomerProductForm v-if="customerProductVisible" ref="CustomerProductForm" @refreshDataList="initData" @close="closeForm" />
+    <CustomerProductIndex v-if="customerProductIndexVisible" ref="CustomerProductIndex" :customerId="customerId" @close="closeForm" />
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct" :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
@@ -172,23 +179,29 @@ import programme from "../components/programme.vue";
 import { deletePartner, uploadPartner } from '@/api/customerManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import RecordForm from '@/views/CRMmanagement/punter/RecordForm1.vue'
-import {
-    excelExport,
-    getCooperativeData,
-    getcategoryTree,
-    supplierContactsupload,
-    supplierAddressupload
-} from '@/api/basicData/index'
+import { excelExport, getcategoryTree, getCooperativeData, supplierAddressupload, supplierContactsupload } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
 import Form from './Form'
+import CustomerProductForm from '@/views/salesManagement/basicManagement/customerProduct/depForm.vue'
+import CustomerProductIndex from '@/views/salesManagement/basicManagement/customerProduct/customerProductIndex.vue'
 import { mapGetters, mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+
 export default {
   // name: 'formalCustomer',
-  components: { Form, ExportForm, RecordForm, SuperQuery, programme },
+  components: { CustomerProductForm, CustomerProductIndex, Form, ExportForm, RecordForm, SuperQuery, programme },
+  props: {
+    type: {
+      type: String,
+      default: 'customer'
+    }
+  },
   data() {
     return {
       file: {},
+      customerId: '',
+      customerProductVisible: false,
+      customerProductIndexVisible: false,
       uploadVisib: false,
       programmefrom: {},
       partentOrChild: 'partent',
@@ -352,6 +365,9 @@ export default {
     ...mapState('user', ['token']),
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
+    },
+    isCustomer() {
+      return this.type === 'customer'
     }
   },
   beforeDestroy() {
@@ -696,11 +712,12 @@ export default {
 
     },
 
-
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
       this.orderFollowVisible = false
+      this.customerProductVisible = false
+      this.customerProductIndexVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -762,12 +779,18 @@ export default {
     },
 
 
-
     addSupplier(id, btntype) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, '', btntype)
-      })
+      if (this.isCustomer) {
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(id, '', btntype)
+        })
+      } else {
+        this.customerProductVisible = true
+        this.$nextTick(() => {
+          this.$refs.CustomerProductForm.init(id, btntype)
+        })
+      }
     },
 
     addOrUpdateHandle(id, partnerCategoryId, btntype) {
@@ -797,10 +820,15 @@ export default {
 
     },
     handleUserRelation(id, partnerCategoryId, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, partnerCategoryId, btnType)
-      })
+      if (this.isCustomer) {
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(id, partnerCategoryId, btnType)
+        })
+      } else{
+        this.customerId = id
+        this.customerProductIndexVisible = true
+      }
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
@@ -810,7 +838,6 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped>
 .el-tab-pane {
   height: calc(100% - 10px);
@@ -836,14 +863,6 @@ export default {
 
 .JNPF-common-search-box .el-form-item {
   margin-bottom: 0px !important;
-}
-
-.pagination-container {
-  background-color: #ebeef5;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
 }
 
 .main {
@@ -939,5 +958,11 @@ export default {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+}
+
+.JNPF-common-head-left {
+  .el-button + .el-button {
+    margin-left: 0;
+  }
 }
 </style>

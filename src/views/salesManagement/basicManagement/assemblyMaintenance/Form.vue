@@ -310,12 +310,12 @@ export default {
                     }">
                         <template slot="top">
                           <div class="tableTopContainer">
-                            <div v-if="activeType" class="left">
-                              <template>
+                            <div class="left">
+                              <template v-if="activeType">
                                 <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog">选择产品</el-button>
                                 <span>|</span>
-                              </template>
                               <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.tableForm.batchDelete()">批量删除</el-button>
+                              </template>
                             </div>
                             <div class="right">
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">

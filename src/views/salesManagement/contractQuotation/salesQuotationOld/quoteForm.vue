@@ -82,6 +82,18 @@ export default {
           minWidth: 180,
         },
         {
+          prop: 'customerProductDrawingNo',
+          label: '客户产品型号',
+          type: 'view',
+          minWidth: 160,
+        },
+        {
+          prop: 'supplierCode',
+          label: '供应商编号',
+          type: 'view',
+          minWidth: 160,
+        },
+        {
           prop: 'mainUnit',
           label: '单位',
           type: 'view',
@@ -237,7 +249,8 @@ export default {
         multiple: false,
         listMethod: getEnquiryDetailList,
         tableItems: [
-          { prop: 'supplierCode', label: '供应商', minWidth: 180, sortable: 'custom' },
+          { prop: 'supplierName', label: '供应商名称', minWidth: 180, sortable: 'custom' },
+          { prop: 'supplierCode', label: '供应商编码', minWidth: 180, sortable: 'custom' },
           { prop: 'productsName', label: '产品名称', minWidth: 180, sortable: 'custom' },
           { prop: 'productsCode', label: '产品编码', minWidth: 180, sortable: 'custom' },
           { prop: 'productsDrawingNo', label: '品名规格', minWidth: 180, sortable: 'custom' },
@@ -346,12 +359,9 @@ export default {
 
       const updatedProduct = {
         ...this.linesList[this.currentSelectedIndex],
-        procurementAmounts: enquiryData.procurementAmounts,
-        sampleAmounts: enquiryData.sampleAmounts,
-        moldAmounts: enquiryData.moldAmounts,
-        moldAmounts11: enquiryData.moldAmounts,
-        deliveryDate: enquiryData.deliveryDate,
-        remark2: enquiryData.remark,
+        ...enquiryData,
+        remark2: enquiryData.remark1,
+        supplierPartnerId: enquiryData.cooperativePartnerId,
       };
 
       this.linesList.splice(this.currentSelectedIndex, 1, updatedProduct);

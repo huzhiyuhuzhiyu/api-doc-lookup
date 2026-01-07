@@ -42,11 +42,21 @@ export function getColumns() {
     },
     {
       prop: 'cooperativePartnerCode',
-      label: '客户编码',
+      label: '供应商编码',
       minWidth: 120,
     },
     {
       prop: 'cooperativePartnerName',
+      label: '供应商名称',
+      minWidth: 120,
+    },
+    {
+      prop: 'customerCode',
+      label: '客户编码',
+      minWidth: 120,
+    },
+    {
+      prop: 'customerName',
       label: '客户名称',
       minWidth: 120,
     },

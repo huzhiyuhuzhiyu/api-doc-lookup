@@ -63,8 +63,10 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "订单编号",
       value: "",
       type: "input",
-      disabled: true,
       itemRules: [{ required: true, trigger: "blur" }],
+      get disabled() {
+        return context.isOrderNoEditable
+      }
     },
     {
       prop: "orderType",
@@ -73,6 +75,10 @@ export function getBasicFormSchema(dataFormRef, context) {
       type: "select",
       options: global.salesOrderType,
       itemRules: [{ required: true, trigger: "change" }],
+      change: (val) => {
+        const code = val === 'normal' ? 'KHDD' : 'YCDD'
+        context.getOrderNoConfig(code)
+      }
     },
     {
       prop: "cooperativePartnerName",

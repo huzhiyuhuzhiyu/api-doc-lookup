@@ -38,7 +38,7 @@ export function updateBusinessComponent(data) {
 // 删除组合件
 export function removeBusinessComponent(id) {
   return request({
-    url: `/api/zgt/businessComponent/remove/${ id }`,
+    url: `/api/zgt/businessComponent/del/${ id }`,
     method: 'delete',
   })
 }

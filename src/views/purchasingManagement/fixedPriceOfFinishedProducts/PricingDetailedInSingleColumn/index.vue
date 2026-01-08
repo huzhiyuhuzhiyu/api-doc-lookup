@@ -177,7 +177,7 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         {
-          field: 'partnerName',
+          field: 'cooperativePartnerName',
           fieldValue: '',
           label: '供应商名称',
           symbol: 'like',
@@ -866,7 +866,7 @@ export default {
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         {
-          field: 'partnerName',
+          field: 'cooperativePartnerName',
           fieldValue: '',
           label: '供应商名称',
           symbol: 'like',

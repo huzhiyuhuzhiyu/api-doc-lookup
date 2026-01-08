@@ -29,6 +29,7 @@ export default {
     return {
       title: '销售订单',
       btnType: '',
+      isOrderNoEditable: false,
       loading: false,
       btnLoading: false,
       uploadVisible: false,
@@ -40,14 +41,14 @@ export default {
       originalFormData: {},
       dataForm: {
         orderNo: '',
-        orderType: '',
+        orderType: 'normal',
         departments: [],
         cooperativePartnerId: '',
         cooperativePartnerName: '',
         cooperativePartnerCode: '',
         departmentId: '',
         salesId: '',
-        orderDate: '',
+        orderDate: moment(new Date()).format('YYYY-MM-DD'),
         deliveryDate: '',
         remark: '',
         remark1: '',
@@ -430,16 +431,17 @@ export default {
       actions: {
         edit: async (id) => {
           await this.getDetail(id);
+          await this.getOrderNoConfig('KHDD');
         },
         look: async (id) => {
           await this.getDetail(id);
         },
         copy: async (id) => {
           await this.getDetail(id);
-          await this.getOrderNoConfig();
+          await this.getOrderNoConfig('KHDD');
         },
         default: async () => {
-          await this.getOrderNoConfig();
+          await this.getOrderNoConfig('KHDD');
         },
       }
     }
@@ -703,10 +705,12 @@ export default {
       }
     },
 
-    async getOrderNoConfig() {
-      const { number } = await this.$store.dispatch('base/getOrderNoConfig', 'SHDD')
-      this.dataForm.orderNo = `${ number }D`
-      this.dataForm.orderDate = moment(new Date()).format('YYYY-MM-DD')
+    async getOrderNoConfig(code) {
+      const { number, modifyFlag, codeWay } = await this.$store.dispatch('base/getOrderNoConfig', code)
+      this.isOrderNoEditable = codeWay === 'auto' ? !modifyFlag : false
+      if (this.btnType === 'add') {
+        this.dataForm.orderNo = `${ number }`
+      }
     },
 
     async fetchDepartment() {

@@ -11,6 +11,13 @@ export const buttonList = [
     permission: 'btn_confirm',
     icon: '',
     text: '确认'
+  },
+  {
+    buttonType: 'primary',
+    type: 'add',
+    permission: 'btn_add',
+    icon: 'el-icon-plus',
+    text: '新建'
   }
 ]
 

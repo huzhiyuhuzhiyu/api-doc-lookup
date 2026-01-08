@@ -102,6 +102,14 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
+            {
+              validator: this.formValidate({
+                type: 'calc',
+                params: [(rowIndex, value) => +value <= +this.linesList[rowIndex].waitPackingQuantity, "本次计划数量不能大于待装箱数量", (errMsg, rowIndex) => {
+                  this.$message.error(`本次计划包装信息第${ rowIndex + 1 }行：${ errMsg }`)
+                }]
+              }), trigger: 'blur'
+            },
             {required: true, message: '本次计划不能为空', trigger: ['blur', 'change'],},
           ]
         },
@@ -146,7 +154,9 @@ export default {
       this.linesTableHeight = maxHeight
     },
 
-    handleConfirm() {
+   async handleConfirm() {
+      const valid = await this.$refs['tableForm'].$refs.main.validate().catch(err => false)
+      if (!valid) return
       this.$emit('update:visible', false);
       this.$emit('confirm', this.planTotalNum);
     },

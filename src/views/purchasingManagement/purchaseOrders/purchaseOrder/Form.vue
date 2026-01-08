@@ -5,9 +5,9 @@
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
           <el-page-header @back="goBack" :content="type === 'look' ? '查看采购订单' : '新建采购订单'" />
           <div class="options">
-            <el-button :loading="loadingClosureOrders" type="primary" v-if="isClosureOrders" @click="handlePartialClosureOrders">
-              部分关单
-            </el-button>
+<!--            <el-button :loading="loadingClosureOrders" type="primary" v-if="isClosureOrders" @click="handlePartialClosureOrders">-->
+<!--              部分关单-->
+<!--            </el-button>-->
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>

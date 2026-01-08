@@ -29,7 +29,7 @@ export function getBatchColumns() {
     {
       prop: "batchNumber",
       label: "批次",
-      minWidth: 100
+      minWidth: 120
     },
     {
       prop: "packagingMethod",
@@ -86,7 +86,7 @@ export function getSingleBoxColumns() {
     {
       prop: "batchNumber",
       label: "批次",
-      minWidth: 100,
+      minWidth: 120,
     },
     {
       prop: "packagingMethod",

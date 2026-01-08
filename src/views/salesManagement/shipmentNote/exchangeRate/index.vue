@@ -26,8 +26,8 @@
         <JNPF-table v-loading="listLoading" :data="treeList" v-if="refreshTable" fixedNO
           :setColumnDisplayList="columnList" :default-expand-all="expands" ref="dataTable"
           custom-column customKey="JNPFTableKey_619371" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
-          <el-table-column prop="name" label="币制" min-width="200"></el-table-column>
-          <el-table-column prop="code" label="兑换比" min-width="120" />
+          <el-table-column prop="currencySystem" label="币制" min-width="200"></el-table-column>
+          <el-table-column prop="exchangeRate" label="兑换比" min-width="120" />
 
 <!--          <el-table-column prop="createTime" label="创建时间" width="180" />-->
 <!--          <el-table-column prop="createByName" label="创建人" width="180" />-->
@@ -36,6 +36,7 @@
           <el-table-column label="操作" width="120" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
+                :has-edit="false"
                 @del="handleDel(scope.row.id, scope.row.parentId)"></tableOpts>
             </template>
           </el-table-column>
@@ -51,8 +52,9 @@
 <script>
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import { getExchangeRateList, delExchangeRate, productPlmSync } from '@/api/basicData/materialSettings'
+import { productPlmSync } from '@/api/basicData/materialSettings'
 import DepForm from './depForm'
+import { getExchangeRateList, batchDelExchangeRate } from "@/api/masterDataManagement/productManage";
 export default {
   components: { DepForm, ExportForm },
   data() {
@@ -62,23 +64,21 @@ export default {
         fullName: "默认视图", // 视图名称*
         conditionJson: { // 视图内容配置*
           condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
-            { prop: 'name', symbol: 'like', fixed: true },
+            { prop: 'currencySystem', symbol: 'like', fixed: true },
           ],
           // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 999, // 每页条数*
           orderItems: [
-            {
-              asc: false,
-              column: 'createTime'
-            }
+            // {
+            //   asc: false,
+            //   column: 'createTime'
+            // }
           ]
         },
       }],
       superQueryJson: [],
       exportFormVisible: false,
-      listQuery: {
-        type: 'process',
-      },
+      listQuery: {},
       treeList: [],
       expands: true,
       refreshTable: true,
@@ -202,7 +202,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          delExchangeRate(id).then((res) => {
+          batchDelExchangeRate([id]).then((res) => {
             if (res.msg === 'Success') {
               this.initData()
               this.$message({

@@ -8,12 +8,12 @@
     </template>
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule"
-        label-position="top" label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="兑换比" prop="code">
-          <el-input v-model="dataForm.code" placeholder="请输入兑换比" maxlength="20" />
+        label-position="top" label-width="120px">
+        <el-form-item label="币制" prop="currencySystem">
+          <el-input v-model="dataForm.currencySystem" placeholder="请输入币制" maxlength="20" />
         </el-form-item>
-        <el-form-item label="币制" prop="name">
-          <el-input v-model="dataForm.name" placeholder="请输入币制" maxlength="20" />
+        <el-form-item label="兑换比" prop="exchangeRate">
+          <el-input v-model="dataForm.exchangeRate" placeholder="请输入兑换比" maxlength="20" />
         </el-form-item>
       </el-form>
       <span class="button-bottom">
@@ -27,7 +27,8 @@
 </template>
 
 <script>
-import { detailCategory, updateCategory, addExchangeRate, checkCategoryCode } from '@/api/basicData/materialSettings'
+import { detailCategory, updateCategory, checkCategoryCode } from '@/api/basicData/materialSettings'
+import { addExchangeRate } from "@/api/masterDataManagement/productManage"
 
 export default {
   data() {
@@ -36,18 +37,16 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
-        code: '',
-        name: '',
+        exchangeRate: '',
+        currencySystem: '',
       },
-      autoCode: '',
       title: '',
       btntype: false,
       codeConfig: {},
       dataRule: {
-        name: [{ required: true, message: '请输入币制', trigger: 'blur' }],
-        code: [
+        currencySystem: [{ required: true, message: '请输入币制', trigger: 'blur' }],
+        exchangeRate: [
           { required: true, message: '请输入兑换比', trigger: 'blur' },
-          { validator: this.formValidate('enCode'), trigger: 'blur' },
         ]
       }
     }
@@ -74,7 +73,6 @@ export default {
           // this.fetchData('bm_gy_gxfl', false)
           detailCategory(this.dataForm.id).then((res) => {
             this.dataForm = res.data
-            this.autoCode = res.data.code
             this.formLoading = false
           })
         } else {
@@ -82,15 +80,6 @@ export default {
           this.formLoading = false
         }
       })
-    },
-    onOrganizeChange(val, data) {
-      if (!data) {
-        this.dataForm.parentId = ''
-        this.dataForm.parentName = ''
-      } else {
-        this.dataForm.parentId = data[0].id
-        this.dataForm.parentName = data[0].name
-      }
     },
     async dataFormSubmit() {
       let valid = await this.$refs['dataForm'].validate().catch((err) => false)

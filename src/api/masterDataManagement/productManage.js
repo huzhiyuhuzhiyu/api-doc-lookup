@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-12 16:30:33
  * @LastEditors: Carrey 2954831281@qq.com
- * @LastEditTime: 2026-01-07 13:59:04
+ * @LastEditTime: 2026-01-07 14:27:42
  * @FilePath: src/api/masterDataManagement/productManage.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -159,10 +159,19 @@ export function getExchangeRateList(data) {
 }
 
 // 删除汇率
-export function delExchangeRate(id) {
+// export function delExchangeRate(id) {
+//   return request({
+//     url: `/api/erp/foreign/exchange/del/${id}`,
+//     method: 'delete'
+//   })
+// }
+
+// 批量删除汇率
+export function batchDelExchangeRate(data) {
   return request({
-    url: `/api/erp/foreign/exchange/del/${id}`,
-    method: 'delete'
+    url: `/api/erp/foreign/exchange/batch/remove`,
+    method: 'post',
+    data
   })
 }
 

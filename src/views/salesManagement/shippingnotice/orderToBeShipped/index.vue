@@ -157,11 +157,11 @@
 <script>
 import {excelExport, getOrderFiledMap} from '@/api/basicData/index'
 import {deleteOrders, getOrderLineReport, getsaleOrderDetailList} from '@/api/salesManagement/assemblyOrders'
-import Form from '../../orderManagement/orderList/Form.vue'
-import OrderFollow from '../../orderManagement/orderList/orderFollow.vue'
-import UserRelationList from '../../orderManagement/orderList/userRelation.vue'
+import Form from '@/views/salesManagement/orderManagement/orderList/Form.vue'
+import OrderFollow from '@/views/salesManagement/orderManagement/orderList/orderFollow.vue'
+import UserRelationList from '@/views/salesManagement/orderManagement/orderList/userRelation.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import AddForm from "../saleMetalworking/Form.vue"
+import AddForm from "@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import ViewForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import {mapGetters} from 'vuex'

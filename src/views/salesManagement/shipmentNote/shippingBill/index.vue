@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="[]" />
+<!--    <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="[]" />-->
   </div>
 </template>
 
@@ -73,12 +73,12 @@ import {
   deleteQcUnqualifiedData,
   getQcUnqualifiedLinesList
 } from '@/api/inspectionManagement/index' // 检验单
-import Form from './Form.vue'
+// import Form from './Form.vue'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
-  components: { Form },
+  // components: { Form },
   mixins: [getProjectList],
 
   props: {

@@ -63,6 +63,13 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
+      prop: "cooperativePartnerIdText",
+      label: "客户名称",
+      minWidth: 200,
+      align: "left",
+      sortable: 'custom',
+    },
+    {
       prop: "inquiryTime",
       label: "询价日期",
       minWidth: 120,

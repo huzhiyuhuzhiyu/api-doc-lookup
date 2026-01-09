@@ -48,8 +48,8 @@
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                   导出
                 </el-button>
-                <el-button  :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-                  icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>
+<!--                <el-button  :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"-->
+<!--                  icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>-->
               </topOpts>
             </div>
             <div class="JNPF-common-head-right">

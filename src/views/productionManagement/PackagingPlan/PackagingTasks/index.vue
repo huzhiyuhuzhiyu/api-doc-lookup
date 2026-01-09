@@ -71,6 +71,7 @@ export default {
       ],
       listQuery: {
         source: 'package_plan',
+        orderStatus: 'normal',
       },
       productionLineOptions: [],
       btnList: buttonList,

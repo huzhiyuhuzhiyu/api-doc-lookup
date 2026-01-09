@@ -1,46 +1,22 @@
 <script>
-import {buttonList, getBatchColumns, getSingleBoxColumns} from "./data";
-import {addStockPlanPallet, getStockPlanWaitPalletPage} from "@/api/PackagingPalletPlan";
-import {getBimPackagingMaterialsPage} from "@/api/packagingMaterials";
+import { buttonList, getBatchColumns, getSingleBoxColumns } from "./data";
+import { addStockPlanPallet, getStockPlanWaitPalletPage } from "@/api/PackagingPalletPlan";
+import { getBimPackagingMaterialsPage } from "@/api/packagingMaterials";
+import { deepClone, getDictDataSync } from "@/utils";
 
 export default {
   name: "index",
   data() {
     return {
-      systemSearchView: [{
-        matchLogic: "AND", // 条件逻辑（固定）*
-        fullName: "默认视图", // 视图名称*
-        conditionJson: { // 视图内容配置*
-          condition: [ // 视图查询条件（自动根据绑定表格的列顺序排序）
-            // 这里放置系统原顶栏显示的查询元素，如：
-            // {
-            //   prop: 'createTime', // 属性*
-            //   value: [this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'today-29'), this.jnpf.getToday('YYYY-MM-DD HH:mm:ss', 'todayLastMoment')], // 默认值
-            //   symbol: 'between', // 比较符*
-            //   timeOffset: true, // 保存视图后的静态时间区间随实际查询时刻偏移
-            //   fixed: true // 是否在搜索栏显示
-            // },
-            {prop: 'batchNumber', symbol: 'like', fixed: true},
-            {prop: 'packagingMethod', symbol: '==', fixed: true},
-          ],
-          keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
-          pageSize: 20, // 每页条数*
-          orderItems: []
-        },
-      }],
       loading: false,
       visible: false,
       batchData: [],
       singleBoxData: [],
-      superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: this.getDictDataSync('packaging')
-        },
-      ],
+      initListQuery: {
+        productsDrawingNo: '',
+        batchNumber: '',
+        packagingMethod: '',
+      },
       listQuery: {},
       btnList: buttonList,
       columnList: [],
@@ -52,7 +28,6 @@ export default {
       selectedSingleBoxList: [],
       palletValue: '',
       palletOptions: [],
-      superQueryTableRef: 'batchTable',
     }
   },
   computed: {
@@ -71,19 +46,17 @@ export default {
     }
   },
   created() {
+    this.listQuery = deepClone(this.initListQuery)
     this.getPackagingMaterial()
+    this.initData()
   },
   methods: {
-    async initData(listQuery) {
-      if (listQuery) this.listQuery = listQuery;
-      if (!this.listQuery?.pageSize) return this.$message.error('请先等待视图加载完成！');
-      const listLoadKey = this.listLoadKey = +new Date();
-      if (listLoadKey !== this.listLoadKey) return; // 请求过期
-
+    getDictDataSync,
+    async initData() {
       this.loading = true
       try {
         const res = await getStockPlanWaitPalletPage(this.listQuery);
-        const {data} = res
+        const { data } = res
         this.batchData = data.map(item => {
           return {
             ...item.stockPlanPackage,
@@ -102,7 +75,7 @@ export default {
         pageSize: 9999
       }
       const res = await getBimPackagingMaterialsPage(params)
-      const {records} = res.data
+      const { records } = res.data
       this.palletOptions = records.map(item => {
         return {
           ...item,
@@ -171,7 +144,7 @@ export default {
     },
 
     handleButtonClick(type) {
-      switch (type) {
+      switch ( type ) {
         case 'support':
           if (!this.validateSelectedRows()) return;
           this.addStockPlanPallet();
@@ -226,10 +199,10 @@ export default {
           },
           stockPlanPalletLineList
         }
-        const res = await addStockPlanPallet(params)
+        await addStockPlanPallet(params)
         this.$message.success('装托成功');
         this.initData();
-      } catch (e) {
+      } catch ( e ) {
         this.$message.error('装托失败: ' + e.message);
       }
     },
@@ -241,7 +214,17 @@ export default {
     showSingleBoxColumnSettings() {
       this.$refs.singleBoxTable.showDrawer()
     },
-
+    search() {
+      Object.keys(this.listQuery).forEach(key => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.initData()
+    },
+    reset() {
+      this.listQuery = deepClone(this.initListQuery)
+      this.search()
+    },
     getAlign(align) {
       return align || 'left'
     },
@@ -252,7 +235,42 @@ export default {
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main" style="display: flex; flex-direction: column; height: 100%;">
-      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="batchTable"/>
+      <el-row class="JNPF-common-search-box" :gutter="16">
+        <el-form @submit.native.prevent>
+          <el-col :span="6">
+            <el-form-item label="型号">
+              <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入型号" clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="批次号">
+              <el-input v-model="listQuery.batchNumber" placeholder="请输入批次号" clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="包装方式">
+              <el-select v-model="listQuery.packagingMethod" clearable placeholder="请选择包装方式" @change="search()">
+                <el-option
+                  v-for="item in getDictDataSync('packaging')"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" icon="el-icon-search" @click="search">
+                {{ $t('common.search') }}
+              </el-button>
+              <el-button icon="el-icon-refresh-right" @click="reset">{{ $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
       <div class="table-container" style="flex: 1; display: flex; flex-direction: column;">
         <div class="table-section" style="flex: 1; display: flex; flex-direction: column;">
           <div class="JNPF-common-head" style="padding: 8px; position: relative;">
@@ -277,23 +295,20 @@ export default {
               </el-row>
             </div>
             <div class="JNPF-common-head-right">
-              <el-tooltip effect="dark" content="数据排序设置" placement="top">
-                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
-                  @click="$refs.batchTable.showSortDrawer()"/>
-              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                  @click="showBatchColumnSettings()"/>
+                         @click="showBatchColumnSettings()"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                  @click="initData()"/>
+                         @click="initData()"/>
               </el-tooltip>
             </div>
             <span class="table-title" style="position: absolute; left: 50%; transform: translateX(-50%);">整批</span>
           </div>
           <div class="table-content" style="flex: 1;">
-            <JNPF-table customKey="BatchTable"
+            <JNPF-table
+              customKey="BatchTable"
               v-loading="loading"
               :data="batchData"
               :has-c="true"
@@ -302,7 +317,7 @@ export default {
               fixedNO
               :setColumnDisplayList="columnList"
               ref="batchTable"
-              custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+              custom-column>
               <template v-for="column in batchColumns">
                 <el-table-column
                   v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
@@ -310,7 +325,6 @@ export default {
                   :prop="column.prop"
                   :label="column.label"
                   :min-width="column.minWidth"
-                  :sortable="column.sortable"
                   :fixed="column.fixed"
                   :align="getAlign(column.align)"
                 >
@@ -348,23 +362,20 @@ export default {
               </el-row>
             </div>
             <div class="JNPF-common-head-right">
-              <el-tooltip effect="dark" content="数据排序设置" placement="top">
-                <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
-                  @click="$refs.batchTable.showSortDrawer()"/>
-              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                  @click="showSingleBoxColumnSettings()"/>
+                         @click="showSingleBoxColumnSettings()"/>
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                  @click="initData()"/>
+                         @click="initData()"/>
               </el-tooltip>
             </div>
             <span class="table-title" style="position: absolute; left: 50%; transform: translateX(-50%);">单箱</span>
           </div>
           <div class="table-content" style="flex: 1;">
-            <JNPF-table customKey="SingleBoxTable"
+            <JNPF-table
+              customKey="SingleBoxTable"
               v-loading="loading"
               :data="singleBoxData"
               :has-c="true"
@@ -373,7 +384,7 @@ export default {
               fixedNO
               :setColumnDisplayList="columnList"
               ref="singleBoxTable"
-              custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+              custom-column>
               <template v-for="column in singleBoxColumns">
                 <el-table-column
                   v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
@@ -381,7 +392,6 @@ export default {
                   :prop="column.prop"
                   :label="column.label"
                   :min-width="column.minWidth"
-                  :sortable="column.sortable"
                   :fixed="column.fixed"
                   :align="getAlign(column.align)"
                 >

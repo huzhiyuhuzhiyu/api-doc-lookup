@@ -53,7 +53,7 @@ export function getBasicFormSchema(dataFormRef, context) {
     {
       prop: "currency",
       label: "币种",
-      value: "CNY",
+      value: "",
       type: "select",
       options: global.currencyType,
       itemRules: [{required: true, trigger: "change"}],

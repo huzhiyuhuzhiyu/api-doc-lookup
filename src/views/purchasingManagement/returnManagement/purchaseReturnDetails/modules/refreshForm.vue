@@ -36,6 +36,7 @@ export default {
       },
       apiMethodActions: {
         add: insertPurchaseOrder,
+        resubmit: insertPurchaseOrder,
         edit: editPurchaseOrder,
       }
     }
@@ -175,6 +176,7 @@ export default {
     getTitle(type) {
       switch ( type ) {
         case 'add':
+        case 'resubmit':
           return `创建${ this.title }`
         case 'edit':
           return `编辑${ this.title }`

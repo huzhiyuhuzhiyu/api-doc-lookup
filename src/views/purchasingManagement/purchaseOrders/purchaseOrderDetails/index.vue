@@ -109,12 +109,12 @@
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="orderFormDownload(scope.row.purchaseOrderId)">
-                      下载订货单
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="printView(scope.row, 'p006')">
-                      打印订货单
-                    </el-dropdown-item>
+<!--                    <el-dropdown-item @click.native="orderFormDownload(scope.row.purchaseOrderId)">-->
+<!--                      下载订货单-->
+<!--                    </el-dropdown-item>-->
+<!--                    <el-dropdown-item @click.native="printView(scope.row, 'p006')">-->
+<!--                      打印订货单-->
+<!--                    </el-dropdown-item>-->
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>

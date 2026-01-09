@@ -123,7 +123,7 @@
                 <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                   查看详情
                 </el-button>
-                <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, 'copy',scope.row)">
+                <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, 'copy')">
                   复制
                 </el-button>
                 <!-- <el-dropdown hide-on-click>
@@ -1395,10 +1395,10 @@ export default {
       })
     },
     // 复制
-    copyHandle(id, btnType,row) {
+    copyHandle(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType,row,this.isProjectSwitch)
+        this.$refs.Form.init(id, btnType,false)
       })
     },
     handleDel(id) {

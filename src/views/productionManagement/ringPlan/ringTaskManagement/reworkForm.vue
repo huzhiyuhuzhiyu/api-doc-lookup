@@ -615,7 +615,8 @@ export default {
                 bomId: "",
                 drawingNo: "",
                 productionLineId: "",
-              source: 'rework'
+              source: 'rework',
+              orderType:'rework'
             },
             dataFormTwo: {
                 data: [],
@@ -860,7 +861,7 @@ export default {
         },
         // 打开选择工序的弹框
         openselectProcessFun() {
-            // if (!this.dataForm.routingId) return this.$message.error("请先选择工艺路线")
+            if (!this.dataForm.routingId) return this.$message.error("请先选择工艺路线")
             this.processVisible = true
             this.$nextTick(() => {
                 this.$refs.processForm.init(this.dataForm.routingId, this.dataFormTwo.data)
@@ -1288,6 +1289,7 @@ export default {
                         }
 
                         item.source = "rework";
+                        item.orderType = "rework";
                         if (item.processingType !== "self_produced" && selectArr.length > 1) {
                             if (item.firstFlag) {
                                 selectArr[index].stockFlag = true;
@@ -1353,6 +1355,7 @@ export default {
                     this.selectTaskMethod()
                     this.dataForm.routingId=this.dataForm.routingName?this.dataForm.routingId:''
                     this.dataForm.source = 'rework'
+                    this.dataForm.orderType = 'rework'
                     this.dataForm.productsId = this.dataForm.id
                     this.dataForm.planStartDate = this.dataForm.planDate[0]
                     this.dataForm.planEndDate = this.dataForm.planDate[1]

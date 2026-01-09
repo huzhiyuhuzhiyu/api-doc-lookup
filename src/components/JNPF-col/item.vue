@@ -230,7 +230,7 @@ export default {
     Placeholder() {
       const { item: { label, type, placeholder, hideLookP } } = this;
 
-      if (hideLookP !== false || this.openMode === '只读' && (this.readOnly || this.disabled)) return ''
+      if (hideLookP !== false && this.openMode === '只读' && (this.readOnly || this.disabled)) return ''
 
       if (placeholder) return placeholder;
 

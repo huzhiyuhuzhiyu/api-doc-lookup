@@ -12,7 +12,7 @@
               <el-button :disabled="!selectedData.length" size="mini" icon="el-icon-plus" type="success"
                 @click="handleFun('confirm')">批量确认
               </el-button>
-              <el-button :disabled="!selectedData.length" size="mini" icon="el-icon-plus" type="warning"
+              <el-button :disabled="!selectedData.length" size="mini" icon="el-icon-minus" type="warning"
                 @click="handleFun('cancel')">批量取消确认
               </el-button>
               <TableDataExportButton tableRef="dataTable" :listQuery="listQuery" exportType="1094"
@@ -103,7 +103,8 @@ import Form from './Form.vue'
 import ConfirmForm from './ConfirmForm.vue'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import getProjectList from '@/mixins/generator/getProjectList'
-import { getDeliveryLineList } from "@/api/masterDataManagement/productManage";
+import { batchRevokeDeliveryLine, getDeliveryLineList } from "@/api/masterDataManagement/productManage";
+import { removeCompany } from "@/api/customerAndFactory";
 
 export default {
   components: { Form, ConfirmForm },
@@ -226,8 +227,8 @@ export default {
           this.$refs.Form.init(this.selectedData, 'add')
         })
       } else if (type === 'confirm') {
-        if (!this.selectedData.every(item => true)) {
-          return this.$message.error('请选择相同产品图号、工序和待处理类型的行！')
+        if (!this.selectedData.every(item => item.deliveryStatus === 'waiting')) {
+          return this.$message.error('只有待确认的记录才能确认！')
         }
         this.confirmFormVisible = true
         this.$nextTick(() => {
@@ -235,7 +236,17 @@ export default {
         })
 
       } else if (type === 'cancel') {
-
+        if (!this.selectedData.every(item => item.deliveryStatus === 'confirmed')) {
+          return this.$message.error('只能选择已确认且未报关的记录！')
+        }
+        this.$confirm('确定要恢复成待确认状态吗？', '提示', {
+          type: 'warning'
+        }).then(async (res) => {
+          await batchRevokeDeliveryLine(this.selectedData.map(item => item.id))
+          this.$message.success('操作成功')
+          this.initData()
+        }).catch(() => {
+        })
       }
     },
   }

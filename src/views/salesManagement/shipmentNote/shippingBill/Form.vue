@@ -2,90 +2,21 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
-        <el-page-header @back="$emit('close')" :content="btnType ? '查看不良项' : title" />
+        <el-page-header @back="$emit('close')" content="创建报关单" />
         <div class="options" v-if="!btnType">
           <el-button type="primary" :loading="btnLoading" @click="submit()">{{ $t('common.submitButton') }}</el-button>
           <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading">
-
-        <el-collapse :value="['basicInfo', 'report', 'inspection', 'defective']">
+        <el-collapse :value="['basicInfo', 'product']">
           <el-collapse-item title="基本信息" name="basicInfo" style="margin-top: 5px;">
             <JNPF-col v-model="dataForm" :tabContent="dataFormItem" ref="dataForm" :btnType="btnType" />
           </el-collapse-item>
-
-          <el-collapse-item title="报工数量信息" name="report" style="margin-top: 5px;">
-            <el-form label-position="top">
-              <el-row :gutter="20">
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="报工合格数量">
-                    <el-input v-model="dataForm.qualifiedQuantity" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="报工不合格数量">
-                    <el-input v-model="dataForm.unqualifiedQuantity" disabled />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-            <el-table :data="dataForm.causesList">
-              <el-table-column type="index" label="序号" width="60" fixed />
-              <el-table-column prop="name" label="不良名称" min-width="120" />
-              <el-table-column prop="code" label="不良编码" min-width="120" />
-              <el-table-column prop="unqualifiedQuantity" label="不良数量" min-width="120" />
-            </el-table>
-          </el-collapse-item>
-
-          <el-collapse-item title="检验数量信息" name="inspection" style="margin-top: 5px;">
-            <el-form label-position="top">
-              <el-row :gutter="20">
-                <!-- <el-col :sm="12" :xs="24">
-                  <el-form-item label="检验合格数量">
-                    <el-input v-model="dataForm.qualifiedQuantity" disabled />
-                  </el-form-item>
-                </el-col> -->
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="检验不合格数量">
-                    <el-input v-model="dataForm.inspectUnqualifiedQuantity" disabled />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-            <el-table :data="dataForm.inspectCausesList">
-              <el-table-column type="index" label="序号" width="60" fixed />
-              <el-table-column prop="name" label="不良名称" min-width="120" />
-              <el-table-column prop="code" label="不良编码" min-width="120" />
-              <el-table-column prop="unqualifiedQuantity" label="不良数量" min-width="120" />
-            </el-table>
-          </el-collapse-item>
-
-          <el-collapse-item title="不良品处理信息" name="defective" style="margin-top: 5px;">
-            <el-form ref="dataForm" :model="dataForm" label-width="160px" label-position="top">
-              <el-row :gutter="30" class="custom-row">
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="处理后最终合格数量">
-                    <el-input v-model="dataForm.treatmentQualifiedQuantity" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="处理后最终不合格数量">
-                    <el-input v-model="dataForm.treatmentUnqualifiedQuantity" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="报废数量">
-                    <el-input v-model="dataForm.treatmentScrapQuantity" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="返工数量">
-                    <el-input v-model="dataForm.treatmentRepairQuantity" disabled />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
+          <el-collapse-item title="报关产品信息" name="product" style="margin-top: 5px;">
+            <TableForm-product ref="TableFormTwo" :value="tableFormTwoList" @input="tableFormTwoValueChange"
+              :tableItems="tableTwoItems" :btnType="btnType" @deleteth="" :hasToolbar="false">
+            </TableForm-product>
           </el-collapse-item>
         </el-collapse>
       </div>
@@ -94,8 +25,9 @@
 </template>
 
 <script>
-import { workReportDetail } from "@/api/productOrdes/index.js"
+import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue' // 附带产品多选的表格表单组件
 export default {
+  components: { TableFormProduct },
   data() {
     return {
       btnType: null,
@@ -106,20 +38,43 @@ export default {
         { prop: "orderNo", label: "报工单号", value: "", type: "input", sm: 8, itemDisabled: true },
         { prop: "processName", label: "工序名称", value: "", type: "input", sm: 8, itemDisabled: true },
         { prop: "processCode", label: "工序编码", value: "", type: "input", sm: 8, itemDisabled: true },
-      ]
+      ],
+      tableFormTwoList: [],
+      tableTwoItems: [
+        { prop: 'orderNo', label: '分卡组别号', type: 'input', minWidth: '200', itemDisabled: true },
+        {
+          prop: 'productionQuantity', label: '计划数量', value: '', type: 'input', placeholder: '请输入计划数量', minWidth: '120',
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: [null, (errMsg, index) => { this.$message.error(`分卡信息第${index + 1}行：计划数量${errMsg}`) }], }), trigger: 'blur' },
+            { required: true, trigger: 'blur' },
+            { validator: this.formValidate('positiveNumber', null, (errMsg, index) => { this.$message.error(`分卡信息第${index + 1}行：计划数量${errMsg}`) }), trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (errMsg, index) => { this.$message.error(`分卡信息第${index + 1}行：计划数量${errMsg}`) }], }), trigger: 'blur' },
+          ],
+        },
+        {
+          prop: 'personId', label: '配置人员', value: [], type: 'multiple', minWidth: '200', options: () => this.personList.map(item => ({ label: item.personnelIdText, value: item.personnelId, })),
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: [null, (errMsg, index) => { this.$message.error(`分卡信息第${index + 1}行：配置人员${errMsg}`) }] }), trigger: 'change' },
+            { required: true, trigger: 'change' },
+          ],
+        },
+      ],
     }
   },
   methods: {
     init(id, btnType) {
       // this.formLoading = true
       this.btnType = btnType
-
+      if(btnType){
       workReportDetail(id).then(res => {
         this.formLoading = false
         this.dataForm = res.data
       }).catch(() => {
 
       })
+      } else {
+
+      }
     },
     async submit() {
       this.btnLoading = true
@@ -164,6 +119,14 @@ export default {
         this.btnLoading = false
       }
 
+    },
+
+    tableFormTwoValueChange(dataOrIndex, prop, value) {
+      if (Array.isArray(dataOrIndex)) {
+        this.tableFormTwoList = JSON.parse(JSON.stringify(dataOrIndex))
+      } else if (prop) {
+        this.tableFormTwoList[dataOrIndex][prop] = value
+      }
     },
   },
 }

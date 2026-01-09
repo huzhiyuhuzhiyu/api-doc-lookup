@@ -248,6 +248,7 @@ export default {
 
       const R = [];
       itemRules.forEach(rule => {
+        rule = structuredClone(rule)
         if (!rule.message && !rule.validator) { rule.message = this.Placeholder }
         R.push(rule);
       });

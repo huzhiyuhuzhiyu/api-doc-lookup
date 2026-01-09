@@ -127,7 +127,14 @@ export default {
         matchLogic: "AND", // 条件逻辑（固定）*
         fullName: "默认视图", // 视图名称*
         conditionJson: { // 视图内容配置*
-          condition: [],
+          condition: [
+            {
+              prop: 'deliveryStatus',
+              symbol: 'in',
+              value: ['waiting', 'confirmed'],
+              fixed: true
+            }
+          ],
           keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*
           orderItems: [

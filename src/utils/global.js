@@ -308,10 +308,17 @@ const global = {
     { label: "小于等于", value: "le", type: "warning" },
     { label: "大于等于", value: "ge", type: "primary" }
   ],
+
   targetColorList: [
     { label: "绿色", value: "green", type: "success" },
     { label: "黄色", value: "yellow", type: "warning" },
     { label: "红色", value: "red", type: "danger" }
+  ],
+
+  // 状态
+  reInspectionStatus: [
+    { label: '未确认', value: 'not_confirm', type: 'danger' },
+    { label: '已确认', value: 'confirm', type: 'success' },
   ],
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {

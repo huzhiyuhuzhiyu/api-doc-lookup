@@ -99,7 +99,7 @@
               {{ scope.row.orderedQuantity?scope.row.orderedQuantity:0 }}
             </template>
           </el-table-column>
-          <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+          <el-table-column prop="feedbackDeliveryDate" label="反馈交期" width="120" sortable="custom" />
 <!--          <el-table-column prop="source" label="来源" width="100" sortable="custom">-->
 <!--            <template slot-scope="scope">-->
 <!--              &lt;!&ndash; <div v-if="scope.row.source == 'procure'">请购单</div>-->

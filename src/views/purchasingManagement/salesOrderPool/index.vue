@@ -62,6 +62,7 @@ export default {
       listQuery: {
         confirmedStatus: 'need_purchase',
         productSourceList: ['purchase', 'assemble', 'virtual_assemble'],
+        waitIssuanceNumFlag: true,
       },
       btnList: buttonList,
       columnList: [],

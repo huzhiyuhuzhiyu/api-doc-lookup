@@ -1,6 +1,6 @@
 <script>
 import { buttonList, getColumns } from "./data";
-import { ordershengchanList } from "@/api/productOrdes";
+import { ordershengchanList, packagingTaskProgressList } from "@/api/productOrdes";
 
 export default {
   name: "index",
@@ -53,7 +53,7 @@ export default {
       this.loading = true
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
-        const res = await ordershengchanList(this.listQuery);
+        const res = await packagingTaskProgressList(this.listQuery);
         const { total, records } = res.data
         this.tableData = records;
         this.total = total

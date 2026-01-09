@@ -338,7 +338,7 @@ export default {
         type: 'input'
       })
     }
-    this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   },
   computed: {

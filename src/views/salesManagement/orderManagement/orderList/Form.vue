@@ -6,7 +6,7 @@ import { getBasicFormSchema } from "./data";
 import { getcategoryTree } from "@/api/basicData/materialSettings";
 import { getOrganization } from "@/api/permission/user";
 import { getOrganizeInfo } from "@/api/permission/organize";
-import { addOrders, editOrders, getcooperativeProduct, getOrderDetail, uploadProduct } from "@/api/salesManagement/assemblyOrders";
+import { addOrders, editOrders, getcooperativeProduct, getOrderDetail, getOrderNumberByCode, uploadProduct } from "@/api/salesManagement/assemblyOrders";
 import { getProducts } from "@/api/masterDataManagement";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
@@ -438,7 +438,7 @@ export default {
         },
         copy: async (id) => {
           await this.getDetail(id);
-          await this.getOrderNoConfig('KHDD');
+          await this.getOrderNumberByCode();
         },
         default: async () => {
           await this.getOrderNoConfig('KHDD');
@@ -702,6 +702,15 @@ export default {
       } catch ( error ) {
         console.error('Error fetching suggestions:', error)
         cb([])
+      }
+    },
+
+    async getOrderNumberByCode() {
+      try {
+        const { data } = await getOrderNumberByCode(this.dataForm.orderNo)
+        this.isOrderNoEditable = true
+        this.dataForm.orderNo = data
+      } catch ( e ) {
       }
     },
 

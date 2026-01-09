@@ -1,6 +1,6 @@
 <template>
   <section class="app-main" :copyright="sysConfig.copyright">
-    <keep-alive :include="useCache?cachedViews:[]">
+    <keep-alive :include="useCache ? /[\w\W]*/ : []">
       <router-view :key="key" />
     </keep-alive>
   </section>

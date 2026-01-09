@@ -11,11 +11,6 @@ export function getColumns() {
       minWidth: 220,
     },
     {
-      prop: 'purchaseOrderNo',
-      label: '订单号',
-      minWidth: 220,
-    },
-    {
       prop: 'productName',
       label: '产品名称',
       minWidth: 220,

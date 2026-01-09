@@ -6,7 +6,7 @@ export const buttonList = [
     buttonType: 'primary',
     type: 'export',
     permission: 'btn_export',
-    exportType: '1018',
+    exportType: '1269',
     exportName: '包装任务进度',
     tableRef: 'dataTable',
     disabled: false
@@ -17,125 +17,146 @@ export function getColumns() {
   return [
     {
       prop: "orderNo",
-      label: "订单号",
+      label: "生产单号",
       minWidth: 220,
     },
     {
-      prop: "orderType",
-      label: "类型",
-      minWidth: 120,
-      slot: true,
-      dictType: "orderType"
-    },
-    {
-      prop: "arrivalDate",
-      label: "来货日期",
-      minWidth: 160
-    },
-    {
-      prop: "productDrawingNo",
-      label: "产品型号",
+      prop: "saleOrderNo",
+      label: "销售订单号",
       minWidth: 220,
     },
     {
-      prop: "category",
-      label: "类型",
-      minWidth: 120,
+      prop: "productsDrawingNo",
+      label: "型号",
+      minWidth: 220,
     },
     {
-      prop: "customer",
-      label: "客户",
+      prop: "productsCode",
+      label: "产品编码",
+      minWidth: 180,
+    },
+    {
+      prop: "productsName",
+      label: "产品名称",
+      minWidth: 200,
+    },
+    {
+      prop: "customerCode",
+      label: "客户编码",
       minWidth: 160,
     },
     {
-      prop: "factoryNo",
-      label: "工号",
-      minWidth: 120
+      prop: "customerName",
+      label: "客户名称",
+      minWidth: 180,
     },
     {
-      prop: "batchNo",
+      prop: "supplierCode",
+      label: "供应商编码",
+      minWidth: 160,
+    },
+    {
+      prop: "supplierName",
+      label: "供应商名称",
+      minWidth: 180,
+    },
+    {
+      prop: "batchNumber",
       label: "批次号",
-      minWidth: 160
+      minWidth: 160,
     },
     {
-      prop: "arrivalQuantity",
+      prop: "arrivalDate",
+      label: "到货日期",
+      minWidth: 160,
+    },
+    {
+      prop: "planStartDate",
+      label: "计划开始时间",
+      minWidth: 160,
+    },
+    {
+      prop: "planEndDate",
+      label: "计划结束时间",
+      minWidth: 160,
+    },
+    {
+      prop: "productionQuantity",
       label: "来货数量",
-      minWidth: 120
-    },
-    {
-      prop: "isInspected",
-      label: "是否已检",
-      minWidth: 120
-    },
-    {
-      prop: "actualInspectionDate",
-      label: "实际检验日期",
-      minWidth: 160
+      minWidth: 120,
     },
     {
       prop: "qualifiedQuantity",
-      label: "合格数",
-      minWidth: 120
-    },
-    {
-      prop: "temporaryUninspectedQuantity",
-      label: "暂不检数",
-      minWidth: 120
+      label: "合格数量",
+      minWidth: 120,
     },
     {
       prop: "unqualifiedQuantity",
-      label: "不合格数",
-      minWidth: 120
+      label: "不合格数量",
+      minWidth: 120,
     },
     {
-      prop: "typingDate",
-      label: "打字日期",
-      minWidth: 160
+      prop: "randomConfirmedStatus",
+      label: "抽检确认状态",
+      minWidth: 140,
+      slot: true,
+      dictType: "inspectStatus"
     },
     {
-      prop: "typedQuantity",
+      prop: "randomTreatmentResults",
+      label: "抽检处理结果",
+      minWidth: 140,
+      slot: true,
+      dictType: "treatmentResult"
+    },
+    {
+      prop: "fullConfirmedStatus",
+      label: "全检确认状态",
+      minWidth: 140,
+      slot: true,
+      dictType: "inspectStatus"
+    },
+    {
+      prop: "fullTreatmentResults",
+      label: "全检处理结果",
+      minWidth: 140,
+      slot: true,
+      dictType: "treatmentResult"
+    },
+    {
+      prop: "patrolInspectionDate",
+      label: "全检日期",
+      minWidth: 160,
+    },
+    {
+      prop: "typingQualifiedQuantity",
       label: "已打字数量",
-      minWidth: 120
+      minWidth: 120,
     },
     {
-      prop: "remainingUntypedQuantity",
-      label: "剩余未打字数",
-      minWidth: 140
+      prop: "waitTypingQuantity",
+      label: "未打字数量",
+      minWidth: 120,
     },
     {
-      prop: "packagingDate",
-      label: "包装日期",
-      minWidth: 160
+      prop: "packingQualifiedQuantity",
+      label: "已包装数量",
+      minWidth: 120,
     },
     {
-      prop: "packagedQuantity",
-      label: "包装数量",
-      minWidth: 120
-    },
-    {
-      prop: "unpackagedQuantity",
+      prop: "waitPackingQuantity",
       label: "未包装数量",
-      minWidth: 120
+      minWidth: 120,
     },
     {
-      prop: "warehousingDate",
-      label: "入库日期",
-      minWidth: 160
+      prop: "packQuantity",
+      label: "装箱数量",
+      minWidth: 120,
     },
     {
-      prop: "warehousedQuantity",
-      label: "入库数量",
-      minWidth: 120
-    },
-    {
-      prop: "unwarehousedQuantity",
-      label: "未入库数量",
-      minWidth: 120
-    },
-    {
-      prop: "remainingQualifiedQuantity",
-      label: "合格品剩余数量",
-      minWidth: 180
+      prop: "waitPackQuantity",
+      label: "未装箱数量",
+      minWidth: 120,
     }
-  ]
+  ];
 }

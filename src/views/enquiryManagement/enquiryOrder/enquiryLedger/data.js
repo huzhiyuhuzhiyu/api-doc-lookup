@@ -64,12 +64,6 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
-      prop: "bidder",
-      label: "制单人",
-      minWidth: 120,
-      sortable: 'custom',
-    },
-    {
       prop: "purchaseUserId",
       label: "采购负责人",
       minWidth: 120,
@@ -82,5 +76,17 @@ export function getColumns() {
       minWidth: 150,
       sortable: 'custom',
     },
+    {
+      prop: "createTime",
+      label: "创建时间",
+      minWidth: 180,
+      sortable: 'custom'
+    },
+    {
+      prop: "createByName",
+      label: "创建人",
+      minWidth: 120,
+      sortable: 'custom'
+    }
   ]
 }

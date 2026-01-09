@@ -130,7 +130,7 @@
   </div>
 </template>
 
-<script> 
+<script>
 import { WithdrawalList,deleteWithdrawal } from '@/api/productOrdes/index.js'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from './Form.vue'
@@ -155,7 +155,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '退料单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'personName', fieldValue: '', label: '退料人', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'personId', fieldValue: '', label: '退料人', symbol: 'like', searchType: 1, width: 120 },
       ],
       formVisible:false,
       columnList: ["productionOrderNo", "createByName"],
@@ -163,7 +163,7 @@ export default {
         { label: "订单物料", value: "order" },
         { label: "工序物料", value: "process" },
       ],
- 
+
       superQueryVisible: false,
       exportFormVisible: false,
 
@@ -179,7 +179,7 @@ export default {
       orderFormlist: {
         receiveType: "",
         orderNo: "",
-        personName: "",
+        personId: "",
         pageNum: 1,
         pageSize: 20,
         superQuery: {
@@ -201,7 +201,7 @@ export default {
 
 
 
-      total: 0, 
+      total: 0,
       selectArr: [],
 
       superQueryJson: [
@@ -226,7 +226,7 @@ export default {
           ]
         },
         {
-          prop: 'personName',
+          prop: 'personId',
           label: "退料人",
           type: 'input'
         },
@@ -262,13 +262,13 @@ export default {
 
 
     }
-  }, 
+  },
   async created() {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
     this.superForm=  this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -317,7 +317,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='personName'||prop=='productionOrderNo') {
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='personId'||prop=='productionOrderNo') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -384,11 +384,11 @@ export default {
 
     this.superForm=  this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
- 
+
       this.$refs.SuperQuery.conditionList = []
       this.searchList= [
         { field: 'orderNo', fieldValue: '', label: '退料单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'personName', fieldValue: '', label: '退料人', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'personId', fieldValue: '', label: '退料人', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.search('basic')
     },

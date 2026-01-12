@@ -353,7 +353,8 @@ export default {
         { label: '不良品仓库', value: 'unqualified' },
         { label: '报废仓库', value: 'scrap' },
         { label: '虚拟仓库', value: 'virtually' },
-        { label: '线边仓库', value: 'line_edge' }
+        { label: '线边仓库', value: 'line_edge' },
+        { label: '委外仓库', value: 'out' },
       ],
       treeList: [],
       expands: true,

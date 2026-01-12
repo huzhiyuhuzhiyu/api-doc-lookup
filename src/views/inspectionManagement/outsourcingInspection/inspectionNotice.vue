@@ -42,7 +42,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
-              <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>
+              <!--              <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>-->
               <el-button size="mini" type="primary" @click="scanFun">
                 <i class="iconfont-menu icon-saoma"></i>
                 扫码检验
@@ -66,7 +66,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange" 
+          <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange"
            :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_599661">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
@@ -369,7 +369,7 @@ export default {
     handleBatch() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条检验数据')
 
-    
+
       this.btnLoading = false
       this.analyseDialog = true
     },
@@ -403,7 +403,7 @@ export default {
 						ratio: item.ratio,
 						remark: item.remark,
             approvalStatus:'ok',
-          
+
 						// unqualifiedQuantity: this.inspectionResults === 'qualified' ?
 						// 	0 : item.receivedQuantity
 					}

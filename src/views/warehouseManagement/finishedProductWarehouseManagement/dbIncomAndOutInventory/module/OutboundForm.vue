@@ -183,8 +183,10 @@ export default {
       return actions.batchDelete;
     },
     showPrintButton() {
-      const config = this.businessConfig.print || {};
-      return config.enabled && this.activeType;
+      // const config = this.businessConfig.print || {};
+      // return config.enabled && this.activeType;
+      // 功能暂不启用，后续有具体需求再进行配置开启，暂时返回false
+      return false
     },
     outboundLabel() {
       if (['outbound_sale_exchange'].includes(this.businessType)) {

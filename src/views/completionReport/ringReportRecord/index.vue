@@ -176,8 +176,8 @@
           </el-col>
         </el-form>
       </el-row>
-      <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo
-        v-loading="tableloading" border :checkSelectable="row => !row.selectFlag" customKey="JNPFTableKey_643502">
+      <JNPF-table ref="work" :data="workOrderData" :hasC="true" @selection-change="handleSelectWork" fixedNo
+        v-loading="tableloading" border customKey="JNPFTableKey_643502">
         <el-table-column prop="orderNo" label="工单号" min-width="160" />
         <el-table-column prop="processName" label="工序名称" min-width="120" />
         <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
@@ -364,18 +364,7 @@ export default {
       return getSummaries(param, this)
     },
         handleSelectWork(val) {
-      if (val.length) {
-        this.workOrderData.forEach(item => {
-          if (item.id != val[0].id) {
-            item.selectFlag = true
-          }
-        });
-        this.selectWorkOrder = val
-      } else {
-        this.workOrderData.forEach(item => {
-          item.selectFlag = false
-        });
-      }
+          this.selectWorkOrder = val
     },
       closePrint() {
       this.printVisible = false

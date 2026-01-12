@@ -68,6 +68,11 @@ export function getColumns() {
       minWidth: 80
     },
     {
+      prop: "batchNumber",
+      label: "批次号",
+      minWidth: 160
+    },
+    {
       prop: "planProductionQuantity",
       label: "计划生产数量",
       minWidth: 160

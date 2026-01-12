@@ -200,6 +200,7 @@ export default {
         pageSize: 20,
         orderState: "recognised",
         approvalStatus: 'ok',
+        canIssueFlag: true,
         orderItems: [{
           asc: false,
           column: ""
@@ -523,6 +524,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         orderState: "recognised",
+        canIssueFlag: true,
         orderItems: [{
           asc: false,
           column: ""

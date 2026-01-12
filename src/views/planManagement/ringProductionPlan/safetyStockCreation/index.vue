@@ -100,7 +100,7 @@ import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
+import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
 import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
@@ -344,13 +344,11 @@ export default {
 
 
     addSupplier() {
-      console.log(this.selectList);
       if (!this.selectList.length) return this.$message.error("请选择您要生成计划的数据")
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(this.selectList)
+        this.$refs.Form.init('', 'add', this.selectList)
       })
-
     },
 
 

@@ -2,12 +2,14 @@
   <div>
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
-        <el-page-header @back="goBack" content="新建计划" />
+        <el-page-header @back="goBack" :content="title" />
         <div class="options">
-          <el-button type="success" size="mini" :loading="btnLoading" @click="handleConfirm('draft')">
-            保存草稿</el-button>
-          <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
-            保存并提交</el-button>
+          <template v-if="activeType">
+            <el-button type="success" size="mini" :loading="btnLoading" @click="handleConfirm('draft')">
+              保存草稿</el-button>
+            <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
+              保存并提交</el-button>
+          </template>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -17,7 +19,7 @@
           <el-tab-pane label="基础信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top">
+                <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top" :disabled="!activeType">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="计划类型" prop="planType">
@@ -67,24 +69,24 @@
               <el-collapse-item title="产品信息" name="productInfo">
                 <div>
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                    icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
+                    icon="el-icon-plus" @click="openSeleceProductDialog()" :disabled="!activeType">选择产品</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                    icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
+                    :disabled="!activeType" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                 </div>
 
                 <JNPF-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" v-if="isProjectSwitchFlag"
-                  border height="660" :key="165" style="width: 100%;" hasC customKey="JNPFTableKey_168788">
+                  border height="660" :key="165" style="width: 100%;" :hasC="activeType" customKey="JNPFTableKey_168788">
 
-                  <el-table-column type="planNo" width="160" label="计划单号" :key="1011"
-                    v-if="codeConfig.codeWay != 'auto'">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.planNo" placeholder="计划单号" />
-                    </template>
-                  </el-table-column>
+<!--                  <el-table-column type="planNo" width="160" label="计划单号" :key="1011"-->
+<!--                    v-if="codeConfig.codeWay != 'auto'">-->
+<!--                    <template slot-scope="scope">-->
+<!--                      <el-input v-model="scope.row.planNo" :disabled="!activeType" placeholder="计划单号" />-->
+<!--                    </template>-->
+<!--                  </el-table-column>-->
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="180" :key="6"></el-table-column>
                   <el-table-column prop="bomId" label="BOM" width="140" :key="444">
                     <template slot-scope="scope">
                       <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
@@ -99,22 +101,23 @@
                       <span class="required">*</span>计划数量
                     </template>
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.planQuantity" placeholder="计划数量"
+                      <el-input v-model="scope.row.planQuantity" :disabled="!activeType" placeholder="计划数量"
                         oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
                       </el-input>
                     </template>
                   </el-table-column>
                   <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
-                  <el-table-column prop="remark" label="备注" width="200" :key="128">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
-                    </template>
-                  </el-table-column>
+<!--                  <el-table-column prop="remark" label="备注" width="200" :key="128">-->
+<!--                    <template slot-scope="scope">-->
+<!--                      <el-input v-model="scope.row.remark" :disabled="!activeType" placeholder="请输入" maxlength="200" />-->
+<!--                    </template>-->
+<!--                  </el-table-column>-->
 
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
 
-                      <el-button type="text" @click="handleDel(scope)" style=" color: #ff3a3a">删除</el-button>
+                      <el-button type="text" @click="handleDel(scope)" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        :disabled="!activeType" color="#ff3a3a">删除</el-button>
                     </template>
                   </el-table-column>
                 </JNPF-table>
@@ -123,7 +126,7 @@
             </el-collapse>
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
-            <UploadWj v-model="datafilelist" :detailed="false"></UploadWj>
+            <UploadWj v-model="datafilelist" :disabled="!activeType" :detailed="!activeType"></UploadWj>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -207,18 +210,15 @@
 
 <script>
 import { batchAddPlan } from '@/api/plan/index.js'
-import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct, getCopyOrders, getWorkOrderNo, uploadProduct, } from '@/api/salesManagement/assemblyOrders'
-import { getCounryData, getCooperativeInfo,getcategoryTree, getCooperativeData, getscheduleList } from '@/api/basicData/index'
-import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
+import { getBimBusinessDetail, getcategoryTree, getCooperativeData } from '@/api/basicData/index'
+import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 import { mapGetters, mapState } from 'vuex'
-import { getBimBusinessDetail,getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
-
-import {
-  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
-} from "@/api/masterDataManagement/index";
-import { log } from 'mathjs'
+import { addProdPlanArrange } from "@/api/basicData/processSettingss";
+import { addProdOrder } from "@/api/productOrdes/finishedProductOrders";
+import { getQuotationsendlist } from "@/api/salesManagement";
+import { detailPlanList } from "@/api/calculationList/calculationList";
+import { standardizeFields } from "@/utils";
 
 export default {
   mixins: [getProjectList],
@@ -226,6 +226,7 @@ export default {
 
   data() {
     return {
+      title: '安全库存计划',
       getCooperativeData,
       getcategoryTree,
       //  客户 树请求
@@ -339,13 +340,37 @@ export default {
       projectIdDataList: [],
       originalData: [],
       isProductNameSwitch: "",
-
+      actions: {
+        edit: async (data) => {
+          this.setDetail(data)
+          this.fetchData("JHDH")
+        },
+        look: async (data) => {
+          this.setDetail(data)
+        },
+        default: async (prefillData) => {
+          await this.defaultInit(prefillData);
+          this.fetchData("JHDH")
+        },
+      },
+      apiMethodActions: {
+        arrange: null,
+        add: null
+      },
+      productFieldMap: {
+        productName: ['productName', 'productsName', 'name'],
+        productCode: ['productCode', 'productsCode', 'code'],
+        drawingNo: ['productDrawingNo', 'productsDrawingNo', 'drawingNo'],
+        productsId: ['productsId', 'productId', 'id'],
+      }
     }
   },
   computed: {
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token']),
-
+    activeType() {
+      return this.btnType !== 'look'
+    },
   },
 
   async created() {
@@ -367,8 +392,29 @@ export default {
   },
 
   methods: {
+    setDetail(data){
+      this.planForm = data.plan
+      this.planForm.planDate = [this.planForm.planStartDate, this.planForm.planEndDate]
+      this.productData = standardizeFields(data.planLineList, this.productFieldMap);
+    },
+    async defaultInit(prefillData) {
+      this.productData = prefillData.map(item => {
+        const newItem = { ...item };
 
+        newItem.productsId = item.id;
 
+        const diff = this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]);
+        newItem.planQuantity = this.jnpf.numberFormat(diff) < 0 ? 0 : this.jnpf.numberFormat(diff);
+
+        newItem.planType = 'safety_stock_plan';
+
+        if (this.codeConfig.codeWay !== 'auto') {
+          newItem.planNo = null;
+        }
+
+        return newItem;
+      });
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -453,12 +499,6 @@ export default {
       }
     },
 
-
-
-
-
-
-
     // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
@@ -486,14 +526,6 @@ export default {
     handleDel(data) {
       this.productData.splice(data.$index, 1)
     },
-
-
-
-
-
-
-
-
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
       if (!this.planForm.projectId && this.isProjectSwitch == 1) return this.$message.error("请先选择所属项目")
@@ -586,31 +618,9 @@ export default {
       this.productData = uniqueArr
 
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     async fetchData(code) {
       try {
-        const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig = data
-
+        this.codeConfig = await this.jnpf.getBillRuleConfigFun(code)
       } catch (error) {
       }
     },
@@ -635,24 +645,25 @@ export default {
       }
       this.productData = []
     },
-    init(data) {
-      setTimeout(() => {
-        data.forEach(item => {
-          item.productsId = item.id
-          let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity])) < 0 ? 0 : this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))
-          this.$set(item, 'planQuantity', num)
-          item.planType = 'safety_stock_plan'
-          if (this.codeConfig.codeWay != 'auto') {
-            item.planNo = null
-          }
-        })
-        this.productData = data
-        this.originalData = JSON.parse(JSON.stringify(data))
-
-      }, 500);
-      this.fetchData("JHDH")
+   async init(id, type, data) {
+      this.btnType = type
+      this.title = this.getTitle(type)
+      if (id && this.actions[type]) {
+        await this.actions[type](data);
+      } else {
+        await this.actions.default(data);
+      }
     },
-
+    getTitle(type) {
+      switch ( type ) {
+        case 'add':
+          return `新建${ this.title }`
+        case 'edit':
+          return `编辑${ this.title }`
+        case 'look':
+          return `查看${ this.title }`
+      }
+    },
     goBack() {
       this.$emit('close', true)
     },

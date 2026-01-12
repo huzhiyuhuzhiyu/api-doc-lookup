@@ -76,6 +76,7 @@ export function getColumns() {
       label: "状态",
       slot: true,
       dictType: "workReportInspection",
+      minWidth: 120,
     }
   ]
 }

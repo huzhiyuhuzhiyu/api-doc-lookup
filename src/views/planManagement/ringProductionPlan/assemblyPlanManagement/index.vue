@@ -129,14 +129,11 @@
 
         </div>
       </div>
-
     </div>
-
-    <!-- <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" /> -->
 
     <OrderForm v-if="orderFormVisible" ref="orderForm" @refreshDataList="initData" @close="closeForm" />
     <CreateDirectly v-if="createDirectlyVisible" ref="createDirectly" @refreshDataList="initData" @close="closeForm" />
-
+    <safetyStockForm v-if="safetyStockVisible" ref="safetyStockForm" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -155,6 +152,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import getProjectList from '@/mixins/generator/getProjectList'
+import safetyStockForm from '@/views/planManagement/ringProductionPlan/safetyStockCreation/Form.vue'
 import { mapGetters, mapState } from 'vuex'
 
 import {
@@ -162,11 +160,12 @@ import {
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyPlanManagement',
-  components: { Form, ExportForm, SuperQuery, OrderForm ,CreateDirectly},
+  components: { safetyStockForm, ExportForm, SuperQuery, OrderForm ,CreateDirectly},
   mixins: [getProjectList],
   data() {
     return {
       createDirectlyVisible:false,
+      safetyStockVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -559,13 +558,15 @@ export default {
 
 
     // 关闭新建编辑页面
-    closeForm(isRefresh) {
+     closeForm(isRefresh = true) {
       this.formVisible = false
       this.FormVisible = false
       this.createDirectlyVisible = false
+      this.safetyStockVisible = false
       this.orderFormVisible=false
-      console.log("1");
-      this.search('basic')
+       if (isRefresh){
+         this.search('basic')
+       }
     },
     initData() {
       this.listLoading = true
@@ -666,10 +667,12 @@ export default {
           this.$nextTick(() => {
             this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
           })
-        }else{
-
+        }else if (data.planType == 'safety_stock_plan') {
+          this.safetyStockVisible = true
+          this.$nextTick(() => {
+            this.$refs.safetyStockForm.init(data.id, btnType,res.data)
+          })
         }
-
       })
     },
 
@@ -711,10 +714,13 @@ export default {
           this.$nextTick(() => {
             this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
           })
-        }else{
-
+        } else if (data.planType == 'safety_stock_plan') {
+          // 安全库存计划
+          this.safetyStockVisible = true
+          this.$nextTick(() => {
+            this.$refs.safetyStockForm.init(data.id, btnType,res.data)
+          })
         }
-
       })
 
     },

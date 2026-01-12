@@ -50,9 +50,8 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
-              <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>
-              <el-button size="mini" type="primary" @click="scanFun">
-                <i class="iconfont-menu icon-saoma"></i>
+              <!--              <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>-->
+              <el-button size="mini" type="primary" icon="iconfont-menu icon-saoma" @click="scanFun">
                 扫码检验
               </el-button>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"

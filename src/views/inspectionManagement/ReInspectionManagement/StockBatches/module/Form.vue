@@ -208,6 +208,7 @@ export default {
       }
     },
     async handleSubmit() {
+      if (!this.linesList.length) return this.$message.error('无产品信息，无法保存提交！')
       // 校验表单
       this.btnLoading = true
       const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)

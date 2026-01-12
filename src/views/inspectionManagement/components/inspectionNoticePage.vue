@@ -6,9 +6,9 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
-              <el-button v-has="'inspection:withdraw'" :disabled="tableData.length<=0" size="mini" type="primary" icon="iconfont-menu icon-chehui" @click="withdrawFun">
-                撤回
-              </el-button>
+<!--              <el-button v-has="'inspection:withdraw'" :disabled="tableData.length<=0" size="mini" type="primary" icon="iconfont-menu icon-chehui" @click="withdrawFun">-->
+<!--                撤回-->
+<!--              </el-button>-->
               <el-button :disabled="tableData.length<=0" size="mini" type="primary"
                          icon="el-icon-download" @click="exportForm">
                 导出

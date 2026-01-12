@@ -11,7 +11,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.partnerName" placeholder="供应商名称" @keyup.enter.native="search()"
+                <el-input v-model="listQuery.partnerName" placeholder="客户名称" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>
@@ -41,7 +41,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:8px">
             <div>
-              <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>
+              <!--              <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>-->
               <el-button size="mini" type="primary" @click="scanFun">
                 <i class="iconfont-menu icon-saoma"></i>
                 扫码检验
@@ -65,7 +65,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange" 
+          <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange"
            :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_276454">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
@@ -565,7 +565,7 @@ export default {
     handleBatch() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条检验数据')
 
-    
+
       this.btnLoading = false
       this.analyseDialog = true
     },
@@ -599,7 +599,7 @@ export default {
 						ratio: item.ratio,
 						remark: item.remark,
             approvalStatus:'ok',
-            
+
 						// unqualifiedQuantity: this.inspectionResults === 'qualified' ?
 						// 	0 : item.deliveryQuantity
 					}
@@ -679,8 +679,8 @@ export default {
         console.log(includeFieldMap)
         let _data = {
           ...this.listQuery,
-          exportType: '1073',
-          exportName: '采购待检收货单',
+          exportType: '1061',
+          exportName: '销售退货通知单明细',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
           totalRowFlag: true

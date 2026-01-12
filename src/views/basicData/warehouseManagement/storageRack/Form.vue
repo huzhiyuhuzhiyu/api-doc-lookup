@@ -50,7 +50,7 @@ export default {
       getWarehouseList,
       activeName: 'basicInfo',
       activeNames: ['productInfo', 'basicInfo'],
-      tabs: tabs(),
+      tabs: null,
       tempRules: {}, // 动态判断是否必填项
       btnType: false,
       visible: true,
@@ -176,25 +176,12 @@ export default {
   },
 
   async created() {
+    this.tabs = tabs(this)
     await this.getProjectSwitch('system', 'project')
 
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
-
-        // 添加自定义表单元素方法和参数
-        if (tc.type == 'custom') {
-          // 产品分类
-          if (tc.prop === 'warehouseName') {
-            tc.method = getWarehouseList
-            this.requestObj2.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-
-            tc.requestObj = this.requestObj2
-            tc.change = this.warehouseNameChange
-
-            tc.dialogTitle = '选择上级仓库'
-          }
-        }
       })
     })
   },

@@ -167,6 +167,14 @@ export default {
     },
     async handleBatchAction(type) {
       if (!this.validateSelectedRows(true)) return;
+
+      const invalidRows = this.selectedRow.filter(row => row.deliveryStatus !== 'waiting');
+      if (invalidRows.length > 0) {
+        const actionText = type === 'approve' ? '批准' : '拒绝';
+        this.$message.warning(`只有“待发货”状态的记录才能${actionText}，请检查选中项。`);
+        return;
+      }
+
       const actionMap = {
         approve: {
           title: '批准',

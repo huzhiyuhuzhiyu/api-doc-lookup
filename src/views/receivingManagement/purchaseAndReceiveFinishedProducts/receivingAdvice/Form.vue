@@ -132,7 +132,7 @@
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
                       v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
-                    <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+<!--                    <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />-->
 <!--                    <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"-->
 <!--                      v-if="isProportionSwitch === '1'">-->
 <!--                      <template slot-scope="scope">-->
@@ -168,6 +168,12 @@
                             {{ scope.row.receivedQuantity }}
                           </el-input>
                         </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="batchNumber" label="批次号" min-width="160">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.batchNumber" placeholder="请输入批次号"
+                                  :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
                     <el-table-column prop="price" label="单价(含税)" width="130"
@@ -368,7 +374,7 @@
                 <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
-                <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+<!--                <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />-->
 <!--                <el-table-column prop="weight" label="重量(kg)" width="140" :key="737" v-if="isProportionSwitch === '1'">-->
 <!--                  <template slot-scope="scope">-->
 <!--                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"-->
@@ -1216,21 +1222,15 @@ export default {
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
       return (rule, value, callback) => {
-        console.log(value, 'kkk')
         let index = Number(rule.field.match(/\d+/)[0])
-        let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`
+        let msg = `收货数量不能大于待收货数量`
         if (!value || value == 0) {
           callback()
         } else {
-          let flag = false
-          let list = this.dataFormTwo.productData
-          let num_1 = Number(list[index].receivedQuantity)
-          let num_2 = Number(list[index].maxReceiptNum)
-
-          if (!(num_1 <= num_2)) {
-            flag = true
-          }
-          if (flag) {
+          const row = this.dataFormTwo.productData[index]
+          const received = Number(row.receivedQuantity) || 0
+          const waitReceipt = Number(row.waitReceiptNum) || 0
+          if (received > waitReceipt) {
             this.$message.error(`第${index + 1}行${msg}`)
             callback(new Error(msg))
           } else {
@@ -1369,7 +1369,7 @@ export default {
       this.productVisible = false
       this.selectArr.forEach((item) => {
         this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-        this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+        // this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
         this.dataFormTwo.productData.push(item)
       })
       let uniqueArr = []
@@ -1768,7 +1768,7 @@ export default {
             item.ordersNo = item.orderNo
             this.$set(item, 'receivedQuantity', item.waitReceiptNum)
             this.$set(item, 'discount', 1)
-            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+            // this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
           })
         }
       }
@@ -1793,7 +1793,7 @@ export default {
             this.dataFormTwo.productData = res.data.noticeLineList
             this.dataFormTwo.productData.forEach((item) => {
               item.drawingNo = item.productDrawingNo
-              this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+              // this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
 
             })
             if (this.btnType === 'edit') {
@@ -1927,12 +1927,12 @@ export default {
             })
             return
           }
-          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)) {
+          if (Number(item.receivedQuantity) > Number(item.waitReceiptNum)) {
             console.log(123)
             submitFlag = false
             this.btnLoading = false
             this.$message({
-              message: '第' + (index + 1) + '行产品的收货数量不能大于最大可收货数量',
+              message: '第' + (index + 1) + '行产品的收货数量不能大于待收货数量',
               type: 'error',
               duration: 1500
             })

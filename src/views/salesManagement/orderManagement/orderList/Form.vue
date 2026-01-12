@@ -1033,7 +1033,7 @@ export default {
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="流程信息" name="approvalFlow">
+          <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
             <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId"
                      style="margin-top: 5px;"/>
           </el-tab-pane>

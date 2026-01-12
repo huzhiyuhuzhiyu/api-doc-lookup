@@ -55,7 +55,7 @@
               <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                 <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
               </el-tab-pane>
-              <el-tab-pane label="流转记录" name="transferList">
+              <el-tab-pane label="流转记录" name="transferList" v-if="dataForm.approvalFlag">
                 <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
               </el-tab-pane>
             </el-tabs>

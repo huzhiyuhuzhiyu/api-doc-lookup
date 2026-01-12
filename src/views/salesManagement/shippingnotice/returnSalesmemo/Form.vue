@@ -13,7 +13,7 @@
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
-      <div class="main" v-loading="formLoading">
+      <div class="main" v-loading="formLoading" ref="main">
 
         <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="基础信息" name="orderInfo">
@@ -79,7 +79,7 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData"  >
+                    @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
@@ -262,7 +262,7 @@
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                @selection-change="handeleProductInfoData"  >
+                @selection-change="handeleProductInfoData" :height="customStyleData">
                 <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
@@ -939,6 +939,9 @@ export default {
       pairingModeList: [],
       pageType:"",
       isPairingModeSwitch: '', // 配对方式显示隐藏
+      customStyleData: 0,
+      timeout: null,
+      clientResize: null
     }
   },
   computed: {
@@ -975,13 +978,35 @@ export default {
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
-
     this.getBimBusinessDetail()
-    let tBody = document.querySelectorAll('.el-table')[0]
-    tBody.style.height = 'auto'
-    tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
+    this.$nextTick(()=>this.switchStyleheight())
+    // 页面发生缩放，触发明细表格表单的resize
+    this.clientResize = () => {
+      if (!this.$refs.product) return
+      this.$nextTick(() => { this.$refs.product.doLayout() })
+    }
+    window.addEventListener('resize', this.clientResize)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.clientResize)
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion = this.$refs.main // 表单页面区域
+      const mainHeight = mainRegion.clientHeight;
+      const TableFormTitle = mainRegion.querySelector('.TableForm_title') // 获取TableForm头部操作栏
+      const TableFormTitleHeight = TableFormTitle ? TableFormTitle.clientHeight : 0
+      let maxHeight = mainHeight - TableFormTitleHeight - 65 - 154
+      maxHeight = maxHeight > 500 ? maxHeight : 500
+      this.customStyleData = maxHeight - 300
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100);
+      };
+    },
      // 配对方式显示隐藏
      async getPairingModeSwitch(code, type) {
       try {

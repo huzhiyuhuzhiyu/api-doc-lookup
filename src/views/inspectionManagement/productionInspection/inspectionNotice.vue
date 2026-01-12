@@ -109,11 +109,6 @@
               {{ scope.row.cases?scope.row.cases:'0' }}
             </template>
           </el-table-column>
-          <el-table-column prop="productWeight" label="产品单重" min-width="120" sortable="custom" >
-            <template slot-scope="scope">
-              {{ scope.row.productWeight?scope.row.productWeight:'0' }}
-            </template>
-          </el-table-column>
           <el-table-column prop="utilizeQuantity" label="利用数量" min-width="120" sortable="custom" />
           <!-- <el-table-column prop="completedNum" label="返工数量" min-width="120" /> -->
           <el-table-column prop="planStartDate" label="计划开始日期" width="150" sortable="custom" />

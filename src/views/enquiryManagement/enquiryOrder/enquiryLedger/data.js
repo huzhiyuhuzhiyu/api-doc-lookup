@@ -11,14 +11,14 @@ export function getBasicFormSchema(dataFormRef, context) {
       disabled: true,
     },
     {
-      prop: "cooperativePartnerId",
+      prop: "customerCode",
       label: "客户编号",
       value: "",
       type: "input",
       disabled: true,
     },
     {
-      prop: "quotationTime",
+      prop: "inquiryTime",
       label: "询价日期",
       value: "",
       type: "date",
@@ -26,20 +26,13 @@ export function getBasicFormSchema(dataFormRef, context) {
     },
     {
       prop: "bidder",
-      label: "制单人",
-      value: "",
-      type: "input",
-      disabled: true,
-    },
-    {
-      prop: "",
       label: "业务员",
       value: "",
       type: "input",
       disabled: true,
     },
     {
-      prop: "",
+      prop: "purchaseUserId",
       label: "采购负责人",
       value: "",
       type: "input",
@@ -58,7 +51,7 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
-      prop: "cooperativePartnerId",
+      prop: "customerCode",
       label: "客户编码",
       minWidth: 200,
       align: "left",
@@ -67,12 +60,6 @@ export function getColumns() {
     {
       prop: "inquiryTime",
       label: "询价日期",
-      minWidth: 120,
-      sortable: 'custom',
-    },
-    {
-      prop: "bidder",
-      label: "制单人",
       minWidth: 120,
       sortable: 'custom',
     },
@@ -89,5 +76,17 @@ export function getColumns() {
       minWidth: 150,
       sortable: 'custom',
     },
+    {
+      prop: "createTime",
+      label: "创建时间",
+      minWidth: 180,
+      sortable: 'custom'
+    },
+    {
+      prop: "createByName",
+      label: "创建人",
+      minWidth: 120,
+      sortable: 'custom'
+    }
   ]
 }

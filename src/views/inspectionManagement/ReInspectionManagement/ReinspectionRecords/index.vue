@@ -41,10 +41,7 @@ export default {
           prop: 'status',
           label: '状态',
           type: 'select',
-          options: [
-            { label: '未确认', value: 'not_confirm' },
-            { label: '已确认', value: 'confirmed' },
-          ]
+          options: this.global.reInspectionStatus
         }
       ],
       listQuery: {
@@ -201,7 +198,7 @@ export default {
           </template>
           <el-table-column label="操作" width="120" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'submit')">
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'submit')" :disabled="row.status !== 'not_confirm'">
                 提交
               </el-button>
             </template>

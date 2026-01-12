@@ -52,6 +52,9 @@ export function getBasicFormSchema(dataFormRef, context) {
         if (!data || !data.length) return
         context.dataForm.productCategoryId = data[0].id
         context.dataForm.productCategoryName = data[0].name
+        if (!context.dataForm.name) {
+          context.dataForm.name = data[0].name
+        }
       },
       dialogTitle: '选择产品分类',
       sm: 12

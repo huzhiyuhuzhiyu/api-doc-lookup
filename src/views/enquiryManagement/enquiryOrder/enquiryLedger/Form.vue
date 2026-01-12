@@ -61,26 +61,25 @@ export default {
       globalBrand: '',
       originalFormData: {},
       dataForm: {
-        orderNo: '',
-        orderType: '',
-        departments: [],
-        cooperativePartnerId: '',
-        cooperativePartnerName: '',
-        cooperativePartnerCode: '',
-        departmentId: '',
-        salesId: '',
-        orderDate: '',
-        deliveryDate: '',
-        remark: '',
-        remark1: '',
+        inquiryNo: '',
+        customerCode: '',
+        inquiryTime: '',
+        bidder: '',
+        purchaseUserId: '',
       },
       fileList: [],
       basicFormSchema: [],
       linesList: [],
       linesListItems: [
         {
-          prop: 'cooperativePartnerId',
-          label: '供应商',
+          prop: 'supplierCode',
+          label: '供应商编码',
+          type: 'view',
+          minWidth: 150,
+        },
+        {
+          prop: 'supplierName',
+          label: '供应商名称',
           type: 'view',
           minWidth: 150,
         },
@@ -184,7 +183,7 @@ export default {
       this.title = this.getTitle(type)
       if (id && this.actions[type]) {
         await this.actions[type](id);
-      } 
+      }
       this.$nextTick(() => {
         this.$refs.dataForm.$refs.main.clearValidate()
         this.refreshTableHeight()
@@ -257,13 +256,15 @@ export default {
         const res = await getEnquiryDetailById(id)
         const { msg, data } = res
         if (msg === 'Success') {
-          this.dataForm = Object.assign(this.dataForm, data.purchaseInquiryVo)
+          this.dataForm = data.purchaseInquiryVo
           this.originalFormData = deepClone(this.dataForm)
           this.linesList = data.inquiryLineList
-          await this.fetchDepartment()
-          await this.fetchOrganization()
+          // await this.fetchDepartment()
+          // await this.fetchOrganization()
         }
       } catch (err) {
+        this.loading = false
+      } finally {
         this.loading = false
       }
     },

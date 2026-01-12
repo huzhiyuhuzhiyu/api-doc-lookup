@@ -8,3 +8,12 @@ export function purchaseReceiveReport(data) {
     data
   })
 }
+
+// 在库重检 报表
+export function prodOrderRecheckReport(data) {
+  return request({
+    url: '/api/mrp/prod/order/recheck/report',
+    method: 'post',
+    data
+  })
+}

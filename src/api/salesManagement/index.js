@@ -165,7 +165,7 @@ export function getQuotationInfo (id) {
 export function submitSaleQuotation (id) {
   return request({
     url: `/api/erp/sale/quotation/submit/${id}`,
-    method: 'get',
+    method: 'put',
   })
 }
 // 销售报价-重新询价
@@ -348,9 +348,9 @@ export function editReceiptnoticelist (data) {
   })
 }
 // 报价单-导出
-export function exportSaleQuotation (id) {
+export function exportSaleQuotation (id,hasInclude) {
   return request({
-    url: `/api/erp/sale/quotation/export/fill/${id}`,
+    url: `/api/erp/sale/quotation/export/fill/${id}/${hasInclude}`,
     method: 'get',
   })
 }

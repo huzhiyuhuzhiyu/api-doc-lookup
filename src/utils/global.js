@@ -137,7 +137,8 @@ const global = {
     { label: '已有库存', value: 'existing_inventory' },
     { label: '无需采购', value: 'no_need_purchase' },
     { label: '需要采购', value: 'need_purchase' },
-    { label: '待生产', value: 'need_production' },
+    { label: '无需生产', value: 'no_need_produce' },
+    { label: '需要生产', value: 'need_produce' },
   ],
 
   // 交期状态
@@ -297,6 +298,7 @@ const global = {
     { label: '直接出入库', value: 'direct', type: 'warning' },
     { label: '其他', value: 'io_other', type: 'info' },
     { label: '复制', value: 'copy', type: 'info' },
+    { label: '达克收货', value: 'move', type: 'success' },
   ],
 
   // 指标目标比较符
@@ -306,10 +308,17 @@ const global = {
     { label: "小于等于", value: "le", type: "warning" },
     { label: "大于等于", value: "ge", type: "primary" }
   ],
+
   targetColorList: [
     { label: "绿色", value: "green", type: "success" },
     { label: "黄色", value: "yellow", type: "warning" },
     { label: "红色", value: "red", type: "danger" }
+  ],
+
+  // 状态
+  reInspectionStatus: [
+    { label: '未确认', value: 'not_confirm', type: 'danger' },
+    { label: '已确认', value: 'confirm', type: 'success' },
   ],
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {

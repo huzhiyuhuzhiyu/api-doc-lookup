@@ -28,7 +28,7 @@ export default {
       dataForm: {
         orderType: 'procure',
         orderNo: '',
-        currency: '',
+        currency: 'CNY',
         orderDate: '',
         cooperativePartnerName: '',
         cooperativePartnerCode: '',
@@ -604,8 +604,7 @@ export default {
                 <el-tab-pane label="基础信息" name="jcInfo">
                   <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
-                      <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                        :btnType="btnType"/>
+                      <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm" :btnType="btnType"/>
                     </el-collapse-item>
                     <el-collapse-item class="productInfo"
                       title="产品信息"
@@ -657,8 +656,7 @@ export default {
                   </el-collapse>
                 </el-tab-pane>
                 <el-tab-pane label="其他要求" name="other">
-                  <JNPF-col v-model="dataOtherForm" :tabContent="otherFormSchema" ref="dataForm"
-                    :btnType="btnType"/>
+                  <JNPF-col v-model="dataOtherForm" :tabContent="otherFormSchema" ref="dataOtherForm" :btnType="btnType"/>
                 </el-tab-pane>
                 <!--                <el-tab-pane label="付款信息" name="payment">-->
                 <!--                  <JNPF-col v-model="dataForm" :tabContent="paymentFormSchema" ref="dataForm"-->

@@ -120,7 +120,6 @@ export function getColumns() {
       minWidth: 220,
       align: "left",
       sortable: 'custom',
-      slot: true
     },
     {
       prop: "purchaseOrderNo",
@@ -128,11 +127,17 @@ export function getColumns() {
       minWidth: 220,
       align: "left",
       sortable: 'custom',
-      slot: true
     },
     {
-      prop: "partnerName",
-      label: "供应商",
+      prop: "supplierCode",
+      label: "供应商编码",
+      minWidth: 180,
+      align: "left",
+      sortable: 'custom'
+    },
+    {
+      prop: "supplierName",
+      label: "供应商名称",
       minWidth: 180,
       align: "left",
       sortable: 'custom'

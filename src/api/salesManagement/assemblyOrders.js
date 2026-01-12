@@ -33,6 +33,14 @@ export function getsaleOrderDetailList(data) {
       data
     })
   }
+
+// 订单详情-根据订单号查询订单编号
+export const getOrderNumberByCode = (code) => {
+  return request({
+    url: `/api/erp/sale/orders/getNumberByCode/${ code }`,
+    method: 'get'
+  })
+}
   // 订单详情
   export const getOrderDetail = (id) => {
     return request({

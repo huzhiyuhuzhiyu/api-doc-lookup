@@ -563,11 +563,7 @@ export default {
     exportForm() {
       this.exportFormVisible = true
       let columnList
-      if (this.activeName == 'latestprice') {
-        columnList = this.$refs.tableForm.columnList.filter((item) => !!item.label && !!item.prop)
-      } else {
-        columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
-      }
+      columnList = this.$refs.tableForm.columnList.filter((item) => !!item.label && !!item.prop)
 
       columnList = columnList.map((item) => {
         return { label: item.label, prop: item.prop }

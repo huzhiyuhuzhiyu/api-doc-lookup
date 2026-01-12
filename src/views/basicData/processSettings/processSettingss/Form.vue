@@ -954,7 +954,7 @@ export default {
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.visible = true
-      this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
+      this.dialogTitle = this.getTitle(type)
       this.type = type
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
@@ -972,6 +972,10 @@ export default {
             this.dataForm = {
               ...this.dataForm,
               ...res.data.routing
+            }
+            if (this.type === 'copy') {
+              this.dataForm.documentStatus = ''
+              this.fetchData('bm_gy_gylx', true)
             }
             res.data.routingLineList.forEach((item) => {
               item.name = item.processName
@@ -1016,6 +1020,17 @@ export default {
           })
         }
       })
+    },
+    getTitle(type) {
+      switch (type) {
+        case 'add':
+        case 'copy':
+          return `新建`
+        case 'edit':
+          return `编辑`
+        case 'look':
+          return `查看`
+      }
     },
     // 表单提交
     handleSubmit(type) {
@@ -1245,7 +1260,12 @@ export default {
         attachmentList: this.datafilelist,
         flowData: this.flowData
       }
-
+      if (this.type === 'copy') {
+        _data.routing.id = ''
+        _data.routingLineList.forEach((item) => {
+          item.id = ''
+        })
+      }
       let msgs = ''
       if (type === 'draft') {
         msgs = '保存成功'

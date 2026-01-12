@@ -7,7 +7,7 @@ export function getColumns() {
   return [
     {
       prop: "orderNo",
-      label: "单号",
+      label: "通知单号",
       minWidth: 220,
       align: "left",
       sortable: 'custom',

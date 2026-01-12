@@ -331,7 +331,7 @@ export default {
 
       detailDataList: [],
       detailDiaFlag: false,
-      previousReceiveType: null,  // 存储上一次选择的退料类型  
+      previousReceiveType: null,  // 存储上一次选择的退料类型
       isSame: false,
       flowTemplateJson: {},
       flowData: {},
@@ -368,7 +368,7 @@ export default {
       })
     },
     checkSelection() {
-      this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同  
+      this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同
       this.previousReceiveType = this.dataForm.receiveType; // 更新上一次选择
       console.log(9999);
       if (!this.isSame && this.dataForm.productionOrderNo) {
@@ -499,7 +499,7 @@ export default {
       var year = date.getFullYear();
       var month = (date.getMonth() + 1).toString().padStart(2, "0");
       var day = date.getDate().toString().padStart(2, "0");
-   
+
       const formattedDate = `${year}-${month}-${day}`;
       return formattedDate
     },
@@ -603,6 +603,10 @@ export default {
       if (!valid_1 && submitFlag) {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_1.fields)
+      }
+      if (!this.dataFormTwo.data.length) {
+        this.$message.error('请添加退料清单！')
+        return
       }
 
       let form_2 = this.$refs['productForm']

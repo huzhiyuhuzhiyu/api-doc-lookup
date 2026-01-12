@@ -337,6 +337,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        quotationId: "",
         quotationNo: "",
         cooperativePartnerIdText: "",
         deliver: "",
@@ -419,11 +420,13 @@ export default {
             const matchedLine = inquiryLineList.find(line => line.quotationLineId === product.id);
 
             if (matchedLine) {
-              product.sampleAmounts = matchedLine.sampleAmounts || '';
-              product.procurementAmounts = matchedLine.procurementAmounts || '';
-              product.moldAmounts = matchedLine.moldAmounts || '';
-              product.minNumStr = matchedLine.minNumStr || '';
-              product.deliveryDate = matchedLine.deliveryDate || '';
+              product.sampleAmounts = matchedLine.sampleAmounts;
+              product.procurementAmounts = matchedLine.procurementAmounts;
+              product.moldAmounts = matchedLine.moldAmounts;
+              product.minNumStr = matchedLine.minNumStr;
+              product.deliveryDate = matchedLine.deliveryDate;
+              product.material = matchedLine.material;
+              product.remark1 = matchedLine.remark1;
               updatedCount++;
             }
           });
@@ -442,11 +445,13 @@ export default {
         const matchedLine = await this.getSupplierQuotationForSingle(row, selectedSupplier.id);
 
         if (matchedLine) {
-          this.linesList[index].sampleAmounts = matchedLine.sampleAmounts || '';
-          this.linesList[index].procurementAmounts = matchedLine.procurementAmounts || '';
-          this.linesList[index].moldAmounts = matchedLine.moldAmounts || '';
-          this.linesList[index].minNumStr = matchedLine.minNumStr || '';
-          this.linesList[index].deliveryDate = matchedLine.deliveryDate || '';
+          this.linesList[index].sampleAmounts = matchedLine.sampleAmounts;
+          this.linesList[index].procurementAmounts = matchedLine.procurementAmounts;
+          this.linesList[index].moldAmounts = matchedLine.moldAmounts;
+          this.linesList[index].minNumStr = matchedLine.minNumStr;
+          this.linesList[index].deliveryDate = matchedLine.deliveryDate;
+          this.linesList[index].material = matchedLine.material;
+          this.linesList[index].remark1 = matchedLine.remark1;
 
           this.$message.success('已加载该供应商的报价信息');
         }
@@ -689,6 +694,7 @@ export default {
           this.dataForm = Object.assign(this.dataForm, data.sale, {
             inquiryTime: this.jnpf.getToday()
           })
+          this.formData.quotationId = data.sale.id
           this.originalFormData = deepClone(this.dataForm)
           this.linesList = data.lines.map(item => ({
             ...item,

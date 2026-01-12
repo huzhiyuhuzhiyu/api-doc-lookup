@@ -24,7 +24,7 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
-                    custom-column :setColumnDisplayList="columnList" hasMove @changeMove="changeMove" customKey="JNPFTableKey_496179" :listQuery="form" @queryChange="initData"
+                    custom-column :setColumnDisplayList="columnList" @changeMove="changeMove" customKey="JNPFTableKey_496179" :listQuery="form" @queryChange="initData"
                     :queryJson="superQueryJson">
           <el-table-column prop="name" label="类别名称" width="250"/>
           <el-table-column prop="code" label="类别编码" min-width="150"/>

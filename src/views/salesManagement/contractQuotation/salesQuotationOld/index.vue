@@ -19,7 +19,7 @@
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
-                  $t('common.reset') }}
+                    $t('common.reset') }}
                 </el-button>
               </el-form-item>
             </el-col>
@@ -29,18 +29,18 @@
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add','purchase_quotation')" :addText="'报价'">
               <el-button type="primary" size="mini" icon="el-icon-plus"
-                @click="addSupplier('', 'add', 'directly_quotation')">直接报价</el-button>
+                         @click="addSupplier('', 'add', 'directly_quotation')">直接报价</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
+                         @click="exportForm('dataTable')">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                         @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                  @click="columnSetFun()" />
+                         @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -48,18 +48,18 @@
             </div>
           </div>
           <JNPF-table customKey="salesQuotationOld" v-loading="listLoading" :data="tableDataList" :has-c="true"
-            @selection-change="(val) => selectedRow = val" :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
-            @sort-change="sortChange" ref="dataTable" custom-column>
+                      @selection-change="(val) => selectedRow = val" :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
+                      @sort-change="sortChange" ref="dataTable" custom-column>
             <template v-for="column in columnsConfig">
               <el-table-column v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)" :key="column.prop"
-                :prop="column.prop" :label="column.label" :min-width="column.minWidth" :sortable="column.sortable"
-                :fixed="column.fixed" :align="getAlign(column.align)">
+                               :prop="column.prop" :label="column.label" :min-width="column.minWidth" :sortable="column.sortable"
+                               :fixed="column.fixed" :align="getAlign(column.align)">
                 <template v-if="column.slot" v-slot="scope">
                   <template v-if="column.dictType">
                     <span>
                       <el-tag
                         :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
-                        global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
+                          global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
                         }}</el-tag>
                     </span>
                   </template>
@@ -69,9 +69,9 @@
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="{ row }">
                 <el-button type="text" @click="addOrUpdateHandle(row, 'edit')" size="mini"
-                  :disabled="row.documentStatus == 'draft' ? false : true">编辑</el-button>
+                           :disabled="row.documentStatus == 'draft' ? false : true">编辑</el-button>
                 <el-button type="text" :disabled="row.documentStatus == 'draft' ? false : true" size="mini"
-                  @click="handleDel(row.id)" class="JNPF-table-delBtn">删除</el-button>
+                           @click="handleDel(row.id)" class="JNPF-table-delBtn">删除</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -85,7 +85,7 @@
                       重新提交
                     </el-dropdown-item>
                     <el-dropdown-item v-if="row.approvalStatus === 'ing' && showAppCodeFlag"
-                      @click.native="withdrawnHandle(row.id, 'withdrawn')">
+                                      @click.native="withdrawnHandle(row.id, 'withdrawn')">
                       审批撤回
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="handleUserRelation(row, 'look')">
@@ -103,7 +103,7 @@
                     <el-dropdown-item @click.native="quoteHandle(row.id)" :disabled="row.quotationStatus !== 'feedback_received'">
                       报价
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleSubmit(row.id)">
+                    <el-dropdown-item @click.native="handleSubmit(row.id)" :disabled="row.quotationStatus !== 'not_submit'">
                       提交
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -112,16 +112,37 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
-            @pagination="initData" />
+                      @pagination="initData" />
         </div>
       </div>
 
     </div>
     <DepForm v-if="depFormVisible" :quoteType="quoteType" ref="depForm" @close="closeForm" />
     <QuoteForm v-if="quoteFormVisible" ref="quoteForm" @close="closeForm"></QuoteForm>
+
+    <!-- 下载报价单选择弹窗 -->
+    <el-dialog
+      title="请选择报价单类型"
+      :visible.sync="downloadDialogVisible"
+      width="30%"
+      lock-scroll
+      append-to-body
+      :close-on-click-modal="false"
+      class="JNPF-dialog JNPF-dialog_center"
+    >
+      <el-radio-group v-model="hasInclude">
+        <el-radio border size="medium" :label="true">报价单（含税）</el-radio>
+        <el-radio border size="medium" :label="false">报价单（不含税）</el-radio>
+      </el-radio-group>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="downloadDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmDownload">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+                @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
@@ -144,7 +165,7 @@ export default {
       superQuery: {},
       superForm: {},
       basicQuery: {},
-      columnList: ["deliver", "address", "fax", "reasonRejection", "createByName", "remark"],
+      columnList: ["deliver", "address", "fax", "reasonRejection", "remark"],
       superQueryVisible: false,
 
       deliveryDatefahuo: [],
@@ -167,7 +188,7 @@ export default {
       ],
       depFormVisible: false,
       quoteFormVisible: false,
-      background: true,//分页器背景颜色
+      background: true,
       tableDataList: [],
       form: {},
       formlist: {
@@ -272,12 +293,6 @@ export default {
           sortable: 'custom',
         },
         {
-          prop: "createByName",
-          label: "制单人",
-          minWidth: 100,
-          sortable: 'custom',
-        },
-        {
           prop: "bidder",
           label: "业务员",
           minWidth: 120,
@@ -309,8 +324,24 @@ export default {
           minWidth: 120,
           sortable: 'custom',
         },
+        {
+          prop: "createByName",
+          label: "创建人",
+          minWidth: 100,
+          sortable: 'custom',
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          minWidth: 180,
+          sortable: 'custom',
+        },
       ],
-      listQuery: {}
+      listQuery: {},
+
+      downloadDialogVisible: false,
+      currentDownloadId: null,
+      hasInclude: true
     }
   },
   async created() {
@@ -332,11 +363,10 @@ export default {
     async handleAgainQuotation(id) {
       try {
         await getQueryConfirm(this, '确认重新询价吗？')
-
         await saleAgainQuotation(id);
         this.$message.success('重新询价成功');
         this.initData()
-      } catch ( error ) {
+      } catch (error) {
         if (error !== 'cancel') {
           this.$message.error(error.message || '重新询价失败');
         }
@@ -345,11 +375,10 @@ export default {
     async handleSubmit(id) {
       try {
         await getQueryConfirm(this, '确认提交报价单吗？')
-
         await submitSaleQuotation(id);
         this.$message.success('提交成功');
         this.initData()
-      } catch ( error ) {
+      } catch (error) {
         if (error !== 'cancel') {
           this.$message.error(error.message || '提交失败');
         }
@@ -378,7 +407,6 @@ export default {
       this.form.orderItems[0].column = newProp
       this.search('basic')
     },
-    // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.depFormVisible = false
       this.quoteFormVisible = false
@@ -398,11 +426,11 @@ export default {
       })
     },
     search(type) {
-      Object.keys(this.form).forEach(key => { // 清除搜索条件两端空格
+      Object.keys(this.form).forEach(key => {
         let item = this.form[key]
         this.form[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.form.pageNum = 1 // 重置页码
+      this.form.pageNum = 1
       this.initData()
     },
     reset() {
@@ -413,7 +441,6 @@ export default {
     },
     addSupplier(id, type, quoteType) {
       this.depFormVisible = true
-      // quoteType 区分是报价还是直接报价
       this.quoteType = quoteType
       this.$nextTick(() => {
         this.$refs.depForm.init(id, type)
@@ -422,14 +449,11 @@ export default {
     copyFun(id, type) {
       this.depFormVisible = true
       if (id) {
-        // setTimeout(() => {
         this.$nextTick(() => {
           this.$refs.depForm.init(id, type)
         })
-        // }, 600);
       }
     },
-    // 编辑
     addOrUpdateHandle(res, type) {
       this.depFormVisible = true
       let id = res.id
@@ -472,12 +496,33 @@ export default {
         this.$refs.depForm.init(id, type)
       })
     },
+
     downloadOrder(id) {
-      exportSaleQuotation(id).then(res => {
-        this.jnpf.downloadFile(res.data.url, res.data.name)
-      })
+      this.currentDownloadId = id;
+      this.hasInclude = true;
+      this.downloadDialogVisible = true;
     },
-    // 导出
+
+    async confirmDownload() {
+      if (this.currentDownloadId == null) return;
+
+      this.listLoading = true
+      this.downloadDialogVisible = false;
+      try {
+        const res = await exportSaleQuotation(this.currentDownloadId, this.hasInclude);
+        if (res?.data?.url) {
+          this.jnpf.downloadFile(res.data.url, res.data.name);
+        } else {
+          this.$message.warning('下载链接无效');
+        }
+      } catch (error) {
+        this.$message.error('下载报价单失败');
+      } finally {
+        this.listLoading = false
+      }
+    },
+
+    // 导出（原功能保留）
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
@@ -527,6 +572,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 .JNPF-common-search-box {
   padding: 8px 0 !important;

@@ -6,7 +6,7 @@ export const buttonList = [
     buttonType: 'primary',
     type: 'export',
     permission: 'btn_export',
-    exportType: '1073',
+    exportType: '1020',
     exportName: '包装报工单',
     tableRef: 'dataTable',
     disabled: false

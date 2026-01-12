@@ -67,7 +67,7 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column customKey="JNPFTableKey_267317" :listQuery="form" @queryChange="initData" :queryJson="superQueryJson">
           <el-table-column prop="name" label="名称" />
-           <el-table-column prop="code" label="编码"> </el-table-column>
+<!--           <el-table-column prop="code" label="编码"> </el-table-column>-->
           <el-table-column prop="sortCode" label="排序" />
           <el-table-column prop="remark" label="备注" />
           <el-table-column label="操作" width="100" fixed="right">
@@ -144,7 +144,6 @@ export default {
             //   fixed: true // 是否在搜索栏显示
             // },
             { prop: 'name', symbol: 'like', fixed: true },
-            { prop: 'code', symbol: 'like', fixed: true },
           ],
           // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设
           pageSize: 20, // 每页条数*

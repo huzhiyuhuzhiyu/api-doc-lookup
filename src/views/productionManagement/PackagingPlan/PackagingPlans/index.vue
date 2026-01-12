@@ -272,9 +272,9 @@ export default {
                 @click="handleColumnClick(row, 'close')">
                 关闭
               </el-button>
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'look')">
-                详情
-              </el-button>
+<!--              <el-button size="mini" type="text" @click="handleColumnClick(row, 'look')">-->
+<!--                详情-->
+<!--              </el-button>-->
             </template>
           </el-table-column>
         </JNPF-table>

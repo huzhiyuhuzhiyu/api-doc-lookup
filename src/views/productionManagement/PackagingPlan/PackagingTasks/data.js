@@ -35,6 +35,13 @@ export const buttonList = [
 export function getColumns() {
   return [
     {
+      prop: "orderStatus",
+      label: "任务状态",
+      minWidth: 120,
+      slot: true,
+      dictType: 'orderStatus'
+    },
+    {
       prop: "productionPlanNo",
       label: "包装计划单号",
       minWidth: 220,

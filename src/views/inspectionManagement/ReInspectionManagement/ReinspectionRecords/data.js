@@ -57,7 +57,7 @@ export function getColumns() {
       label: "状态",
       minWidth: 160,
       slot: true,
-      dictType: 'shippingStatus',
+      dictType: 'reInspectionStatus',
     }
   ]
 }

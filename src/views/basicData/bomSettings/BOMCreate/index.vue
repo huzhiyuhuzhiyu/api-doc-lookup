@@ -472,8 +472,8 @@ export default {
         if (this.$store.getters.configData.produce.bom) {
           this.dataForm.pickingWay = 'dispatch_list'
           this.$set(tc,'itemDisabled',true)
-        } 
-          
+        }
+
       }
     })
     if (this.$store.getters.configData.produce.bom) {
@@ -484,12 +484,12 @@ export default {
           }
         })
     }
-  
+
 
     this.dataForm.approvalFlag = false
     this.getBusInfo()
     this.getBimBusinessDetail()
-    
+
   },
   methods: {
     async init(productId, btnType, approvalStatus, nodeData) {
@@ -745,6 +745,8 @@ export default {
         if (index !== -1) {
           this.$message.error(`产品信息第${index + 1}行：子产品不能与父产品相同`)
           submitFlag = false
+          this.btnDisabled = false
+          this.btnLoading = false
         }
       }
 

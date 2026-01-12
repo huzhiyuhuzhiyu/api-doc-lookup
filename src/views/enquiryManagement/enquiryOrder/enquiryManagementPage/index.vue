@@ -5,19 +5,29 @@
         <!-- 查询条件 -->
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item>
                 <el-input v-model.trim="form.quotationNo" placeholder="报价单号" clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item>
-                <el-input v-model.trim="form.customerCode" placeholder="客户编号" clearable />
+                <el-input v-model.trim="form.customerCode" placeholder="客户编码" clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item>
                 <el-input v-model.trim="form.customerName" placeholder="客户名称" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="3">
+              <el-form-item>
+                <el-input v-model.trim="form.supplierCode" placeholder="供应商编号" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="3">
+              <el-form-item>
+                <el-input v-model.trim="form.supplierName" placeholder="供应商名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -159,13 +169,20 @@ export default {
           sortable: 'custom',
         },
         {
+          prop: "customerName",
+          label: "客户名称",
+          minWidth: 220,
+          align: "left",
+          sortable: 'custom',
+        },
+        {
           prop: "quotationDate",
           label: "询价日期",
           minWidth: 120,
           sortable: 'custom',
         },
         {
-          prop: "cooperativePartnerId",
+          prop: "supplierCode",
           label: "供应商编号",
           minWidth: 220,
           align: "left",

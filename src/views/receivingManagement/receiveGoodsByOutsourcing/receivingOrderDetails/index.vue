@@ -61,9 +61,8 @@
             </div>
           </div>
 
-          <JNPF-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="false" @sort-change="sortChange"
-            custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList"show-summary
-          :summary-method="getSummaries"  @selection-change="handleSelectionChange" customKey="JNPFTableKey_780483">
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="false" @sort-change="sortChange"
+            custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList" @selection-change="handleSelectionChange" customKey="JNPFTableKey_780483">
             <el-table-column prop="orderNo" label="通知单单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary"
@@ -98,7 +97,7 @@
                 </el-link>
               </template>
             </el-table-column>
-       
+
             <el-table-column prop="qualifiedQuantity" label="检验合格数量" width="140" sortable="custom" />
             <el-table-column prop="unqualifiedQuantity" label="检验不合格数量" width="150" sortable="custom" >
               <template slot-scope="scope">
@@ -204,7 +203,6 @@ export default {
       isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
-      tableFlag: false,
       superQueryVisible: false,
       columnList: ['createByName'],
       linesTotal: 0,
@@ -420,7 +418,7 @@ export default {
         this.$refs.FormS.init(row, 'inventoryFlag', "", row.projectId)
       })
     },
-   
+
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -524,13 +522,12 @@ export default {
         this.orderForm.projectId = this.userInfo.projectId
       }
       this.superForm = this.orderForm
-      purPurchaseReceiptReturnGoodsDetailListReport(this.superForm)
+      purPurchaseReceiptReturnGoodsDetailList(this.superForm)
         .then((res) => {
-          this.tableData = res.data.page.records||[]
-          this.tableFlag = true
+          this.tableData = res.data.records||[]
 
-          this.total =   res.data.page.total||0
-          this.totalList=res.data.total
+          this.total =   res.data.total||0
+          // this.totalList=res.data.total
           this.listLoading = false
           this.visible = false
         })

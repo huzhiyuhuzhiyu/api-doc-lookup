@@ -48,8 +48,8 @@
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                   导出
                 </el-button>
-                <el-button  :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-                  icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>
+<!--                <el-button  :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"-->
+<!--                  icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>-->
               </topOpts>
             </div>
             <div class="JNPF-common-head-right">
@@ -110,9 +110,9 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
-                      复制通知单
-                    </el-dropdown-item>
+<!--                    <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">-->
+<!--                      复制通知单-->
+<!--                    </el-dropdown-item>-->
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -523,12 +523,16 @@ export default {
       this.search('basic')
     },
     addSupplier(id, btntype) {
-      const firstSource = this.selectArr[0].source
-      const hasDifferentSource = this.selectArr.some(item => item.source !== firstSource)
-      if (hasDifferentSource) {
-        this.$message.error('只能选择相同来源的明细订单')
-        return
-      }
+      // if (this.selectArr.length === 0) {
+      //   this.$message.error('请选择通知单')
+      //   return
+      // }
+      // const firstSource = this.selectArr[0].source
+      // const hasDifferentSource = this.selectArr.some(item => item.source !== firstSource)
+      // if (hasDifferentSource) {
+      //   this.$message.error('只能选择相同来源的明细订单')
+      //   return
+      // }
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btntype, false, [])

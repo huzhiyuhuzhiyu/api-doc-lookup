@@ -198,7 +198,7 @@ export default {
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
-        orderState: "not_finish",
+        orderState: "recognised",
         approvalStatus: 'ok',
         orderItems: [{
           asc: false,
@@ -522,7 +522,7 @@ export default {
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
-        orderState: "not_finish",
+        orderState: "recognised",
         orderItems: [{
           asc: false,
           column: ""

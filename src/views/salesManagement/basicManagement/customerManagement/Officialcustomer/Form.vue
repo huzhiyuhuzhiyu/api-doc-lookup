@@ -20,7 +20,7 @@
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="客户编码" prop="code">
-                        <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                        <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20" disabled />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -399,9 +399,6 @@
                 </template>
               </el-table-column>
               <el-table-column prop="province" label="省" width="180">
-                <template slot="header">
-                  <span class="required">*</span>省
-                </template>
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.province" placeholder="请选择省份" :disabled="scope.row.country !== 'CN' ? true : btnType=='look' ? true : false">
                     <el-option v-for="item in provinces" :key="item.id" :label="item.fullName" :value="item.id" @click.native="changeProvince1(item, scope.row)"></el-option>
@@ -409,9 +406,6 @@
                 </template>
               </el-table-column>
               <el-table-column prop="city" label="市" width="180">
-                <template slot="header">
-                  <span class="required">*</span>市
-                </template>
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.city" placeholder="请选择城市" @focus="focusaction(scope.row)" :loading="loadingcity" :disabled="!scope.row.province ? true : btnType=='look' ? true : false">
                     <el-option v-for="item in cities1" :key="item.id" :label="item.fullName" :value="item.id" @click.native="changeCity1(item, scope.row)"></el-option>
@@ -419,9 +413,6 @@
                 </template>
               </el-table-column>
               <el-table-column prop="area" label="区" width="180">
-                <template slot="header">
-                  <span class="required">*</span>区
-                </template>
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.area" placeholder="请选择区" @focus="focusactionarea(scope.row)" :loading="loadingarea" :disabled="!scope.row.city ? true : btnType=='look' ? true : false">
                     <el-option v-for="item in area1" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
@@ -481,7 +472,7 @@
 </template>
 
 <script>
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getCooperativeNumberByCode } from '@/api/basicData/index'
 import {checkPartner, addPartner, updatePartner, detailPartner, cooperativeReplication} from '@/api/customerManagement'
 import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
@@ -500,7 +491,6 @@ export default {
         keyword: '',
         type: "customer"
       },
-      codeConfig: {},//单据规则配置
       activeNames: ["basicInfo", "FinanceInfo"],
       taxRateTypeList: [],
       tableData: [],
@@ -728,12 +718,9 @@ export default {
     },
     async fetchData(code) {
       try {
-        const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig = data
-        if (this.btnType === 'add' || this.btnType === 'copy') {
-          this.dataForm.code = this.jnpf.replacePre(data.number, '')
-        }
-      } catch (error) {
+        const { data } = await getCooperativeNumberByCode(code);
+        this.dataForm.code = data || ''
+      } catch ( error ) {
       }
     },
     actiompro(value) {
@@ -1155,7 +1142,6 @@ export default {
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
       this.btnType = btnType
-      if (this.btnType === 'add' || this.btnType === 'edit' || this.btnType === 'copy') this.fetchData('ZGTKHBM')
       // getBimBusinessInfo('460918012862529542').then(res=>{
       //   console.log("编码配置");
       //   this.businessType = res.data.configValue1
@@ -1287,7 +1273,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerCategoryId')
       })
-      this.dataForm.code = this.jnpf.replacePre(this.codeConfig.number, data[0].all.codeRule)
+      this.fetchData(data[0].all.codeRule)
       this.dataForm.partnerCategoryId = data ? data[0].id : ''
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },

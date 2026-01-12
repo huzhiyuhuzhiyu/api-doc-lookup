@@ -1,11 +1,11 @@
 <script>
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
-import {getCompanyPage, setCompany} from "@/api/customerAndFactory";
-import {getCooperativeData} from "@/api/basicData";
+import { getCompanyPage, setCompany } from "@/api/customerAndFactory";
+import { getCooperativeData } from "@/api/basicData";
 
 export default {
   name: "bindingForm",
-  components: {TableFormProduct},
+  components: { TableFormProduct },
   data() {
     return {
       loading: false,
@@ -16,7 +16,7 @@ export default {
       initListQuery: {
         type: 'customer', // 默认类型为客户
         name: '',
-        value2: '',
+        hasSalesperson: '',
         orderItems: [
           {
             asc: false,
@@ -105,7 +105,10 @@ export default {
       this.loading = true
       try {
         const response = await getCooperativeData(this.listQuery)
-        this.linesList = response.data.records
+        const { total, records } = response.data
+        this.linesList = records
+        this.total = total
+
       } finally {
         this.loading = false
       }
@@ -132,7 +135,7 @@ export default {
         value: item.id
       }))
     },
-    handleChangeCompanyId(val, {row}) {
+    handleChangeCompanyId(val, { row }) {
       this.$refs.tableForm.$refs.tableRef.$refs.JNPFTable.toggleRowSelection(row, true)
     },
     handleChangeCompanyName(val) {
@@ -210,13 +213,13 @@ export default {
           companyId: item.companyId,
         }))
         const res = await setCompany(params)
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success(MSG)
           this.goBack()
         }
         this.btnLoading = false
-      } catch (error) {
+      } catch ( error ) {
         this.btnLoading = false
       }
     },
@@ -247,13 +250,13 @@ export default {
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.name"
-                      placeholder="客户名称"
-                      clearable @keyup.enter.native="search()"/>
+                              placeholder="客户名称"
+                              clearable @keyup.enter.native="search()"/>
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item label="有无业务员">
-                    <el-select v-model.trim="listQuery.value2" placeholder="请选择">
+                    <el-select v-model.trim="listQuery.hasSalesperson" placeholder="请选择">
                       <el-option
                         v-for="item in global.booleanOptions"
                         :key="item.value"
@@ -266,7 +269,7 @@ export default {
                 <el-col :span="6">
                   <el-form-item>
                     <el-button size="mini" type="primary" icon="el-icon-search"
-                      @click="search()">查询
+                               @click="search()">查询
                     </el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置
                     </el-button>
@@ -309,14 +312,14 @@ export default {
                   <div class="right">
                     <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                       <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                        @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
+                               @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
                     </el-tooltip>
                   </div>
                 </div>
               </template>
             </TableForm-product>
             <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-              @pagination="initData"
+                        @pagination="initData"
             />
           </div>
         </div>

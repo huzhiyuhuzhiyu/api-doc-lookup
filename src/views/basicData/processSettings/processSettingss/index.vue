@@ -112,6 +112,9 @@
                     @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                     审批撤回
                   </el-dropdown-item>
+                  <el-dropdown-item @click.native="updateHandle(scope.row.id, 'copy')">
+                    复制
+                  </el-dropdown-item>
                   <el-dropdown-item @click.native="updateHandle(scope.row.id, 'look')">
                     查看详情
                   </el-dropdown-item>

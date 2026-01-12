@@ -125,6 +125,14 @@ export function ordershengchanList(data) {
     data
   })
 }
+//包装任务进度列表
+export function packagingTaskProgressList(data) {
+  return request({
+    url: `/api/mrp/prod/order/packaging/task/progress`,
+    method: 'POST',
+    data
+  })
+}
 //生产订单-详情
 export function detailordershengchan(id) {
   return request({

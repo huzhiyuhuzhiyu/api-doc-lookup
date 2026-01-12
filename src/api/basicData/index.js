@@ -38,6 +38,13 @@ export function getCooperativeData(data) {
     data: data
   })
 }
+// 供应商、客户、外协、承运商  根据编码获取编号
+export function getCooperativeNumberByCode(code) {
+  return request({
+    url: `/api/erp/cooperative/partner/getNumberByCode/${code}`,
+    method: 'get',
+  })
+}
 // 修改发货状态
 
 export function editShipmentfreeze(data) {

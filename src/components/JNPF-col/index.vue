@@ -27,30 +27,37 @@
 <template>
   <el-form :label-position="labelPosition" :model="value" ref="main">
     <el-row :gutter="30" class="custom-row" :key="tabContentKey">
-
-      <FormItem v-for="item in tabContent" :key="item.prop+item.label+item.content" :item="item" v-bind="item" :value="value[item.prop]"
-        @input="handleInput($event, item.prop)" :ref="item.prop" :openMode="realOpenMode" />
+      <FormItem
+        v-for="item in processedTabContent"
+        :key="item.prop + item.label"
+        :item="item"
+        v-bind="item"
+        :value="value[item.prop]"
+        @input="handleInput($event, item.prop)"
+        :ref="item.prop"
+        :openMode="realOpenMode"
+      />
 
       <div style="color:#aaa" v-if="tabContent.length === 0" :style="{ 'textAlign': 'center', 'padding': '10%' }">
         暂无数据
       </div>
-
     </el-row>
   </el-form>
 </template>
 
 <script>
-import FormItem from "./item.vue"
+import FormItem from "./item.vue";
+
 export default {
   components: { FormItem },
   name: 'JNPF-col',
   data() {
     return {
       tabContentKey: +new Date()
-    }
+    };
   },
   props: {
-    labelPosition:{
+    labelPosition: {
       type: String,
       default: 'top'
     },
@@ -73,10 +80,16 @@ export default {
   computed: {
     realOpenMode() {
       if (this.btnType) {
-        return this.btnType === 'look' ? '只读' : this.btnType === 'edit' ? '编辑' : '新建'
+        return this.btnType === 'look' ? '只读' : this.btnType === 'edit' ? '编辑' : '新建';
       } else {
-        return this.openMode
+        return this.openMode;
       }
+    },
+    processedTabContent() {
+      return this.tabContent.map(item => ({
+        hideLookP: true,
+        ...item
+      }));
     }
   },
   mounted() {
@@ -88,7 +101,7 @@ export default {
     },
     async setDefaultValue() {
       const formData = { ...this.value };
-      this.tabContent.forEach(item => {
+      this.processedTabContent.forEach(item => {
         const { prop, value } = item;
         if ((formData[prop] === undefined || formData[prop] === null || formData[prop] === '') && value !== undefined) {
           formData[prop] = value;
@@ -96,8 +109,8 @@ export default {
       });
 
       this.$emit('input', { ...formData });
-      this.tabContentKey = +new Date()
+      this.tabContentKey = +new Date();
     }
   }
-}
+};
 </script>

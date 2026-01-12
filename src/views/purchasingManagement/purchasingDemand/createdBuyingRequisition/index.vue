@@ -144,9 +144,9 @@ export default {
         },
         listMethod: getProductList,
         tableItems: [
+          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
           {prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom'},
           {prop: 'code', label: '产品编码', sortable: 'custom'},
-          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
           {prop: 'mainUnit', label: '单位', sortable: 'custom'},
           {prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom'}
         ],
@@ -176,8 +176,8 @@ export default {
           return true
         },
         searchList: [
+          {prop: 'productDrawingNo', label: '型号', type: 'input'},
           {prop: 'productCode', label: '产品编码', type: 'input'},
-          {prop: 'productDrawingNo', label: '产品型号', type: 'input'},
         ]
       },
       activeName: 'jcInfo',

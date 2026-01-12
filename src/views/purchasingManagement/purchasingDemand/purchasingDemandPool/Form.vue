@@ -602,7 +602,6 @@ export default {
             rules: {
                 // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
                 cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
-                deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }],
                 currency: [{ required: true, message: '请选择币种', trigger: ['change'] }],
                 orderDate: [{ required: true, message: '请选择订单日期', trigger: ['change'] }]
             },
@@ -1282,6 +1281,7 @@ export default {
             this.dataForm.source = data[0].source
             this.dataForm.classAttribute = classAttributeFlag
             this.dataForm.currency = 'CNY'
+            this.dataForm.orderDate = this.jnpf.getToday()
             this.ProductListRequestObj = {
                 classAttribute: this.dataForm.classAttribute,
                 productSource: 'purchase', // 产品来源
@@ -1342,6 +1342,7 @@ export default {
                 this.$set(this.dataFormTwo.data[i], 'taxAmount', '') // 税额
                 this.$set(this.dataFormTwo.data[i], 'taxRate', '') // taxRate
                 this.$set(this.dataFormTwo.data[i], 'totalAmount', '') // 	价税合计
+                this.$set(this.dataFormTwo.data[i], 'deliveryDate', '')
                 this.$set(
                     this.dataFormTwo.data[i],
                     'orderQuantity',

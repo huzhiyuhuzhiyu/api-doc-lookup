@@ -642,6 +642,36 @@ export function getColumns(type = 'default') {
       },
       ...createColumns
     ],
+    // 外协退货出库
+    inbound_dake_receive: [
+      {
+        prop: 'orderNo',
+        label: '内贸出库单号',
+        minWidth: 180,
+        slot: true
+      },
+      // {
+      //   prop: 'partnerName',
+      //   label: '供应商名称',
+      //   minWidth: 160,
+      // },
+      // {
+      //   prop: 'partnerCode',
+      //   label: '供应商编码',
+      //   minWidth: 120,
+      // },
+      // {
+      //   prop: 'deliverDate',
+      //   label: '退货日期',
+      //   minWidth: 160,
+      // },
+      {
+        prop: 'remark',
+        label: '备注',
+        minWidth: 220,
+      },
+      ...createColumns
+    ],
 
     default: defaultColumns
   };

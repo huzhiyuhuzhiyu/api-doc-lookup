@@ -88,7 +88,7 @@ export function getColumns() {
       sortable: 'custom',
     },
     {
-      prop: "cooperativePartnerId",
+      prop: "supplierCode",
       label: "供应商编号",
       align: "left",
       minWidth: 180,

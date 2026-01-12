@@ -35,7 +35,7 @@
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="180"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="" label="客户型号" width="160" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="customerProductDrawingNo" label="客户型号" width="160" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="90" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="num" label="数量" width="160">
                       <template slot="header">
@@ -50,9 +50,6 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="sampleNumStr" label="样品数" width="160">
-                      <template slot="header">
-                        <span class="required">*</span>样品数
-                      </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'sampleNumStr'"
                           :rules='productRules.sampleNumStr'>
@@ -63,9 +60,6 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="sampleQuotationFlag" label="样品报价" width="170">
-                      <template slot="header">
-                        <span class="required">*</span>样品报价
-                      </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'sampleQuotationFlag'"
                           :rules='productRules.sampleQuotationFlag'>
@@ -513,15 +507,14 @@ export default {
         ],
         // 样品数
         sampleNumStr: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["样品数不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
+          { required: false, trigger: 'blur' },
           { validator: this.formValidate('positiveNumber', '样品数必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
         ],
-        // 样品报价
-        sampleQuotationFlag: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["样品报价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
-          { required: true, trigger: 'change' },
-        ],
+        // // 样品报价
+        // sampleQuotationFlag: [
+        //   { validator: this.formValidate({ type: 'noEmtry', params: ["样品报价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
+        //   { required: true, trigger: 'change' },
+        // ],
         // 起订量
         minNumStr: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["起订量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
@@ -1183,7 +1176,7 @@ export default {
             item.data.productsId = item.data.id
             this.$set(this.dataFormTwo.lines, index, item.data)
             // this.$set(this.dataFormTwo.lines, index, item.data)
-            this.watchPrice(this.dataFormTwo.lines[index], index)
+            // this.watchPrice(this.dataFormTwo.lines[index], index)
           }
           console.log(666777);
           this.dataFormTwo.lines.push(obj)
@@ -1639,14 +1632,39 @@ export default {
       if (this.dataFormTwo.lines.length) {
         for (let index = 0; index < this.dataFormTwo.lines.length; index++) {
           const item = this.dataFormTwo.lines[index];
-          if (!item.productsId) {
-            submitFlag = false
-            this.$message({
-              message: "第" + (index + 1) + "行产品不存在",
-              type: 'error',
-              duration: 1500,
-            })
-            break
+
+          // 需要校验的字段
+          const requiredFields = ['customerDrawingNumber', 'customerProductName','productDrawingNo','num'];
+
+          // 检查是否所有需要校验的字段都为空
+          const isEmptyRow = requiredFields.every(field => !item[field]);
+
+          if (isEmptyRow) {
+            // 如果所有字段都为空，则删除该行，但至少保留一条数据
+            if (this.dataFormTwo.lines.length > 1) {
+              this.dataFormTwo.lines.splice(index, 1);
+              index--; // 因为删除了当前行，所以需要调整索引
+              submitFlag = true;
+            } else {
+              // 如果只剩一条数据，不能删除，直接跳过
+              continue;
+            }
+          } else {
+            // 如果至少有一个字段填写，则进行校验
+            if (!item.productDrawingNo) {
+              submitFlag = false;
+              this.$message.error("产品信息第" + (index + 1) + "行产品不能为空");
+              return;
+            }
+            if (!item.productsId) {
+              submitFlag = false;
+              this.$message({
+                message: "第" + (index + 1) + "行产品不存在",
+                type: 'error',
+                duration: 1500,
+              });
+              break;
+            }
           }
         }
       }
@@ -1669,9 +1687,9 @@ export default {
         }
         let filteredArr = this.dataFormTwo.lines.filter(item => item.productDrawingNo && item.productsId);
         // 计算arr中所有amount的总和
-        const totalAmount = filteredArr.reduce((sum, item) => sum + item.amounts, 0);
+        // const totalAmount = filteredArr.reduce((sum, item) => sum + item.amounts, 0);
         // 将总和赋值给form中的amounts
-        this.dataForm.totalAmount = totalAmount;
+        // this.dataForm.totalAmount = totalAmount;
         let obj = {
           attachmentList: this.datafilelist,
           sale: this.dataForm,

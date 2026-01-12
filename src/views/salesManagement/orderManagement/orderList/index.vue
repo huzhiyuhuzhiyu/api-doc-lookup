@@ -108,6 +108,18 @@ export default {
         },
       },
       selectedRow: [],
+      confirmedStatusOptions: {
+        production: [
+          { label: '已有库存', value: 'existing_inventory' },
+          { label: '无需生产', value: 'no_need_produce' },
+          { label: '需要生产', value: 'need_produce' }
+        ],
+        purchase: [
+          { label: '已有库存', value: 'existing_inventory' },
+          { label: '无需采购', value: 'no_need_purchase' },
+          { label: '需要采购', value: 'need_purchase' }
+        ]
+      }
     }
   },
   created() {
@@ -130,9 +142,20 @@ export default {
         this.loading = false
       }
     },
+
+    getConfirmedStatusOptions(row) {
+      const productSource = row.productSource || '';
+      if (productSource.includes('purchase')) {
+        return this.confirmedStatusOptions.purchase;
+      } else {
+        return this.confirmedStatusOptions.production;
+      }
+    },
+
     closePrint() {
       this.printVisible = false
     },
+
     printView(row, enCode, fullName) {
       this.selectArr = [row]
       this.enCode = enCode
@@ -142,6 +165,7 @@ export default {
         this.$refs.printTemplate.init(enCode)
       })
     },
+
     async printOrder(enCode) {
       try {
         const res = await getPrintBusInfo(enCode)
@@ -398,21 +422,21 @@ export default {
       </div>
     </div>
     <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @confirm="submitAllProduct">
-      <template #confirmedStatus="row">
-        <el-select v-model="row.row.confirmedStatus" placeholder="" @change="(val)=>handleChangeStatus(val,row.row)">
+      <template #confirmedStatus="{row}">
+        <el-select v-model="row.confirmedStatus" placeholder="" @change="(val) => handleChangeStatus(val,row)">
           <el-option
-            v-for="item in global.orderConfirmedStatus"
+            v-for="item in getConfirmedStatusOptions(row)"
             :key="item.value"
             :label="item.label"
             :value="item.value">
           </el-option>
         </el-select>
       </template>
-      <template #inventoryArrangementNum="row">
-        <el-input v-model="row.row.inventoryArrangementNum"></el-input>
+      <template #inventoryArrangementNum="{row}">
+        <el-input v-model="row.inventoryArrangementNum"></el-input>
       </template>
-      <template #orderPoolNum="row">
-        <el-input v-model="row.row.orderPoolNum"></el-input>
+      <template #orderPoolNum="{row}">
+        <el-input v-model="row.orderPoolNum"></el-input>
       </template>
       <template slot="table-action">
         <div></div>

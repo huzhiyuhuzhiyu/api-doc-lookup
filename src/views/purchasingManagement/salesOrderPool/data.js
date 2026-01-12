@@ -31,7 +31,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       disabled: true,
     },
     {
-      prop: "issuanceNum",
+      prop: "waitIssuanceNum",
       label: "需求数量",
       value: "",
       type: "input",
@@ -120,7 +120,7 @@ export function getColumns() {
       minWidth: 120
     },
     {
-      prop: "issuanceNum",
+      prop: "waitIssuanceNum",
       label: "需求数量",
       minWidth: 120
     },

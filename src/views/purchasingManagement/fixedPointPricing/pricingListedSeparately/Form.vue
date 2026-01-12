@@ -667,7 +667,7 @@ export default {
           }
         ],
         price: [
-          // { required: true, trigger: ['blur'] },
+          { required: true, trigger: ['blur'] },
           {
             validator: this.formValidate({
               type: 'decimal',

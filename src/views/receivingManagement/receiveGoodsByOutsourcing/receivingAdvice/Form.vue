@@ -51,8 +51,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data') 
-                      && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                           v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
@@ -116,7 +115,7 @@
                   </el-button>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'"
                     hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData" customKey="JNPFTableKey_460722">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
@@ -128,7 +127,7 @@
                     <el-table-column prop="productName" label="产品名称" width="140" v-if="$store.getters.configData.product.enable_productName"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
-                    
+
                     <el-table-column prop="productCategoryName" label="产品分类" width="140"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
@@ -138,7 +137,7 @@
                     <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
                       v-if="isDeputyUnitSwitch" />
-                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"/> 
+                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"/>
                     <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -268,7 +267,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data') 
+                <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')
                   && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                   <el-form-item label="供应商名称" prop="partnerName">
                     <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
@@ -335,7 +334,7 @@
               </el-button>
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'"
                 hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
@@ -857,7 +856,7 @@ export default {
           if (item.price && item.receivedQuantity && item.excludingTaxAmount) {
             // ;
               let amount;
-              
+
             if(item.calcType=='number'){
             amount=this.jnpf.numberFormat(item.price * item.receivedQuantity)
             }else{
@@ -1036,7 +1035,7 @@ export default {
         }
       }
     },
- 
+
 
     dateFormat(dateData) {
       var date = new Date(dateData)
@@ -1468,7 +1467,7 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-   
+
     init(id, btnType, approvalFlag, data,pageFlag,) {
       console.log(111,id, btnType, approvalFlag, data,pageFlag,);
       this.dataForm.id = id || ''
@@ -1479,12 +1478,12 @@ export default {
       console.log(data, 'kk')
 
         if (data && data.length !== 0) {
-         
+
           this.oldData = data
            this.dataFormTwo.productData=data
           this.dataForm.partnerName = data[0].cooperativePartnerName
           this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-         
+
         }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
@@ -1530,7 +1529,7 @@ export default {
         })
       } else {
         this.fetchData('WXSH')
-      
+
         this.dataForm.salesman = this.userInfo.userName
         this.dataForm.deliverDate = this.jnpf.getToday()
         this.getBusInfo()
@@ -1659,7 +1658,7 @@ export default {
             })
             return
           }
-       
+
         })
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {

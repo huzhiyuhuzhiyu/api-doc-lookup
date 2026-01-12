@@ -229,14 +229,18 @@ export default {
   computed: {
     Placeholder() {
       const { item: { label, type, placeholder, hideLookP } } = this;
-      if (hideLookP !== false && this.openMode === '只读' && this.readOnly) return ''
+
+      if (hideLookP !== false && this.openMode === '只读' && (this.readOnly || this.disabled)) return ''
+
       if (placeholder) return placeholder;
 
-      let setPlaceholder = ""
-      if (type === 'input' || type === 'textarea') { setPlaceholder = '请输入' }
-      else if (type === 'select' || type === 'date' || type === 'date_interval') { setPlaceholder = '请选择' }
-      else { setPlaceholder = '请选择' }
-      return setPlaceholder + label;
+      let prefix = '';
+      if (type === 'input' || type === 'textarea') {
+        prefix = '请输入';
+      } else {
+        prefix = '请选择';
+      }
+      return prefix + label;
     },
     Rules() {
       const { item: { itemRules, label, type } } = this;
@@ -244,6 +248,7 @@ export default {
 
       const R = [];
       itemRules.forEach(rule => {
+        rule = structuredClone(rule)
         if (!rule.message && !rule.validator) { rule.message = this.Placeholder }
         R.push(rule);
       });

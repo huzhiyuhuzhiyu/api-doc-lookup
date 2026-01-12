@@ -109,9 +109,9 @@
               {{ scope.row.cases?scope.row.cases:'0' }}
             </template>
           </el-table-column>
-          <el-table-column prop="reportProductWeight" label="产品单重" min-width="120" sortable="custom" >
+          <el-table-column prop="productWeight" label="产品单重" min-width="120" sortable="custom" >
             <template slot-scope="scope">
-              {{ scope.row.reportProductWeight?scope.row.reportProductWeight:'0' }}
+              {{ scope.row.productWeight?scope.row.productWeight:'0' }}
             </template>
           </el-table-column>
           <el-table-column prop="utilizeQuantity" label="利用数量" min-width="120" sortable="custom" />

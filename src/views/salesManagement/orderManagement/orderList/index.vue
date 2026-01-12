@@ -1,8 +1,6 @@
 <script>
-import SuperQuery from '@/components/SuperQuery/index.vue'
-
 import { buttonList, getColumns } from "./data";
-import { closeOrders, deleteOrders, getsaleOrderList } from "@/api/salesManagement/assemblyOrders";
+import { antiCancelSaleOrders, cancelSaleOrders, closeOrders, deleteOrders, getsaleOrderList } from "@/api/salesManagement/assemblyOrders";
 import { getOrdersConfirmed, getOrdersConfirmedIssuance, ordersFeedbackDeliveryFinished } from "@/api/salesManagement/orderChanges";
 import { getPrintBusInfo } from "@/api/system/printDev";
 import Form from './Form.vue'
@@ -15,7 +13,6 @@ export default {
   components: {
     BatchPrintBrowse,
     PrintDialog,
-    SuperQuery,
     Form
   },
   data() {
@@ -59,7 +56,6 @@ export default {
       enCode: '',
       tableData: [],
       total: 0,
-      superQueryVisible: false,
       superQueryJson: [
         {
           prop: 'orderType',
@@ -183,10 +179,6 @@ export default {
     },
     handleChangeStatus(val, row) {
     },
-    calcInventoryArrangementNum() {
-    },
-    calcOrderPoolNum() {
-    },
     async submitAllProduct(data) {
       const params = data.map(item => ({
         ...item,
@@ -229,7 +221,65 @@ export default {
           if (!this.validateSelectedRows()) return;
           this.handleConfirmDeliveryDate()
           break;
+        case 'cancel':
+        case 'uncancel':
+          if (!this.validateSelectedRows()) return;
+          this.handleCancelOrUnCancel(type);
+          break;
         default:
+      }
+    },
+    async handleCancelOrUnCancel(type) {
+      const config = {
+        cancel: {
+          isValid: (state) => state !== 'cancel',
+          invalidMsg: '已取消的订单无法再次取消',
+          title: '取消订单',
+          message: '确定要取消该订单吗？',
+          confirmType: 'warning',
+          api: cancelSaleOrders,
+          successMsg: '取消成功',
+          errorMsg: '取消失败'
+        },
+        uncancel: {
+          isValid: (state) => state === 'cancel',
+          invalidMsg: '仅已取消的订单可恢复',
+          title: '恢复订单',
+          message: '确定要恢复该订单吗？',
+          confirmType: 'info',
+          api: antiCancelSaleOrders,
+          successMsg: '恢复成功',
+          errorMsg: '恢复失败'
+        }
+      };
+
+      const action = config[type];
+      if (!action) {
+        console.error('未知操作类型:', type);
+        return;
+      }
+
+      const row = this.selectedRow[0];
+
+      if (!action.isValid(row.orderState)) {
+        return this.$message.warning(action.invalidMsg);
+      }
+
+      try {
+        await this.$confirm(action.message, action.title, {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: action.confirmType
+        });
+
+        await action.api(row.id);
+
+        this.$message.success(action.successMsg);
+        await this.initData();
+      } catch ( error ) {
+        if (error !== 'cancel') {
+          this.$message.error(action.errorMsg);
+        }
       }
     },
     async handleConfirmDeliveryDate() {

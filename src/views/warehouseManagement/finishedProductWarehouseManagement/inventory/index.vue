@@ -29,8 +29,7 @@
           <el-table-column prop="productCode" label="产品编码" width="120" />
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
           <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
-          <el-table-column prop="projectName" label="所属项目" min-width="120"
-            v-if="isProjectSwitch == 1" />
+          <el-table-column prop="productionLineName" label="产线名称" width="120" />
           <el-table-column prop="classAttribute" label="产品分类" width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
@@ -350,7 +349,7 @@ console.log(this.$store.getters.productionLineList)
       const listLoadKey = this.listLoadKey = +new Date();
       if (listLoadKey !== this.listLoadKey) return; // 请求过期
 
-      this.tableQuery.classAttributeList = this.classAttributeList
+      // this.tableQuery.classAttributeList = this.classAttributeList
       this.listLoading = true
       this.tableQuery.projectId=this.projectId
       this.tableQuery.warehouseId=this.warehouseInfo.id

@@ -13,8 +13,8 @@ export const buttonList = [
     buttonType: 'primary',
     type: 'export',
     permission: 'btn_export',
-    exportType: '1018',
-    exportName: '采购明细分卡',
+    exportType: '1073',
+    exportName: '采购收货通知单明细',
     tableRef: 'dataTable',
   }
 ]

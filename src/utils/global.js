@@ -108,9 +108,11 @@ const global = {
     { label: '进行中', value: 'normal', type: 'warning' },
     { label: '暂停', value: 'suspend', type: 'danger' },
     { label: '关闭', value: 'closed', type: 'danger' },
+    { label: '取消', value: 'cancel', type: 'danger' },
     { label: '未完成', value: 'not_finish', type: 'info' },
     { label: '部分完成', value: 'part_finish', type: 'info' },
     { label: '已完成', value: 'finish', type: 'success' },
+    { label: '已确认', value: 'recognised', type: 'success' },
     { label: '已停止', value: 'stopped', type: 'danger' },
   ],
 

@@ -27,6 +27,20 @@ export const buttonList = [
     icon: '',
     text: '确认交期'
   },
+  {
+    buttonType: 'danger',
+    type: 'cancel',
+    permission: 'btn_cancel',
+    icon: 'el-icon-close',
+    text: '取消'
+  },
+  {
+    buttonType: 'warning',
+    type: 'uncancel',
+    permission: 'btn_uncancel',
+    icon: 'el-icon-refresh-left',
+    text: '反取消'
+  }
 ]
 
 /**
@@ -272,6 +286,13 @@ export function getColumns() {
       prop: "deliveryDate",
       label: "交货日期",
       minWidth: 120,
+    },
+    {
+      prop: "orderState",
+      label: "订单状态",
+      minWidth: 120,
+      slot: true,
+      dictType: 'salesOrderState',
     },
     {
       prop: "deliveryStatus",

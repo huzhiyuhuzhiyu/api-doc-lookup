@@ -295,11 +295,11 @@ export default {
     singleImg,
     UploadImg,
     selectAsset
-  }, 
+  },
 
   data() {
     return {
-      
+
       selectAssetVisible:false,
       propertyKey:"",
       isProjectSwitch: '',
@@ -479,7 +479,7 @@ export default {
         ],
             propertyName: [
           { required: true, message: '请选择资产', trigger: 'blur' },
-       
+
         ],
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
@@ -523,7 +523,6 @@ export default {
     this.getProjectListdata()
     this.getBimBusinessDetail()
     this.getfactoryFloor()
-    console.log("444",this.$store.getters.configData.equipment.inspectionUserSetting);
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -536,9 +535,9 @@ export default {
       })
     },
        changeAsset(data){
-      console.log("资产数据",data); 
-      this.$set(this.dataForm,'propertyId',data.id) 
-      this.$set(this.dataForm,'propertyName',data.name) 
+      console.log("资产数据",data);
+      this.$set(this.dataForm,'propertyId',data.id)
+      this.$set(this.dataForm,'propertyName',data.name)
     },
     getProjectListdata() {
       let query = {

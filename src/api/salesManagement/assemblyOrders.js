@@ -278,3 +278,64 @@ export const attachmentsUpdate = (data) => {
     data
   })
 }
+
+// 取消订单
+export const cancelSaleOrders = (id) => {
+  return request({
+    url: `/api/erp/sale/orders/cancel?id=${ id }`,
+    method: 'PUT'
+  })
+}
+
+// 反取消订单
+export const antiCancelSaleOrders = (id) => {
+  return request({
+    url: `/api/erp/sale/orders/anti/cancel?id=${ id }`,
+    method: 'PUT',
+  })
+}
+
+// 批量取消订单
+export const batchCancelSaleOrders = (data) => {
+  return request({
+    url: `/api/erp/sale/orders/line/cancel`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 批量反取消订单
+export const batchAntiCancelSaleOrders = (data) => {
+  return request({
+    url: `/api/erp/sale/orders/line/anti/cancel`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 批量关闭订单
+export const batchCloseSaleOrders = (data) => {
+  return request({
+    url: `/api/erp/sale/orders/line/close`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 批量反关闭订单
+export const batchAntiCloseSaleOrders = (data) => {
+  return request({
+    url: `/api/erp/sale/orders/line/anti/close`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 批量交期撤回
+export const batchWithdrawSaleOrders = (data) => {
+  return request({
+    url: `/api/erp/sale/orders/line/feedbackDeliveryFinished/withdraw`,
+    method: 'PUT',
+    data
+  })
+}

@@ -695,7 +695,7 @@ export default {
         } else {
           this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
         }
-
+        item.stockInventoryLineId = item.id
       })
       this.productData = [...this.productData, ...this.selectArr]
       console.log(this.productData);
@@ -961,6 +961,7 @@ export default {
                 pairingModeId:item.pairingModeId,
                 specialRequire:item.specialRequire,
                 cooperativePartnerId:item.cooperativePartnerId,
+                stockInventoryLineId:item.stockInventoryLineId,
               }
               arr.push(obj)
             });

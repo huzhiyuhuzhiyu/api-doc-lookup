@@ -52,11 +52,15 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
-          <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')">
-              <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
-            </topOpts>
+          <div class="JNPF-common-head" style="padding: 8px">
+            <div class="JNPF-common-head-left">
+              <CustomButton
+                :export-disabled="tableData.length <= 0"
+                :export-list-query="orderForm"
+                :btnList="btnList"
+                @click="handleButtonClick"
+              />
+            </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -72,7 +76,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="tableDataFlag"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_473980">
+            :setColumnDisplayList="columnList" :has-c="['btn_cancel','btn_uncancel']"  @selection-change="(val) => selectedRow = val" @sort-change="sortChange" custom-column customKey="JNPFTableKey_473980">
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">{{
@@ -110,11 +114,19 @@
 
             <el-table-column prop="remark" label="备注" width="120" sortable="custom" />
               <el-table-column prop="assistantNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-              <el-table-column prop="shipmentStatus" label="订单状态" min-width="120" sortable="custom">
+              <el-table-column prop="shipmentStatus" label="发货状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.shipmentStatus == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
                 <div v-else-if="scope.row.shipmentStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
                 <div v-else-if="scope.row.shipmentStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="orderState" label="订单状态" min-width="120" sortable="custom">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="global.getDictLabelGlobal('salesOrderState', scope.row.orderState, { withType: true }).type">{{
+                    global.getDictLabelGlobal('salesOrderState', scope.row.orderState)
+                  }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
@@ -186,7 +198,15 @@
 <script>
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
+import {
+  getsaleOrderList,
+  getsaleOrderDetailList,
+  deleteOrders,
+  getAttributeline,
+  getSaleordersTotal,
+  getOrderLineReport,
+  cancelSaleOrders, antiCancelSaleOrders, batchCancelSaleOrders, batchAntiCancelSaleOrders, batchCloseSaleOrders, batchAntiCloseSaleOrders, batchWithdrawSaleOrders
+} from '@/api/salesManagement/assemblyOrders'
 import Form from '../orderList/Form'
 import OrderFollow from '../orderList/orderFollow'
 import UserRelationList from '../orderList/userRelation'
@@ -337,13 +357,19 @@ export default {
         },
         {
           prop: 'shipmentStatus',
-          label: "订单状态",
+          label: "发货状态",
           type: 'select',
           options: [
             { label: "未完成", value: "not_finish" },
             { label: "已完成", value: "finish" },
             { label: "已停止", value: "stopped" },
           ]
+        },
+        {
+          prop: 'orderState',
+          label: "订单状态",
+          type: 'select',
+          options: this.global.salesOrderState
         },
         {
           prop: 'mainUnit',
@@ -413,6 +439,60 @@ export default {
       colourFlag: '',
       bimProductAttributesList: [],
       saleContractNoSwitch: null,
+      selectedRow:[],
+      btnList: [
+        {
+          buttonType: 'primary',
+          type: 'add',
+          permission: 'btn_add',
+          icon: 'el-icon-plus',
+          text: '新建'
+        },
+        {
+          buttonType: 'danger',
+          type: 'cancel',
+          permission: 'btn_cancel',
+          icon: 'el-icon-close',
+          text: '批量取消'
+        },
+        {
+          buttonType: 'warning',
+          type: 'uncancel',
+          permission: 'btn_uncancel',
+          icon: 'el-icon-refresh-left',
+          text: '批量反取消'
+        },
+        {
+          buttonType: 'danger',
+          type: 'close',
+          permission: 'btn_close',
+          icon: 'el-icon-circle-close',
+          text: '批量关闭'
+        },
+        {
+          buttonType: 'warning',
+          type: 'unclose',
+          permission: 'btn_unclose',
+          icon: 'el-icon-refresh-right',
+          text: '批量反关闭'
+        },
+        {
+          buttonType: 'danger',
+          type: 'withdraw',
+          permission: 'btn_withdraw',
+          icon: 'el-icon-undo',
+          text: '批量交期撤回'
+        },
+        {
+          buttonType: 'primary',
+          type: 'export',
+          permission: 'btn_export',
+          exportType: '1005',
+          exportName: '销售订单明细',
+          tableRef: 'dataTable',
+          disabled: false
+        },
+      ],
     }
   },
   watch: {
@@ -487,7 +567,122 @@ if (classAttributeObj) {
     this.search('basic')
   },
   methods: {
+    validateSelectedRows() {
+      if (!this.selectedRow.length) {
+        this.$message.warning('请至少选择一条数据');
+        return false;
+      }
+      return true;
+    },
+    handleButtonClick(type) {
+      switch ( type ) {
+        case 'add':
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init('', 'add')
+          })
+          break;
+        case 'cancel':
+        case 'uncancel':
+        case 'close':
+        case 'unclose':
+        case 'withdraw':
+          if (!this.validateSelectedRows()) return;
+          this.handleBatchAction(type)
+          break;
+        default:
+      }
+    },
+    async handleBatchAction(type) {
+      const config = {
+        cancel: {
+          isValid: (state) => state !== 'cancel',
+          invalidMsg: '已取消的订单无法再次取消',
+          title: '取消订单',
+          message: '确定要取消所选订单吗？',
+          confirmType: 'warning',
+          api: batchCancelSaleOrders,
+          successMsg: '取消成功',
+          errorMsg: '取消失败'
+        },
+        uncancel: {
+          isValid: (state) => state === 'cancel',
+          invalidMsg: '仅已取消的订单可恢复',
+          title: '恢复订单',
+          message: '确定要恢复所选订单吗？',
+          confirmType: 'info',
+          api: batchAntiCancelSaleOrders,
+          successMsg: '恢复成功',
+          errorMsg: '恢复失败'
+        },
+        close: {
+          isValid: (state) => state !== 'closed',
+          invalidMsg: '已关闭的订单无法再次关闭',
+          title: '关闭订单',
+          message: '确定要关闭所选订单吗？',
+          confirmType: 'warning',
+          api: batchCloseSaleOrders,
+          successMsg: '关闭成功',
+          errorMsg: '关闭失败'
+        },
+        unclose: {
+          isValid: (state) => state === 'closed',
+          invalidMsg: '仅已关闭的订单可恢复',
+          title: '恢复关闭订单',
+          message: '确定要恢复所选已关闭订单吗？',
+          confirmType: 'info',
+          api: batchAntiCloseSaleOrders,
+          successMsg: '恢复成功',
+          errorMsg: '恢复失败'
+        },
+        withdraw: {
+          isValid: (state) => state !== 'withdrawn',
+          invalidMsg: '已撤回的订单交期无法再次撤回',
+          title: '撤回订单交期',
+          message: '确定要撤回所选订单交期吗？',
+          confirmType: 'warning',
+          api: batchWithdrawSaleOrders,
+          successMsg: '撤回成功',
+          errorMsg: '撤回失败'
+        }
+      };
 
+      const action = config[type];
+      if (!action) {
+        console.error('未知操作类型:', type);
+        return;
+      }
+
+      // 获取所有选中行
+      const selectedRows = this.selectedRow;
+      if (!selectedRows || selectedRows.length === 0) {
+        return this.$message.warning('请先选择订单');
+      }
+
+      const ids = selectedRows.map(row => row.id);
+      const invalidRows = selectedRows.filter(row => !action.isValid(row.orderState));
+
+      if (invalidRows.length > 0) {
+        return this.$message.warning(action.invalidMsg);
+      }
+
+      try {
+        await this.$confirm(action.message, action.title, {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: action.confirmType
+        });
+
+        await action.api(ids);
+
+        this.$message.success(action.successMsg);
+        await this.initData();
+      } catch (error) {
+        if (error !== 'cancel') {
+          this.$message.error(action.errorMsg);
+        }
+      }
+    },
     getOrderFiledMap() {
 
       getOrderFiledMap('sale').then((res) => {
@@ -771,6 +966,8 @@ if (classAttributeObj) {
       }
     },
     initData() {
+      this.listLoading = true
+
       if (localStorage.getItem('loginTenant')) {
         this.orderForm.tenant = localStorage.getItem('loginTenant')
       }
@@ -870,12 +1067,6 @@ this.superForm = this.orderForm
       this.orderFollowVisible = true
       this.$nextTick(() => {
         this.$refs.orderFollow.init(id)
-      })
-    },
-    addSupplier(id, btntype) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
       })
     },
     getCopyOrders(id, btntype) {
@@ -999,10 +1190,6 @@ this.superForm = this.orderForm
   margin-bottom: 0;
   padding-left: 10px !important;
   background: #fff;
-}
-
-.el-button--small {
-  padding: 1;
 }
 
 ::v-deep .JNPF-common-page-header {

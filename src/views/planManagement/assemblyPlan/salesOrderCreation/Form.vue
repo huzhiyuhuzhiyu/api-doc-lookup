@@ -59,8 +59,8 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="配对方式" prop="taskMethod" v-if="isPairingModeSwitch === '1'">
+                      <el-col :sm="6" :xs="24" v-if="isPairingModeSwitch === '1'">
+                        <el-form-item label="配对方式" prop="taskMethod">
                           <el-select v-model="planForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                             disabled>
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"

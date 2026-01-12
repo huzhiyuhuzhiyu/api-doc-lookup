@@ -100,28 +100,28 @@ export function getColumns() {
       label: "抽检确认状态",
       minWidth: 140,
       slot: true,
-      dictType: "inspectStatus"
+      dictType: "workReportInspection"
     },
     {
       prop: "randomTreatmentResults",
       label: "抽检处理结果",
       minWidth: 140,
       slot: true,
-      dictType: "treatmentResult"
+      dictType: "inspectionResultsType"
     },
     {
       prop: "fullConfirmedStatus",
       label: "全检确认状态",
       minWidth: 140,
       slot: true,
-      dictType: "inspectStatus"
+      dictType: "workReportInspection"
     },
     {
       prop: "fullTreatmentResults",
       label: "全检处理结果",
       minWidth: 140,
       slot: true,
-      dictType: "treatmentResult"
+      dictType: "inspectionResultsType"
     },
     {
       prop: "patrolInspectionDate",

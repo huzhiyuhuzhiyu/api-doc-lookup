@@ -79,11 +79,6 @@ export function getColumns() {
       minWidth: 160,
     },
     {
-      prop: "productionNumber",
-      label: "成品批号",
-      minWidth: 160,
-    },
-    {
       prop: "shelfSpaceName",
       label: "库位",
       minWidth: 160,

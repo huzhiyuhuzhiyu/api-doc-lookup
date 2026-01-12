@@ -356,7 +356,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      this.form.classAttributeList = this.classAttributeList
+      // this.form.classAttributeList = this.classAttributeList
       // this.form.approvalStatus='ok'
 
       // this.form.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''

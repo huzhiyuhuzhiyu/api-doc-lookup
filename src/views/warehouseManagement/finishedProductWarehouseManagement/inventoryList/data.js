@@ -44,7 +44,7 @@ export function getColumns() {
     },
     {
       prop: "supplierPartnerName",
-      label: "供应商",
+      label: "供应商名称",
       minWidth: 160,
     },
     {
@@ -53,12 +53,12 @@ export function getColumns() {
       minWidth: 160,
     },
     {
-      prop: "cooperativePartnerName",
-      label: "客户",
+      prop: "partnerName",
+      label: "客户名称",
       minWidth: 160,
     },
     {
-      prop: "cooperativePartnerCode",
+      prop: "partnerCode",
       label: "客户编码",
       minWidth: 160,
     },

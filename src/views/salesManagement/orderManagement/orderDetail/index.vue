@@ -114,25 +114,20 @@
 
             <el-table-column prop="remark" label="备注" width="120" sortable="custom" />
               <el-table-column prop="assistantNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-              <el-table-column prop="shipmentStatus" label="发货状态" min-width="120" sortable="custom">
-              <template slot-scope="scope">
-                <div v-if="scope.row.shipmentStatus == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
-                <div v-else-if="scope.row.shipmentStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
-                <div v-else-if="scope.row.shipmentStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="orderState" label="订单状态" min-width="120" sortable="custom">
+            <el-table-column prop="shipmentStatus" label="订单状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <el-tag
-                  :type="global.getDictLabelGlobal('salesOrderState', scope.row.orderState, { withType: true }).type">{{
-                    global.getDictLabelGlobal('salesOrderState', scope.row.orderState)
+                  :type="global.getDictLabelGlobal('salesOrderState', scope.row.shipmentStatus, { withType: true }).type">{{
+                    global.getDictLabelGlobal('salesOrderState', scope.row.shipmentStatus)
                   }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
-                <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+                <el-tag
+                  :type="global.getDictLabelGlobal('documentStatusList', scope.row.documentStatus, { withType: true }).type">{{
+                    global.getDictLabelGlobal('documentStatusList', scope.row.documentStatus)
+                  }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
@@ -660,7 +655,7 @@ if (classAttributeObj) {
       }
 
       const ids = selectedRows.map(row => row.id);
-      const invalidRows = selectedRows.filter(row => !action.isValid(row.orderState));
+      const invalidRows = selectedRows.filter(row => !action.isValid(row.shipmentStatus));
 
       if (invalidRows.length > 0) {
         return this.$message.warning(action.invalidMsg);

@@ -170,7 +170,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="batchNumber" label="批次号" min-width="160">
+                    <el-table-column prop="batchNumber" label="批次号" min-width="160" v-if="isFinishProduct">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.batchNumber" placeholder="请输入批次号"
                                   :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
@@ -344,11 +344,11 @@
                 扫码录入
               </el-button>
               |
-              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                icon="el-icon-plus" @click="openSeleceProductDialog()">
-                选择产品
-              </el-button>
-              |
+<!--              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"-->
+<!--                icon="el-icon-plus" @click="openSeleceProductDialog()">-->
+<!--                选择产品-->
+<!--              </el-button>-->
+<!--              |-->
               <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
                   :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择订单</el-button>| -->
               <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
@@ -724,6 +724,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import { deepClone } from "@/utils";
 export default {
   components: { Process, recordList, PrintBrowse, PrintDialog },
   mixins: [busFlow, getProjectList],
@@ -745,7 +746,7 @@ export default {
       productTotal: 0,
       codeConfig: {},
       datafilelist: [],
-      orderForm: {
+      initOrderForm: {
         cooperativePartnerCode: '',
         cooperativePartnerName: '',
         createByName: '',
@@ -769,6 +770,7 @@ export default {
         classAttribute: 'finish_product',
         receivingStatus: 'receiving'
       },
+      orderForm: {},
       productRules: {
         receivedQuantity: [
           {
@@ -1000,6 +1002,9 @@ export default {
       }
 
       return totalNum
+    },
+    isFinishProduct () {
+      return this.orderForm.classAttribute === 'finish_product'
     }
   },
   watch: {
@@ -1039,6 +1044,7 @@ export default {
     }
   },
   async created() {
+    this.orderForm = deepClone(this.initOrderForm)
     await this.getProjectSwitch('system', 'project')
     await this.getOrderFiledMap()
     await this.getProportionSwitch('warehouse', 'proportion')
@@ -1332,30 +1338,7 @@ export default {
     // 选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
-      this.orderForm = {
-        cooperativePartnerCode: '',
-        cooperativePartnerName: '',
-        createByName: '',
-        deliveryEndDate: '',
-        deliveryStartDate: '',
-        receiptQueryFlag: 1,
-        endTime: '',
-        orderNo: '',
-        orderType: 'procure',
-        orderItems: [
-          {
-            asc: false,
-            column: 'createTime'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        startTime: '',
-        productCode: '',
-        productName: '',
-        classAttribute: 'finish_product',
-        receivingStatus: 'receiving'
-      }
+      this.orderForm = deepClone(this.initOrderForm)
       this.searchProductFun()
     },
     // 点击选择产品
@@ -1752,10 +1735,11 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data) {
+    init(id, btnType, approvalFlag, data, classAttribute) {
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
+      this.orderForm.classAttribute = classAttribute
       if (data != 'outInboundWarehouse') {
 
         if (data && data.length) {
@@ -1957,6 +1941,7 @@ export default {
 
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
+            ...item,
             accuracyLevel: item.accuracyLevel,
             billStatus: item.billStatus,
             calculationDirection: item.calculationDirection,
@@ -2008,6 +1993,7 @@ export default {
             saleOrdersLineId: item.ordersLineId
           }
           let dep1 = {
+            ...item,
             billStatus: item.billStatus ? item.billStatus : '',
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',

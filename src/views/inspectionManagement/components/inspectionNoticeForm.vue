@@ -922,7 +922,10 @@ export default {
           }
         }
         if (hasItemList.length) this.$message.error(`已经存在的不良原因：${ hasItemList.join('、') }`)
-        this.linesListTwo = JSON.parse(JSON.stringify(tempList))
+        this.linesListTwo = tempList.map(item => ({
+          ...item,
+          id: '',
+        }))
         this.$nextTick(() => {
           this.$refs.linesFormTwo.setDefaultValue()
         })

@@ -20,6 +20,7 @@ export default {
       superQueryVisible: false,
       superQueryJson: [],
       initListQuery: {
+        orderNo: '',
         purchaseOrderNo: '',
         notificationType: 'work_report',
         status: 'confirmed',
@@ -135,6 +136,13 @@ export default {
             <el-form-item>
               <el-input v-model.trim="listQuery.purchaseOrderNo"
                 placeholder="采购单号"
+                clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.orderNo"
+                placeholder="检验单号"
                 clearable/>
             </el-form-item>
           </el-col>

@@ -218,7 +218,7 @@
     </div>
   </transition>
 </template>
-    
+
 <script>
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree, getequMaintenanceLevel } from '@/api/basicData/materialSettings'
@@ -480,7 +480,7 @@ export default {
     },
     //下次保养时间
     // nextMaintenanceTimeaction(value) {
-    //   this.dataForm.nextMaintenanceTime = value 
+    //   this.dataForm.nextMaintenanceTime = value
     // },
     // 打开保养项目
     openSeleceProductDialog() {
@@ -702,7 +702,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -809,6 +809,14 @@ export default {
     handleConfirm(value) {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          if (!this.dataFormOne.productData.length) {
+            this.$message({
+              message: '请添加设备',
+              type: 'error',
+              duration: 1500,
+            })
+            return
+          }
           if (!this.dataFormTwo.productData.length) {
             this.$message({
               message: '请添加项目',
@@ -931,4 +939,3 @@ export default {
   padding: 5px 10px !important;
 }
 </style>
-    

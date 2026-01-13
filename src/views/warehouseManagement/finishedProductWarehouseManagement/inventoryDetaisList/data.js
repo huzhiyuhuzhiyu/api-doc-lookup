@@ -88,59 +88,59 @@ export function getColumns() {
       label: '单位',
       minWidth: 120,
     },
-    {
-      prop: "weight",
-      label: "重量",
-      minWidth: 120,
-    },
-    {
-      prop: "proportion",
-      label: "比重",
-      minWidth: 120,
-    },
-    {
-      prop: "discount",
-      label: "折扣",
-      minWidth: 120,
-    },
+    // {
+    //   prop: "weight",
+    //   label: "重量",
+    //   minWidth: 120,
+    // },
+    // {
+    //   prop: "proportion",
+    //   label: "比重",
+    //   minWidth: 120,
+    // },
+    // {
+    //   prop: "discount",
+    //   label: "折扣",
+    //   minWidth: 120,
+    // },
     {
       prop: "num",
       label: '数量',
       minWidth: 120,
     },
-    {
-      prop: "costPrice",
-      label: '单价(含税)',
-      minWidth: 160,
-    },
-    {
-      prop: "totalAmount",
-      label: '总金额(含税)',
-      minWidth: 160,
-    },
-    {
-      prop: "taxRate",
-      label: '税率',
-      minWidth: 120,
-      formatter: (row) => {
-        return row.taxRate ? row.taxRate + '%' : ''
-      },
-    },
-    {
-      prop: "excludingTaxCostPrice",
-      label: '单价(不含税)',
-      minWidth: 160,
-    },
-    {
-      prop: "taxAmount",
-      label: '税额',
-      minWidth: 160,
-    },
-    {
-      prop: "excludingTaxTotalAmount",
-      label: '总金额(不含税)',
-      minWidth: 160,
-    },
+    // {
+    //   prop: "costPrice",
+    //   label: '单价(含税)',
+    //   minWidth: 160,
+    // },
+    // {
+    //   prop: "totalAmount",
+    //   label: '总金额(含税)',
+    //   minWidth: 160,
+    // },
+    // {
+    //   prop: "taxRate",
+    //   label: '税率',
+    //   minWidth: 120,
+    //   formatter: (row) => {
+    //     return row.taxRate ? row.taxRate + '%' : ''
+    //   },
+    // },
+    // {
+    //   prop: "excludingTaxCostPrice",
+    //   label: '单价(不含税)',
+    //   minWidth: 160,
+    // },
+    // {
+    //   prop: "taxAmount",
+    //   label: '税额',
+    //   minWidth: 160,
+    // },
+    // {
+    //   prop: "excludingTaxTotalAmount",
+    //   label: '总金额(不含税)',
+    //   minWidth: 160,
+    // },
     {
       prop: "processName",
       label: '外协工序',

@@ -164,6 +164,10 @@ export default {
       default: () => ({
         sourceList: ['sale_order_finished_product']
       })
+    },
+    classAttribute: {
+      type: String,
+      default: 'finish_product'
     }
   },
   data() {
@@ -761,7 +765,7 @@ export default {
       console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, this.list)
+        this.$refs.Form.init(id, btntype, false, this.list, this.classAttribute)
       })
     },
 

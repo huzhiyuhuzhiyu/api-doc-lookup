@@ -47,7 +47,9 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "采购单号",
       value: "",
       type: "input",
-      disabled: true,
+      get disabled() {
+        return context.isOrderNoEditable
+      },
       itemRules: [{required: true, trigger: "blur"}],
     },
     {

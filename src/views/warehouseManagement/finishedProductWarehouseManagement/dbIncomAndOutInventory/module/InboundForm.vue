@@ -908,7 +908,7 @@ export default {
           minWidth: 140,
         },
         ...(() => {
-          if (['inbound_purchase', 'inbound_external', 'inbound_sale_return', 'inbound_purchase_exchange', 'inbound_purchase2', 'inbound_external2'].includes(this.businessType)) {
+          if (['no'].includes(this.businessType)) {
             // 获取税率(数据字典)
             const taxrateDict = this.$store.getters.dictionaryList.find(item => item.enCode === 'taxrate')
             const taxRateList = taxrateDict.dictionaryList.map(item => ({

@@ -67,7 +67,7 @@ export function getColumns() {
     {
       prop: "inspectionResults",
       label: "检验结果",
-      minWidth: 120,
+      minWidth: 140,
       slot: true,
       dictType: "inspectionResultsType",
     },
@@ -76,7 +76,7 @@ export function getColumns() {
       label: "状态",
       slot: true,
       dictType: "workReportInspection",
-      minWidth: 120,
+      minWidth: 140,
     }
   ]
 }

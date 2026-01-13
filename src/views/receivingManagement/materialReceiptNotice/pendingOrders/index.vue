@@ -8,5 +8,5 @@ export default {
 </script>
 
 <template>
-  <pendingOrders :query-object="{ sourceList: ['sale_order_material','sale_order_finished_material'] }"/>
+  <pendingOrders :query-object="{ sourceList: ['sale_order_material','sale_order_finished_material'] }" class-attribute=""/>
 </template>

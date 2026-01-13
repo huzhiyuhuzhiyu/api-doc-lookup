@@ -139,6 +139,11 @@ export function getColumns() {
       minWidth: 120,
     },
     {
+      prop: "typingDate",
+      label: "打字日期",
+      minWidth: 160,
+    },
+    {
       prop: "packingQualifiedQuantity",
       label: "已包装数量",
       minWidth: 120,
@@ -149,6 +154,11 @@ export function getColumns() {
       minWidth: 120,
     },
     {
+      prop: "packingDate",
+      label: "包装日期",
+      minWidth: 160,
+    },
+    {
       prop: "packQuantity",
       label: "装箱数量",
       minWidth: 120,
@@ -157,6 +167,11 @@ export function getColumns() {
       prop: "waitPackQuantity",
       label: "未装箱数量",
       minWidth: 120,
-    }
+    },
+    {
+      prop: "packDate",
+      label: "装箱日期",
+      minWidth: 160,
+    },
   ];
 }

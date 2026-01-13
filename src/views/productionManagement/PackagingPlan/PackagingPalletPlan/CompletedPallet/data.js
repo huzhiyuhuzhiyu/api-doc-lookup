@@ -7,16 +7,19 @@ export const buttonList = []
 export function getColumns() {
   return [
     {
+      prop: "palletTime",
+      label: "装托时间",
+      minWidth: 220,
+    },
+    {
       prop: "productsDrawingNo",
       label: "型号",
       minWidth: 220,
-      align: "left",
     },
     {
       prop: "productsName",
       label: "产品名称",
       minWidth: 220,
-      align: "left",
     },
     {
       prop: "singleWeight",

@@ -154,7 +154,7 @@
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-    <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
+    <JNPF-Form v-if="formVisible" ref="procureForm" :auto-init="false" @refresh="refresh" @close="closeForm" />
     <!-- 订单来源明细 -->
     <el-dialog title="订单来源明细" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="sourceDialog"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
@@ -176,7 +176,8 @@
 
 <script>
 import { purProcurementDemandPoolList, getPoolSourceList,purProcurementDemandPoolRevoke } from '@/api/purchasingManagement/purchaseInquirySheet'
-import JNPFForm from './Form'
+// import JNPFForm from './Form'
+import JNPFForm from '@/views/purchasingManagement/purchaseOrders/createPurchaseOrder/index.vue'
 import moment from 'moment'
 import QuiryForm from '@/views/purchasingManagement/priceAdjustmentInquiry/purchaseInquirySheet/Form.vue'
 import fixedForm from '@/views/purchasingManagement/priceAdjustmentInquiry/fixedPointPricing/Form.vue'
@@ -801,7 +802,13 @@ export default {
       console.log("this.selectData ✈️ ", this.selectData)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool', this.isFactory)
+        // this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool', this.isFactory)
+        this.$refs.procureForm.init({
+          id: '',
+          type: 'generate',
+          sourceList: this.listQuery.sourceList,
+          prefillData: this.selectData,
+        })
       })
     },
 

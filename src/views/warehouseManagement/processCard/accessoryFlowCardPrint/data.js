@@ -13,7 +13,7 @@ export const buttonList = [
     buttonType: 'primary',
     type: 'export',
     permission: 'btn_export',
-    exportType: '1017',
+    exportType: '1073',
     exportName: '配件流转卡',
     tableRef: 'dataTable',
   }

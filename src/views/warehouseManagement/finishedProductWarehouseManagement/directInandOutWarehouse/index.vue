@@ -845,69 +845,69 @@ export default {
             { required: true, message: '数量不能为空', trigger: ['blur', 'change'], },
           ]
         },
-        {
-          prop: 'price',
-          label: '单价(含税)',
-          type: 'input',
-          minWidth: 180,
-          itemRules: [
-            {
-              validator: this.formValidate('noZero', '单价(含税)不能为0', (errMsg, rowIndex) => {
-                this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
-              }), trigger: ['blur', 'change']
-            },
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['单价(含税)不能为空', (errMsg, rowIndex) => {
-                  this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
-                }]
-              }), trigger: 'blur',
-            },
-            {
-              validator: this.formValidate({
-                type: 'decimal', params: [20, 4, null, (errMsg, rowIndex) => {
-                  this.$message.error(`产品信息第${ rowIndex + 1 }行：单价(含税)${ errMsg }`)
-                }]
-              }),
-              trigger: ['blur', 'change'],
-            },
-            { required: true, message: '单价(含税)不能为空', trigger: ['blur', 'change'], },
-          ]
-        },
-        {
-          prop: 'taxRate',
-          label: '税率',
-          type: 'select',
-          options: this.getDictDataSync('taxrate'),
-          minWidth: 160,
-          itemRules: [
-            { required: true, message: '税率不能为空', trigger: 'change', },
-          ]
-        },
-        {
-          prop: 'excludingTaxPrice',
-          label: '单价(不含税)',
-          type: 'view',
-          minWidth: 120,
-        },
-        {
-          prop: 'taxAmount',
-          label: '税额',
-          type: 'view',
-          minWidth: 120,
-        },
-        {
-          prop: 'totalAmount',
-          label: '金额(含税)',
-          type: 'view',
-          minWidth: 150,
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: '金额(不含税)',
-          type: 'view',
-          minWidth: 150,
-        },
+        // {
+        //   prop: 'price',
+        //   label: '单价(含税)',
+        //   type: 'input',
+        //   minWidth: 180,
+        //   itemRules: [
+        //     {
+        //       validator: this.formValidate('noZero', '单价(含税)不能为0', (errMsg, rowIndex) => {
+        //         this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
+        //       }), trigger: ['blur', 'change']
+        //     },
+        //     {
+        //       validator: this.formValidate({
+        //         type: 'noEmtry', params: ['单价(含税)不能为空', (errMsg, rowIndex) => {
+        //           this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
+        //         }]
+        //       }), trigger: 'blur',
+        //     },
+        //     {
+        //       validator: this.formValidate({
+        //         type: 'decimal', params: [20, 4, null, (errMsg, rowIndex) => {
+        //           this.$message.error(`产品信息第${ rowIndex + 1 }行：单价(含税)${ errMsg }`)
+        //         }]
+        //       }),
+        //       trigger: ['blur', 'change'],
+        //     },
+        //     { required: true, message: '单价(含税)不能为空', trigger: ['blur', 'change'], },
+        //   ]
+        // },
+        // {
+        //   prop: 'taxRate',
+        //   label: '税率',
+        //   type: 'select',
+        //   options: this.getDictDataSync('taxrate'),
+        //   minWidth: 160,
+        //   itemRules: [
+        //     { required: true, message: '税率不能为空', trigger: 'change', },
+        //   ]
+        // },
+        // {
+        //   prop: 'excludingTaxPrice',
+        //   label: '单价(不含税)',
+        //   type: 'view',
+        //   minWidth: 120,
+        // },
+        // {
+        //   prop: 'taxAmount',
+        //   label: '税额',
+        //   type: 'view',
+        //   minWidth: 120,
+        // },
+        // {
+        //   prop: 'totalAmount',
+        //   label: '金额(含税)',
+        //   type: 'view',
+        //   minWidth: 150,
+        // },
+        // {
+        //   prop: 'excludingTaxAmount',
+        //   label: '金额(不含税)',
+        //   type: 'view',
+        //   minWidth: 150,
+        // },
       ]
       this.$nextTick(() => {
         this.$refs.tableForm.setDefaultValue()

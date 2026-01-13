@@ -143,7 +143,11 @@ export default {
         case 'add':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init('', type, this.listQuery.sourceList)
+            this.$refs.Form.init({
+              id: '',
+              type,
+              sourceList: this.listQuery.sourceList
+            })
           })
           break;
         case 'print':

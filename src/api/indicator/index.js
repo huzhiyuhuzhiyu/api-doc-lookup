@@ -70,6 +70,15 @@ export function addIndicatorRules(data) {
   })
 }
 
+// 指标规则-更新
+export function updateIndicatorRules(data) {
+  return request({
+    url: '/api/jx/Knowledge/indicator/rules/update',
+    method: 'put',
+    data
+  })
+}
+
 // 指标规则-删除
 export function deleteIndicatorRules(id) {
   return request({

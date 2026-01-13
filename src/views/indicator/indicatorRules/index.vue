@@ -68,6 +68,7 @@ export default {
     handleColumnClick(row, type) {
       switch ( type ) {
         case 'look':
+        case 'edit':
           this.visible = true
           this.$nextTick(() => {
             this.$refs.Form.init(row.id, type)
@@ -175,12 +176,24 @@ export default {
           </template>
           <el-table-column label="操作" width="160" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'look')">
-                查看详情
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'edit')">
+                编辑
               </el-button>
               <el-button class="JNPF-table-delBtn" size="mini" type="text" @click="handleColumnClick(row, 'delete')">
                 删除
               </el-button>
+              <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
+                    查看详情
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </JNPF-table>

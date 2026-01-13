@@ -1,6 +1,6 @@
 <script>
 import { getBasicFormSchema } from "./data";
-import { addIndicatorRules, getIndicatorRulesDetail } from "@/api/indicator";
+import { addIndicatorRules, getIndicatorRulesDetail, updateIndicatorRules } from "@/api/indicator";
 
 export default {
   name: "Form",
@@ -30,6 +30,10 @@ export default {
 
       currentType: '',
       actions: {
+        edit: async (id) => {
+          await this.getDetail(id);
+          await this.getOrderNoConfig()
+        },
         look: async (id) => {
           await this.getDetail(id);
         },
@@ -43,7 +47,7 @@ export default {
       },
       apiMethodActions: {
         add: addIndicatorRules,
-        edit: null,
+        edit: updateIndicatorRules,
       }
     }
   },

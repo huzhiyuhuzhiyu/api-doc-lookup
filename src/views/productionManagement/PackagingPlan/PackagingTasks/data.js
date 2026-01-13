@@ -2,20 +2,20 @@
  * @description 按钮权限列表
  */
 export const buttonList = [
-  {
-    buttonType: 'primary',
-    type: 'add',
-    permission: 'btn_add',
-    icon: 'el-icon-plus',
-    text: '新建任务'
-  },
-  {
-    buttonType: 'primary',
-    type: 'assemblePrinter',
-    permission: 'btn_assemble_printer',
-    icon: 'el-icon-printer',
-    text: '打印装配单'
-  },
+  // {
+  //   buttonType: 'primary',
+  //   type: 'add',
+  //   permission: 'btn_add',
+  //   icon: 'el-icon-plus',
+  //   text: '新建任务'
+  // },
+  // {
+  //   buttonType: 'primary',
+  //   type: 'assemblePrinter',
+  //   permission: 'btn_assemble_printer',
+  //   icon: 'el-icon-printer',
+  //   text: '打印装配单'
+  // },
   {
     buttonType: 'primary',
     type: 'flowPrinter',

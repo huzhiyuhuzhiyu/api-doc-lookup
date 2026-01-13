@@ -116,7 +116,14 @@ export function getColumns() {
     },
     {
       prop: "orderNo",
-      label: "退货单号",
+      label: "检验单号",
+      minWidth: 220,
+      align: "left",
+      sortable: 'custom',
+    },
+    {
+      prop: "saleOrderNo",
+      label: "销售单号",
       minWidth: 220,
       align: "left",
       sortable: 'custom',

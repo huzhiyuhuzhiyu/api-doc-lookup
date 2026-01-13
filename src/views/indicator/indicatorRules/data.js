@@ -122,12 +122,12 @@ export function getColumns() {
     {
       prop: "orderNo",
       label: "指标目标编码",
-      minWidth: 120,
+      minWidth: 140,
     },
     {
       prop: "name",
       label: "指标目标名称",
-      minWidth: 120,
+      minWidth: 140,
     },
     {
       prop: "productionLineName",

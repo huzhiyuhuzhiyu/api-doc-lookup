@@ -56,7 +56,10 @@ export default {
           // productionLineName: '大线装配车间',
           ...this.query,
         }).then(res => {
-          this.viewData = this.jnpf.numberFormat(res.data)
+          this.viewData = {
+            target: Number(res.data.indicatorRules.targetValue),
+            value: Number(res.data.value)
+          }
         }).finally(err => {
           if (loadingFlag) Bus.$emit('subLoading')
         })
@@ -66,7 +69,10 @@ export default {
           _title: this.title,
           productionLineName: '大线装配车间',
         }).then(res => {
-          this.viewData = Number(res.data)
+          this.viewData = {
+            target: Number(res.data.indicatorRules.targetValue),
+            value: Number(res.data.value)
+          }
         }).finally(err => {
           if (loadingFlag) Bus.$emit('subLoading')
         })
@@ -79,14 +85,14 @@ export default {
 <template>
   <FrameLayout :title="title" :subTitle="subTitle">
     <div class="container" v-if="title === '士气'">
-      <el-progress :percentage="100" :format="(percentage) => `目标10个`" v-bind="progressProps"></el-progress>
+      <el-progress :percentage="100" :format="(percentage) => `目标${viewData.target}个`" v-bind="progressProps"></el-progress>
       <div class="title">本月提案</div>
-      <el-progress :percentage="100 / 10 * viewData" :format="(percentage) => `实际${viewData}个`" v-bind="progressProps"></el-progress>
+      <el-progress :percentage="100 / 10 * viewData.value" :format="(percentage) => `实际${viewData.value}个`" v-bind="progressProps"></el-progress>
     </div>
     <div class="container" v-else-if="title === '交期'">
-      <el-progress :percentage="98" :format="(percentage) => `目标98%`" v-bind="progressProps"></el-progress>
+      <el-progress :percentage="viewData.target" :format="(percentage) => `目标${viewData.target}%`" v-bind="progressProps"></el-progress>
       <div class="title">计划完成率</div>
-      <el-progress :percentage="Number(viewData)" :format="(percentage) => `实际${this.viewData}%`" v-bind="progressProps"></el-progress>
+      <el-progress :percentage="Number(viewData.value)" :format="(percentage) => `实际${jnpf.numberFormat(viewData.value)}%`" v-bind="progressProps"></el-progress>
     </div>
   </FrameLayout>
 </template>

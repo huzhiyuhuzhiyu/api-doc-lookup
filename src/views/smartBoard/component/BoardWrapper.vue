@@ -110,8 +110,13 @@ export default {
 
       // const currentWidth = window.innerWidth;
       // const currentHeight = window.innerHeight;
-      const currentWidth = this.$refs.layout.clientWidth;
-      const currentHeight = this.$refs.layout.clientHeight;
+      let currentWidth = this.$refs.layout.clientWidth;
+      let currentHeight = this.$refs.layout.clientHeight;
+
+      if (this.isFullScreen) {
+        currentWidth = document.body.clientWidth;
+        currentHeight = document.body.clientHeight;
+      }
 
       const scaleX = currentWidth / this.baseWidth;
       const scaleY = currentHeight / this.baseHeight;

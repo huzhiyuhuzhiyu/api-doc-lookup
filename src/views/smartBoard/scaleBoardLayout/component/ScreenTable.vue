@@ -2,7 +2,7 @@
  * @Author: Carrey 2954831281@qq.com
  * @Date: 2025-12-29 10:09:59
  * @LastEditors: Carrey 2954831281@qq.com
- * @LastEditTime: 2025-12-30 10:31:50
+ * @LastEditTime: 2026-01-05 10:26:02
  * @FilePath: src/views/smartBoard/scaleBoardLayout/component/ScreenTable.vue
  * @Description: 这是默认设置,可以在设置》工具》File Description中进行配置
  -->
@@ -50,9 +50,11 @@ export default {
   color: #fff;
   box-sizing: border-box;
   width: 100%;
-  border-collapse: collapse;
+  //border-collapse: collapse;
   font-size: 12px;
   table-layout: fixed; /* 关键：固定表格布局，确保列宽生效 */
+  border-collapse: separate;
+  border-spacing: 0 6px;
 
   tr {
     white-space: nowrap; /* 防止内容换行 */

@@ -163,7 +163,11 @@ export default {
         case 'copy':
           this.visible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(row.id, type, this.listQuery.sourceList)
+            this.$refs.Form.init({
+              id: row.id,
+              type,
+              sourceList: this.listQuery.sourceList
+            })
           })
           break;
         case 'delete':

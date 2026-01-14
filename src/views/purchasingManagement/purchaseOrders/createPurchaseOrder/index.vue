@@ -303,7 +303,6 @@ export default {
           label: '可下单数量',
           type: 'view',
           minWidth: 120,
-          render: this.isGenerate
         },
         {
           prop: 'purchaseQuantity',
@@ -331,22 +330,28 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
-            ...(
-              this.isGenerate ?
-                [{
-                  validator: this.formValidate({
-                    type: 'calc',
-                    params: [(rowIndex) => +this.linesList[rowIndex].purchaseQuantity <= +this.linesList[rowIndex].orderQuantity,
-                      "采购数不能超过可下单数量",
-                      (errMsg) => {
-                        this.$message.error(errMsg)
-                      }]
-                  }),
-                  trigger: 'blur'
-                }]
-                :
-                []
-            ),
+            {
+              validator: this.formValidate({
+                type: 'calc',
+                params: [
+                  (rowIndex) => {
+                    const orderQty = this.linesList[rowIndex].orderQuantity;
+                    const purchaseQty = this.linesList[rowIndex].purchaseQuantity;
+
+                    if (orderQty === null || orderQty === undefined || orderQty === '' || isNaN(+orderQty)) {
+                      return true;
+                    }
+
+                    return +purchaseQty <= +orderQty;
+                  },
+                  "采购数不能超过可下单数量",
+                  (errMsg) => {
+                    this.$message.error(errMsg);
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
             { required: true, message: '采购数不能为空', trigger: ['blur', 'change'], },
           ]
         },
@@ -539,19 +544,32 @@ export default {
           name, productName,
           code, productCode,
           drawingNo, productDrawingNo,
-          id, productsId,
+          id,
+          productsId,
+          planDemandQuantity,
+          orderedQuantity,
           ...restAll
         } = all;
-        return {
+
+        const baseItem = {
           ...createEmptyObject(this.linesListItems),
           ...restAll,
           productName: isProduct ? name : productName,
           productCode: isProduct ? code : productCode,
           drawingNo: isProduct ? drawingNo : productDrawingNo,
           productsId: isProduct ? id : productsId,
-          ...(!isProduct && { procurementDemandPoolId: id })
+          ...(isProduct ? {} : { procurementDemandPoolId: id })
         };
+
+        if (!isProduct) {
+          const num = this.jnpf.math('-', [planDemandQuantity || 0, orderedQuantity || 0]);
+          baseItem.orderQuantity = num;
+          baseItem.purchaseQuantity = num;
+        }
+
+        return baseItem;
       });
+
       this.linesList = [...this.linesList, ...newData];
     },
     getTitle(type) {

@@ -203,7 +203,7 @@ export default {
       ProductTableItemss: [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         { prop: 'sheetName', label: '图纸名称' },
         { prop: 'version', label: '版本' }
       ],
@@ -646,7 +646,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           value: '',
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],

@@ -121,7 +121,7 @@
                                                     v-loading="tableloading"
                                                     style="border-top: 1px solid #EBEEF5;" :hasC="notView"
                                                     @selection-change="handeleProductInfoData" customKey="JNPFTableKey_680684">
-                                            <el-table-column prop="productDrawingNo" label="用料规格"
+                                            <el-table-column prop="productDrawingNo" label="型号"
                                                              min-width="130"></el-table-column>
                                             <el-table-column prop="productName" label="用料名称"
                                                              min-width="130"></el-table-column>

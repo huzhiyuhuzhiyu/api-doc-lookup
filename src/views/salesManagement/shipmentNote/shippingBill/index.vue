@@ -69,7 +69,7 @@
             <el-table-column prop="partnerCode" label="客户编码" min-width="180" />
             <el-table-column prop="partnerName" label="客户名称" min-width="250" />
             <el-table-column prop="salesName" label="业务员" min-width="120" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="180" />
+            <el-table-column prop="drawingNo" label="型号" min-width="180" />
             <el-table-column prop="hsProductDrawingNo" label="报关品名" min-width="120" />
             <el-table-column prop="customerProductNo" label="客户产品型号" min-width="120" />
             <el-table-column prop="mainUnit" label="单位" min-width="120" />

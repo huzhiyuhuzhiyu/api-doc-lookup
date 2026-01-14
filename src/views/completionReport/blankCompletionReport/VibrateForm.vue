@@ -20,8 +20,8 @@
           </el-col>
 
           <el-col :sm="8" :xs="24">
-            <el-form-item label="品名规格">
-              <el-input v-model="form.productDrawingNo" placeholder="品名规格" disabled />
+            <el-form-item label="型号">
+              <el-input v-model="form.productDrawingNo" placeholder="型号" disabled />
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -256,7 +256,7 @@ export default {
     forceUpdata() {
       this.$forceUpdate()
     },
-    handleBlur(data) {  
+    handleBlur(data) {
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [data, this.form.unqualifiedQuantity]), 6)
       this.$set(this.form, 'reportingQuantity', this.totalReportNum)
     },

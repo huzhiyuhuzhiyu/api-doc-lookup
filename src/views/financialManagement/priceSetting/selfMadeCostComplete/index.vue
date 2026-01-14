@@ -66,7 +66,7 @@
 
           <el-table-column prop="productsCode" label="产品编码" min-width="130" show-overflow-tooltip sortable="custom" />
           <el-table-column prop="productsName" label="产品名称" min-width="110" show-overflow-tooltip sortable="custom" />
-          <el-table-column prop="productsDrawingNo" label="产品图号" min-width="200" show-overflow-tooltip />
+          <el-table-column prop="productsDrawingNo" label="型号" min-width="200" show-overflow-tooltip />
           <el-table-column prop="hoseLength" label="胶管长度" min-width="100" show-overflow-tooltip />
           <el-table-column prop="materialCost" label="材料成本(元)" min-width="140" show-overflow-tooltip sortable="custom" />
           <el-table-column prop="totalLaborCost" label="总人工费用(元)" min-width="160" sortable="custom" />

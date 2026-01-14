@@ -81,7 +81,7 @@
           <el-table-column prop="productCategoryName" label="产品分类名称" width="180" />
           <el-table-column prop="productCode" label="产品编码" width="180" />
           <el-table-column prop="productName" label="产品名称" width="180" />
-          <el-table-column prop="productDrawingNo" label="品名规格" width="180" />
+          <el-table-column prop="productDrawingNo" label="型号" width="180" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="remark" label="备注" min-width="200" />
           <el-table-column label="操作" width="180" fixed="right">
@@ -170,10 +170,10 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
-   
+
         {
           prop: 'createTime',
           label: '创建时间',

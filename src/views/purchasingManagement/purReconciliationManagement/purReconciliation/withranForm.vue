@@ -81,7 +81,7 @@
                       </el-table-column>
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
                             <div class="viewData">

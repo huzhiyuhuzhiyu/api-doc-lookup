@@ -24,8 +24,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="品名规格" prop="productDrawingNo">
-                          <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled>
+                        <el-form-item label="型号" prop="productDrawingNo">
+                          <el-input v-model="dataForm.productDrawingNo" placeholder="型号" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -439,7 +439,7 @@ export default {
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
         ],
         productsDrawingNo: [
-          { required: true, message: '品名规格不能为空', trigger: 'blur' }
+          { required: true, message: '型号不能为空', trigger: 'blur' }
         ]
       },
       selectArr: [],
@@ -797,7 +797,7 @@ export default {
       this.linesFormItems_right = [
         { prop: "productsCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
         { prop: "productsName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
-        { prop: "productsDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        { prop: "productsDrawingNo", label: "型号", value: "", type: 'view', minWidth: 150 },
         {
           prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
           customComponent: 'ComSelect-page', renderTree: false, change: this.getProcessData,

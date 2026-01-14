@@ -27,14 +27,14 @@
                   </el-input>
                 </el-form-item>
               </el-col>
-          
+
               <el-col :span="6">
-                <el-form-item label="品名规格" prop="productDrawingNo">
-                  <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled>
+                <el-form-item label="型号" prop="productDrawingNo">
+                  <el-input v-model="dataForm.productDrawingNo" placeholder="型号" disabled>
                   </el-input>
                 </el-form-item>
               </el-col>
-             
+
               <el-col :span="6">
                 <el-form-item label="单位" prop="mainUnit">
                   <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
@@ -73,8 +73,8 @@
             <el-table-column type="index" key="index" width="60" label="序号" align="center" fixed="left" />
             <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="140" show-overflow-tooltip>
             </el-table-column>
-      
-            <el-table-column prop="productDrawingNo" key="productDrawingNo" label="品名规格" min-width="350"
+
+            <el-table-column prop="productDrawingNo" key="productDrawingNo" label="型号" min-width="350"
               show-overflow-tooltip> </el-table-column>
               <el-table-column prop="projectName" label="所属项目" min-width="120"  v-if="isProjectSwitch == 1" />
             <el-table-column prop="productSource" key="productSource" label="产品来源" min-width="100">
@@ -83,7 +83,7 @@
                 </div>
               </template>
             </el-table-column>
- 
+
             <el-table-column prop="mainUnit" key="mainUnit" label="单位" width="80"></el-table-column>
             <el-table-column prop="kitDemandQuantity" key="kitDemandQuantity" label="需求数量"
               min-width="100"></el-table-column>
@@ -142,9 +142,9 @@ export default {
     ...mapGetters(['userInfo'])
   },
   async created() {
-    await this.getProjectSwitch('system', 'project') 
-  
-   
+    await this.getProjectSwitch('system', 'project')
+
+
   },
   methods: {
     closeForm() {

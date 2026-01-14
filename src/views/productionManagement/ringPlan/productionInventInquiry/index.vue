@@ -12,7 +12,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入型号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -65,7 +65,7 @@
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="tableFlag" highlight-current-row :fixedNO="true"
             ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
             :checkSelectable="checkSelectable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_391128">
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
@@ -115,7 +115,7 @@ import Form from './Form.vue'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getInventoryLineReport } from '@/api/basicData/index' // 仓库 
+import { getInventoryLineReport } from '@/api/basicData/index' // 仓库
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
@@ -140,7 +140,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
 
@@ -175,7 +175,7 @@ export default {
           prop: 'shelfSpaceName',
           label: '库位',
           type: 'input'
-        }, 
+        },
         {
           prop: 'latestStorageTime',
           label: '入库日期',

@@ -43,7 +43,7 @@
           <el-table-column prop="partnerCode" label="供应商编码" min-width="180"/>
           <el-table-column prop="productCode" label="产品编码" min-width="180"/>
           <el-table-column prop="productName" label="产品名称" width="160" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="drawingNo" label="品名规格" min-width="180" />
+          <el-table-column prop="drawingNo" label="型号" min-width="180" />
           <el-table-column prop="businessType" label="收/退货类型" width="140">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'outbound_purchase'">退货</div>

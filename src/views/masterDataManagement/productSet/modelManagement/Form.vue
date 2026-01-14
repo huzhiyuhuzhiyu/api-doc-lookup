@@ -93,7 +93,7 @@ export default {
       getProductList,
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+        { prop: 'productDrawingNo', label: '型号', type: 'input' }
       ], // 产品选择弹出框搜索条件
       ProductMethodArr: [
         { label: '物料分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
@@ -122,7 +122,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         // { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
+        { prop: 'drawingNo', label: '型号', minWidth: 0 },
         { prop: 'mainUnit', label: '单位', minWidth: 0 }
         // { prop: 'productType', label: '产品类别', minWidth: 0 },
         // { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }

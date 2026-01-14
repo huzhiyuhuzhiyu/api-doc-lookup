@@ -80,7 +80,7 @@ export default {
         { prop: 'partnerName', label: '客户名称', minWidth: 160 },
         { prop: 'salePurchaseOrderNo', label: '销售订单号', minWidth: 180, sortable: 'custom' },
         { prop: 'contractNo', label: '客户单号', minWidth: 180, sortable: 'custom' },
-        { prop: 'drawingNo', label: '产品品名规格', minWidth: 160, sortable: 'custom' },
+        { prop: 'drawingNo', label: '产品型号', minWidth: 160, sortable: 'custom' },
         { prop: 'customerProductNo', label: '客户料号', minWidth: 140, sortable: 'custom' },
         { prop: 'orderNum', label: '订单数量', minWidth: 140, sortable: 'custom' },
         { prop: 'num', label: '发货数量', minWidth: 140, sortable: 'custom' },
@@ -109,7 +109,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '产品品名规格',
+          label: '产品型号',
           type: 'input'
         },
         {
@@ -208,7 +208,7 @@ export default {
         {
           fieldValue: '',
           field: 'drawingNo',
-          label: '产品品名规格',
+          label: '产品型号',
           prop: 'drawingNo',
           symbol: 'like',
           searchType: 1

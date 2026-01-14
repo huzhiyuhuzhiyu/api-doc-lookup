@@ -108,7 +108,7 @@
                   <el-table-column prop="productCode" width="160" label="产品编码"></el-table-column>
                   <el-table-column prop="productName" width="160" label="产品名称" sortable="custom"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" width="160" label="品名规格" />
+                  <el-table-column prop="drawingNo" width="160" label="型号" />
                   <el-table-column prop="productCategoryName" label="产品分类" min-width="140" />
                   <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                     <template slot="header">
@@ -237,14 +237,14 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         { prop: 'productCategoryName', label: '产品分类' },
         { prop: 'routingName', label: '工艺路线' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: "productCode", label: "产品编码", type: 'input' },
         { prop: "productName", label: "产品名称", type: 'input' },
-        { prop: "productDrawingNo", label: "品名规格", type: 'input' }
+        { prop: "productDrawingNo", label: "型号", type: 'input' }
       ], // 产品选择弹出框搜索条件
       collectVisible: false,
       productRules: {

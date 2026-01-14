@@ -90,7 +90,7 @@
                       </el-table-column>
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
-                      <el-table-column prop="drawingNo" label="品名规格" width="190" show-overflow-tooltip>
+                      <el-table-column prop="drawingNo" label="型号" width="190" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
                             <div class="viewData">
@@ -166,7 +166,7 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <!-- 
+                      <!--
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="type === 'look'"
@@ -315,7 +315,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column> -->
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="drawingNo" label="型号" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
                         <div class="viewData">
@@ -382,7 +382,7 @@
                       </el-input>
                     </template>
                   </el-table-column>
-                  <!-- 
+                  <!--
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="type === 'look'"
@@ -491,7 +491,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-  
+
     this.getDeputyUnit()
   },
   methods: {

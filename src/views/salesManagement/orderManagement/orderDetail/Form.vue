@@ -220,7 +220,7 @@
                         <el-table-column prop="productName" label="产品名称" width="200" :key="5">
                         </el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="drawingNo" label="产品图号" min-width="220" :key="6" />
+                        <el-table-column prop="drawingNo" label="型号" min-width="220" :key="6" />
                         <el-table-column prop="availableQuantity" label="可用库存(主)" width="200" :key="121"
                           v-if="btnType != 'look'">
                           <template slot-scope="scope">
@@ -468,7 +468,7 @@
                 <el-table-column prop="customerProductDrawingNo" label="客户图号" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" />
                 <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="drawingNo" label="产品图号" min-width="180" />
+                <el-table-column prop="drawingNo" label="型号" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
                 <el-table-column prop="num" label="数量(主)" min-width="140">
                   <template slot-scope="scope">
@@ -771,7 +771,7 @@
                   @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_231365">
                   <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="name" label="产品名称" />
-                  <el-table-column prop="drawingNo" label="图号" />
+                  <el-table-column prop="drawingNo" label="型号" />
                   <el-table-column prop="spec" label="规格型号" />
 
                 </JNPF-table>

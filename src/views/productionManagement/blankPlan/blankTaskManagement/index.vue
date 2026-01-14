@@ -88,7 +88,7 @@
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
@@ -212,8 +212,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="品名规格">
-              <el-input v-model="splitForm.productDrawingNo" placeholder="品名规格" disabled />
+            <el-form-item label="型号">
+              <el-input v-model="splitForm.productDrawingNo" placeholder="型号" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -391,7 +391,7 @@ export default {
       searchList: [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productionLineId', fieldValue: '', label: '产线', symbol: 'like', searchType: 4, width: 120, options: [] },
       ],
       taskFormVisible: false,
@@ -487,7 +487,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -1202,7 +1202,7 @@ export default {
       this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productionLineId', fieldValue: '', label: '产线', symbol: 'like', searchType: 4, width: 120,options:this.productionLineList },
       ],
         this.search('basic')

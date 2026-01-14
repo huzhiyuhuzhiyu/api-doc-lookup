@@ -9,7 +9,7 @@
             <el-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
               style="width: 100%">
               <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" show-overflow-tooltip>
+              <el-table-column prop="productDrawingNo" label="型号" min-width="120" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'" :rules="productRule.listPrice">
                     <div class="viewData">

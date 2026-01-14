@@ -9,7 +9,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-          
+
 
             <el-col :span="6">
               <el-form-item>
@@ -18,7 +18,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="tableQuery.productDrawingNo" placeholder="品名规格" clearable
+                <el-input v-model="tableQuery.productDrawingNo" placeholder="型号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -49,7 +49,7 @@
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" ></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300" ></el-table-column>
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="120"  />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="120"  />
             <el-table-column label="操作" width="100" fixed="right">

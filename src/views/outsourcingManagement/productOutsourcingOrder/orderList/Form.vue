@@ -30,7 +30,7 @@
                             placeholder="外协单号"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_external_data') 
+                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_external_data')
                         && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <!-- 供应商选择弹窗  -->
@@ -94,10 +94,10 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item>
-                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
+                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入型号" disabled />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -224,7 +224,7 @@
                             </el-button>
                           </template>
                         </el-table-column>
-  
+
                     </JNPF-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
@@ -242,7 +242,7 @@
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
+                    <el-table-column prop="drawingNo" label="型号" min-width="160"></el-table-column>
 
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
@@ -340,10 +340,10 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                  <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
+                        <el-input v-model="scope.row.productDrawingNo" placeholder="请输入型号" disabled />
                       </el-form-item>
                     </template>
                   </el-table-column>
@@ -502,7 +502,7 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="120"
                   v-if="$store.getters.configData.product.enable_productName"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
+                <el-table-column prop="drawingNo" label="型号" min-width="160"></el-table-column>
 
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
@@ -626,15 +626,15 @@ export default {
       ProductTableItems: [
         { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', sortable: 'custom' },
         { prop: 'name', label: '产品名称', sortable: 'custom',render:false },
-       
+
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
         // { prop: 'name', label: '产品名称', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
@@ -915,7 +915,7 @@ export default {
     openSeleceProductDialog() {
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
       ]
       if (this.$store.getters.configData.product.enable_productName) {
       this.ProductTableItems.forEach(tc=>{
@@ -992,7 +992,7 @@ export default {
             productsId: item.all.id, // 产品id
             productName: item.all.name, // 产品名称
             productCode: item.all.code, // 产品编码
-            productDrawingNo: item.all.drawingNo, // 品名规格
+            productDrawingNo: item.all.drawingNo, // 型号
             taxRate: 13, // 税率
             deliveryDate: this.dataForm.deliveryDate // 交期
            }
@@ -1362,7 +1362,7 @@ export default {
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
-            
+
                       this.$message({
                         message: msg,
                         type: 'success',

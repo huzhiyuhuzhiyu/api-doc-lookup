@@ -103,7 +103,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                         min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
+                        <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                         min-width="160" />
@@ -271,7 +271,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                         min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
+                        <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                         min-width="160" />
@@ -347,7 +347,7 @@
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                 </UploadWj>
               </el-tab-pane>
-                 
+
               </el-tabs>
             </div>
           </div>
@@ -366,7 +366,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productDrawingNo" placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -405,7 +405,7 @@
 
                 <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom" />
 
-                <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="300" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
@@ -789,13 +789,13 @@ export default {
 
     },
 
-    // 点击选择产品 
+    // 点击选择产品
     openSeleceProductDialog() {
 
       this.productVisible = true
       this.searchProductFun()
     },
-    //  
+    //
     searchProductFun() {
       this.productForm.orderNo = this.dataForm.sourceNo
       this.productForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
@@ -807,13 +807,13 @@ export default {
             this.$set(item, 'awitNum', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
             this.$set(item, 'warehouseCodeLineList', [])
             item.equipments.forEach(equipment => {
-              // 创建新的对象并赋值  
+              // 创建新的对象并赋值
               const newObj = {
-                assetCode: equipment.equipmentCode, // 将 equipmentCode 赋值给 assetCode  
-                moveId: "", // 根据需要设置  
-                moveLineId: "" // 根据需要设置  
+                assetCode: equipment.equipmentCode, // 将 equipmentCode 赋值给 assetCode
+                moveId: "", // 根据需要设置
+                moveLineId: "" // 根据需要设置
               };
-              // 将新对象添加到 warehouseCodeLineList  
+              // 将新对象添加到 warehouseCodeLineList
               item.warehouseCodeLineList.push(newObj);
             });
             if (this.mainUnitFlag == 1) {

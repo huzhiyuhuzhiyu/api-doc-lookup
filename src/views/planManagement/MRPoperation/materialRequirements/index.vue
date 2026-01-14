@@ -71,7 +71,7 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="170" sortable="custom" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
                 <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
 
@@ -177,7 +177,7 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="170" sortable="custom" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
                 <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -330,7 +330,7 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="170" sortable="custom" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
                 <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -463,7 +463,7 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="180" sortable="custom" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
@@ -556,7 +556,7 @@
         <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
           show-overflow-tooltip></el-table-column>
           <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
+        <el-table-column prop="productDrawingNo" label="型号" min-width="330" />
         <el-table-column prop="pairingModeName" label="配对方式" width="160"  v-if="isPairingModeSwitch === '1'" />
 
         <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
@@ -661,28 +661,28 @@ export default {
       superForm1: {},
       basicQuery1: {},
       searchList1: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ],
       superQuery2: {},
       superForm2: {},
       basicQuery2: {},
       searchList2: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ],
       superQuery3: {},
       superForm3: {},
       basicQuery3: {},
       searchList3: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ],
       superQuery4: {},
       superForm4: {},
       basicQuery4: {},
       searchList4: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ],
       orderDetailData: [],
@@ -1114,7 +1114,7 @@ export default {
           },
           {
             prop: 'productDrawingNo',
-            label: "品名规格",
+            label: "型号",
             type: 'input'
           },
           {
@@ -1180,7 +1180,7 @@ export default {
           },
           {
             prop: 'productDrawingNo',
-            label: "品名规格",
+            label: "型号",
             type: 'input'
           },
           {
@@ -1293,7 +1293,7 @@ export default {
           },
           {
             prop: 'productDrawingNo',
-            label: "品名规格",
+            label: "型号",
             type: 'input'
           },
           {
@@ -1353,7 +1353,7 @@ export default {
           },
           {
             prop: 'productDrawingNo',
-            label: "品名规格",
+            label: "型号",
             type: 'input'
           },
           {
@@ -1606,7 +1606,7 @@ export default {
 
         this.$refs.SuperQuery.conditionList = []
       this.searchList1 = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
         if (this.isProductNameSwitch == 1) {
@@ -1707,7 +1707,7 @@ export default {
         pageSize: 20,
       }
         this.searchList2 = [
-          { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
           { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
         ]
         if (this.isProductNameSwitch == 1) {
@@ -1799,7 +1799,7 @@ export default {
         pageSize: 20,
       }
       this.searchList3 = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
       if (this.isProductNameSwitch == 1) {
@@ -1901,7 +1901,7 @@ export default {
       },
         this.$refs.SuperQuery.conditionList = []
       this.searchList4 = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
         if (this.isProductNameSwitch == 1) {

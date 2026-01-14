@@ -10,7 +10,7 @@
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @keyup.native.enter="search()"  v-model="listQuery.drawingNo" placeholder="品名规格" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model="listQuery.drawingNo" placeholder="请输入型号" clearable />
                         </el-form-item>
                     </el-col>
 
@@ -47,7 +47,7 @@
                 </div>
                 <JNPF-table v-if="tableData.length" hasC ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column customKey="JNPFTableKey_26735678567">
                     <el-table-column min-width="120" prop="code" label="代号" />
-                    <el-table-column min-width="220" prop="drawingNo" label="品名规格" />
+                    <el-table-column min-width="220" prop="drawingNo" label="型号" />
                     <el-table-column v-for="item in attrDictionaryData" :key="item.id" min-width="140" :prop="item.description" :label="$store.getters[item.description] || item.fullName" />
                     <el-table-column prop="remark" label="备注" />
                     <el-table-column label="操作" width="240" fixed="right">
@@ -100,7 +100,7 @@ export default {
         return {
             ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "", } }, // 产品选择弹出框树状列表
             tableItems:[
-                { prop: 'drawingNo',value: '', type: 'view', minWidth: 340, label: '品名规格' },
+                { prop: 'drawingNo',value: '', type: 'view', minWidth: 340, label: '型号' },
                 { prop: 'code', label: '产品编码', value: '', type: 'view', minWidth: 160 },
                 { prop: 'name',value: '', type: 'view', minWidth: 140, label: '产品名称',render:this.$store.getters.configData.product.enable_productName },
                 { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 100 },
@@ -120,7 +120,7 @@ export default {
             },
             ProductTableSearchList:[
                 { prop: 'productCode', label: '产品编码', type: 'input' },
-                { prop: 'productDrawingNo', label: '品名规格', type: 'input'},
+                { prop: 'productDrawingNo', label: '型号', type: 'input'},
             ],
             mainCode:'',
             relatedProductVisible: false,

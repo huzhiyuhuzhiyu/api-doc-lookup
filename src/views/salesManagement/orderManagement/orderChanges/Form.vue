@@ -217,7 +217,7 @@ export default {
         { prop: "productCode", label: "产品编码", value: "", type: 'view', width: "140", },
         { prop: "productName", label: "产品名称", value: "", type: 'view', width: "120", },
         { prop: "productCategoryName", label: "产品分类", value: "", type: 'view', width: "140", },
-        { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', width: "350", },
+        { prop: "productDrawingNo", label: "型号", value: "", type: 'view', width: "350", },
         { prop: "pairingModeName", label: "配对方式", value: "", type: 'view', width: "120", },
         { prop: "mainUnit", label: "单位", value: "", type: 'view', width: "180", },
         { prop: "num", label: "原数量", value: "", type: 'view', width: "100", },
@@ -369,7 +369,7 @@ export default {
         }, 100);
       };
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       console.log("val", val);
       this.selectRows = val

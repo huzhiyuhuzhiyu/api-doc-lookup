@@ -113,7 +113,7 @@
               sortable="custom"></el-table-column>
               <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="330" sortable="custom"></el-table-column>
             <el-table-column prop="prodOrderStatus" label="任务状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.prodOrderStatus == 'normal'"><el-tag>正常</el-tag> </div>
@@ -179,7 +179,7 @@ export default {
       searchList: [
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-      ], 
+      ],
       fullName: '',
       BatchDispatchVisible: false,
       dataFormList: {
@@ -207,7 +207,7 @@ export default {
       btnLoading: false,
       title: "更多查询",
       tableData: [],
-      listLoading: false, 
+      listLoading: false,
       total: 0,
       formVisible: false,
       selectArr: [],
@@ -315,7 +315,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -349,7 +349,7 @@ export default {
     }
   },
   async created() {
-    await this.getProjectSwitch('system', 'project') 
+    await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(15, 0, {
@@ -450,7 +450,7 @@ export default {
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-      this.formVisible = false 
+      this.formVisible = false
       this.BatchDispatchVisible = false
       this.search()
     },
@@ -495,8 +495,8 @@ export default {
       this.superForm = this.dataForm = JSON.parse(JSON.stringify(this.dataFormList))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 }, 
-        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.search('basic')
     },

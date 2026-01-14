@@ -63,16 +63,17 @@
                           v-if="isProjectSwitch === '1'"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120"
                           v-if="isProductNameSwitch === '1'"></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip
                           :key="1">
                           <template slot="header">
                             <span class="required">*</span>
-                            品名规格
+                            型号
                           </template>
+型号
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                               :rules="productRules.productDrawingNo">
-                              <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
+                              <el-input v-model="scope.row.productDrawingNo" placeholder="请输入型号" disabled />
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -373,7 +374,7 @@ export default {
         pageSize: 20
       },
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         // { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
@@ -382,7 +383,7 @@ export default {
         { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ],
       ProductPoolTableItems: [
-        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'productDrawingNo', label: '型号', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
@@ -392,7 +393,7 @@ export default {
       ],
       // 客户产品查询条件
       ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' }
       ],
       getcooperativeProduct,

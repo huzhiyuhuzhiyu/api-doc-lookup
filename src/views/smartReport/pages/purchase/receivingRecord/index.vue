@@ -33,7 +33,7 @@ export default {
           { prop: "receiveDate", label: '收货日期', minWidth: 180 },
           { prop: "partnerCode", label: '供应商编码', minWidth: 180 },
           { prop: "partnerName", label: '供应商名称', minWidth: 180 },
-          { prop: "productsDrawingNo", label: '品名规格', minWidth: 160 },
+          { prop: "productsDrawingNo", label: '型号', minWidth: 160 },
           { prop: "productsCode", label: '产品编码', minWidth: 140 },
           { prop: "productsName", label: '产品名称', minWidth: 160, show: () => this.$store.getters.configData.product.enable_productName },
           { prop: "mainUnit", label: '单位', minWidth: 90 },

@@ -52,7 +52,7 @@
           </div>
         </div>
 
-        <JNPF-table  highlight-current-row 
+        <JNPF-table  highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList"  customKey="JNPFTableKey_123476">
           <el-table-column prop="orderNo" label="服务单号" min-width="200" sortable="custom" />
@@ -83,17 +83,17 @@
               <div v-if="scope.row.billStatus == 'billed'"><el-tag type="success">已对账</el-tag></div>
               <div v-if="scope.row.billStatus == 'in_bill' && scope.row.documentStatus == 'submit'"><el-tag type="warning">对账中</el-tag></div>
             </template>
-          </el-table-column> 
+          </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="120" sortable="custom" ></el-table-column>
              <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-          
+
 
                 <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.billStatus !== 'no_billing'"
                   @click="handleDel(scope.row.id)">删除</el-button>
                   <el-button size="mini" type="text"   @click="detailFun(scope.row)">查看详情</el-button>
                 <!-- :disabled="scope.row.documentStatus == 'draft' ? false : true" -->
-           
+
               </template>
             </el-table-column>
           <!-- <el-table-column prop="remark" label="备注" min-width="180" sortable="custom" /> -->
@@ -106,17 +106,17 @@
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" /> 
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
-<script> 
+<script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 
 import JNPFForm from './Form'
 import moment from 'moment'
 import { mapGetters, mapState } from 'vuex'
-import getProjectList from '@/mixins/generator/getProjectList' 
+import getProjectList from '@/mixins/generator/getProjectList'
 import {delFinServiceTicket,finServiceTicketList}from '@/api/service/index'
 import tenantMinix from "@/mixins/generator/TenantMinix"
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
@@ -132,7 +132,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '服务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商/客户名称', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商/客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'billStatus', fieldValue: '', label: '对账状态', symbol: 'like', searchType: 4, width: 120, options: [
           {label:"未对账",value:"no_billing",},
           {label:"已对账",value:"billed",},
@@ -196,7 +196,7 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        
+
         {
           prop: 'partnerName',
           label: "客户名称",
@@ -215,7 +215,7 @@ export default {
 
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -261,8 +261,8 @@ export default {
   },
   async created() {
     this.superForm = this.listQuery=JSON.parse(JSON.stringify(this.listQuerylist))
-    this.search('basic')    
-    
+    this.search('basic')
+
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -276,15 +276,15 @@ export default {
       })
 
     },
- 
-  
-   
+
+
+
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },
-  
+
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
     },
@@ -296,13 +296,13 @@ export default {
       this.selectData = val
       function calculateTotalValue(arr) {
         return arr.reduce((sum, item) => {
-          const value = Number(item.totalAmount); // 将 value 转换为数字  
+          const value = Number(item.totalAmount); // 将 value 转换为数字
           if (item.paymentType === 'receive') {
-            return sum + value;  // 对于 '正', 加上 value  
+            return sum + value;  // 对于 '正', 加上 value
           } else if (item.paymentType === 'pay') {
-            return sum - value;   // 对于 '负', 减去 value  
+            return sum - value;   // 对于 '负', 减去 value
           }
-          return sum;  // 默认情况，无需改变 sum  
+          return sum;  // 默认情况，无需改变 sum
         }, 0);
       }
       function calculateSum(data, type) {
@@ -372,10 +372,10 @@ export default {
 
 
     initData() {
-      
-      
+
+
       finServiceTicketList(this.listQuery).then(res => {
-       
+
 
         this.tableDataList = res.data.records
         this.total = res.data.total
@@ -415,7 +415,7 @@ export default {
          this.superForm = this.listQuery=JSON.parse(JSON.stringify(this.listQuerylist))
         this.searchList =  [
         { field: 'orderNo', fieldValue: '', label: '服务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商/客户名称', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商/客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'billStatus', fieldValue: '', label: '对账状态', symbol: 'like', searchType: 4, width: 120, options: [
           {label:"no_billing",value:"未对账",},
           {label:"billed",value:"已对账",},
@@ -426,7 +426,7 @@ export default {
 
       this.search('basic')
     },
-  
+
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle() {
       this.formVisible = true

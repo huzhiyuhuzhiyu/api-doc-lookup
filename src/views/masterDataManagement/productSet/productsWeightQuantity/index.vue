@@ -51,7 +51,7 @@
                     
                     <el-table-column prop="productCode" label="产品编码" sortable="custom"></el-table-column>
                     <el-table-column prop="productName" label="产品名称" sortable="custom" v-if="$store.getters.configData.product.enable_productName" />
-                    <el-table-column prop="drawingNo" label="品名规格" sortable="custom"></el-table-column>
+                    <el-table-column prop="drawingNo" label="型号" sortable="custom"></el-table-column>
                     <el-table-column prop="weight" label="重量" sortable="custom"></el-table-column>
                     <el-table-column prop="quantity" label="数量" sortable="custom"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />

@@ -9,7 +9,7 @@
               <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
               <el-table-column prop="productCode" label="产品编码" min-width="120" show-overflow-tooltip />
               <el-table-column prop="productName" label="产品名称" min-width="120" show-overflow-tooltip />
-              <el-table-column prop="drawingNo" label="产品图号" min-width="120" show-overflow-tooltip />
+              <el-table-column prop="drawingNo" label="型号" min-width="120" show-overflow-tooltip />
 
               <el-table-column prop="routingName" label="工艺路线名称" min-width="120" show-overflow-tooltip />
               <el-table-column prop="processCode" label="工序编码" min-width="120" show-overflow-tooltip />

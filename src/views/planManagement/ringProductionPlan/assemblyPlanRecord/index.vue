@@ -68,12 +68,12 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom" 
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom"
               v-if="$store.getters.configData.produce.production_related_customers" />
             <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="型号" min-width="330" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
             <!-- <el-table-column prop="productName" label="产品名称" width="120" sortable="custom" /> -->
@@ -155,7 +155,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
 
 
@@ -196,7 +196,7 @@ export default {
           label: "计划单号",
           type: 'input'
         },
-     
+
         {
           prop: 'productCode',
           label: "产品编码",
@@ -204,7 +204,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -220,7 +220,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-        
+
         {
           prop: 'remark',
           label: "备注",
@@ -267,7 +267,7 @@ export default {
   },
 
   async created() {
-    await this.getProjectSwitch('system', 'project') 
+    await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(2, 0, {
@@ -281,7 +281,7 @@ export default {
     this.superForm = this.orderForm
     this.search('basic')
   },
- 
+
   methods: {
     async getProductNameSwitch(code, type) {
       try {
@@ -319,7 +319,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'standardValue');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -352,7 +352,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -385,7 +385,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -417,7 +417,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -451,7 +451,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -482,7 +482,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -514,7 +514,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -545,7 +545,7 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -670,11 +670,11 @@ export default {
       }
       this.searchList = [
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         // { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
       ]
       if (this.isProductNameSwitch == 1) {
-   
+
       this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
 
     }

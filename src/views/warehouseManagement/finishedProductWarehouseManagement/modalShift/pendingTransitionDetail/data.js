@@ -35,7 +35,7 @@ export function getColumns() {
     },
     {
       prop: "targetProductDrawingNo",
-      label: "目标品名规格",
+      label: "目标型号",
       minWidth: 220,
     },
     {
@@ -75,7 +75,7 @@ export function getColumns() {
     },
     {
       prop: "productDrawingNo",
-      label: "源品名规格",
+      label: "源型号",
       minWidth: 160,
     },
     {

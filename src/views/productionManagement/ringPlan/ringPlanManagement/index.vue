@@ -89,7 +89,7 @@
             <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productsDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productsDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -208,7 +208,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productsDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
       columnList: ["productCode", "arithmeticNo", "remark", "createByName",],
 
@@ -276,7 +276,7 @@ export default {
         },
         {
           prop: 'productsDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -598,7 +598,7 @@ export default {
 
       this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productsDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.search('basic')
     },

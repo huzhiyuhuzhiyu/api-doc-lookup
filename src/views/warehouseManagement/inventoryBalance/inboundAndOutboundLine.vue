@@ -81,12 +81,12 @@
                       <el-table-column  :key="item.prop" :prop="item.prop" :label="item.label" :sortable="item.custom"
                                      :fixed="item.fixed || false" :min-width="item.minWidth || 120"
                     >
-                   
+
                 </el-table-column>
                    </template>
                 </template>
                     <!-- <template v-for="item in tableItems"> -->
-                    
+
                     <el-table-column v-for="item in attrDictionaryData" :key="item.id" min-width="140" :prop="item.description" :label="$store.getters[item.description] || item.fullName" />
                     <!-- </template> -->
                 </JNPF-table>
@@ -195,7 +195,7 @@ export default {
             listLoading: false,
             visible: false,
             listQuery: {
-              
+
             },
             total: 0,
             exportFormVisible: false,
@@ -218,7 +218,7 @@ export default {
                 },
                 {
                     prop: 'productsDrawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     type: 'input'
                 },
                 {
@@ -280,13 +280,13 @@ export default {
         })
     },
     created() {
- 
+
         this.getData()
     },
     methods: {
       cahngeDocuType(){
           this.search('basic')
-          
+
           },
         superQuerySearch(query) {
             this.superQuery = query
@@ -340,7 +340,7 @@ export default {
                 { label: '直接领料入库', value: 'inbound_receive_material' },
                 { label: '生产工单入库', value: 'inbound_production' },
                 { label: '生产产品入库', value: 'inbound_order_production' },
-                { label: '翻库入库', value: 'inbound_flip' }, 
+                { label: '翻库入库', value: 'inbound_flip' },
                 { label: '盘点调整入库', value: 'inbound_taking_adjust' },
                 { label: '组装入库', value: 'inbound_merge' },
                 { label: '形态转换入库', value: 'inbound_shift' },
@@ -358,7 +358,7 @@ export default {
                 { label: '组装出库', value: 'outbound_merge' },
                 { label: '拆卸出库', value: 'outbound_split' },
                 { label: '形态转换出库', value: 'outbound_shift' },
-    
+
             ]
             res.data.records.forEach(item1 => {
               let name=arr.find(item=>item.value === item1.businessType) ?  arr.find(item=>item.value === item1.businessType).label : ''

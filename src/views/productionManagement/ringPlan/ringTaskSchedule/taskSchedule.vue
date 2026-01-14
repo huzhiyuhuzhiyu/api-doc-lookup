@@ -22,7 +22,7 @@
                 </el-descriptions>
                 <el-descriptions :column="1" class="box">
 
-                  <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                  <el-descriptions-item label="型号" class="drawingNo">{{ dataForm.productDrawingNo
                     }} </el-descriptions-item>
                 </el-descriptions>
                 <el-descriptions class="margin-top" :column="4">
@@ -279,7 +279,7 @@ export default {
 
     await this.getProjectSwitch('system', 'project')
   },
- 
+
   mounted() {
     this.switchStyle()
     // 清空之前的配置
@@ -313,7 +313,7 @@ export default {
     //   if (!task.parent) {
     //     return `
     //         <div style='display:flex;flex-wrap:wrap;align-items: center;width:300px;'>
-    //           <div style='width: 60%;line-height: 18px;'>任务单号：${task.text}</div> 
+    //           <div style='width: 60%;line-height: 18px;'>任务单号：${task.text}</div>
     //           <div style='width: 60%;line-height: 18px;'>数量：${task.qualifiedQuantity}/${task.productionQuantity}</div>
     //           <div style='width: 60%;line-height: 18px;'>计划时间：${task.start_date} ~ ${task.end_date}</div>
     //         </div>
@@ -368,27 +368,27 @@ export default {
       console.log(task.progress);
       if (task.progress == 0) return 'Noproduc'
       if (task.progress < 0.5) {
-        return "low-progress"; //进度低于50%  
+        return "low-progress"; //进度低于50%
       } else if (task.progress < 1.0) {
-        return "mid-progress"; //进度在50%-99%之间 
+        return "mid-progress"; //进度在50%-99%之间
       } else {
-        return "high-progress"; // 完成 }  
+        return "high-progress"; // 完成 }
       };
     }
     const style = document.createElement('style');
-    style.innerHTML = `  
+    style.innerHTML = `
     .Noproduc{
     background-color:"#FFbc00!important"
     }
-      .low-progress {  
-      background-color:#FFbc00; /*低进度颜色 */  
-      }  
-      .mid-progress {  
-      background-color: #FFbc00; /* 中等进度颜色 */  
-      }  
-      .high-progress {  
-      background-color: green!important; /* 高进度颜色 */  
-      }  
+      .low-progress {
+      background-color:#FFbc00; /*低进度颜色 */
+      }
+      .mid-progress {
+      background-color: #FFbc00; /* 中等进度颜色 */
+      }
+      .high-progress {
+      background-color: green!important; /* 高进度颜色 */
+      }
       `;
     document.head.appendChild(style);
 
@@ -414,22 +414,22 @@ export default {
 
     handleRowClick(row) {
       console.log(row);
-      this.selectedRow = row; // 点击行时更新选中行  
+      this.selectedRow = row; // 点击行时更新选中行
       console.log(123, row == this.selectedRow);
     },
-    // 这里处理行的样式类  
+    // 这里处理行的样式类
     rowClassName({ row, rowIndex }) {
       const classes = [];
       if (rowIndex === 0 && this.selectedRow != this.workOrderData[0]) {
         console.log(666666);
-        classes.push('highlight-first-row'); // 只有在没有选中其他行时才添加第一行的背景色  
+        classes.push('highlight-first-row'); // 只有在没有选中其他行时才添加第一行的背景色
       }
       this.$nextTick(() => {
         if (this.selectedRow == row) {
-          classes.push('highlight-selected-row'); // 选中行添加背景色类  
+          classes.push('highlight-selected-row'); // 选中行添加背景色类
         }
       })
-      return classes.join(' '); // 返回类名  
+      return classes.join(' '); // 返回类名
     },
     //自适应窗口
     async switchStyle() {

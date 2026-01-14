@@ -91,7 +91,7 @@
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
+          <el-table-column prop="drawingNo" label="型号" sortable="custom" min-width="300" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" min-width="140" />
@@ -176,7 +176,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
       columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
       num: 0,
@@ -238,7 +238,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
 
@@ -912,7 +912,7 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.initData()
     },

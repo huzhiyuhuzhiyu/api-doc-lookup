@@ -59,7 +59,7 @@
               <div v-else>角度</div>
             </template>
           </el-table-column>
-          <el-table-column prop="productDrawingNo" label="产品图号" sortable="custom">
+          <el-table-column prop="productDrawingNo" label="型号" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                                 scope.row.productDrawingNo

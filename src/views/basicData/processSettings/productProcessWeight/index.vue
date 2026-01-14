@@ -107,7 +107,7 @@ export default {
                     type: 'select',
                     options: [{ label: '无重量', value: false }, { label: '有重量', value: true }, { label: '所有', value: '' }]
                 },
-                { prop: 'drawingNo', label: '品名规格', type: 'input' },
+                { prop: 'drawingNo', label: '型号', type: 'input' },
                 { prop: 'processName', label: '工序名称', type: 'input' }
             ],
             superQueryVisible: false,
@@ -115,7 +115,7 @@ export default {
             tableItems:[
                 { prop: 'productsCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
                 { prop: 'productsName', label: '产品名称', minWidth: '160', sortable: 'custom' },
-                { prop: 'drawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
+                { prop: 'drawingNo', label: '型号', minWidth: '160', sortable: 'custom' },
                 { prop: 'processName', label: '工序名称', minWidth: '140', sortable: 'custom' },
                 { prop: 'processCode', label: '工序编码', minWidth: '140', sortable: 'custom' },
                 { prop: 'weight', label: '重量', minWidth: '140', sortable: 'custom' },
@@ -267,7 +267,7 @@ export default {
             this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
             this.searchList = [
                 { prop: 'weightFlag', label: '是否有重量', type: 'select', options: [{ label: '无重量', value: false }, { label: '有重量', value: true }, { label: '所有', value: '' }] },
-                { prop: 'drawingNo', label: '品名规格', type: 'input' },
+                { prop: 'drawingNo', label: '型号', type: 'input' },
                 { prop: 'processName', label: '工序名称', type: 'input' }
             ]
             this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))

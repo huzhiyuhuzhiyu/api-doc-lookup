@@ -83,7 +83,7 @@
                       <el-table-column prop="productCode" label="产品编码" min-width="130"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                         v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
@@ -191,7 +191,7 @@
                   <el-table-column prop="productCode" label="产品编码" min-width="130"></el-table-column>
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="型号" min-width="130"></el-table-column>
                   <el-table-column prop="processName" label="工序名称" min-width="130" />
                   <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                   <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
@@ -331,7 +331,7 @@ export default {
 
       detailDataList: [],
       detailDiaFlag: false,
-      previousReceiveType: null,  // 存储上一次选择的退料类型  
+      previousReceiveType: null,  // 存储上一次选择的退料类型
       isSame: false,
       flowTemplateJson: {},
       flowData: {},
@@ -368,7 +368,7 @@ export default {
       })
     },
     checkSelection() {
-      this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同  
+      this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同
       this.previousReceiveType = this.dataForm.receiveType; // 更新上一次选择
       console.log(9999);
       if (!this.isSame && this.dataForm.productionOrderNo) {
@@ -499,7 +499,7 @@ export default {
       var year = date.getFullYear();
       var month = (date.getMonth() + 1).toString().padStart(2, "0");
       var day = date.getDate().toString().padStart(2, "0");
-   
+
       const formattedDate = `${year}-${month}-${day}`;
       return formattedDate
     },

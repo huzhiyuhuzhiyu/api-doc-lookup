@@ -8,7 +8,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input @keyup.native.enter="getassembleData()"  v-model="assembleFormSQ.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="getassembleData()"  v-model="assembleFormSQ.productDrawingNo" placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -64,7 +64,7 @@
               <JNPF-table ref="assembleRef" v-loading="listLoading" :data="assembleData" :fixedNO="true"
                 @sort-change="sortChange" custom-column hasC @selection-change="handleAssemble"
                 :setColumnDisplayList="columnList1" :checkSelectable="disproduceData" customKey="JNPFTableKey_691206">
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="320" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
@@ -109,7 +109,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input @keyup.native.enter="getproduceData()"  v-model="produceFormSQ.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="getproduceData()"  v-model="produceFormSQ.productDrawingNo" placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -159,7 +159,7 @@
               <JNPF-table ref="produceRef" v-loading="listLoading" :data="produceData" :fixedNO="true"
                 :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column hasC
                 @selection-change="handleProduce" :checkSelectable="disproduceData" customKey="JNPFTableKey_463436">
-                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
@@ -245,7 +245,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input @keyup.native.enter="getpurchaseData()"  v-model="purchaseFormSQ.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="getpurchaseData()"  v-model="purchaseFormSQ.productDrawingNo" placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -302,7 +302,7 @@
               <JNPF-table ref="purchaseRef" v-loading="listLoading" :data="purchaseData" :fixedNO="true"
                 :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column hasC
                 @selection-change="handlePurchase" :checkSelectable="dispurchaseData" customKey="JNPFTableKey_359935">
-                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
                   <template slot-scope="scope">
@@ -378,7 +378,7 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="outFormSQ.productDrawingNo" placeholder="品名规格" clearable />
+                  <el-input v-model="outFormSQ.productDrawingNo" placeholder="型号" clearable />
                 </el-form-item>
               </el-col>
               <el-form @submit.native.prevent>
@@ -433,7 +433,7 @@
               <JNPF-table ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true" @sort-change="sortChange"
                 :setColumnDisplayList="columnList4" custom-column hasC @selection-change="handleOut"
                 :checkSelectable="disOutData" customKey="JNPFTableKey_170707">
-                <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="180" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
@@ -523,7 +523,7 @@
         height="600" customKey="JNPFTableKey_993556">
         <el-table-column prop="productionPlanNo" label="生产计划单号" width="180"
           v-if="activeName != 'purchase' && activeName != 'out' && codeConfig.codeWay != 'auto'"></el-table-column>
-        <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
+        <el-table-column prop="productDrawingNo" label="型号" min-width="180" />
         <el-table-column prop="productCode" label="产品编码" min-width="120" />
         <el-table-column prop="outputQuantity" label="组装数量" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="outputQuantity" label="生产数量" min-width="120" v-if="activeName == 'produce'" />
@@ -1069,7 +1069,7 @@ export default {
     //     this.superQueryJson = [
     //       {
     //         prop: 'productDrawingNo',
-    //         label: "品名规格",
+    //         label: "型号",
     //         type: 'input'
     //       },
     //       {
@@ -1169,7 +1169,7 @@ export default {
     //     this.superQueryJson = [
     //       {
     //         prop: 'productDrawingNo',
-    //         label: "品名规格",
+    //         label: "型号",
     //         type: 'input'
     //       },
     //       {
@@ -1262,7 +1262,7 @@ export default {
     //     this.superQueryJson = [
     //       {
     //         prop: 'productDrawingNo',
-    //         label: "品名规格",
+    //         label: "型号",
     //         type: 'input'
     //       },
     //       {
@@ -1347,7 +1347,7 @@ export default {
     //     this.superQueryJson = [
     //       {
     //         prop: 'productDrawingNo',
-    //         label: "品名规格",
+    //         label: "型号",
     //         type: 'input'
     //       },
     //       {

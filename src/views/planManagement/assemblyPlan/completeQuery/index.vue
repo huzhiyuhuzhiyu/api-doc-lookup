@@ -6,7 +6,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入型号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -50,7 +50,7 @@
           <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="100" show-overflow-tooltip/>
           <el-table-column prop="productName" label="产品名称"   width="160" v-if="isProductNameSwitch === '1'"
           show-overflow-tooltip></el-table-column>
-          <el-table-column prop="drawNo" label="品名规格"width="360" show-overflow-tooltip>
+          <el-table-column prop="drawNo" label="型号"width="360" show-overflow-tooltip>
             <template slot-scope="scope">
               <i :class="[
                 scope.row.childrenList.length >= 1

@@ -143,7 +143,7 @@
                   </el-table-column>
                   <el-table-column prop="productName" label="产品名称" width="170" show-overflow-tooltip>
                   </el-table-column>
-                  <el-table-column prop="productDrawingNo" label="产品图号" width="290" key="8" show-overflow-tooltip>
+                  <el-table-column prop="productDrawingNo" label="型号" width="290" key="8" show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column prop="ordersNum" label="订单数量" width="120" key="9" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="outboundQuantity" label="已出库数量" width="120" key="10" show-overflow-tooltip>

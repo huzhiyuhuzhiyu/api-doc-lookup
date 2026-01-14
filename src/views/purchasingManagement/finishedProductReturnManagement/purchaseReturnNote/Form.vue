@@ -131,7 +131,7 @@
                       v-if="isProjectSwitch === '1'"></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
+                    <el-table-column prop="drawingNo" label="型号" width="160" sortable="custom"
                       show-overflow-tooltip />
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch ? 85 : 60" />
@@ -375,7 +375,7 @@
                   v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" show-overflow-tooltip />
+                <el-table-column prop="drawingNo" label="型号" width="160" sortable="custom" show-overflow-tooltip />
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch ? 85 : 60" />
                 <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
@@ -911,7 +911,7 @@ export default {
         { prop: 'productCode', label: '产品编码', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
         { prop: 'productName', label: '产品名称', sortable: 'custom' },
-        { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
+        { prop: 'drawingNo', label: "型号", sortable: 'custom' },
         { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
         { prop: 'processName', label: '工序', sortable: 'custom' },
         { prop: 'remark', label: '备注', sortable: 'custom' },
@@ -923,7 +923,7 @@ export default {
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
+        { prop: 'productDrawingNo', label: "型号", type: 'input' },
 
       ], // 产品选择弹出框搜索条件
     }
@@ -1285,7 +1285,7 @@ export default {
           pageSize: 20,
         }
         this.ProductTableSearchList = [
-          { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
+          { prop: 'productDrawingNo', label: "型号", type: 'input' },
           // { prop: 'deliveryDate', label: '交货日期', type: 'date' },
         ]
         if (this.$store.getters.configData.product.enable_productName) {
@@ -1296,7 +1296,7 @@ export default {
           { prop: 'orderNo', label: '订单号', sortable: 'custom' },
           { prop: 'productCode', label: '产品编码', sortable: 'custom' },
           { prop: 'productName', label: '产品名称', sortable: 'custom' },
-          { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
+          { prop: 'drawingNo', label: "型号", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
           { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
           { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },
@@ -1329,7 +1329,7 @@ export default {
         }
         this.ProductTableSearchList = [
           { prop: 'productCode', label: '产品编码', type: 'input' },
-          { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
+          { prop: 'productDrawingNo', label: "型号", type: 'input' },
         ]
         if (this.$store.getters.configData.product.enable_productName) {
           let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
@@ -1339,7 +1339,7 @@ export default {
           { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
           { prop: 'code', label: '产品编码', sortable: 'custom' },
           { prop: 'name', label: '产品名称', sortable: 'custom' },
-          { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
+          { prop: 'drawingNo', label: "型号", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
           { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
           { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },

@@ -75,10 +75,10 @@
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="型号" min-width="200" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" min-width="200" sortable="custom"
               v-if="$store.getters.configData.product.enable_productName" />
-                  
+
             <el-table-column prop="workReport.productionOrderNo" label="生产任务单号" min-width="200" sortable="custom" />
             <el-table-column prop="workReport.workNo" label="工单单号" min-width="200" sortable="custom" />
             <el-table-column prop="workReport.reportingQuantity" label="报工数量" min-width="200" sortable="custom" />
@@ -181,7 +181,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
 

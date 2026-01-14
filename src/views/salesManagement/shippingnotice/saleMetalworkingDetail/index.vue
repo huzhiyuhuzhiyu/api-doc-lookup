@@ -82,7 +82,7 @@
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom"/>
             <el-table-column prop="productName" label="产品名称" width="160" sortable="custom"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom"/>
+            <el-table-column prop="productDrawingNo" label="型号" width="300" sortable="custom"/>
             <el-table-column prop="productSourceName" label="产品来源"></el-table-column>
 
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom"/>
@@ -205,7 +205,7 @@ export default {
         {field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120},
         {field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120},
         {field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120},
-        {field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120},
+        {field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120},
         {field: 'priority', fieldValue: '', label: '发货优先级', symbol: 'like', searchType: 4, width: 120, options: this.global.shippingPriority},
       ],
 
@@ -359,7 +359,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {

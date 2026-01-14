@@ -58,7 +58,7 @@
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="index" />
-                    <el-table-column prop="productDrawingNo" label="原品名规格" width="200" show-overflow-tooltip
+                    <el-table-column prop="productDrawingNo" label="型号" width="200" show-overflow-tooltip
                       key="productDrawingNo" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip
@@ -113,10 +113,10 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="targetProductDrawingNo" label="目标品名规格" width="260"
+                    <el-table-column prop="targetProductDrawingNo" label="目标型号" width="260"
                       key="targetProductDrawingNo">
                       <template slot="header">
-                        <span class="required">*</span>目标品名规格
+                        <span class="required">*</span>目标型号
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'targetProductDrawingNo'"
@@ -426,7 +426,7 @@
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="index" />
-                <el-table-column prop="productDrawingNo" label="原品名规格" width="200" show-overflow-tooltip
+                <el-table-column prop="productDrawingNo" label="原型号" width="200" show-overflow-tooltip
                   key="productDrawingNo" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip
@@ -494,9 +494,9 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="targetProductDrawingNo" label="目标品名规格" width="260" key="targetProductDrawingNo">
+                <el-table-column prop="targetProductDrawingNo" label="目标型号" width="260" key="targetProductDrawingNo">
                   <template slot="header">
-                    <span class="required">*</span>目标品名规格
+                    <span class="required">*</span>目标型号
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'data.' + scope.$index + '.' + 'targetProductDrawingNo'"
@@ -782,7 +782,7 @@ export default {
       productTableSearchList: [ // &
         { prop: "productCode", label: "产品编码", type: "input" },
         // { prop: "name", label: "产品名称", type: "input" },
-        { prop: "productDrawingNo", label: "品名规格", type: 'input' }
+        { prop: "productDrawingNo", label: "型号", type: 'input' }
       ],
       productRequestObj: { // 明细
         accuracyLevel: "",
@@ -801,7 +801,7 @@ export default {
         classAttributeList:[],
       },
       productTableItems: [ // 明细
-        { prop: 'productDrawingNo', label: '品名规格', minWidth: 120 },
+        { prop: 'productDrawingNo', label: '型号', minWidth: 120 },
         { prop: 'productCode', label: '产品编码', fixed: 'left', minWidth: 160 },
         { prop: 'warehouseName', label: '仓库名称', minWidth: 120 },
         { prop: 'shelfSpaceName', label: '库位', minWidth: 120 },
@@ -832,7 +832,7 @@ export default {
       },
       targetProductTableItems: [ // 目标产品
         { prop: "code", label: "产品编码", fixed: "left" },
-        { prop: "drawingNo", label: "品名规格" },
+        { prop: "drawingNo", label: "型号" },
         { prop: "productCategoryName", label: "产品分类" },
         { prop: "mainUnit", label: "单位" },
       ],

@@ -198,7 +198,7 @@
                 <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="getHistoryPriceFun()"
-                      v-model="historyPriceRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                      v-model="historyPriceRequestObj.productDrawingNo" placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -295,7 +295,7 @@
                 <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productDrawingNo"
-                      placeholder="请输入品名规格" clearable />
+                      placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -1113,7 +1113,7 @@ export default {
               cb(arr)
             } else {
               let air = []
-              this.$message.error("您输入的品名规格暂未匹配到对应的产品数据，请重新输入!")
+              this.$message.error("您输入的型号暂未匹配到对应的产品数据，请重新输入!")
               queryString = ""
               cb(air)
             }

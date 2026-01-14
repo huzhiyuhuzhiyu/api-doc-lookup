@@ -347,7 +347,7 @@ export default {
 
         {
           prop: 'drawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {

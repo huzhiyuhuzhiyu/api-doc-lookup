@@ -27,7 +27,7 @@
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="code" label="产品编码" min-width="140" />
           <el-table-column prop="name" label="产品名称" min-width="140" />
-          <el-table-column prop="drawingNo" label="品名规格" min-width="160" />
+          <el-table-column prop="drawingNo" label="型号" min-width="160" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" />
           <el-table-column prop="classAttribute" label="类别属性" min-width="120">
             <template slot-scope="scope">

@@ -22,7 +22,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="品名规格" prop="drawingNo">
+                      <el-form-item label="型号" prop="drawingNo">
                         <ComSelect-page v-model="dataForm.drawingNo" @change="submitCustomerProduct1" :tableItems="ProductTableItems1" title="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList1" :isdisabled="btnType == 'look'" placeholder="请选择产品" />
                       </el-form-item>
                     </el-col>
@@ -95,7 +95,7 @@
                   <el-table class="TableForm table" ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData" style="border: 1px solid #e3e7ee">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
-                    <el-table-column prop="productDrawingNo" label="品名规格" width="300" show-overflow-tooltip />
+                    <el-table-column prop="productDrawingNo" label="型号" width="300" show-overflow-tooltip />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <!-- <el-table-column prop="productSpec" label="规格型号" width="200" show-overflow-tooltip /> -->
                     <el-table-column prop="warehouseName" label="仓库" width="200" show-overflow-tooltip />
@@ -159,7 +159,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
-                  <el-form-item label="品名规格" prop="drawingNo">
+                  <el-form-item label="型号" prop="drawingNo">
                     <ComSelect-page v-model="dataForm.drawingNo" @change="submitCustomerProduct1" :tableItems="ProductTableItems1" title="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList1" :isdisabled="btnType == 'look'" placeholder="请选择产品" />
                   </el-form-item>
                 </el-col>
@@ -232,7 +232,7 @@
               <el-table class="TableForm table" ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData" style="border: 1px solid #e3e7ee">
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'" key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="300" show-overflow-tooltip />
+                <el-table-column prop="productDrawingNo" label="型号" width="300" show-overflow-tooltip />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <!-- <el-table-column prop="productSpec" label="规格型号" width="200" show-overflow-tooltip /> -->
                 <el-table-column prop="warehouseName" label="仓库" width="200" show-overflow-tooltip />
@@ -348,11 +348,11 @@ export default {
       ProductTableSearchList1: [
         { prop: "code", label: "产品编码", type: "input" },
         { prop: "name", label: "产品名称", type: "input" },
-        { prop: "drawingNo", label: "品名规格", type: 'input' }
+        { prop: "drawingNo", label: "型号", type: 'input' }
       ],
       ProductTableItems1: [
         { prop: 'code', label: '产品编码', fixed: 'left', minWidth: 160 },
-        { prop: 'drawingNo', label: '品名规格', minWidth: 300 },
+        { prop: 'drawingNo', label: '型号', minWidth: 300 },
         { prop: 'productCategoryName', label: '产品分类', minWidth: 120 },
         { prop: 'mainUnit', label: '单位', minWidth: 120 },
       ],
@@ -375,7 +375,7 @@ export default {
         warehouseId: ""
       }, // 产品选择弹出框列表请求参数
       ProductTableItems2: [
-        { prop: 'productDrawingNo', label: '品名规格', minWidth: 300 },
+        { prop: 'productDrawingNo', label: '型号', minWidth: 300 },
         { prop: 'productCode', label: '产品编码', fixed: 'left', minWidth: 160 },
         { prop: 'productCategoryName', label: '产品分类', minWidth: 120 },
         { prop: 'shelfSpaceName', label: '库位', minWidth: 120 },
@@ -466,7 +466,7 @@ export default {
           { required: true, message: "组装单号不能为空", trigger: "blur" },
         ],
         drawingNo: [
-          { required: true, message: "品名规格不能为空", trigger: "change" },
+          { required: true, message: "型号不能为空", trigger: "change" },
         ],
         transferBy: [
           { required: true, message: "组装人不能为空", trigger: "change" },

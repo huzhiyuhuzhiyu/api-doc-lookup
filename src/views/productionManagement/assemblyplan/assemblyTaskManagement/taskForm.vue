@@ -15,7 +15,7 @@
             <el-collapse-item title="任务信息" name="basicInfo">
               <div class="stoclInfo">
                 <el-descriptions :column="1" class="box">
-                  <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                  <el-descriptions-item label="型号" class="drawingNo">{{ dataForm.productDrawingNo
                     }} <img v-if="dataForm.urgentFlag" src="@/assets/images/emergency2.png" alt="" style="width: 30px;vertical-align: top;"> </el-descriptions-item>
                 </el-descriptions>
                 <el-descriptions class="margin-top" :column="4">
@@ -103,7 +103,7 @@
           </JNPF-table>
           <JNPF-table ref="feed" v-if="categoryType == 'feed'" :data="feedData" fixedNO v-loading="tableloading"
             :key="Math.random()" customKey="JNPFTableKey_541595">
-            <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
+            <el-table-column prop="productDrawingNo" show-overflow-tooltip label="型号"></el-table-column>
             <el-table-column prop="productCode" label="用料编码" />
             <el-table-column prop="processName" label="工序名称" />
             <el-table-column prop="mainUnit" label="单位" />
@@ -120,7 +120,7 @@
             :key="Math.random()" customKey="JNPFTableKey_370295">
             <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
             <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="180"></el-table-column>
             <el-table-column prop="processName" label="工序名称" width="160" />
             <el-table-column prop="reportingTime" label="报工时间" min-width="160" />
             <el-table-column prop="producerName" label="生产人" min-width="160" />

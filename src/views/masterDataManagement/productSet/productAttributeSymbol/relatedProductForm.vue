@@ -10,7 +10,7 @@
             <div class="main" v-loading="formLoading">
                         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column customKey="JNPFTableKey_26735678567Form">
                             <el-table-column prop="code" label="代号" />
-                            <el-table-column prop="drawingNo" label="品名规格" />
+                            <el-table-column prop="drawingNo" label="型号" />
                             <el-table-column prop="productCode" label="产品编码" />
                             <el-table-column v-if="$store.getters.configData.product.enable_productName" prop="productName" label="产品名称" />
                             <el-table-column prop="remark" label="备注" />

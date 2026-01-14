@@ -97,10 +97,10 @@
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"
           v-if="isProjectSwitchFlag" @sort-change="sortChange" customKey="JNPFTableKey_372917">
- 
+
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -243,7 +243,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
 
@@ -482,9 +482,9 @@ export default {
         productCode: "",
         superQuery: {},
       }
-      
+
       this.$refs.SuperQuery.conditionList = []
-      this.searchList = [ 
+      this.searchList = [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'shelfSpaceName', fieldValue: '', label: '库位名称', symbol: 'like', searchType: 1, width: 120 },

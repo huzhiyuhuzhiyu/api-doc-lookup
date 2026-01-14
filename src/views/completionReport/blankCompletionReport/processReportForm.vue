@@ -28,7 +28,7 @@
                       </el-col>
                       <el-col :span="6">
                         <el-form-item>
-                          <el-input v-model="form.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
+                          <el-input v-model="form.productDrawingNo" @keyup.enter.native="search()" placeholder="型号"
                             clearable />
                         </el-form-item>
                       </el-col>
@@ -60,7 +60,7 @@
                 <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
                 <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="160"
                   sortable="custom"></el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
+                <el-table-column prop="productDrawingNo" label="型号" min-width="160"
                   sortable="custom"></el-table-column>
                 <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
                   <template slot-scope="scope">
@@ -96,7 +96,7 @@
                     <el-button size="mini" type="text" @click="reportRecordsFun(scope.row)">查看报工记录</el-button>
                   </template>
                 </el-table-column>
-              </JNPF-table> 
+              </JNPF-table>
             </el-collapse-item>
           </el-collapse>
 
@@ -224,16 +224,16 @@ export default {
       console.log("供需信息", row);
       this.processData = row
       this.processId=this.form.processId = row.id
-      
+
       this.getWorkListFun()
     },
     search() {
       this.getWorkListFun()
     },
-    reset() { 
+    reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.form={
-        
+
         productionOrderNo: "",
         productDrawingNo: "",
         processId: this.processId,

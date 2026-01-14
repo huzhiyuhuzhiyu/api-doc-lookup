@@ -86,7 +86,7 @@
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
               show-overflow-tooltip></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="drawingNo" label="型号" min-width="200" sortable="custom" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -239,7 +239,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {

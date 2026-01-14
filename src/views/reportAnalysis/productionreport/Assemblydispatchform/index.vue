@@ -38,7 +38,7 @@
           <el-table-column prop="partnerCode" label="客户编码" min-width="180">
           </el-table-column>
           <el-table-column prop="partnerName" label="客户名称" min-width="180" />
-          <el-table-column prop="productDrawingNo" label="产品图号" min-width="160" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="160" />
           <el-table-column prop="mainUnit" label="单位" min-width="120" />
           <el-table-column prop="dispatchQuantity" label="派工数量" min-width="140" />
           <el-table-column prop="completedQuantity" label="完工数量" min-width="140" />

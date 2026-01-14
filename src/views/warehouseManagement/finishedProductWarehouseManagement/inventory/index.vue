@@ -28,7 +28,7 @@
 
           <el-table-column prop="productCode" label="产品编码" width="120" />
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
-          <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
+          <el-table-column prop="productDrawingNo" label="型号" width="300" />
           <el-table-column prop="productionLineName" label="产线名称" width="120" />
           <el-table-column prop="classAttribute" label="产品分类" width="120">
             <template slot-scope="scope">

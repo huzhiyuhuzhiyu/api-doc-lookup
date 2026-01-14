@@ -17,7 +17,7 @@
           <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
             <div class="stoclInfo">
               <el-descriptions :column="1" class="box">
-                <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                <el-descriptions-item label="型号" class="drawingNo">{{ dataForm.productDrawingNo
                   }}</el-descriptions-item>
               </el-descriptions>
                 <el-descriptions class="margin-top" :column="4">
@@ -87,7 +87,7 @@
 
               <el-col :sm="24" :xs="24">
                 <div class="info">
-                  <span class="left-title">品名规格：</span>
+                  <span class="left-title">型号：</span>
                   <el-tooltip class="item" effect="dark" :content="currentProcess.productDrawingNo"
                     placement="top-start">
                     <span class="left-title ts">
@@ -701,10 +701,10 @@ export default {
               productsId: item.productsId, // 产品id
               productName: item.productName, // 产品名称
               productCode: item.productCode, // 产品编码
-              productDrawingNo: item.productDrawingNo, // 品名规格
-              model: item.model, // 品名规格
-              spec: item.spec, // 品名规格
-              drawingSheetNo: item.drawingSheetNo, // 品名规格
+              productDrawingNo: item.productDrawingNo, // 型号
+              model: item.model, // 型号
+              spec: item.spec, // 型号
+              drawingSheetNo: item.drawingSheetNo, // 型号
               ratio: item.ratio, // 转换系数
               calculationDirection: item.calculationDirection, // 计算方向
               mainUnit: item.mainUnit, // 单位

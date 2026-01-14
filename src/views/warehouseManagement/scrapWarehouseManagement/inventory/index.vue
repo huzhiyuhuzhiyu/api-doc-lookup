@@ -60,7 +60,7 @@
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
             sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" width="300" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -124,7 +124,7 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ],
@@ -181,7 +181,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
 
@@ -385,7 +385,7 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ]

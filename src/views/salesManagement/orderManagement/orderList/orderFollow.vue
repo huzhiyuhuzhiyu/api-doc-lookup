@@ -73,7 +73,7 @@
                     <el-table-column prop="productCode" label="产品编码" min-width="200"  />
                     <el-table-column prop="productName" label="产品名称" min-width="200"  >
                     </el-table-column>
-                    <el-table-column prop="drawingNo" label="产品图号" min-width="200"   />
+                    <el-table-column prop="drawingNo" label="型号" min-width="200"   />
                     <el-table-column prop="mainUnit" label="单位(主)" min-width="100"   />
                     <el-table-column prop="num" label="数量"   min-width="100" >  </el-table-column>
                     <el-table-column prop="distributionFlag" label="分配" min-width="100"    >
@@ -102,7 +102,7 @@
                     <el-table-column prop="productCode" label="产品编码" min-width="200"  />
                     <el-table-column prop="productName" label="产品名称" min-width="200"  >
                     </el-table-column>
-                    <el-table-column prop="drawingNo" label="产品图号" min-width="200"   />
+                    <el-table-column prop="drawingNo" label="型号" min-width="200"   />
                     <el-table-column prop="mainUnit" label="单位(主)" min-width="100"   />
                     <el-table-column prop="num" label="数量"   min-width="100" >  </el-table-column>
                     <el-table-column prop="distributionFlag" label="分配" min-width="100"    >
@@ -134,7 +134,7 @@
                         </el-table-column>
                         <el-table-column prop="productCode" label="产品编码"    />
                         <el-table-column prop="productName" label="产品名称"    />
-                        <el-table-column prop="drawingNo" label="产品图号"  />
+                        <el-table-column prop="drawingNo" label="型号"  />
                         <el-table-column prop="mainUnit" label="单位"  />
                         <el-table-column prop="num" label="数量"  />
                         <el-table-column prop="utilizationQuantity" label="利用库存量"  />
@@ -183,7 +183,7 @@
                               class="dataTables" border ref="MRPlistTable" customKey="JNPFTableKey_631705">
                               <el-table-column prop="productCode" label="产品编码"   width="140"/>
                               <el-table-column prop="productName" label="产品名称"    width="180"/>
-                              <el-table-column prop="productDrawingNo" label="产品图号"  min-width="470"  />
+                              <el-table-column prop="productDrawingNo" label="型号"  min-width="470"  />
                                  <el-table-column prop="bomFlagText" label="是否有BOM"  width="130">
                                   <template slot-scope="scope">
                                     <div :style="scope.row.bomId ?'color:#85ce60':'color:#f56c6c'">{{ scope.row.bomId ? "有" : '否' }}</div>
@@ -242,7 +242,7 @@
                               class="dataTabless" border ref="MRPlistTables" customKey="JNPFTableKey_768655">
                               <el-table-column prop="productCode" label="产品编码"   width="140"/>
                               <el-table-column prop="productName" label="产品名称"    width="180"/>
-                              <el-table-column prop="productDrawingNo" label="产品图号"  min-width="470"  />
+                              <el-table-column prop="productDrawingNo" label="型号"  min-width="470"  />
                               <el-table-column prop="planNo" label="计划单号"  width="180"/>
                               <el-table-column prop="demandQuantity" label="需求数量"  width="100">
                                 <template slot-scope="scope">
@@ -316,7 +316,7 @@
                               class="dataTablesss" border ref="listTabless" customKey="JNPFTableKey_365984">
                               <el-table-column prop="productCode" label="产品编码"  width="140"/>
                               <el-table-column prop="productName" label="产品名称"   width="180"/>
-                              <el-table-column prop="productDrawingNo" label="产品图号"  min-width="470"   />
+                              <el-table-column prop="productDrawingNo" label="型号"  min-width="470"   />
                               <el-table-column prop="bomFlagText" label="是否有BOM"  width="180">
                                   <template slot-scope="scope">
                                     <div :style="scope.row.bomId ?'color:#85ce60':'color:#f56c6c'">{{ scope.row.bomId ? "有" : '否' }}</div>
@@ -490,7 +490,7 @@
                         </el-table-column>
                         <el-table-column prop="productCode" label="产品编码"     width="180"/>
                         <el-table-column prop="productName" label="产品名称"   width="180"/>
-                        <el-table-column prop="productDrawingNo" label="产品图号"   width="180"/>
+                        <el-table-column prop="productDrawingNo" label="型号"   width="180"/>
                         <el-table-column prop="deliveryDate" label="交货日期"   width="140"/>
                         <el-table-column prop="productionStatus" label="生产状态" width="110"  fixed="right">
                           <template slot-scope="scope">

@@ -69,7 +69,7 @@
                         <el-table-column prop="productName" label="产品名称"  width="160"
                         v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="160" />
                         <el-table-column prop="projectName" label="所属项目" min-width="120"
                         v-if="isProjectSwitch == 1" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
@@ -184,7 +184,7 @@
                     <el-table-column prop="productName" label="产品名称"  width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+                    <el-table-column prop="productDrawingNo" label="型号" min-width="160" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120"
                     v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
@@ -257,7 +257,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -294,7 +294,7 @@
                 <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                 v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
+                <el-table-column prop="productDrawingNo" label="型号" min-width="160"
                   sortable="custom"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />

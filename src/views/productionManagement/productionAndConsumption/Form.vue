@@ -31,7 +31,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="productCode" label="产品编码" min-width="140" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="140" />
+                  <el-table-column prop="drawingNo" label="型号" min-width="140" />
                   <el-table-column prop="productCategoryName" label="产品分类" min-width="140" />
                   <el-table-column prop="unit" label="单位" min-width="140" />
                   <el-table-column prop="consumeQuantity" label="耗料数量" width="180" show-overflow-tooltip>

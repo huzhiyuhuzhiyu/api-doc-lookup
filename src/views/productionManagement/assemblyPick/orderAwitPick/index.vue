@@ -33,7 +33,7 @@
 
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="productDrawingNoS" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+                            <el-input v-model="productDrawingNoS" placeholder="型号" clearable @keyup.enter.native="search()" />
                           </el-form-item>
                         </el-col> -->
 
@@ -98,7 +98,7 @@
             </el-table-column>
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
@@ -108,7 +108,7 @@
             </el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="工单单号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="processName" label="工序名称" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" min-width="300" sortable="custom"></el-table-column>
@@ -197,7 +197,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
 
       superQueryVisible: false,
@@ -257,7 +257,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -609,7 +609,7 @@ export default {
       this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
       this.searchList = [
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ]
 
       this.$refs.SuperQuery.conditionList = []

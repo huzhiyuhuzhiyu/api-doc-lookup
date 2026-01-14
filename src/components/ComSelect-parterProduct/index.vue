@@ -201,7 +201,7 @@ export default {
     /* 列表数据请求体 */
     listRequestObj: {
       // type: Object | Function,
-      /* 
+      /*
         对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
         函数写法：(rowIndex) => {
           let id = this.linesList[rowIndex].id
@@ -253,7 +253,7 @@ export default {
         { prop: 'customerProductNo', label: ' 客户料号', type: 'input'  },
         { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productName', label: '产品名称', type: 'input' },
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'drawingNo', label: '型号', type: 'input' },
       ]
       /* [
           {prop:'code',label:'编码',type:'input'},
@@ -291,7 +291,7 @@ export default {
         { prop: 'customerProductNo', label: ' 客户料号'  },
         { prop: 'productCode', label: '产品编码' },
         { prop: 'productName', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         { prop: 'mainUnit', label: '单位(主)' },
       ]
       /* [

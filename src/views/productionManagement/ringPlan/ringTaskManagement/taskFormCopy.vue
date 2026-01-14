@@ -23,7 +23,7 @@
                 </el-descriptions>
                 <el-descriptions :column="1" class="box">
 
-                  <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                  <el-descriptions-item label="型号" class="drawingNo">{{ dataForm.productDrawingNo
                     }} </el-descriptions-item>
                 </el-descriptions>
                 <el-descriptions class="margin-top" :column="4">
@@ -131,7 +131,7 @@
                 </JNPF-table>
                 <JNPF-table ref="feed" v-if="categoryType == 'feed'" :data="feedData" fixedNO v-loading="tableloading"
                   :height="height" :key="Math.random()" customKey="JNPFTableKey_121084">
-                  <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
+                  <el-table-column prop="productDrawingNo" show-overflow-tooltip label="型号"></el-table-column>
                   <el-table-column prop="productCode" label="用料编码" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="processName" label="工序名称" />
@@ -159,7 +159,7 @@
                   v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_541199">
                   <el-table-column prop="workNo" label="工单号" min-width="200"></el-table-column>
                   <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330"></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="型号" min-width="330"></el-table-column>
                   <el-table-column prop="processName" label="工序名称" width="160" />
                   <el-table-column prop="reportingTime" label="报工时间" min-width="180" />
                   <el-table-column prop="producerName" label="生产人" min-width="120" />
@@ -180,7 +180,7 @@
                   <el-table-column prop="docNo" label="业务单号" min-width="200" />
                   <el-table-column prop="inspectorName" label="检验人" width="100" />
                   <el-table-column prop="inspectionDate" label="检验日期" width="120" />
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
+                  <el-table-column prop="productDrawingNo" label="型号" min-width="300" show-overflow-tooltip />
                   <el-table-column prop="productCode" label="产品编码" min-width="180" />
 
                   <el-table-column prop="mainUnit" label="单位" width="60" />
@@ -224,7 +224,7 @@
                   :height="height" v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_506311">
 
                   <el-table-column prop="orderNo" label="上传单编码" min-width="180" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
+                  <el-table-column prop="drawingNo" label="型号" min-width="300"  show-overflow-tooltip/>
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" />
@@ -257,7 +257,7 @@
                   :height="height" v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_446458">
 
                   <!-- <el-table-column prop="orderNo" label="上传单编码" min-width="180" /> -->
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
+                  <el-table-column prop="drawingNo" label="型号" min-width="300"  show-overflow-tooltip/>
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" />
@@ -284,7 +284,7 @@
                   v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_446808">
 
                   <!-- <el-table-column prop="orderNo" label="上传单编码" min-width="180" /> -->
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
+                  <el-table-column prop="drawingNo" label="型号" min-width="300" show-overflow-tooltip />
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" />
@@ -312,7 +312,7 @@
                 <JNPF-table ref="customerProduct" v-if="categoryType == 'customerProduct'" :data="customerProductData"
                   fixedNO :height="height" v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_678401">
                   <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
+                  <el-table-column prop="drawingNo" label="型号" min-width="305" />
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" />
                   <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">

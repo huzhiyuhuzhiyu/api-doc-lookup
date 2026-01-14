@@ -59,7 +59,7 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                      <el-table-column prop="drawingNo" label="型号" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
                             <div class="viewData">
@@ -235,7 +235,7 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                  <el-table-column prop="drawingNo" label="型号" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
                         <div class="viewData">

@@ -65,15 +65,16 @@
                         <el-table-column prop="productName" label="产品名称" width="120"
                           v-if="$store.getters.configData.product.enable_productName"></el-table-column>
                         <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip>
                           <template slot="header">
                             <span class="required">*</span>
-                            品名规格
+                            型号
                           </template>
+型号
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                               :rules="productRules.productDrawingNo">
-                              <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
+                              <el-input v-model="scope.row.productDrawingNo" placeholder="请输入型号" disabled />
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -343,7 +344,7 @@ export default {
         { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
         { prop: 'productCode', label: '产品编码', sortable: 'custom' },
         { prop: 'productName', label: '产品名称', sortable: 'custom',render:false },
-        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'productDrawingNo', label: '型号', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即外协', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位', width: 60 },
         { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', minWidth: 130 },
@@ -354,7 +355,7 @@ export default {
       // 客户产品查询条件
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
         { prop: 'deliveryDate', label: '交货日期', type: 'date' }
       ],
       getcooperativeProduct,
@@ -743,7 +744,7 @@ export default {
         // }
 
         this.$nextTick(() => {
-          this.$refs['sourceRef'].init(this.sourceData, this.dataFormTwo.data[index]) 
+          this.$refs['sourceRef'].init(this.sourceData, this.dataFormTwo.data[index])
         })
       })
     },
@@ -797,7 +798,7 @@ export default {
     openSeleceProductDialog() {
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
       ]
       if (this.$store.getters.configData.product.enable_productName) {
         this.ProductTableItems.forEach(tc=>{
@@ -1184,9 +1185,9 @@ export default {
         })
         .catch(() => { })
     },
- 
+
   },
-  mounted() { 
+  mounted() {
     // 页面发生缩放，触发明细表格表单的resize
     this.clientResize = () => {
       if (!this.$refs.table) return

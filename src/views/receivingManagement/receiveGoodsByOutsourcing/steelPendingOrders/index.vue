@@ -49,13 +49,13 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
-          <div class="JNPF-common-head"> 
+          <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
 
               <el-button type="primary" size="mini" icon="el-icon-plus" @click="mergeOrdrFun('dataTable')">{{ btnTitle }}</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
-              </el-button> 
+              </el-button>
               </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -88,7 +88,7 @@
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="drawingNo" label="型号" min-width="200" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
             <template v-if="isProportionSwitch === '1'">
@@ -246,7 +246,7 @@ export default {
 
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
 
@@ -566,7 +566,7 @@ export default {
       this.dataFormSubmit()
     },
     mergeOrdrFun(){
-     
+
       if( this.orderForm.mergeFlag){
          this.orderForm.mergeFlag=0
          this.btnTitle="合并待收货订单"
@@ -578,7 +578,7 @@ export default {
     this.dataFormSubmit()
     },
     reset() {
-     
+
       this.orderForm.mergeFlag=0
     this.$nextTick(() => { this.$refs.dataTable.doLayout() })
     this.$nextTick(()=>{

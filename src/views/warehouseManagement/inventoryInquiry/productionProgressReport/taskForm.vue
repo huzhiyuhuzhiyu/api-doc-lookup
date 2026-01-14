@@ -82,7 +82,7 @@ export default {
       searchList: [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
     }
   },
@@ -177,7 +177,7 @@ export default {
         // superQuery: {
         //   matchLogic: 'AND',
         //   condition: [
-        //     { field: 'productDrawingNo', fieldValue: drawingNo, label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        //     { field: 'productDrawingNo', fieldValue: drawingNo, label: '型号', symbol: 'like', searchType: 1, width: 120 },
         //   ],
         // }
       }

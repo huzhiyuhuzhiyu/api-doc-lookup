@@ -49,8 +49,8 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="品名规格">
-                    <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled></el-input>
+                  <el-form-item label="型号">
+                    <el-input v-model="dataForm.productDrawingNo" placeholder="型号" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">

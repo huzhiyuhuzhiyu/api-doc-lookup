@@ -22,7 +22,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
+                <el-input v-model="orderForm.productDrawingNo" placeholder="型号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -80,7 +80,7 @@
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="型号" width="160" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
@@ -297,7 +297,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {

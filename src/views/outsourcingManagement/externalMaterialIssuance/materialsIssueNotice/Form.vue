@@ -44,7 +44,7 @@
                           </el-form-item>
                         </el-col>
 
-                        <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data') 
+                        <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')
                           && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                           <el-form-item label="供应商名称" prop="partnerName">
                             <!-- 供应商选择弹窗  -->
@@ -148,7 +148,7 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="drawingNo" label="品名规格" width="220" key="5"
+                      <el-table-column prop="drawingNo" label="型号" width="220" key="5"
                         show-overflow-tooltip></el-table-column>
 
                       <el-table-column prop="processName" label="工序名称" width="160" key="7"
@@ -258,7 +258,7 @@
                     <el-table-column prop="productCode" label="产品编码" width="200"></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200"
+                    <el-table-column prop="drawingNo" label="型号" min-width="200"
                       show-overflow-tooltip></el-table-column>
 
                     <el-table-column prop="processName" label="工序名称" width="200"></el-table-column>
@@ -423,7 +423,7 @@
                     show-overflow-tooltip key="5"></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" width="290" key="7"
+                  <el-table-column prop="drawingNo" label="型号" width="290" key="7"
                     show-overflow-tooltip></el-table-column>
 
                   <el-table-column prop="processName" label="工序名称" width="100" key="9"
@@ -540,7 +540,7 @@
                 <el-table-column prop="productCode" label="产品编码" width="120"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="120"
                   v-if="isProductNameSwitch === '1'"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="drawingNo" label="型号" min-width="200" show-overflow-tooltip></el-table-column>
 
                 <el-table-column prop="processName" label="工序名称" width="100"></el-table-column>
                 <template v-if="isProportionSwitch === '1'">
@@ -694,7 +694,7 @@ export default {
       ProductTableItems: [
         { prop: 'orderNo', label: '订单号', sortable: 'custom', width: 200 },
         { prop: 'cooperativePartnerName', label: '供应商名称', sortable: 'custom2', width: 160 },
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', sortable: 'custom' },
         { prop: 'processName', label: '工序名称', sortable: 'custom2' },
 
         { prop: 'mainUnit', label: '单位', sortable: 'custom', width: 80 },
@@ -703,7 +703,7 @@ export default {
       ProductTableSearchList: [
         { prop: 'orderNo', label: '订单号', type: 'input' },
         { prop: 'cooperativePartnerName', label: '供应商名称', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+        { prop: 'productDrawingNo', label: '型号', type: 'input' }
       ], // 产品选择弹出框搜索条件
 
       tipsvisible: false,
@@ -1210,7 +1210,7 @@ export default {
             productsId: item.productsId, // 产品id
             productName: item.name, // 产品名称
             productCode: item.code, // 产品编码
-            drawingNo: item.drawingNo, // 品名规格
+            drawingNo: item.drawingNo, // 型号
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位

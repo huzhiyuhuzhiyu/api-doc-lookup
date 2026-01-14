@@ -79,7 +79,7 @@
                         <span class="required">*</span>备件名称
                       </template>
                     </el-table-column> -->
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                    <el-table-column prop="drawingNo" label="型号" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                     </el-table-column>
@@ -160,7 +160,7 @@
                         <span class="required">*</span>备件名称
                       </template>
                     </el-table-column> -->
-                <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                <el-table-column prop="drawingNo" label="型号" min-width="160" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                 </el-table-column>
@@ -255,7 +255,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '备件编码' },
         { prop: 'name', label: '备件名称' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         { prop: 'productCategoryName', label: '备件分类' },
       ],
       salesList: [],

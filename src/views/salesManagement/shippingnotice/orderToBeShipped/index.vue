@@ -93,7 +93,7 @@
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"/>
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom"/>
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom"/>
+            <el-table-column prop="drawingNo" label="型号" width="300" sortable="custom"/>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom"/>
             <el-table-column prop="oil" label="机型" width="160" sortable="custom"/>
             <el-table-column prop="accuracyLevel" label="制令号" width="160" sortable="custom"/>
@@ -277,7 +277,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {

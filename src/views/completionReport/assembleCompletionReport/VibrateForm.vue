@@ -20,8 +20,8 @@
           </el-col>
 
           <el-col :sm="8" :xs="24">
-            <el-form-item label="品名规格">
-              <el-input v-model="form.productDrawingNo" placeholder="品名规格" disabled />
+            <el-form-item label="型号">
+              <el-input v-model="form.productDrawingNo" placeholder="型号" disabled />
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -257,7 +257,7 @@ export default {
     handleBlur(item, data) {
       console.log("item", item, data, this.form.item);
       let total = Object.values(this.form.item)
-        .map(Number) // 将每个值转换为数字  
+        .map(Number) // 将每个值转换为数字
         .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.form.unqualifiedQuantity]), 6)
       this.$set(this.form, 'reportingQuantity', this.totalReportNum)

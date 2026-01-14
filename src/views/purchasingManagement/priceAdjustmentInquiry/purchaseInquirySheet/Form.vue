@@ -119,7 +119,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="productsDrawingNo" label="产品图号" key="productsDrawingNo">
+                  <el-table-column prop="productsDrawingNo" label="型号" key="productsDrawingNo">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productsDrawingNo'">
 

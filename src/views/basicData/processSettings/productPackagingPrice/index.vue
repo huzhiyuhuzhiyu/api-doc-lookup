@@ -47,7 +47,7 @@ export default {
       },
       tableItems: [
         { prop: 'productsCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
-        { prop: 'drawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', minWidth: '160', sortable: 'custom' },
 
         { prop: 'effectiveDate', label: '生效日期', minWidth: '140' },
         { prop: 'attributeMethod', label: '属性名称', minWidth: '140', sortable: 'custom' },
@@ -60,7 +60,7 @@ export default {
           type: 'select',
           options: [{ label: '无单价', value: 0 }, { label: '有单价', value: 1 }, { label: '所有', value: '' }]
         },
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'drawingNo', label: '型号', type: 'input' },
         { prop: 'attributeMethod', label: '包装方式', type: 'select', options: [] }
       ],
       superQueryJson: [

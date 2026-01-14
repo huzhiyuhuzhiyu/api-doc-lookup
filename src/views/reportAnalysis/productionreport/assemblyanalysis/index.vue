@@ -52,7 +52,7 @@
           </el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="180" />
           <el-table-column prop="productName" label="产品名称" min-width="180" />
-          <el-table-column prop="productDrawingNo" label="产品图号" min-width="180" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="180" />
           <el-table-column prop="itemNumber" label="项号" min-width="140" />
           <el-table-column prop="calcState" label="分析状态" min-width="120">
             <template slot-scope="scope">

@@ -69,7 +69,7 @@
                           <span class="required">*</span>设备名称
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="drawingNo" label="设备规格" min-width="160" show-overflow-tooltip>
+                      <el-table-column prop="drawingNo" label="型号" min-width="160" show-overflow-tooltip>
                       </el-table-column>
                       <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                       </el-table-column>
@@ -194,7 +194,7 @@
     </div>
   </transition>
 </template>
-    
+
 <script>
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
@@ -246,7 +246,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         { prop: 'productCategoryName', label: '产品分类' },
         { prop: 'availableQuantity', label: '可用库存数量' },
       ],
@@ -400,7 +400,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -622,4 +622,3 @@ export default {
   display: inline-block;
 }
 </style>
-    

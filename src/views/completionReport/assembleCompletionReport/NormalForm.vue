@@ -20,8 +20,8 @@
           </el-col>
 
           <el-col :sm="8" :xs="24">
-            <el-form-item label="品名规格">
-              <el-input v-model="form.productDrawingNo" placeholder="品名规格" disabled />
+            <el-form-item label="型号">
+              <el-input v-model="form.productDrawingNo" placeholder="型号" disabled />
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -232,11 +232,11 @@ export default {
   methods: {
     handleBlur2() {
       this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
- 
+
     },
     handleBlur3() {
       this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
-       
+
     },
     //生产人
     hangleSelectSales(e, r) {

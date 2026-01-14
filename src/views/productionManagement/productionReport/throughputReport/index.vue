@@ -32,7 +32,7 @@
                   <el-form-item>
                     <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                       @keyup.enter.native="search('basic')" />
-                  
+
                     <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                       clearable>
                       <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -45,7 +45,7 @@
                   </el-form-item>
                 </el-col>
               </template>
-           
+
                 <el-col :span="4">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -53,7 +53,7 @@
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                     </el-button>
                   </el-form-item>
-                </el-col> 
+                </el-col>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -73,7 +73,7 @@
                   </el-tooltip>
                 </div>
               </div>
- 
+
               <JNPF-table ref="dataTableProduce" v-loading="listLoading" :data="produceData" :fixedNO="true" @sort-change="sortChange" custom-column  :setColumnDisplayList="columnList">
                 <el-table-column prop="productionOrderType" label="任务类型" min-width="120" sortable="custom">
                   <template slot-scope="scope">
@@ -86,7 +86,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="120"  sortable="custom"/>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="120"  sortable="custom"/>
+                <el-table-column prop="productDrawingNo" label="型号" min-width="120"  sortable="custom"/>
                 <el-table-column prop="producerName" label="生产人" min-width="120"  sortable="custom"/>
                 <el-table-column prop="mainUnit" label="单位" min-width="100" sortable="custom"></el-table-column>
                 <el-table-column prop="sumQuantity" label="产量合计" min-width="140" sortable="custom"></el-table-column>
@@ -149,7 +149,7 @@ export default {
             matchLogic: "AND",
             condition: []
         }
-      }, 
+      },
       finishProductFlagList:[
         {label:"非成品",value:false},
         {label:"成品",value:true},
@@ -157,7 +157,7 @@ export default {
       searchList1:[
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
       superQueryProduce: [
         {
@@ -180,27 +180,27 @@ export default {
         },
            {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
-        }, 
+        },
         {
           prop: 'producerName',
           label: "生产人",
           type: 'input'
-        }, 
+        },
            {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
-        }, 
+        },
       ],
       superQueryVisible: false,
 
 
 
-      
 
-  
+
+
 
 
 
@@ -212,17 +212,17 @@ export default {
       listLoading: false,
       activeName: "produce",
       reportCode:'',
-    
-    
+
+
       total: 0,
       formVisible: false,
       exportFormVisible:false,
     }
   },
-  async created() { 
+  async created() {
     await this.getProjectSwitch()
     this.superForm=this.productForm = JSON.parse(JSON.stringify(this.productFormList))
-    
+
    this.search('basic')
   },
   watch: {
@@ -266,10 +266,10 @@ export default {
         }).catch(() => {
           this.listLoading = false
         })
-    
-       
-    }, 
-  
+
+
+    },
+
     search(type) {
         if (this.productionDate && this.productionDate.length > 0) {
           this.productForm.startDate = this.productionDate[0].replace(/ 0(?!0)/g, " ")
@@ -294,15 +294,15 @@ export default {
                   fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
                 }
               })
-          } 
+          }
           this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-   
-      
-    
+
+
+
       this.initData()
     },
     reset() {
@@ -312,10 +312,10 @@ export default {
         this.searchList1=[
              { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.$refs.SuperQuery.conditionList = []
-     
+
       this.search('basic')
     },
       // 导出
@@ -338,8 +338,8 @@ export default {
         targetListQuery=this.productForm
         exportName='产量报表'
       }
-  
-         
+
+
       let _data = {
         ...targetListQuery,
         exportType: this.reportCode,

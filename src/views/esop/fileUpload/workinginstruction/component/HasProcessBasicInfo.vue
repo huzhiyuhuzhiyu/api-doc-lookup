@@ -353,7 +353,7 @@ export default {
                      { prop: 'partnerName', label: '客户名称',type: 'input' },
                      { prop: 'customerProductNo', label: '客户料号' ,type: 'input'},
                      { prop: 'productName', label: '产品名称',type: 'input',visible:nameFlag },
-                     { prop: 'drawingNo', label: '品名规格',type: 'input' }
+                     { prop: 'drawingNo', label: '型号',type: 'input' }
                  ])
 
                 this.customerProductProductTableItems = filterArr( [
@@ -362,7 +362,7 @@ export default {
                         { prop: 'customerProductNo', label: '客户料号', },
                         { prop: 'productCode', label: '产品编码' },
                         { prop: 'productName', label: '产品名称',visible:nameFlag },
-                        { prop: 'drawingNo', label: '品名规格' },
+                        { prop: 'drawingNo', label: '型号' },
                         { prop: 'projectName', label: '所属项目',visible:projectFlag },
                         { prop: 'price', label: '销售单价(含税)',width:160 },
                         { prop: 'excludingTaxPrice', label: '销售单价(不含税)',width:160 },
@@ -510,10 +510,10 @@ export default {
                                 </el-row>
                                 <el-row :gutter="10">
                                     <el-col :span="6">
-                                        <el-form-item label="品名规格" prop="drawingNo">
+                                        <el-form-item label="型号" prop="drawingNo">
                                                 <ComSelect-page
                                                     v-if="isNotCustomerProductPage"
-                                                    placeholder="请选择品名规格"
+                                                    placeholder="请选择型号"
                                                     ref="ComSelect-page"
                                                     v-model="dataForm.drawingNo"
                                                     @change="submitCustomerProduct"
@@ -528,7 +528,7 @@ export default {
                                                     :elementShow="true"  />
                                                 <ComSelect-page
                                                     v-else
-                                                    placeholder="请选择品名规格"
+                                                    placeholder="请选择型号"
                                                     :before-open="beforeChooseProduct"
                                                     ref="ComSelect-page"
                                                     v-model="dataForm.drawingNo"

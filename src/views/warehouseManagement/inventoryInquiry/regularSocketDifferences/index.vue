@@ -24,7 +24,7 @@ export default {
                 }],
                 pageNum: 1,
                 pageSize: 50,
-                
+
             },
             tableItems:[],
             columnList:[],
@@ -194,7 +194,7 @@ export default {
                 {
                     fieldValue: '',
                     field: 'drawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     prop: 'drawingNo',
                     symbol: 'like',
                     searchType: 1

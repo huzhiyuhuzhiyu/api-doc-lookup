@@ -90,6 +90,11 @@ export function getColumns() {
       minWidth: 200
     },
     {
+      prop: "drawingNo",
+      label: "型号",
+      minWidth: 200
+    },
+    {
       prop: "productName",
       label: "产品名称",
       minWidth: 200

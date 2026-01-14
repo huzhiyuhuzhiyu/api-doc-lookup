@@ -43,8 +43,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="品名规格" prop="productsDrawingNo">
-                          <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" readonly
+                        <el-form-item label="型号" prop="productsDrawingNo">
+                          <el-input v-model="dataForm.productsDrawingNo" placeholder="型号" readonly
                             @focus="openSelectProductFun">
                           </el-input>
                         </el-form-item>
@@ -337,7 +337,7 @@
                   <!--                    <el-table-column prop="productsCode" label="产品编码"></el-table-column>-->
                   <!--                    <el-table-column prop="productsName" label="产品名称"  width="160"-->
                   <!--                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>-->
-                  <!--                    <el-table-column prop="productsDrawingNo" label="品名规格" />-->
+                  <!--                    <el-table-column prop="productsDrawingNo" label="型号" />-->
                   <!--                    <el-table-column prop="qty" label="基本数量">-->
                   <!--                        <template slot-scope="scope">-->
                   <!--                            <el-input></el-input>-->
@@ -535,7 +535,7 @@
           <el-table ref="product" :data="detailDataList" border max-height="380">
             <el-table-column type="index" width="70" label="序号" fixed />
             <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300"
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processName" show-overflow-tooltip label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
@@ -720,7 +720,7 @@ export default {
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
         ],
         productsDrawingNo: [
-          { required: true, message: '品名规格不能为空', trigger: 'blur' }
+          { required: true, message: '型号不能为空', trigger: 'blur' }
         ],
         cooperativePartnerName: [
           { required: true, message: '客户名称不能为空', trigger: 'change' }
@@ -802,7 +802,7 @@ export default {
   watch: {
     'dataForm.productionWeight': {
       handler: function (newVal, oldVal) {
-        if (!this.dataForm.productsDrawingNo) return this.$message.error('请先选择品名规格')
+        if (!this.dataForm.productsDrawingNo) return this.$message.error('请先选择型号')
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
             if (this.weight && this.quantity) {
@@ -1496,7 +1496,7 @@ console.log("this.$refs.dataForm",this.$refs.dataForm);
       this.linesFormItems_right = [
         { prop: "productsCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
         { prop: "productsName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
-        { prop: "productsDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        { prop: "productsDrawingNo", label: "型号", value: "", type: 'view', minWidth: 150 },
         {
           prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
           customComponent: 'ComSelect-page', renderTree: false, change: this.getProcessData,

@@ -196,7 +196,7 @@
                 <el-table-column prop="productsCode" label="产品编码" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="productsName" label="产品名称" min-width="140" show-overflow-tooltip
                   sortable="custom" />
-                <el-table-column prop="drawingNo" label="产品图号" min-width="140" show-overflow-tooltip sortable="custom" />
+                <el-table-column prop="drawingNo" label="型号" min-width="140" show-overflow-tooltip sortable="custom" />
                 <el-table-column prop="bargaining" label="协议价" min-width="140" />
                 <el-table-column prop="taxRate" label="税率%" min-width="140" />
                 <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="140" />

@@ -9,13 +9,13 @@
     <div style="padding: 10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="品名规格" prop="drawingNo">
+        <el-form-item label="型号" prop="drawingNo">
           <template slot="label">
-            品名规格<span class="required">*</span>
+            型号<span class="required">*</span>
           </template>
-          <ComSelect-page clearable :isdisabled="btnType === 'look'" 
-            v-model="dataForm.drawingNo" :beforeSubmit="beforeSubmit" 
-            @change="addth" :tableItems="productTableItems" :placeholder="'请选择品名规格'" title="选择品名规格"
+          <ComSelect-page clearable :isdisabled="btnType === 'look'"
+            v-model="dataForm.drawingNo" :beforeSubmit="beforeSubmit"
+            @change="addth" :tableItems="productTableItems" :placeholder="'请选择型号'" title="选择型号"
             treeTitle="产品分类" :methodArr="productMethodArr" :listMethod="getProductList"
             :listRequestObj="productListRequestObj" :paramsObj="{ oldData }"
             :searchList="productTableSearchList" />
@@ -78,7 +78,7 @@ export default {
       productTableItems: [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
       ],
       // 产品搜索条件
       productTableSearchList: [
@@ -97,7 +97,7 @@ export default {
       },
       getProductList,
       dataRule: {
-        drawingNo: [{ required: true, message: '请输入品名规格', trigger: 'blur' }],
+        drawingNo: [{ required: true, message: '请输入型号', trigger: 'blur' }],
         weight: [
           { required: true, message: '请输入重量', trigger: 'blur' },
         ],
@@ -133,13 +133,13 @@ export default {
     init(row, type) {
 
       this.visible = true
-      
+
       if (type == 'add') {
         // this.$refs['dataForm'].resetFields()
         this.dataForm = { }
       } else if (type == 'edit') {
         this.dataForm = {...row }
-      
+
       }
       this.title = !this.dataForm.id ? '新建重量数量换算' : '编辑重量数量换算'
     },

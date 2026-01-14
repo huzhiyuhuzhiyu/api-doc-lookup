@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.drawingNo" placeholder="毛坯规格型号" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入型号" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">

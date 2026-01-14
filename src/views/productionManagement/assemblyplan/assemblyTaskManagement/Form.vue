@@ -33,8 +33,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="品名规格" prop="productDrawingNo">
-                          <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled>
+                        <el-form-item label="型号" prop="productDrawingNo">
+                          <el-input v-model="dataForm.productDrawingNo" placeholder="型号" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -215,7 +215,7 @@
               <el-collapse v-model="activeNames3" class="orderInfo">
                 <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
                   <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_156236">
-                    <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
+                    <el-table-column prop="productDrawingNo" show-overflow-tooltip label="型号"></el-table-column>
                     <el-table-column prop="productCode" label="用料编码" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="processName" label="工序名称" />
@@ -310,7 +310,7 @@
           <el-collapse v-model="activeNames3" v-if="btnType == 'feed'" class="orderInfo">
             <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
               <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_278739">
-                <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
+                <el-table-column prop="productDrawingNo" show-overflow-tooltip label="型号"></el-table-column>
                 <el-table-column prop="productCode" label="用料编码" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="processName" label="工序名称" width="120"  />
@@ -342,7 +342,7 @@
               <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_983076">
                 <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
                 <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>
+                <el-table-column prop="productDrawingNo" label="型号" min-width="180"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="processName" label="工序名称" width="160" />
                 <el-table-column prop="reportingTime" label="报工时间" min-width="160" />

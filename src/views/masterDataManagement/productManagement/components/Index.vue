@@ -56,7 +56,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" :placeholder="productName + '规格'" clearable
+              <el-input v-model="listQuery.productDrawingNo" :placeholder="请输入型号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -129,7 +129,7 @@
           </el-table-column>
           <el-table-column v-if="isProductNameSwitch === '1'" prop="name" :label="productName + '名称'" min-width="160"
             sortable="custom" />
-          <el-table-column prop="drawingNo" :label="productName + '规格'" min-width="200" sortable="custom" />
+          <el-table-column prop="drawingNo" :label="型号" min-width="200" sortable="custom" />
 
           <el-table-column prop="productCategoryName" :label="productName + '分类'" width="120">
 
@@ -261,12 +261,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="品名规格" prop="drawingNo">
+            <el-form-item label="型号" prop="drawingNo">
               <template slot="label">
-                {{ productName + '品名规格' }}
+                {{ productName + '型号' }}
                 <span class="required">*</span>
               </template>
-              <el-input v-model="quickForm.drawingNo" :placeholder="'请输入' + productName + '品名规格'"></el-input>
+              <el-input v-model="quickForm.drawingNo" :placeholder="'请输入' + productName + '型号'"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -433,7 +433,7 @@ export default {
           }
         ],
         drawingNo: [
-          { required: true, message: '请输入品名规格', trigger: 'blur' },
+          { required: true, message: '请输入型号', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               if (!value) {
@@ -450,7 +450,7 @@ export default {
                     if (!res.data) {
                       callback()
                     } else {
-                      callback(new Error('此品名规格已存在'))
+                      callback(new Error('此型号已存在'))
                     }
                   })
                   .catch((err) => {
@@ -485,7 +485,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: this.productName + '品名规格',
+          label: this.productName + '型号',
           type: 'input'
         },
         {

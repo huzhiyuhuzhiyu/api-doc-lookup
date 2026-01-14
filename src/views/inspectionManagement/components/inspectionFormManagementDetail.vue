@@ -191,7 +191,7 @@ export default {
       wareVisibled: false,
       ProductListRequestObjs: {},
       ProductTableItemss: [
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         { prop: 'code', label: '产品编码' },
         // { prop: 'name', label: '产品名称' },
         { prop: 'sheetName', label: '图纸名称' },
@@ -420,7 +420,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           value: '',
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],

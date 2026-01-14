@@ -65,7 +65,7 @@
           </el-table-column>
           <el-table-column prop="reconciliationDate" label="对账日期" min-width="180" sortable="custom" />
           <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" sortable="custom" />
- 
+
 
           <el-table-column prop="totalPaymentAmount" label="已收款金额" width="130" sortable="custom">
             <template slot-scope="scope">
@@ -89,7 +89,7 @@
           </el-table-column>
           <el-table-column prop="ordersNo" label="资产出售单号" width="180" sortable="custom" />
           <el-table-column prop="propertyName" label="资产名称" width="180" sortable="custom" />
-          <el-table-column prop="propertyCode" label="资产编码" width="160" 
+          <el-table-column prop="propertyCode" label="资产编码" width="160"
             show-overflow-tooltip></el-table-column>
           <el-table-column prop="totalExcludingTaxAmount" label="金额(不含税)" width="120" />
           <el-table-column prop="totalIncludingTaxAmount" label="金额(含税)" width="130" sortable="custom" />
@@ -113,9 +113,9 @@
   </div>
 </template>
 
-<script> 
+<script>
 
-import {propertyAccountReconciliationLineList} from '@/api/bimPropertyCategory/index' 
+import {propertyAccountReconciliationLineList} from '@/api/bimPropertyCategory/index'
 import JNPFForm from '../salePendReconciliation/Form.vue'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 // import withdrawnForm from '../purReconciliation/withranForm.vue'
@@ -176,7 +176,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {

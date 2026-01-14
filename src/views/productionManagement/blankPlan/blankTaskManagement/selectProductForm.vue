@@ -15,11 +15,11 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input @keyup.native.enter="search()"  v-model="form.productDrawingNo" placeholder="品名规格" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.productDrawingNo" placeholder="型号" clearable />
               </el-form-item>
             </el-col>
-            
-        
+
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -36,7 +36,7 @@
             <el-table-column prop="code" label="产品编码" sortable="custom" />
             <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="150"></el-table-column>
+            <el-table-column prop="drawingNo" label="型号" sortable="custom" min-width="150"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="150" sortable="custom" />
@@ -56,14 +56,14 @@
   </el-dialog>
 </template>
 <script>
-import { getProducts} from '@/api/masterDataManagement/index.js' // 产品列表 
+import { getProducts} from '@/api/masterDataManagement/index.js' // 产品列表
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   mixins: [getProjectList],
   data() {
     return {
-      
+
       customerVisible: false,
       form:{},
       formList: {
@@ -71,14 +71,14 @@ export default {
         productDrawingNo:"",
         productCode:"",
         pageNum: 1,
-        pageSize: 20, 
+        pageSize: 20,
         productStatus:"enable",
         orderItems: [{
           asc: false,
           column: ""
         },],
-        
-      }, 
+
+      },
       listLoading: false,
       total: 0,
       tableDataList: [],
@@ -90,7 +90,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -98,7 +98,7 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
- 
+
       } catch (error) { }
     },
     cancelFun(){
@@ -131,10 +131,10 @@ export default {
       this.customerVisible = false
     },
     getbatchNumList(id) {
-      this.listLoading = true 
+      this.listLoading = true
       this.form.projectId = id
       this.form.classAttributeList=this.isXBN?["raw_material",'raw_material']:['raw_material']
-      getProducts(this.form).then(res => {      
+      getProducts(this.form).then(res => {
 
         this.tableDataList=res.data.records
         this.total=res.data.total
@@ -151,7 +151,7 @@ export default {
     reset() {
     this.form=JSON.parse(JSON.stringify(this.formList))
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-     
+
       this.search()
     },
   }

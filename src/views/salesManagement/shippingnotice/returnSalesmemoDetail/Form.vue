@@ -188,7 +188,7 @@
                 </el-table-column>
                 <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="productDrawingNo" label="产品图号" min-width="220" key="2" show-overflow-tooltip>
+                <el-table-column prop="productDrawingNo" label="型号" min-width="220" key="2" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="ordersNum" label="订单数量" width="140" key="3"></el-table-column>
 

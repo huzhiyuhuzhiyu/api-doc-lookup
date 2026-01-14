@@ -6,7 +6,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                客户名称、客户料号、品名规格
+                客户名称、客户料号、型号
                 <el-col :span="4">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
@@ -17,10 +17,10 @@
                     <el-input v-model.trim="listQuery.partnerCode" placeholder="请输入客户料号" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
-               
+
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model.trim="listQuery.customerProductDrawingNo" placeholder="请输入品名规格" clearable @keyup.enter.native="search()" />
+                    <el-input v-model.trim="listQuery.customerProductDrawingNo" placeholder="请输入型号" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
 
@@ -54,7 +54,7 @@
                 <el-table-column prop="customerProductDrawingNo" label="客户产品图号" sortable="custom" min-width="400" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="drawingNo" label="产品图号" min-width="400" />
+                <el-table-column prop="drawingNo" label="型号" min-width="400" />
                 <el-table-column prop="purchasePrice" min-width="120" label="销售牌价" />
                 <el-table-column prop="price" label="实际价格(含税)" width="160" />
                 <el-table-column prop="excludingTaxPrice" label="实际价格(不含税)" width="160" />
@@ -64,7 +64,7 @@
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                 <el-table-column prop="remark" min-width="200" label="备注1" />
                 <el-table-column prop="remark2" min-width="200" label="备注2" />
-            
+
               </JNPF-table>
               <pagination :total="total" :page.sync="listQuery.pageNum" :background="background" :limit.sync="listQuery.pageSize" @pagination="initData" />
             </div>
@@ -122,7 +122,7 @@
                 <el-table-column prop="customerProductDrawingNo" label="客户产品图号" sortable="custom" min-width="400" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="drawingNo" label="产品图号" min-width="400" />
+                <el-table-column prop="drawingNo" label="型号" min-width="400" />
                 <el-table-column prop="purchasePrice" min-width="120" label="销售牌价" />
                 <el-table-column prop="price" label="实际价格(含税)" width="160" />
                 <el-table-column prop="excludingTaxPrice" label="实际价格(不含税)" width="160" />
@@ -162,7 +162,7 @@
 
   </div>
 </template>
-  
+
 <script>
 import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData } from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
@@ -332,7 +332,7 @@ export default {
     },
     dataFormSubmit() {
       this.listQuery.pageNum = 1
-      
+
       this.initData()
     },
     initData() {

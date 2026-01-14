@@ -215,12 +215,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="品名规格" prop="drawingNo">
+            <el-form-item label="型号" prop="drawingNo">
               <template slot="label">
-                品名规格
+                型号
                 <span class="required">*</span>
               </template>
-              <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
+              <el-input v-model="quickForm.drawingNo" placeholder="请输入型号"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -414,7 +414,7 @@ export default {
           }
         ],
         drawingNo: [
-          { required: true, message: '请输入品名规格', trigger: 'blur' },
+          { required: true, message: '请输入型号', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               if (!value) {
@@ -431,7 +431,7 @@ export default {
                     if (!res.data) {
                       callback()
                     } else {
-                      callback(new Error('此品名规格已存在'))
+                      callback(new Error('此型号已存在'))
                     }
                   })
                   .catch((err) => {

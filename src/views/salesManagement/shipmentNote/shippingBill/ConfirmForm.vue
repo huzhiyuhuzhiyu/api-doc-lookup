@@ -150,7 +150,7 @@ export default {
           },
         },
         { prop: 'partnerCode', label: '客户编码', type: 'view', minWidth: '180' },
-        { prop: 'drawingNo', label: '品名规格', type: 'view', minWidth: '180' },
+        { prop: 'drawingNo', label: '型号', type: 'view', minWidth: '180' },
         { prop: 'hsProductDrawingNo', label: '报关品名', type: 'view', minWidth: '180' },
         { prop: 'num', label: '发货数量', type: 'view', minWidth: '180' },
         { prop: 'mainUnit', label: '单位', type: 'view', minWidth: '180' },

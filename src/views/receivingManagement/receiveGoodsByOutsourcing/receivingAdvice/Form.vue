@@ -126,7 +126,7 @@
                     <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="140" v-if="$store.getters.configData.product.enable_productName"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
+                    <el-table-column prop="drawingNo" label="型号" min-width="200" show-overflow-tooltip />
 
                     <el-table-column prop="productCategoryName" label="产品分类" width="140"
                       show-overflow-tooltip></el-table-column>
@@ -340,7 +340,7 @@
                   key="2"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="140" show-overflow-tooltip v-if="$store.getters.configData.product.enable_productName"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
+                <el-table-column prop="drawingNo" label="型号" width="200" show-overflow-tooltip />
                 <el-table-column prop="productCategoryName" label="产品分类" width="140"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
@@ -605,7 +605,7 @@ export default {
         superQuery: {}
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom', minWidth: 180 },
+        { prop: 'drawingNo', label: '型号', sortable: 'custom', minWidth: 180 },
         { prop: 'productCode', label: '产品编码', sortable: 'custom', minWidth: 180 },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'purchaseQuantity', label: '数量' },
@@ -617,7 +617,7 @@ export default {
       ], // 产品选择弹出框搜索条件
 
       ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
         { prop: 'productName', label: '产品名称', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
@@ -928,7 +928,7 @@ export default {
       if (this.isProjectSwitch === '1') {
         this.ProductTableItems = [
           { prop: 'projectName', label: '所属项目', sortable: 'custom', minWidth: 120 },
-          { prop: 'drawingNo', label: '品名规格', sortable: 'custom', minWidth: 180 },
+          { prop: 'drawingNo', label: '型号', sortable: 'custom', minWidth: 180 },
           { prop: 'productCode', label: '产品编码', sortable: 'custom', minWidth: 180 },
           { prop: 'mainUnit', label: '单位' },
           { prop: 'purchaseQuantity', label: '数量' },
@@ -948,7 +948,7 @@ export default {
         )
       } else {
         this.ProductTableItems = [
-          { prop: 'drawingNo', label: '品名规格', sortable: 'custom', minWidth: 180 },
+          { prop: 'drawingNo', label: '型号', sortable: 'custom', minWidth: 180 },
           { prop: 'productCode', label: '产品编码', sortable: 'custom', minWidth: 180 },
           { prop: 'mainUnit', label: '单位' },
           { prop: 'purchaseQuantity', label: '数量' },
@@ -1189,7 +1189,7 @@ export default {
             productsId: item.productsId, // 产品id
             productName: item.name, // 产品名称
             productCode: item.productCode, // 产品编码
-            drawingNo: item.drawingNo, // 品名规格
+            drawingNo: item.drawingNo, // 型号
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位

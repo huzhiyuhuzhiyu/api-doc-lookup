@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
- 
+
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
@@ -17,7 +17,7 @@
                   <el-form-item>
                     <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                       @keyup.enter.native="search('basic')" />
-                  
+
                     <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                       clearable>
                       <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -29,7 +29,7 @@
                       :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                   </el-form-item>
                 </el-col>
-              </template> 
+              </template>
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -37,7 +37,7 @@
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                     </el-button>
                   </el-form-item>
-                </el-col> 
+                </el-col>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -63,7 +63,7 @@
                 <el-table-column prop="workNo" label="工单单号" min-width="180" />
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位" min-width="100" />
                 <el-table-column prop="processName" label="工序名称" min-width="120" />
                 <el-table-column prop="processCode" label="工序编码" min-width="120" />
@@ -77,14 +77,14 @@
                   </template>
                 </el-table-column>
               </JNPF-table>
-     
+
               <pagination :total="workTotal" :page.sync="workForm.pageNum" :limit.sync="workForm.pageSize" @pagination="initData" />
             </div>
             <!-- 高级查询 -->
             <SuperQuery  :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
            <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
           </div>
-     
+
     </div>
   </div>
 </template>
@@ -107,8 +107,8 @@ export default {
 
 
 
- 
-      workForm:{}, 
+
+      workForm:{},
       workTotal:0,
       workData:[],
       workFormList:{
@@ -132,7 +132,7 @@ export default {
             matchLogic: "AND",
             condition: []
         }
-      }, 
+      },
       searchList3:[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
@@ -148,27 +148,27 @@ export default {
           prop: 'productionOrderNo',
           label: "生产任务单号",
           type: 'input'
-        }, 
+        },
          {
           prop: 'workNo',
           label: "工单单号",
           type: 'input'
-        }, 
+        },
         {
           prop: 'productName',
           label: "产品名称",
           type: 'input'
-        },   
+        },
           {
           prop: 'productCode',
           label: "产品编码",
           type: 'input'
-        }, 
+        },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
-        }, 
+        },
         {
           prop: 'maunit',
           label: "单位",
@@ -183,8 +183,8 @@ export default {
           prop: 'processCode',
           label: "工序编码",
           type: 'input'
-        }, 
-         { 
+        },
+         {
           prop: 'planStartDate',
           label: '计划开始日期',
           type: 'daterange',
@@ -193,7 +193,7 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        { 
+        {
           prop: 'planEndDate',
           label: '计划结束日期',
           type: 'daterange',
@@ -201,39 +201,39 @@ export default {
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
-        }, 
+        },
       ],
       superQueryVisible: false,
 
 
 
 
- 
+
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
       visible: false,
       tableData: [],
       listLoading: false,
       reportCode:'',
-    
-    
+
+
       total: 0,
       formVisible: false,
       exportFormVisible:false,
     }
   },
-  async created() { 
+  async created() {
     this.superForm=this.workForm = JSON.parse(JSON.stringify(this.workFormList))
    this.search('basic')
   },
 
   methods: {
-  
+
     columnSetFunWork(){
       this.$refs['dataTableWork'].showDrawer()
     },
-   
- 
+
+
       superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -250,7 +250,7 @@ export default {
         }
         this.workForm.orderItems[0].asc = order !== "descending"
         this.workForm.orderItems[0].column = order === null ? "" : newProp
-    
+
       this.initData()
     },
     moreQueries() {
@@ -266,10 +266,10 @@ export default {
         }).catch(() => {
           this.listLoading = false
         })
-    }, 
-  
+    },
+
     search(type) {
-   
+
         Object.keys(this.workForm).forEach(key => { // 清除搜索条件两端空格
           let item = this.workForm[key]
           this.workForm[key] = typeof item === 'string' ? item.trim() : item
@@ -286,20 +286,20 @@ export default {
                   fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
                 }
               })
-          } 
+          }
           this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
-      } 
-      
-    
+      }
+
+
       this.initData()
     },
     reset() {
-    
+
         this.$refs['dataTableWork'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-     
+
         this.superForm= this.workForm = JSON.parse(JSON.stringify(this.workFormList))
           this.searchList3=[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
@@ -325,7 +325,7 @@ export default {
         includeFieldMap[data.selectKey[i]] = data.selectVal[i];
       }
       let targetListQuery={},exportName="";
-   
+
        if(this.reportCode=='1252'){
         targetListQuery=this.workForm
         exportName='当日工单进度'

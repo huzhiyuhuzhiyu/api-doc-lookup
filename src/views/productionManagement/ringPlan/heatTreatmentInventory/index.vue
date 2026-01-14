@@ -12,7 +12,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入型号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -22,8 +22,8 @@
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            
-        
+
+
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -64,7 +64,7 @@
             <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
@@ -75,7 +75,7 @@
             <!-- <el-table-column prop="weight" label="重量(kg)" width="90" />
             <el-table-column prop="proportion" label="比重" width="80" />
             <el-table-column prop="discount" label="折扣" width="80" /> -->
-     
+
             <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
             <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
             <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
@@ -103,7 +103,7 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData">
-            
+
 
           </pagination>
         </div>
@@ -118,7 +118,7 @@
   </div>
 </template>
 
-<script> 
+<script>
 import moment from 'moment'
 import Form from './Form.vue'
 import { excelExport,getOrderFiledMap,getInventoryLineReport,getBimBusinessDetail,getBatchNumber } from '@/api/basicData/index'
@@ -147,7 +147,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
 
@@ -182,7 +182,7 @@ export default {
           prop: 'shelfSpaceName',
           label: '库位',
           type: 'input'
-        }, 
+        },
         {
           prop: 'latestStorageTime',
           label: '入库日期',
@@ -249,9 +249,9 @@ export default {
       computedValue2: 0,
       createRequirementDate: [],
       deliveryDate: [],
-    
+
       selectData: [],
-      pages: 0, // 总页数  
+      pages: 0, // 总页数
       columnList: ['weight',
         'proportion',
         'discount'],
@@ -306,7 +306,7 @@ export default {
   },
 
   methods: {
- 
+
     async getOrderFiledMap() {
       await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -335,9 +335,9 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
-       //     material //保持架材质          
+       //     material //保持架材质
       //     colour //颜色
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'shelfSpaceName')
       if (this.colourFlag === '1') {
@@ -553,7 +553,7 @@ export default {
 
     initData() {
       this.listLoading = true
- 
+
       getBatchNumber(this.listQuery)
         .then((res) => {
           console.log(res, '外协订单列表')

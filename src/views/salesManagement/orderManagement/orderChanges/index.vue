@@ -149,7 +149,7 @@
                 </el-col> -->
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="linesQuery.productDrawingNo" @keyup.enter.native="search()" :placeholder="`请输入品名规格`" />
+                    <el-input v-model="linesQuery.productDrawingNo" @keyup.enter.native="search()" :placeholder="`请输入型号`" />
                   </el-form-item>
                 </el-col>
 
@@ -200,10 +200,10 @@
                 </el-table-column>
                 <!-- <el-table-column prop="workOrderNo" label="工作令号" width="180" /> -->
                 <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="250" />
-                <!-- <el-table-column prop="customerProductDrawingNo" label="客户品名规格" min-width="160" sortable="custom" /> -->
+                <!-- <el-table-column prop="customerProductDrawingNo" label="客户型号" min-width="160" sortable="custom" /> -->
                 <el-table-column prop="productCode" label="产品编码" min-width="140" />
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="250" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="250" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
                 <el-table-column prop="num" label="原数量(主)" min-width="120" />
@@ -305,7 +305,7 @@ export default {
         },
         // {
         //   prop: 'customerProductDrawingNo',
-        //   label: `客户品名规格`,
+        //   label: `客户型号`,
         //   type: 'input'
         // },
         {
@@ -320,7 +320,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: `品名规格`,
+          label: `型号`,
           type: 'input'
         },
         {

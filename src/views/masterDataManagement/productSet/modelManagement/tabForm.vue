@@ -94,7 +94,7 @@ export default {
           customComponent: 'ComSelect-page',
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 140,
-         
+
         },
         {
           prop: 'outerCircle',
@@ -153,7 +153,7 @@ export default {
           value: '',
           type: 'input',
           itemRules: [
-            { required: true, message: '油脂用量不能为空', trigger: 'blur' }, 
+            { required: true, message: '油脂用量不能为空', trigger: 'blur' },
             { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的油脂用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
           ],
           minWidth: 160
@@ -167,7 +167,7 @@ export default {
             { required: true, message: '保持架用量不能为空', trigger: 'blur' },
             { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的保持架用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
 
-            
+
           ],
           minWidth: 160
         },
@@ -250,7 +250,7 @@ export default {
         pageSize: 20
       },
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
+        { prop: 'drawingNo', label: '型号', minWidth: 0 },
         { prop: 'code', label: '产品编码' },
         // { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'mainUnit', label: '单位', minWidth: 0 }
@@ -259,7 +259,7 @@ export default {
       ],
       // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' }
       ],
       ProductMethodArr: [

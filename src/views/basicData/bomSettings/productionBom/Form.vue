@@ -162,7 +162,7 @@ export default {
         // },
         {
           prop: 'drawNo',
-          label: '品名规格',
+          label: '型号',
           value: '',
           type: 'custom',
           customComponent: 'ComSelect-page',
@@ -223,14 +223,14 @@ export default {
                 })
           }
         },
-        // { prop: "drawNo", label: "品名规格", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
+        // { prop: "drawNo", label: "型号", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
         { prop: 'remark',  sm: 12, label: '备注', value: '', type: 'textarea' }
       ],
       linesList: [],
 
       linesListItems: [
         { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
-        { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
+        { prop: 'drawingNo', label: '型号', value: '', type: 'view', minWidth: 340 },
         {
           prop: 'qty',
           label: '数量',
@@ -355,12 +355,12 @@ export default {
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'code', label: '产品编码' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         { prop: 'classAttributeName', label: '类别属性' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+        { prop: 'productDrawingNo', label: '型号', type: 'input' }
       ], // 产品选择弹出框搜索条件
       formLoading: false,
       isDoubleFlag: false,
@@ -388,7 +388,7 @@ export default {
       if (tc.type == 'custom') {
         // 若干需要选择的产品
         if (tc.prop === 'drawNo') {
-          tc.dialogTitle = '选择品名规格'
+          tc.dialogTitle = '选择型号'
           tc.placeholder = '请选择产品'
           // tc.treeTitle = '产品分类'
           // tc.methodArr = this.ProductMethodArr

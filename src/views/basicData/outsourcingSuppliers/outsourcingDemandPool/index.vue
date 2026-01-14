@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入型号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -69,7 +69,7 @@
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="120"
             v-if="isProductNameSwitch === '1'"></el-table-column>
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" /> -->
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
@@ -163,7 +163,7 @@ export default {
       superQueryJson: [
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
 
@@ -261,7 +261,7 @@ export default {
         poolType: 'external', //外协池类型  外协 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称
-        productDrawingNo: '', //品名规格
+        productDrawingNo: '', //型号
         source: '', //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
         sourceOrderNo: '', //来源单号
         startTime: '', //创建开始时间
@@ -524,7 +524,7 @@ export default {
         poolType: 'external', //外协池类型  外协 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称
-        productDrawingNo: '', //品名规格
+        productDrawingNo: '', //型号
         source: '', //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
         sourceOrderNo: '', //来源单号
         startTime: ''

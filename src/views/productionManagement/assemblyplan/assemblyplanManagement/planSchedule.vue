@@ -19,7 +19,7 @@
                     }}</el-descriptions-item>
                 </el-descriptions>
                 <el-descriptions :column="1" class="box">
-                  <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productsDrawingNo
+                  <el-descriptions-item label="型号" class="drawingNo">{{ dataForm.productsDrawingNo
                     }} <img v-if="dataForm.urgentFlag" src="@/assets/images/emergency1.png" alt=""
                       style="width: 30px;vertical-align: top;"> </el-descriptions-item>
                 </el-descriptions>
@@ -43,7 +43,7 @@
                     }}</el-descriptions-item>
                 </el-descriptions>
               </div>
- 
+
             </el-collapse-item>
             <el-collapse-item title="生产进度" name="info">
               <div ref='ganttRef'></div>
@@ -257,27 +257,27 @@ export default {
       console.log(task.progress);
       if (task.progress == 0) return 'Noproduc'
       if (task.progress < 0.5) {
-        return "low-progress"; //进度低于50%  
+        return "low-progress"; //进度低于50%
       } else if (task.progress < 1.0) {
-        return "mid-progress"; //进度在50%-99%之间 
+        return "mid-progress"; //进度在50%-99%之间
       } else {
-        return "high-progress"; // 完成 }  
+        return "high-progress"; // 完成 }
       };
     }
     const style = document.createElement('style');
-    style.innerHTML = `  
+    style.innerHTML = `
     .Noproduc{
     background-color:"#FFbc00!important"
     }
-      .low-progress {  
-      background-color:#FFbc00; /*低进度颜色 */  
-      }  
-      .mid-progress {  
-      background-color: #FFbc00; /* 中等进度颜色 */  
-      }  
-      .high-progress {  
-      background-color: green!important; /* 高进度颜色 */  
-      }  
+      .low-progress {
+      background-color:#FFbc00; /*低进度颜色 */
+      }
+      .mid-progress {
+      background-color: #FFbc00; /* 中等进度颜色 */
+      }
+      .high-progress {
+      background-color: green!important; /* 高进度颜色 */
+      }
       `;
     document.head.appendChild(style);
   },

@@ -145,7 +145,7 @@ export default {
         },
         {
           prop: 'drawNo',
-          label: '品名规格',
+          label: '型号',
           value: '',
           type: 'custom',
           customComponent: 'ComSelect-page',
@@ -190,7 +190,7 @@ export default {
               })
           },
         },
-        // { prop: "drawNo", label: "品名规格", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
+        // { prop: "drawNo", label: "型号", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
         { prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12 }
       ],
       linesList: [],
@@ -325,13 +325,13 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码' },
         // { prop: 'name', label: '产品名称'},
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         // { prop: 'spec', label: '规格型号' },
         { prop: 'classAttributeName', label: '类别属性' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+        { prop: 'productDrawingNo', label: '型号', type: 'input' }
       ], // 产品选择弹出框搜索条件
       isDoubleFlag: false,
       approvalStatus: '',
@@ -411,7 +411,7 @@ export default {
         if (tc.prop === 'drawNo') {
           console.log(tc, '1')
           console.log(this.ProductListRequestObj, '3')
-          tc.dialogTitle = '选择品名规格'
+          tc.dialogTitle = '选择型号'
           tc.placeholder = '请选择产品'
           // tc.treeTitle = '产品分类'
           // tc.methodArr = this.ProductMethodArr

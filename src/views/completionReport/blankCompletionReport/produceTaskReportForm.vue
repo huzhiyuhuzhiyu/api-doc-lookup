@@ -17,7 +17,7 @@
           <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
             <div class="stoclInfo">
               <el-descriptions :column="1" class="box">
-                <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                <el-descriptions-item label="型号" class="drawingNo">{{ dataForm.productDrawingNo
                   }}</el-descriptions-item>
               </el-descriptions>
                 <el-descriptions class="margin-top" :column="4">
@@ -87,7 +87,7 @@
 
               <el-col :sm="24" :xs="24">
                 <div class="info">
-                  <span class="left-title">品名规格：</span>
+                  <span class="left-title">型号：</span>
                   <el-tooltip class="item" effect="dark" :content="currentProcess.productDrawingNo"
                     placement="top-start">
                     <span class="left-title ts">
@@ -172,7 +172,7 @@
                       </el-form-item>
                     </el-col>
 
-                   
+
                      <el-col :sm="6" :xs="24" v-if="isBOOS">
                       <el-form-item label="板数：" prop="plates" class="iptLabel responsibility"
                         :style="{ marginBottom: iptLabelMargin }">
@@ -259,7 +259,7 @@
                             </el-select>
                     </el-form-item>
                   </el-col>
-           
+
 
                   <el-col :sm="12" :xs="24" v-if="currentProcess.processType !== 'boxing'">
                     <el-form-item label="责废数量:" class="iptLabel responsibility">
@@ -276,7 +276,7 @@
                       <el-button type="primary"
                         style="float: right;height: 50px;width: 50%;" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>
                     </el-form-item>
-                  </el-col> 
+                  </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcess.processType == 'grinding'">
                     <el-form-item label="孔径" :prop="aperture">
                       <el-select v-model="currentProcess.aperture" placeholder="孔径" style="width: 100%;" class="ipt">
@@ -284,7 +284,7 @@
                           :value="item.name"></el-option>
                       </el-select>
                     </el-form-item>
-                  </el-col> 
+                  </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="报工时间" class="iptLabel">
                       <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd"
@@ -422,7 +422,7 @@ export default {
     PrintDialog, TransitionRemake, TransitionRemakeRecord,OutSouringForm
   },
   data() {
-    return { 
+    return {
       overChargeNum:0,
       overCharge:{},
       forceCompleteFlagList:[
@@ -540,7 +540,7 @@ export default {
       }else{
       let  cases=this.jnpf.numberFormat(this.jnpf.math('multiply', [2,this.currentProcess.cases]), 6) //箱数*2
       let complaReult=this.jnpf.numberFormat(this.jnpf.math('multiply', [this.currentProcess.bagNumber,0.25]), 6)//袋子个数*袋子重量（车加工0.25 磨加工0.5）
-      
+
       let numtotal= this.jnpf.numberFormat(this.jnpf.math('subtract', [this.currentProcess.totalWeight,this.currentProcess.trayTotalWeight,cases,complaReult]), 6)
         this.currentProcess.qualifiedQuantity=this.jnpf.numberFormat(this.jnpf.math('multiply', [numtotal,this.currentProcess.productWeight,1000]), 4)
         //  plates 板数
@@ -654,10 +654,10 @@ export default {
               productsId: item.productsId, // 产品id
               productName: item.productName, // 产品名称
               productCode: item.productCode, // 产品编码
-              productDrawingNo: item.productDrawingNo, // 品名规格
-              model: item.model, // 品名规格
-              spec: item.spec, // 品名规格
-              drawingSheetNo: item.drawingSheetNo, // 品名规格
+              productDrawingNo: item.productDrawingNo, // 型号
+              model: item.model, // 型号
+              spec: item.spec, // 型号
+              drawingSheetNo: item.drawingSheetNo, // 型号
               ratio: item.ratio, // 转换系数
               calculationDirection: item.calculationDirection, // 计算方向
               mainUnit: item.mainUnit, // 单位
@@ -709,7 +709,7 @@ export default {
           this.overCharge = overCharge.data.produce.find(item=>item.configKey === 'work_exceed_report') || {
               configValue2:''
           }
-   
+
       detailordershengchan(id).then(res => {
         this.dataForm = res.data.prodOrder
         this.workList = res.data.workOrderList.map(item=>{
@@ -790,7 +790,7 @@ export default {
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
       this.remakeUnqualifiedQuantity = item.autoUnqualifiedQuantity
-      this.$set(this.currentProcess, 'reportingQuantity', 0) 
+      this.$set(this.currentProcess, 'reportingQuantity', 0)
       if(this.currentProcess.processingType=='self_produced') this.currentProcess.qualifiedQuantity =  this.currentProcess.waitReportNum
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
@@ -933,7 +933,7 @@ export default {
           if (this.currentProcess.processType !== 'boxing') {
 
             if(this.currentProcess.pickingWay=='production_order'&&this.$store.getters.configData.produce.work_exceed_report){
-     
+
                  let totalNum=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.waitReportNum, this.overChargeNum]), 6)
               if (this.totalReportNum > totalNum) {
                 this.submitFlag = false
@@ -1003,7 +1003,7 @@ export default {
           obj.processingTimes = this.currentProcess.processingTimes
 
 
-          
+
           obj.plates=this.currentProcess.plates
           obj.plateNumber=this.currentProcess.plateNumber
           obj.totalWeight=this.currentProcess.totalWeight

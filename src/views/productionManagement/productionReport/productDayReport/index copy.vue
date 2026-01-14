@@ -73,7 +73,7 @@
                 <el-table-column prop="equipmentCode" label="设备编码" min-width="120" />
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="120" />
                 <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" />
                 <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" width="160" sortable="custom"></el-table-column>
                 <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
@@ -155,7 +155,7 @@
                 <el-table-column prop="batchNumber" label="批次号" min-width="180" />
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="120" />
                 <el-table-column prop="num" label="入库数量" min-width="120" />
                 <el-table-column prop="warehouseName" label="仓库" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" min-width="120" />
@@ -237,7 +237,7 @@
                 <el-table-column prop="workNo" label="工单单号" min-width="180" />
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位" min-width="100" />
                 <el-table-column prop="processName" label="工序名称" min-width="120" />
                 <el-table-column prop="processCode" label="工序编码" min-width="120" />
@@ -312,7 +312,7 @@
                 <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" min-width="180" />
                 <el-table-column prop="productCode" label="产品编码" min-width="180" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="180" />
                 <el-table-column prop="processName" label="工序名称" min-width="180" />
                 <el-table-column prop="processCode" label="工序编码" min-width="180" />
                 <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="180" />
@@ -445,7 +445,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -557,7 +557,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
 
@@ -679,7 +679,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -770,7 +770,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
              {

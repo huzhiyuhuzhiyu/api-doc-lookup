@@ -30,8 +30,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="6" v-if="btntype && dataForm.inspectionType === 'product'">
-                    <el-form-item label="品名规格" prop="productDrawingNo">
-                      <el-input v-model.trim="dataForm.productDrawingNo" placeholder="请输入品名规格"
+                    <el-form-item label="型号" prop="productDrawingNo">
+                      <el-input v-model.trim="dataForm.productDrawingNo" placeholder="请输入型号"
                         :disabled="btntype ? true : false" />
                     </el-form-item>
                   </el-col>
@@ -306,7 +306,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
         // { prop: 'processName', label: '工序名称' },
         { prop: 'classAttributeText', label: '产品分类' },
@@ -315,7 +315,7 @@ export default {
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productName', label: '产品名称', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+        { prop: 'productDrawingNo', label: '型号', type: 'input' }
       ], // 产品选择弹出框搜索条件
       requestObj: {
         orderItems: [

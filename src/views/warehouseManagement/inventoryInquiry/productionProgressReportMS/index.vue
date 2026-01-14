@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.drawingNo" placeholder="物料号" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入型号" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -31,7 +31,7 @@
         </div>
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
           @sort-change="sortChange" show-summary :summary-method="getSummaries" customKey="JNPFTableKey_554455">
-          <el-table-column prop="drawingNo" label="产品型号及特殊要求" width="190" fixed="left" sortable="custom"></el-table-column>
+          <el-table-column prop="drawingNo" label="型号" width="190" fixed="left" sortable="custom"></el-table-column>
             <el-table-column prop="waitHeat" label="待热处理" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"

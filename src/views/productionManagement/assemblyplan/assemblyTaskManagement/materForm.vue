@@ -15,10 +15,10 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input @keyup.native.enter="search()"  v-model="form.productDrawingNo" placeholder="品名规格" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.productDrawingNo" placeholder="型号" clearable />
               </el-form-item>
             </el-col>
-        
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -33,7 +33,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_120075" @sort-change="sortChange" ref="dataTable">
             <el-table-column prop="productCode" label="产品编码" sortable="custom" ></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" sortable="custom" ></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" sortable="custom" ></el-table-column>
             <el-table-column prop="orderNo" label="领料单号" sortable="custom" ></el-table-column>
             <el-table-column prop="num" label="领料数量" sortable="custom" ></el-table-column>
 
@@ -43,7 +43,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="personName" label="领料人" sortable="custom" ></el-table-column>
-           
+
           </JNPF-table>
           <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
             @pagination="search" />
@@ -53,14 +53,14 @@
 
   </el-dialog>
 </template>
-<script> 
+<script>
 import { WithdrawalmxList } from '@/api/productOrdes/index.js'
 export default {
   data() {
     return {
-     
+
       customerVisible: false,
-     
+
       form: {
         productCode:"",
         productDrawingNo:"",
@@ -71,26 +71,26 @@ export default {
           asc: false,
           column: ""
         },],
-         
-      }, 
+
+      },
       listLoading: false,
       total: 0,
       tableDataList: [],
-      
+
 
     }
   },
   async created() {
-   
+
   },
   methods: {
     init(id) {
       this.id=id
       this.form.materialListId=id
-      this.customerVisible = true 
+      this.customerVisible = true
       this.search()
     },
- 
+
         sortChange({ prop, order }) {
       let newProp;
       if (prop === 'partnerCode' ||prop=='productionLineNmae'|| prop == 'pairingModeName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
@@ -107,13 +107,13 @@ export default {
       this.search()
     },
 
-    search() { 
+    search() {
       WithdrawalmxList(this.form).then(res=>{
         this.tableDataList=res.data.records
         this.total=res.data.total
       })
     },
-    
+
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.form = {

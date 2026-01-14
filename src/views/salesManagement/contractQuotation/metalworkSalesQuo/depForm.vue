@@ -119,7 +119,7 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" show-overflow-tooltip/>
                 <el-table-column prop="productName" label="产品名称" min-width="140"  show-overflow-tooltip/>
-                <el-table-column prop="productDrawingNo" label="产品图号" min-width="180"  show-overflow-tooltip/>
+                <el-table-column prop="productDrawingNo" label="型号" min-width="180"  show-overflow-tooltip/>
                 <el-table-column prop="spec" label="规格型号" width="200">
                   <!-- <template slot-scope="scope">
                     <el-input v-model="scope.row.spec" placeholder="请输入规格型号" :disabled="status" maxlength="100"

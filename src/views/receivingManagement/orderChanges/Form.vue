@@ -212,7 +212,7 @@ export default {
       purchaseTableSearchList:[
         { prop: 'orderNo', label: '订单号', type: 'input' },
         { prop: 'cooperativePartnerName', label: '供应商名称', type: 'input' },
-        { prop: 'drawingNo', label: '品名规格', type: 'input'},
+        { prop: 'drawingNo', label: '型号', type: 'input'},
       ],
       flowTemplateJson: {},
       flowData: {},
@@ -223,7 +223,7 @@ export default {
       selectRows: [],
       sleeveItems: [
 
-        { prop: "productDrawingNo", label: '品名规格', value: "", type: 'view', width: "140",},
+        { prop: "productDrawingNo", label: '型号', value: "", type: 'view', width: "140",},
         { prop: "productCode", label: "产品编码", value: "", type: 'view', width: "140", },
         { prop: "productName", label: "产品名称", value: "", type: 'view', width: "120", },
         { prop: "mainUnit", label: "单位", value: "", type: 'view', width: "180", },

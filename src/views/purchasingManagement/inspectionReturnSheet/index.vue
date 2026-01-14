@@ -44,7 +44,7 @@ export default {
         productCode: '',
         productDrawingNo: '',
         productName: '',
-        receiptReturnType: 'back', 
+        receiptReturnType: 'back',
         receivingStatus: '',
         salesman: '',
         startTime: '',
@@ -65,7 +65,7 @@ export default {
       tableItems: [
         { prop: 'orderNo', label: '退货单号', minWidth: '160' },
         { prop: 'productCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
-        { prop: 'productDrawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
+        { prop: 'productDrawingNo', label: '型号', minWidth: '160', sortable: 'custom' },
 
         { prop: 'productCategoryName', label: '产品分类', minWidth: '140', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位', minWidth: '140', sortable: 'custom' },
@@ -85,7 +85,7 @@ export default {
           clearable:false,
           options: [{ label: '未处理', value: 'not_finished' }, { label: '已处理', value: 'finished' }]
         },
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'drawingNo', label: '型号', type: 'input' },
         { prop: 'partnerName', label: '供应商名称', type: 'input' },
       ],
       superQueryJson: [

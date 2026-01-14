@@ -34,7 +34,7 @@
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120"/>
             <el-table-column prop="productName" label="产品名称" sortable="custom" min-width="120"/>
-            <el-table-column prop="productDrawingNo" label="品名规格" sortable="custom" min-width="120"/>
+            <el-table-column prop="productDrawingNo" label="型号" sortable="custom" min-width="120"/>
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120"/>
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120"/>
             <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />

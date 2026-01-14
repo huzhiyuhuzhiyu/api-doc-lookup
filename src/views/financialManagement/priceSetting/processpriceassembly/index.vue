@@ -49,7 +49,7 @@
           <JNPF-table ref="linesTableData" v-loading="listLoading" @selection-change="handleSelectionChange" hasC :data="linesTableData" :fixedNO="true" custom-column customKey="JNPFTableKey_336178">
             <el-table-column prop="productCode" label="产品编码" min-width="140" />
             <el-table-column prop="productName" label="产品名称" min-width="140" />
-            <el-table-column prop="drawingNo" label="产品图号" min-width="140" />
+            <el-table-column prop="drawingNo" label="型号" min-width="140" />
 
             <el-table-column prop="routingName" label="工艺路线名称" min-width="140" />
             <el-table-column prop="processCode" label="工序编码" min-width="140" />

@@ -44,7 +44,7 @@
                                          sortable="custom"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                                          v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="300"
                                          sortable="custom"></el-table-column>
                         <el-table-column prop="processName" label="工序名称" width="160" sortable="custom"/>
                         <el-table-column prop="createTime" label="报工时间" min-width="160" sortable="custom"/>

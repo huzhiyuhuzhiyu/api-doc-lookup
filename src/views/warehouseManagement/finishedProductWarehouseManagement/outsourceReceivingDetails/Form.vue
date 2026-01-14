@@ -116,7 +116,7 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                    <el-table-column prop="drawingNo" label="型号" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
                     <el-table-column prop="purchaseQuantity" label="入库数量" width="160" sortable="custom" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
@@ -279,7 +279,7 @@ export default {
         receivingStatus: 'receiving'
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', sortable: 'custom' },
         { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'productCode', label: '产品编码', sortable: 'custom' },
         { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
@@ -296,7 +296,7 @@ export default {
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框搜索条件
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'drawingNo', label: '型号', type: 'input' },
         { prop: 'name', label: '产品名称', type: 'input' },
         { prop: 'code', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
@@ -657,7 +657,7 @@ export default {
             productsId: item.id, // 产品id
             productName: item.name, // 产品名称
             productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
+            productDrawingNo: item.drawingNo, // 型号
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位

@@ -147,7 +147,7 @@ export default {
         },
         {
           prop: "targetProductDrawingNo",
-          label: "目标品名规格",
+          label: "目标型号",
           type: 'view',
           minWidth: 350,
         },
@@ -226,7 +226,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '源品名规格',
+          label: '源型号',
           type: 'view',
           minWidth: 160,
         },

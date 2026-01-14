@@ -119,7 +119,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'view',
           minWidth: 220,
         },

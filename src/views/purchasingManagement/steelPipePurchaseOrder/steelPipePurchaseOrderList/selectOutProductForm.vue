@@ -43,10 +43,10 @@
             <el-input @keyup.native.enter="searchAllProduct()"  v-model="outProductObj.productCode" placeholder="请输入产品编码" clearable />
           </el-form-item>
         </el-col>
-    
+
         <el-col :span="6">
           <el-form-item>
-            <el-input @keyup.native.enter="searchAllProduct()"  v-model="outProductObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+            <el-input @keyup.native.enter="searchAllProduct()"  v-model="outProductObj.productDrawingNo" placeholder="请输入型号" clearable />
           </el-form-item>
         </el-col>
 
@@ -67,7 +67,7 @@
       <JNPF-table v-loading="listLoading" :data="allproductData"  ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_9031478680">
         <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
         <el-table-column prop="name" label="产品名称" width="160"  show-overflow-tooltip></el-table-column>
-        <el-table-column prop="drawingNo" label="品名规格" />
+        <el-table-column prop="drawingNo" label="型号" />
         <el-table-column prop="productCategoryName" label="所属分类" />
         <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="abProjectSwitchVisible" />
         <el-table-column prop="mainUnit" label="单位" />
@@ -87,8 +87,8 @@
       <pagination :total="allProductTotal" :page.sync="outProductObj.pageNum" :limit.sync="outProductObj.pageSize" @pagination="initData2" />
     </div>
       </div>
-      </div>  
-    
+      </div>
+
     </el-dialog>
 </template>
 
@@ -155,7 +155,7 @@ export default {
       })
     },
     selectFun(row) {
-      this.allProVisible = false 
+      this.allProVisible = false
       this.$emit('selectFun',row)
     },
     filterNodeAllProduct(value, data) {

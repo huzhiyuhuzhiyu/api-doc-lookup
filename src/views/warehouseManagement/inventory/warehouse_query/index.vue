@@ -43,7 +43,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入产品图号" clearable
+              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入型号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -66,7 +66,7 @@
           @sort-change="sortChange" custom-column show-summary :summary-method="getSummaries" customKey="JNPFTableKey_525496">
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="产品图号" min-width="400" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="400" />
           <el-table-column prop="productSpec" label="规格型号" width="120" sortable="custom" />
           <el-table-column prop="routingName" label="工艺路线名称" width="160" />
           <el-table-column prop="processName" label="工序名称" width="160" />
@@ -140,7 +140,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品图号">
-              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入产品图号" clearable />
+              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入型号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">

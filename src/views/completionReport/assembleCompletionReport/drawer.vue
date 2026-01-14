@@ -45,7 +45,7 @@
 
           <el-col :sm="24" :xs="24">
             <div class="info">
-              <span class="left-title">品名规格：</span>
+              <span class="left-title">型号：</span>
               <el-tooltip class="item" effect="dark" :content="form.productDrawingNo" placement="top-start">
                 <span class="left-title ts">
                   {{ form.productDrawingNo }}
@@ -496,7 +496,7 @@ export default {
       colourFlag: '',
       currentProcessType: "",
       materialWasteDataList: [],
-      responsWasteDataList: [], 
+      responsWasteDataList: [],
       totalReportNum: "",
     }
   },
@@ -517,10 +517,10 @@ export default {
     },
     // 过滤01精度已选择的数据
     getFilteredAccuracyLevelList2(currentRow) {
-      // 生成当前行可以选择的精度等级列表  
+      // 生成当前行可以选择的精度等级列表
       const selectedLevels = this.tableDataList2
-        .filter(row => row !== currentRow) // 排除当前行  
-        .map(row => row.accuracyLevel); // 获取其他行的已选择项  
+        .filter(row => row !== currentRow) // 排除当前行
+        .map(row => row.accuracyLevel); // 获取其他行的已选择项
 
       return this.accuracyLevelList2.filter(item => !selectedLevels.includes(item.name));
     },
@@ -537,7 +537,7 @@ export default {
     // 01精度删除
     delFun2(scope) {
       this.tableDataList2.splice(scope.$index, 1)
-    
+
     },
     // 获取是否入库下拉框
     getInboundVal() {
@@ -575,7 +575,7 @@ export default {
       if (value) {
         console.log(this.pairingModeListCopy);
         this.pairingModeNum = this.pairingModeListCopy.filter(items => items.id === value)[0].quantity;
-        this.form.waitReportNum=this.pairingModeList.filter(items => items.id === value)[0].waitReportNum 
+        this.form.waitReportNum=this.pairingModeList.filter(items => items.id === value)[0].waitReportNum
 
         this.form.qualifiedQuantity = ''
         this.form.reportingQuantity = 0
@@ -723,10 +723,10 @@ export default {
     },
     // 过滤已选择的数据
     getFilteredAccuracyLevelList(currentRow) {
-      // 生成当前行可以选择的精度等级列表  
+      // 生成当前行可以选择的精度等级列表
       const selectedLevels = this.tableDataList
-        .filter(row => row !== currentRow) // 排除当前行  
-        .map(row => row.accuracyLevel); // 获取其他行的已选择项  
+        .filter(row => row !== currentRow) // 排除当前行
+        .map(row => row.accuracyLevel); // 获取其他行的已选择项
 
       return this.accuracyLevelList.filter(item => !selectedLevels.includes(item.name));
     },
@@ -753,7 +753,7 @@ export default {
 
       const index = this.tableDataList2.findIndex(item => item.accuracyLevel === nameToFind);
 
-      // 输出结果  
+      // 输出结果
       if (index !== -1) {
         this.tableDataList2[index] = { accuracyLevel: "", qualifiedQuantity: "" }
       } else {
@@ -837,7 +837,7 @@ export default {
     },
     setDivHeight() {
       console.log(this.$refs.rightInfo.offsetHeight);
-      // 获取源 div 的动态高度并设置目标 div 的高度  
+      // 获取源 div 的动态高度并设置目标 div 的高度
       const sourceDivHeight = this.$refs.rightInfo.offsetHeight;
     },
     // 定义当前工序的类型
@@ -1043,7 +1043,7 @@ export default {
                 }
               }
               totalQualifiedQuantity = this.tableDataList.reduce((sum, item) => {
-                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加  
+                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加
               }, 0);
               if (totalQualifiedQuantity > this.form.waitReportNum) {
                 this.$message.error("02精度总数量不能超过可报工数量")
@@ -1070,7 +1070,7 @@ export default {
                 }
               }
               totalQualifiedQuantity2 = this.tableDataList2.reduce((sum, item) => {
-                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加  
+                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加
               }, 0);
               if (totalQualifiedQuantity2 > totalQualifiedQuantity) {
                 this.$message.error("01精度总数量不能超过02精度总数量")

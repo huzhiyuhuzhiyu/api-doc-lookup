@@ -17,9 +17,9 @@
                 </el-col>
                    <el-col :span="4">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="orderForm.productsDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="orderForm.productsDrawingNo" placeholder="请输入型号" clearable />
                   </el-form-item>
-                </el-col> 
+                </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -31,7 +31,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading"> 
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
@@ -61,7 +61,7 @@
             <el-table-column prop="cooperativePartnerCode" label="供应商编码"  sortable="custom"></el-table-column>
             <el-table-column prop="productsName" label="产品名称" sortable="custom"  show-overflow-tooltip></el-table-column>
             <el-table-column prop="productsCode" label="产品编码" sortable="custom" />
-            <el-table-column prop="productsDrawingNo" label="品名规格"  sortable="custom"></el-table-column>
+            <el-table-column prop="productsDrawingNo" label="型号"  sortable="custom"></el-table-column>
             <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
             <el-table-column prop="receiptQuantity" label="累计采购总量"  sortable="custom" />
             <el-table-column prop="returnQuantity" label="累计退货总量" sortable="custom" />
@@ -82,7 +82,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" /> 
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
@@ -93,7 +93,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
-  
+
 import userTransfer from '@/components/JNPF-userTransfer'
 
 export default {
@@ -106,7 +106,7 @@ export default {
       superQuery: {},
       superForm: {},
       basicQuery: {},
-      
+
       columnList: [],
 
       superQueryVisible: false,
@@ -120,7 +120,7 @@ export default {
         unqualifiedQuantity:null,
         reportingQuantity:null
       },
- 
+
       btnLoading: false,
       reportDate: [],
       title: "更多查询",
@@ -185,28 +185,28 @@ export default {
         },
         {
           prop: 'productsDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
-   
-       
-         
 
 
-       
+
+
+
+
       ],
- 
+
       isProjectSwitchFlag: false,
       isProjectSwitch: '',
     }
   },
-  
+
   computed: {
     ...mapGetters(['userInfo'])
   },
 
-  async created() { 
- 
+  async created() {
+
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   },
@@ -245,7 +245,7 @@ export default {
         //   item.selectFlag = false
         // })
         this.tableData = res.data.records
-        this.total = res.data.total 
+        this.total = res.data.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false

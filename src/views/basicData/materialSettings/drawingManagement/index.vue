@@ -79,7 +79,7 @@
 
                     <el-table-column prop="code" label="产品编码" sortable="custom" min-width="200"></el-table-column>
                     <el-table-column prop="name" label="产品名称" sortable="custom" width="200"></el-table-column>
-                    <el-table-column prop="drawingNo" label="产品图号" sortable="custom" width="200"></el-table-column>
+                    <el-table-column prop="drawingNo" label="型号" sortable="custom" width="200"></el-table-column>
                     <el-table-column prop="sheetName" label="图纸名称" width="200"></el-table-column>
                     <el-table-column prop="storageType" label="存储类型" width="130">
                         <template slot-scope="scope">

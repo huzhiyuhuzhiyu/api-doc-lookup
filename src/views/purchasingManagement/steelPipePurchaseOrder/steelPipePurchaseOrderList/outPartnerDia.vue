@@ -23,7 +23,7 @@
                 <el-input @keyup.native.enter="search()"  v-model="form.outPartnerName" placeholder="请输入外协供应商名称" clearable />
               </el-form-item>
             </el-col>
-   
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -40,20 +40,20 @@
             <div></div>
             <div></div>
           <div class="JNPF-common-head-right">
-        
+
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
           </div>
         </div>
-            <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableDataList"  
-            :fixedNO="true"  
+            <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableDataList"
+            :fixedNO="true"
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="purchasePartnerName" label="采购供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="outPartnerName" label="外协供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="outProductName" label="产品名称" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="outProductCode" label="产品编码" min-width="120" sortable="custom"> </el-table-column>
-            <el-table-column prop="outProductDrawingNo" label="品名规格" min-width="120" sortable="custom"> </el-table-column>
+            <el-table-column prop="outProductDrawingNo" label="型号" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="yieldRate" label="成材率" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="buyBackPrice" label="回购单价" min-width="120" sortable="custom"> </el-table-column>
@@ -74,13 +74,13 @@
   </el-dialog>
 </template>
 <script>
-import {  outRelatedProductList,addOutRelatedProduct,editOutRelatedProduct,delOutRelatedProduct} from '@/api/purchasingAndOutsourcingOrders/index'; 
+import {  outRelatedProductList,addOutRelatedProduct,editOutRelatedProduct,delOutRelatedProduct} from '@/api/purchasingAndOutsourcingOrders/index';
 export default {
   data() {
     return {
- 
+
       customerVisible: false,
- 
+
       form: {
         purchasePartnerId:"",
         outProductName:"",
@@ -105,14 +105,14 @@ export default {
       tableDataList: [],
       cpData: {},
       cpIndex: "",
-     
+
       columnList:[],
       showflag:false,
       purchasePartnerId:""
     }
   },
   async created () {
-    
+
   },
   methods: {
     columnSetFun() {
@@ -130,7 +130,7 @@ export default {
       this.form.orderItems[0].column = order === null ? "" : newProp
       this.search()
     },
- 
+
     init(id) {
       this.form.purchasePartnerId=id
       this.purchasePartnerId=id

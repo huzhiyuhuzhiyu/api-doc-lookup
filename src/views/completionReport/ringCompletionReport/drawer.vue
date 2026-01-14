@@ -10,12 +10,12 @@
   <!-- </el-drawer> -->
   <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     @close="customerVisible = false" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1400px" append-to-body>
-    
+
         <el-collapse v-model="activeNames">
           <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
             <div class="stoclInfo">
               <el-descriptions :column="1" class="box">
-                <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                <el-descriptions-item label="型号" class="drawingNo">{{ dataForm.productDrawingNo
                   }}</el-descriptions-item>
               </el-descriptions>
                 <el-descriptions class="margin-top" :column="4">
@@ -41,7 +41,7 @@
           </el-collapse-item>
         </el-collapse>
     <div style="padding:10px">
-          
+
       <el-col :span="11" class="fixedInfo" :style="{ height: targetHeight + 'px!important' }"
         style="width: 44%!important;">
         <el-row>
@@ -71,10 +71,10 @@
               <span class="left-title" v-if="form.processType == 'boxing'">装盒工序</span>
             </div>
           </el-col>
- 
+
           <el-col :sm="24" :xs="24">
             <div class="info">
-              <span class="left-title">品名规格：</span>
+              <span class="left-title">型号：</span>
               <el-tooltip class="item" effect="dark" :content="form.productDrawingNo" placement="top-start">
                 <span class="left-title ts">
                   {{ form.productDrawingNo }}
@@ -183,7 +183,7 @@
                       </el-form-item>
                     </el-col>
                   </template>
-                 
+
               <el-col :sm="24" :xs="24">
                 <el-form-item label="合格数量" prop="qualifiedQuantity" class="iptLabel">
                   <el-input v-model="form.qualifiedQuantity" placeholder="合格数量" class="ipt"
@@ -223,15 +223,15 @@
                     <el-form-item label="责废数量:" class="iptLabel">
                       <el-input v-model="form.responsibilityWasteQuantity" disabled placeholder="责废数量"
                         @blur="handleBlur2" class="ipt materialWaste" />
-                        <el-button type="primary" 
+                        <el-button type="primary"
                         style="float: right;height: 50px" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="料废数量:" class="iptLabel">
-                      <el-input v-model="form.materialWasteQuantity" disabled placeholder="料废数量"  
+                      <el-input v-model="form.materialWasteQuantity" disabled placeholder="料废数量"
                         class="ipt materialWaste" />
-                      <el-button type="primary"  
+                      <el-button type="primary"
                         style="float: right;height: 50px" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>
                     </el-form-item>
                   </el-col>
@@ -320,12 +320,12 @@ import responsWaste from './responsWaste.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
- 
+
 import { ordershengchanList, addOrderNum, getscanResultData } from '@/api/productOrdes/index.js'
 import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
-  
+
   mixins: [tenantMinix],
   components: {
     MaterialWasteForm,responsWaste
@@ -409,7 +409,7 @@ export default {
       codeConfig: {},
       vibrationLevelList: [],
       totalReportNum: 0,
-      apertureList: [], 
+      apertureList: [],
     }
   },
     watch: {
@@ -467,7 +467,7 @@ export default {
     materialWasteData(data,totalNums) {
       console.log("设置的设置料废原因", data,totalNums);
       if(totalNums){
-     
+
       this.materialWasteDataList = data
       this.form.materialWasteQuantity=totalNums
         this.handleBlur2()
@@ -517,7 +517,7 @@ export default {
             this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
           })
         }
-       
+
       this.$nextTick(() => {
         const height = this.$refs.mycol.$el.clientHeight
         console.log('el-col的高度是1：', height);
@@ -567,7 +567,7 @@ export default {
     },
     setDivHeight() {
       console.log(this.$refs.rightInfo.offsetHeight);
-      // 获取源 div 的动态高度并设置目标 div 的高度  
+      // 获取源 div 的动态高度并设置目标 div 的高度
       const sourceDivHeight = this.$refs.rightInfo.offsetHeight;
     },
     // 获取工单详情
@@ -660,8 +660,8 @@ export default {
           obj.standardValue=this.form.standardValue
           obj.accuracyLevel=this.form.accuracyLevel
           obj.workOrderId = this.form.id
-          obj.causesList = [...this.materialWasteDataList,...this.responsWasteDataList] 
-          
+          obj.causesList = [...this.materialWasteDataList,...this.responsWasteDataList]
+
           arr.push(obj)
 
           addWorkReport(arr).then(res => {

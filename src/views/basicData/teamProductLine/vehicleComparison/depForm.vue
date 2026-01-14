@@ -91,7 +91,7 @@
                   </el-form>
                 </template>
               </el-table-column>
-              <el-table-column prop="drawingNo" label="产品图号">
+              <el-table-column prop="drawingNo" label="型号">
                 <template slot-scope="{row}">
                   <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                     <el-form-item prop="drawingNo" :style="row.cssObj" ref="drawingNo">

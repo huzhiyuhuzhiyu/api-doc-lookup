@@ -109,7 +109,7 @@ export default {
                         }
                     }
                 },
-                { prop: 'productsDrawingNo', label: '品名规格', value: '', type: 'view', minWidth: 160 ,},
+                { prop: 'productsDrawingNo', label: '型号', value: '', type: 'view', minWidth: 160 ,},
                 { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 ,},
                 { prop: 'availableArrangeQuantity', label: '可编排数量', value: '', type: 'view', minWidth: 120 ,},
                 { prop: 'productionBarrels', label: '生产桶数', value: '1', type: 'input', minWidth: 120 ,itemRules: [

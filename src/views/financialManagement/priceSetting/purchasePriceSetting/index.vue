@@ -109,7 +109,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productsDrawingNo" placeholder="请输入产品图号" clearable
+              <el-input v-model.trim="listQuery.productsDrawingNo" placeholder="请输入型号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -149,7 +149,7 @@
           </el-table-column>
           <el-table-column prop="productsCode" label="产品编码" align="left" min-width="150" sortable="custom" />
           <el-table-column prop="productsName" label="产品名称" min-width="150" sortable="custom" />
-          <el-table-column prop="drawingNo" label="产品图号" min-width="150" sortable="custom" />
+          <el-table-column prop="drawingNo" label="型号" min-width="150" sortable="custom" />
           <el-table-column prop="spec" label="规格型号" align="left" min-width="120" />
           <el-table-column prop="bargaining" label="协议价" min-width="150" />
           <el-table-column prop="taxRate" label="税率(%)" min-width="150" />
@@ -262,7 +262,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品图号">
-              <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入产品图号" clearable />
+              <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入型号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">

@@ -45,7 +45,7 @@
                             </el-form-item>
                           </el-col>
 
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')
                             && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="供应商" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly disabled>
@@ -119,7 +119,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                         min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
+                        <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
@@ -169,7 +169,7 @@
                           </template> -->
                         </el-table-column>
                         <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717" v-if="dataForm.weightFlag == true">
-                          
+
                         </el-table-column>
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -315,7 +315,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                         min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
+                        <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
@@ -365,7 +365,7 @@
                           </template> -->
                         </el-table-column>
                         <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717" v-if="dataForm.weightFlag == true">
-                           
+
                         </el-table-column>
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -405,7 +405,7 @@
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                 </UploadWj>
               </el-tab-pane>
-                
+
               </el-tabs>
             </div>
           </div>
@@ -431,7 +431,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
+                    <el-input v-model="orderForm.productDrawingNo" placeholder="型号" clearable
                       @keyup.enter.native="getTabdataList()" />
                   </el-form-item>
                 </el-col>
@@ -463,7 +463,7 @@
                 <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
-                <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
+                <el-table-column prop="drawingNo" label="型号" width="300" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -825,7 +825,7 @@ export default {
 
     },
 
-    // 点击选择产品 销售发货 
+    // 点击选择产品 销售发货
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       this.productVisible = true
@@ -1044,7 +1044,7 @@ export default {
         });
         if (flag) {
           this.productData = res.data.records
-         
+
         }
 
         this.productList = res.data.records

@@ -67,7 +67,7 @@
             </el-table-column>
             <el-table-column prop="code" label="对象编码" width="200" />
             <el-table-column prop="name" label="对象名称" width="200" sortable="custom"/>
-            <el-table-column prop="drawingNo" label="产品图号" width="200" sortable="custom"/>
+            <el-table-column prop="drawingNo" label="型号" width="200" sortable="custom"/>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column prop="createByName" label="创建人" width="120"/>
             <el-table-column prop="remark" label="备注" width="300"></el-table-column>
@@ -147,7 +147,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品图号">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入库位编码" clearable />
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入型号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">

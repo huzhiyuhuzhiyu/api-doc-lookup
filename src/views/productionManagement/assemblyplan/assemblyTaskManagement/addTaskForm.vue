@@ -39,8 +39,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="品名规格" prop="productsDrawingNo">
-                          <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" readonly
+                        <el-form-item label="型号" prop="productsDrawingNo">
+                          <el-input v-model="dataForm.productsDrawingNo" placeholder="型号" readonly
                             @focus="openSelectProductFun">
                           </el-input>
                         </el-form-item>
@@ -290,7 +290,7 @@
                   <!--                    <el-table-column prop="productCode" label="产品编码"></el-table-column>-->
                   <!--                    <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"-->
                   <!--                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>-->
-                  <!--                    <el-table-column prop="productDrawingNo" label="品名规格" />-->
+                  <!--                    <el-table-column prop="productDrawingNo" label="型号" />-->
 
                   <!--                    <el-table-column prop="mainUnit" label="单位"></el-table-column>-->
                   <!--                    <el-table-column prop="materialsUsedQuantity" label="投料数量">-->
@@ -496,7 +496,7 @@
           <el-table ref="product" :data="detailDataList" border max-height="380">
             <el-table-column type="index" width="70" label="序号" fixed />
             <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300"
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processName" show-overflow-tooltip label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
@@ -663,7 +663,7 @@ export default {
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
         ],
         productsDrawingNo: [
-          { required: true, message: '品名规格不能为空', trigger: 'change' }
+          { required: true, message: '型号不能为空', trigger: 'change' }
         ]
       },
       selectArr: [],
@@ -718,7 +718,7 @@ export default {
         linesFormItems_right: [
             { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
             { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 120,render:this.isProductNameSwitch === '1' },
-            { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+            { prop: "productDrawingNo", label: "型号", value: "", type: 'view', minWidth: 150 },
             {
                 prop: "qty", label: "数量", value: "", type: 'input', width: 180,
                 itemRules: [
@@ -1401,7 +1401,7 @@ export default {
       this.linesFormItems_right = [
         { prop: "productsCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
         { prop: "productsName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
-        { prop: "productsDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        { prop: "productsDrawingNo", label: "型号", value: "", type: 'view', minWidth: 150 },
         {
           prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
           customComponent: 'ComSelect-page', renderTree: false, change: this.getProcessData,
@@ -1655,7 +1655,7 @@ export default {
       }
     },
     handleToQT(){
-        if (!this.dataForm.productsDrawingNo) return this.$message.warning('请先选择品名规格')
+        if (!this.dataForm.productsDrawingNo) return this.$message.warning('请先选择型号')
         this.completeQueryVisible = true
         this.$nextTick(() => {
             this.$refs.completeQueryRef.initData()

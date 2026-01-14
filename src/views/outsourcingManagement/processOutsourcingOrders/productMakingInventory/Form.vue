@@ -33,7 +33,7 @@
                             "></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data') 
+                      <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')
                         && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
 
@@ -89,16 +89,17 @@
                       <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
                         :key="9"></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip
                         :key="11">
                         <template slot="header">
                           <span class="required">*</span>
-                          品名规格
+                          型号
                         </template>
+型号
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                             :rules="productRules.productDrawingNo">
-                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
+                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入型号" disabled />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -191,7 +192,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" min-width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')"> 
+                      <el-table-column prop="taxRate" label="税率" min-width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           税率
@@ -516,7 +517,7 @@ export default {
       { prop: 'projectName', label: '所属项目',render:false },
         { prop: 'productCode', label: '产品编码', sortable: 'custom' },
         { prop: 'productName', label: '产品名称',render:false },
-        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'productDrawingNo', label: '型号', sortable: 'custom' },
 
         { prop: 'processName', label: '工序名称', sortable: 'custom' },
         // { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
@@ -529,7 +530,7 @@ export default {
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
         // { prop: 'name', label: '产品名称', type: 'input' },
 
       ], // 产品选择弹出框搜索条件

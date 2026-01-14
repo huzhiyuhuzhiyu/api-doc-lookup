@@ -83,12 +83,12 @@
                       <el-table-column prop="productsName" label="产品名称" width="120"
                         v-if="isProductNameSwitch === '1'"></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
+                      <el-table-column prop="drawingNo" key="drawingNo" label="型号" min-width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"
                             :rules="productRules.drawingNo">
                             <el-input v-model="scope.row.drawingNo" :disabled="type === 'look'" maxlength="20"
-                              :placeholder="type == 'look' ? '' : '请输入品名规格'">
+                              :placeholder="type == 'look' ? '' : '请输入型号'">
                               {{ scope.row.drawingNo }}
                             </el-input>
                           </el-form-item>
@@ -272,11 +272,11 @@
                   <el-table-column prop="productsName" label="产品名称" width="120"
                     v-if="isProductNameSwitch === '1'"></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
+                  <el-table-column prop="drawingNo" key="drawingNo" label="型号" min-width="180">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'" :rules="productRules.drawingNo">
                         <el-input v-model="scope.row.drawingNo" :disabled="type === 'look'" maxlength="20"
-                          :placeholder="type == 'look' ? '' : '请输入品名规格'">
+                          :placeholder="type == 'look' ? '' : '请输入型号'">
                           {{ scope.row.drawingNo }}
                         </el-input>
                       </el-form-item>
@@ -552,7 +552,7 @@ export default {
         queryType: 7
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
+        { prop: 'drawingNo', label: '型号', minWidth: 140 },
         { prop: 'code', label: '产品编码', minWidth: 140 },
 
         // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
@@ -562,7 +562,7 @@ export default {
         { prop: 'colour', label: '颜色' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
 
@@ -778,7 +778,7 @@ export default {
     console.log(this.isProjectSwitch)
     if (this.isProjectSwitch === '1') {
       this.ProductTableItems = [
-        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
+        { prop: 'drawingNo', label: '型号', minWidth: 140 },
         { prop: 'code', label: '产品编码', minWidth: 140 },
         { prop: 'projectName', label: '所属项目', minWidth: 140 },
         { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
@@ -787,7 +787,7 @@ export default {
       ]
     } else {
       this.ProductTableItems = [
-        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
+        { prop: 'drawingNo', label: '型号', minWidth: 140 },
         { prop: 'code', label: '产品编码', minWidth: 140 },
         { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
         { prop: 'mainUnit', label: '单位' },
@@ -1164,7 +1164,7 @@ export default {
           queryType: 7
         }
         this.ProductTableItems = [
-          { prop: 'drawingNo', label: '品名规格', minWidth: 140, sortable: 'custom' },
+          { prop: 'drawingNo', label: '型号', minWidth: 140, sortable: 'custom' },
           { prop: 'code', label: '产品编码', minWidth: 140, sortable: 'custom' },
           { prop: 'classAttributeName', label: '所属分类', minWidth: 120, sortable: 'custom' },
           { prop: 'mainUnit', label: '单位', width: 60 },
@@ -1194,7 +1194,7 @@ export default {
           queryType: 7
         }
         this.ProductTableItems = [
-          { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
+          { prop: 'drawingNo', label: '型号', minWidth: 140 },
           { prop: 'code', label: '产品编码', minWidth: 140 },
 
           // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },

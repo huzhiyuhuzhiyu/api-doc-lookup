@@ -91,7 +91,7 @@
 
                         <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
+                        <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                         </el-table-column>
@@ -248,7 +248,7 @@
 
                     <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
+                    <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="processName" label="工序" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
@@ -360,7 +360,7 @@
                 <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="searchProductFun(type)" v-model="productForm.productDrawingNo"
-                      placeholder="品名规格" clearable />
+                      placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -396,7 +396,7 @@
 
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip min-width="160"></el-table-column>
                 <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160" />
-                <el-table-column prop="drawingNo" label="品名规格" min-width="330" />
+                <el-table-column prop="drawingNo" label="型号" min-width="330" />
                 <el-table-column prop="processName" label="工序名称" v-if="type == 'invent'"
                   min-width="180"></el-table-column>
                 <el-table-column prop="productCategoryName" label="所属分类" v-if="type == 'all'" min-width="120" />

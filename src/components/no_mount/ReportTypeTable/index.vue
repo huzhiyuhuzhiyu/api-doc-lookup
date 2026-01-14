@@ -65,7 +65,7 @@
                                     ></el-option>
                                 </el-select>
                                 <el-autocomplete v-else-if="item.searchType === 6" v-model="item.fieldValue"
-                                :fetch-suggestions="((queryString,cb)=>{querySearchAsync(queryString,cb,item)})" :placeholder="'请选择' + item.label" 
+                                :fetch-suggestions="((queryString,cb)=>{querySearchAsync(queryString,cb,item)})" :placeholder="'请选择' + item.label"
                                      prefix-icon="el-icon-search"></el-autocomplete>
                             </el-form-item>
                         </el-col>
@@ -129,7 +129,7 @@
                     </template>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-                            @pagination="initData"  :page-sizes="pageSizes" 
+                            @pagination="initData"  :page-sizes="pageSizes"
                 />
             </div>
         </div>
@@ -354,7 +354,7 @@ export default {
               cb(arr)
             } else {
               let air = []
-              this.$message.error("您输入的品名规格暂未匹配到对应的产品数据，请重新输入!")
+              this.$message.error("您输入的型号暂未匹配到对应的产品数据，请重新输入!")
               queryString = ""
               cb(air)
             }
@@ -376,7 +376,7 @@ export default {
             let newProp = ''
             console.log(prop)
             if (this.tableItems.some(item => item.prop === prop && item.sortable === 'custom2')) { newProp = prop }
-            else {  
+            else {
                 if (['productsDrawingNo','productsCode','productsName','warehouseName','partnerName','costPrice','processName','warehouseCode','customerProductNo','orderNum','remainingQuantity','costPrice','salePurchaseDate','orderDate'].includes(prop)) {
                     newProp = prop
                 } else {
@@ -445,7 +445,7 @@ export default {
                 this.treeLoading = false
             }
             this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
-            
+
             this.domSearchList = this.deepCopy(this.searchList)
             this.initData()
         },
@@ -479,11 +479,11 @@ export default {
                     this.tableData = res.data ? res.data.records : res.data.list ? res.data.list : []
                     this.total = res.data ? res.data.total : 0
                 }
-                
+
                 this.totalData = res.data.total || {}
                 // 合计 以后用到放开即可
                 // res.data.total ? this.totalList.push(res.data.total) : ''
-                
+
                 this.listLoading = false
             }).catch(() => {
                 this.listLoading = false
@@ -565,7 +565,7 @@ export default {
             this.lineTableItems = [
                 {prop:"productCode", label:"产品编码",minWidth:160},
                 {prop:"productName", label:"产品名称",minWidth:160 ,render:this.isProductNameSwitch === '1'},
-                {prop:"drawingNo", label:"品名规格",minWidth:160},
+                {prop:"drawingNo", label:"型号",minWidth:160},
                 {prop:"num", label:"出库数量",minWidth:160},
                 {prop:"mainUnit", label:"单位",minWidth:120},
                 {prop:"totalAmount", label:"出库金额",minWidth:160},
@@ -574,7 +574,7 @@ export default {
             this.lineSuperQueryJson = [
                 {
                     prop: 'drawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     type: 'input',
                 },
                 {

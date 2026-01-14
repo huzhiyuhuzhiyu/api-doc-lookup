@@ -26,7 +26,7 @@
               <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
               <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                 sortable="custom" />
-              <el-table-column prop="drawingNo" label="品名规格" min-width="330" sortable="custom" />
+              <el-table-column prop="drawingNo" label="型号" min-width="330" sortable="custom" />
               <el-table-column prop="num" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="createTime" label="入库时间" min-width="180" fixed="right"
                 sortable="custom" />

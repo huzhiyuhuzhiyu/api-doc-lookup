@@ -16,7 +16,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
+                <el-input v-model="listQuery.productDrawingNo" placeholder="请输入型号" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>
@@ -72,7 +72,7 @@
             <el-table-column prop="docNo" label="报工单号" min-width="200" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="200" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="型号" min-width="200" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" min-width="200" sortable="custom"
               v-if="$store.getters.configData.product.enable_productName" />
             <el-table-column prop="docNo" label="生产任务单号" min-width="200" sortable="custom" />
@@ -86,7 +86,7 @@
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="返工数量" min-width="180" sortable="custom" />
             <el-table-column prop="productName" label="责废数量" width="160" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="料废数量" min-width="180" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom" />
             <el-table-column prop="inspectorName" label="检验人" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="检验时间" width="160" />
 
@@ -180,7 +180,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
 

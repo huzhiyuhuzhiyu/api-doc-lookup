@@ -10,7 +10,7 @@
                   <el-form-item>
                     <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                       @keyup.enter.native="search('basic')" />
-                  
+
                     <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                       clearable>
                       <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -22,7 +22,7 @@
                       :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                   </el-form-item>
                 </el-col>
-              </template> 
+              </template>
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -30,7 +30,7 @@
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                     </el-button>
                   </el-form-item>
-                </el-col> 
+                </el-col>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -54,12 +54,12 @@
                 <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" min-width="180" />
                 <el-table-column prop="productCode" label="产品编码" min-width="180" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="180" />
                 <el-table-column prop="processName" label="工序名称" min-width="180" />
                 <el-table-column prop="processCode" label="工序编码" min-width="180" />
                 <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="180" />
                 <el-table-column prop="warehouseName" label="所属线边仓" min-width="180" />
-           
+
               </JNPF-table>
               <pagination :total="processTotal" :page.sync="processForm.pageNum" :limit.sync="processForm.pageSize" @pagination="initData" />
             </div>
@@ -87,12 +87,12 @@ export default {
       superForm: {},
       basicQuery: {},
 
- 
-
-    
 
 
- 
+
+
+
+
       processForm:{},
       processData:[],
       processTotal:0,
@@ -116,7 +116,7 @@ export default {
             matchLogic: "AND",
             condition: []
         }
-      }, 
+      },
       searchList4:[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
@@ -132,17 +132,17 @@ export default {
           prop: 'productName',
           label: "产品名称",
           type: 'input'
-        },   
+        },
           {
           prop: 'productCode',
           label: "产品编码",
           type: 'input'
-        }, 
+        },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
-        },  
+        },
              {
           prop: 'processName',
           label: "工序名称",
@@ -157,10 +157,10 @@ export default {
           prop: 'warehouseName',
           label: "所属线边仓",
           type: 'input'
-        },    
+        },
       ],
       superQueryVisible: false,
- 
+
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
       visible: false,
@@ -168,16 +168,16 @@ export default {
       listLoading: false,
       activeName: "produce",
       reportCode:'',
-    
-    
+
+
       total: 0,
       formVisible: false,
       exportFormVisible:false,
     }
   },
-  async created() { 
- 
- 
+  async created() {
+
+
     this.superForm=this.processForm = JSON.parse(JSON.stringify(this.processFormList))
    this.search('basic')
   },
@@ -187,11 +187,11 @@ export default {
     }
   },
   methods: {
- 
+
     columnSetFunProcess(){
       this.$refs['dataTableProcess'].showDrawer()
     },
- 
+
       superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -219,8 +219,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-   
- 
+
+
          produceProcessReport(this.processForm).then(res => {
           this.processData = res.data.records
           this.processTotal = res.data.total
@@ -229,9 +229,9 @@ export default {
         }).catch(() => {
           this.listLoading = false
         })
-       
-    }, 
-  
+
+    },
+
     search(type) {
 
         Object.keys(this.processForm).forEach(key => { // 清除搜索条件两端空格
@@ -250,14 +250,14 @@ export default {
                   fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
                 }
               })
-            } 
+            }
             this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-      
-    
+
+
       this.initData()
     },
     reset() {
@@ -292,7 +292,7 @@ export default {
         targetListQuery=this.processForm
         exportName='工序料合计'
       }
-         
+
       let _data = {
         ...targetListQuery,
         exportType: this.reportCode,

@@ -185,7 +185,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="drawingNo" label="产品图号" min-width="200" key="drawingNo" fixed="left" show-overflow-tooltip>
+                  <el-table-column prop="drawingNo" label="型号" min-width="200" key="drawingNo" fixed="left" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item prop="drawingNo">
                         <!-- <el-input :title="scope.row.productName" v-model="scope.row.productName"

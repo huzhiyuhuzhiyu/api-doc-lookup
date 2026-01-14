@@ -121,7 +121,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
+                        <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
@@ -296,7 +296,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
+                        <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
@@ -380,7 +380,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productDrawingNo" placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -407,7 +407,7 @@
 
                 <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom" />
 
-                <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="300" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />

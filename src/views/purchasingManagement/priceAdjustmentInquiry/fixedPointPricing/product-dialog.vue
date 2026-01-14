@@ -67,7 +67,7 @@
           <JNPF-table v-loading="listLoading" :data="allproductData" customKey="JNPFTableKey_636696">
             <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
             <el-table-column prop="name" label="产品名称" />
-            <el-table-column prop="drawingNo" label="产品图号" />
+            <el-table-column prop="drawingNo" label="型号" />
             <el-table-column prop="spec" label="规格型号" />
             <el-table-column prop="costPrice" label="产品价格（含税）" min-width="180" />
             <el-table-column label="操作" width="100">

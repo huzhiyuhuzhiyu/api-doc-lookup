@@ -78,7 +78,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="productName" label="产品名称"   v-if="isProductNameSwitch === '1'" ></el-table-column>
-          <el-table-column prop="drawNo" label="品名规格" />
+          <el-table-column prop="drawNo" label="型号" />
           <el-table-column prop="productCategoryName" label="产品分类" />
 
           <el-table-column prop="pickingWay" label="领料方式" >

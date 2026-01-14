@@ -181,7 +181,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="productDrawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
+                  <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item prop="productDrawingNo">
                         <div class="viewData">

@@ -45,7 +45,7 @@
           <el-table-column prop="partnerName" label="客户名称" min-width="150" />
           <el-table-column prop="productsCode" label="产品编码" min-width="150" />
           <el-table-column prop="productsName" label="产品名称" min-width="150" />
-          <el-table-column prop="productsDrawingNo" label="产品图号" min-width="220" />
+          <el-table-column prop="productsDrawingNo" label="型号" min-width="220" />
           <el-table-column prop="productsSpec" label="产品规格型号" min-width="150" />
           <el-table-column prop="num" label="数量" min-width="140" />
           <el-table-column prop="mainUnit" label="单位(主)" min-width="120" />
@@ -111,7 +111,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品图号">
-              <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入产品图号" width="180" clearable
+              <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入型号" width="180" clearable
                 maxlength="20"> </el-input>
             </el-form-item>
           </el-col>

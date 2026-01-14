@@ -32,7 +32,7 @@ export default {
             drawer: false,
             replaceLines:[],
             replaceListItems: [
-                { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
+                { prop: 'drawingNo', label: '型号', value: '', type: 'view', minWidth: 340 },
                 { prop: 'classTypeName', label: '产品类型', value: '', type: 'view', minWidth: 160 },
                 { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
                 {

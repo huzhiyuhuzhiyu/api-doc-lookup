@@ -33,7 +33,7 @@
                             "></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data') 
+                      <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')
                         && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <!-- 供应商选择弹窗  -->
@@ -96,16 +96,17 @@
                         :key="3"></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip
                         :key="4">
                         <template slot="header">
                           <span class="required">*</span>
-                          品名规格
+                          型号
                         </template>
+型号
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                             :rules="productRules.productDrawingNo">
-                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
+                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入型号" disabled />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -411,7 +412,7 @@ export default {
       ProcessListRequestObj: {
         code: '',
         name: '',
-        processingType: 'external_production', 
+        processingType: 'external_production',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -934,7 +935,7 @@ export default {
       }
       return msg
     },
-  
+
 
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
@@ -1044,7 +1045,7 @@ export default {
           item.processName = data[0].name
           item.processId = data[0].id
         });
-        
+
         if(this.dataForm.cooperativePartnerId&&this.isXBN){
             this.requestPriceForm.cooperativePartnerId=this.dataForm.cooperativePartnerId
             this.requestPriceForm.processId=this.dataFormTwo.data[0].processId
@@ -1074,7 +1075,7 @@ export default {
         return formatted
       }
     },
- 
+
     // 产品弹窗
     openSeleceProductDialog() {
 
@@ -1169,7 +1170,7 @@ export default {
       // getShipmentList(obj).then((res) => {
       //   this.dataFormTwo.data[index].outShipmentList = res.data
       // })
-      this.dataFormTwo.data[index].outShipmentList[0].demandQuantity=this.dataFormTwo.data[index].outShipmentList[0].demandQuantity1 =(this.dataFormTwo.data[index].purchaseQuantity*1) 
+      this.dataFormTwo.data[index].outShipmentList[0].demandQuantity=this.dataFormTwo.data[index].outShipmentList[0].demandQuantity1 =(this.dataFormTwo.data[index].purchaseQuantity*1)
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
           this.dataFormTwo.data[index].purchaseQuantity * this.dataFormTwo.data[index].ratio
@@ -1180,7 +1181,7 @@ export default {
         )
       }
     },
-  
+
     clearData() {
       this.dataForm.id = ''
       this.dataFormTwo.data = []
@@ -1309,7 +1310,7 @@ export default {
           ProcessListRequestObj = {
             code: '',
             name: '',
-        processingType: 'external_production', 
+        processingType: 'external_production',
             projectId: item.projectId,
             pageNum: 1,
             pageSize: 20,
@@ -1324,7 +1325,7 @@ export default {
           ProcessListRequestObj = {
             code: '',
             name: '',
-        processingType: 'external_production', 
+        processingType: 'external_production',
             pageNum: 1,
             pageSize: 20,
             orderItems: [
@@ -1339,7 +1340,7 @@ export default {
         getBimProcessList(ProcessListRequestObj).then((res) => {
           console.log(res, 'pjj')
           let data = res.data.records
-          
+
           if (this.orderType === 'external') {
             this.dataFormTwo.data[index].processName = ''
             this.dataFormTwo.data[index].processId = ''
@@ -1347,7 +1348,7 @@ export default {
             this.dataFormTwo.data[index].processName = data[0].name
             this.dataFormTwo.data[index].processId = data[0].id
           }
-          
+
           console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
         })
 
@@ -1392,7 +1393,7 @@ export default {
             productName: item.externalProductName,
             stockInventoryLineId: item.id,
             deliveryDate: item.deliveryDate,
-         
+
             deputyUnit: item.externalDeputyUnit,
             purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity) ,
             productsId: item.externalProductsId,
@@ -1411,9 +1412,9 @@ export default {
             outsourcingQuantity: item.outsourcingQuantity, //转外协数量
             remark: item.remark,
             outShipmentList: [
-            {  
+            {
               demandQuantity1 : Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
-         
+
 
               processId :item.processId,
               processName :item.processName,
@@ -1455,7 +1456,7 @@ export default {
           let ProcessListRequestObj = {
             code: '',
             name: '',
-        processingType: 'external_production', 
+        processingType: 'external_production',
             pageNum: 1,
             pageSize: 20,
             orderItems: [
@@ -1530,7 +1531,7 @@ export default {
             // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
             console.log("this.dataFormTwo.data[index]",this.dataFormTwo.data[index]);
             let obj={
-           
+
 
             processId :item.processId,
               demandQuantity1:item.demandQuantity1,
@@ -1547,7 +1548,7 @@ export default {
               productCode:item.productCode,
               qty:1,
             }
-            
+
             this.sourceData=[obj]
           })
         } else {

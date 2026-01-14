@@ -67,7 +67,7 @@ export default {
                     }
                 },
                 { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 ,},
-                { prop: 'productDrawingNo', label: '品名规格', value: '', type: 'view', minWidth: 160 ,},
+                { prop: 'productDrawingNo', label: '型号', value: '', type: 'view', minWidth: 160 ,},
                 { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 ,},
                 { prop: 'productionBarrels', label: '生产桶数', value: '', type: 'view', minWidth: 120 ,},
                 { prop: 'productionWeight', label: '生产重量（kg）', value: '', type: 'view', minWidth: 160 ,},

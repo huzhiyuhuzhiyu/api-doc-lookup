@@ -47,8 +47,8 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="品名规格">
-                    <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled></el-input>
+                  <el-form-item label="型号">
+                    <el-input v-model="dataForm.productDrawingNo" placeholder="型号" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
@@ -146,7 +146,7 @@ export default {
   components: { ReworkWaste, MaterialWasteForm, responsWaste },
   mixins: [AbProjectMixin],
   data() {
-    return { 
+    return {
       reworkWasteFormVisible: false,
       responsWasteFormVisible: false,
       materialWasteFormVisible: false,
@@ -257,7 +257,7 @@ export default {
         Number(this.dataForm.reportingQuantity) -
         Number(this.dataForm.actualResponsibilityWasteQuantity) -
         Number(this.dataForm.actualMaterialQuantity) -
-        Number(this.dataForm.actualConcessionQuantity) - 
+        Number(this.dataForm.actualConcessionQuantity) -
         Number(this.dataForm.actualReworkQuantity)
       )
     }
@@ -300,7 +300,7 @@ export default {
         this.$message.error('合格数量不能小于0')
         return
       }
-     
+
     },
     // 设置责废原因
     setResponsWasteM() {
@@ -408,7 +408,7 @@ export default {
       this.workReport = {...row}
       this.qualifiedQuantity=this.dataForm.qualifiedQuantity
       this.dataForm.reportNo = this.dataForm.orderNo
-      this.dataForm.actualResponsibilityWasteQuantity = Number(this.dataForm.responsibilityWasteQuantity) 
+      this.dataForm.actualResponsibilityWasteQuantity = Number(this.dataForm.responsibilityWasteQuantity)
       this.dataForm.actualMaterialQuantity = Number(this.dataForm.materialWasteQuantity)
       this.dataForm.notificationType = 'work_report'
       this.dataForm.inspectorId = this.userInfo.userId
@@ -419,7 +419,7 @@ export default {
       console.log(this.dataForm, 'hhhh')
       this.dataForm.docLineId = this.dataForm.id
       this.dataForm.causesList.forEach((item) => {
-        
+
         if (item.scrapCategoryType === 'responsibility_fee') {
           // 责废
           this.responsWasteDataList.push({
@@ -530,7 +530,7 @@ export default {
         this.dataForm.inspectionStatus = 'inspected'
         let obj = {
           attachmentList: this.datafilelist,
-          inspection:this.dataForm,  
+          inspection:this.dataForm,
           workReport: this.workReport,
           lines: [],
           flowData: this.flowData

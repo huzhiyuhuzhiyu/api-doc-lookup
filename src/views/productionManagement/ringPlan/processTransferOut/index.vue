@@ -85,7 +85,7 @@
             <el-table-column prop="productCode" label="产品编码" min-width="120" />
             <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
               show-overflow-tooltip></el-table-column>
-            <el-table-column  prop="productDrawingNo" label="品名规格" min-width="300"></el-table-column>
+            <el-table-column  prop="productDrawingNo" label="型号" min-width="300"></el-table-column>
             <el-table-column prop="productionQuantity" label="计划数量" width="120" />
             <el-table-column prop="qualifiedQuantity" label="合格数量" width="120" />
             <el-table-column prop="outsourcingQuantity" label="已外协数量" width="120" />
@@ -148,7 +148,7 @@ export default {
       initSearchList: [
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         // { field: 'orderNo', fieldValue: '', label: '工单单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         // { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planDate', fieldValue: '', label: '计划日期', dateType: 'daterange', symbol: '==', searchType: 3, width: 120 },
         { field: 'waitOutsourcingQuantity', fieldValue: '0', label: '计划日期', dateType: 'daterange', symbol: '>', searchType: 3, width: 120,render:false },
@@ -163,7 +163,7 @@ export default {
         //   endPlaceholder: '结束日期',
         //   pickerOptions: { ...this.global.timePickerOptions, disabledDate: void (0) }
         // },
-        // { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        // { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         // {
         //   field: 'prodOrderStatus', fieldValue: 'normal', label: '任务状态', symbol: '==', searchType: 4, width: 120,
         //   options: [
@@ -263,7 +263,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {
@@ -579,7 +579,7 @@ export default {
         productsId: item.productsId, // 产品id
         productName: item.productName, // 产品名称
         productCode: item.productCode, // 产品编码
-        productDrawingNo: item.productDrawingNo, // 品名规格
+        productDrawingNo: item.productDrawingNo, // 型号
         ratio: item.ratio, // 转换系数
         calculationDirection: item.calculationDirection, // 计算方向
         mainUnit: item.mainUnit, // 单位

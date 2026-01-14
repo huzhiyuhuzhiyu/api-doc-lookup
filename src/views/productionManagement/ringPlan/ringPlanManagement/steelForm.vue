@@ -52,14 +52,14 @@ export default {
                 pageSize: 20
             }, // 产品选择弹出框列表请求参数
             ProductTableItems: [
-                { prop: 'drawingNo', label: '品名规格'  },
+                { prop: 'drawingNo', label: '型号'  },
                 { prop: 'code', label: '产品编码', sortable: 'custom' },
                 { prop: 'productCategoryName', label: '产品分类', sortable: 'custom' },
                 { prop: 'mainUnit', label: '单位' },
                 { prop: 'createTime', label: '创建时间', sortable: 'custom', width: 180 }
             ], // 产品选择弹出框表单展示字段
             ProductTableSearchList: [
-                { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+                { prop: 'productDrawingNo', label: '型号', type: 'input' },
                 { prop: 'productCode', label: '产品编码', type: 'input' }
             ],
             productWeightQuantity:null,
@@ -77,7 +77,7 @@ export default {
         setDataFormItems(){
             this.dataFormItems = [
                 { prop: "productionPlanNo", label: "生产计划单号", value: "",maxlength: 100, type: 'input', itemRules: [{ required: true, trigger: "blur" }], },
-                { prop: "productDrawingNo", label: "品名规格", value: "", type: "custom", customComponent: 'ComSelect-page', itemRules: [{ required: true,message:'品名规格不能为空', trigger: "change" }],
+                { prop: "productDrawingNo", label: "型号", value: "", type: "custom", customComponent: 'ComSelect-page', itemRules: [{ required: true,message:'型号不能为空', trigger: "change" }],
                     dialogTitle: '选择产品',treeTitle: '产品分类', renderTree:false,
                     listMethod : getProducts,
                     listRequestObj : this.ProductListRequestObj,

@@ -46,7 +46,7 @@
 
           <el-table-column prop="code" label="产品编码" min-width="150"  sortable="custom"></el-table-column>
           <el-table-column prop="name" label="产品名称" min-width="150"  sortable="custom"></el-table-column>
-          <el-table-column prop="drawingNo" label="产品图号" min-width="150" sortable="custom"></el-table-column>
+          <el-table-column prop="drawingNo" label="型号" min-width="150" sortable="custom"></el-table-column>
           <el-table-column prop="ncode" label="替代产品编码" min-width="150" sortable="custom"></el-table-column>
           <el-table-column prop="nname" label="替代产品名称" min-width="150" sortable="custom" />
           <el-table-column prop="ndrawingNo" label="替代产品图号" min-width="150" sortable="custom" />

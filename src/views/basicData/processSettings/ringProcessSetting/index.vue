@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入型号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -110,7 +110,7 @@
           border @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" hasC
           @selection-change="currentChange" customKey="JNPFTableKey_427702">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="240" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="240" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom" />
           <el-table-column prop="name" label="工艺路线名称" min-width="180" sortable="custom" />
@@ -210,7 +210,7 @@ export default {
       superQueryJson: [
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {

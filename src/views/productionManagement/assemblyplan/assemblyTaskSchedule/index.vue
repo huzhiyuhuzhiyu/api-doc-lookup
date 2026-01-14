@@ -87,7 +87,7 @@
             </el-table-column>
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="$store.getters.configData.product.enable_show_pairing_mode" />
 
@@ -161,7 +161,7 @@ export default {
       searchList: [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
       taskScheduleVisible: false,
       form: {
@@ -228,7 +228,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
          {
@@ -634,7 +634,7 @@ export default {
       this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.search('basic')
     },

@@ -253,7 +253,7 @@ export default {
           { prop: 'supplierCode', label: '供应商编码', minWidth: 180, sortable: 'custom' },
           { prop: 'productsName', label: '产品名称', minWidth: 180, sortable: 'custom' },
           { prop: 'productsCode', label: '产品编码', minWidth: 180, sortable: 'custom' },
-          { prop: 'productsDrawingNo', label: '品名规格', minWidth: 180, sortable: 'custom' },
+          { prop: 'productsDrawingNo', label: '型号', minWidth: 180, sortable: 'custom' },
           { prop: 'mainUnit', label: '单位', minWidth: 90, sortable: 'custom' },
           { prop: 'numStr', label: '数量', minWidth: 120, sortable: 'custom' },
           { prop: 'sampleNumStr', label: '样品量', minWidth: 120, sortable: 'custom' },

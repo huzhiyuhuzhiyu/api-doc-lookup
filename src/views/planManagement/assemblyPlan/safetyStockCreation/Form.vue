@@ -74,7 +74,7 @@
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="330" :key="6"></el-table-column>
+                  <el-table-column prop="drawingNo" label="型号" min-width="330" :key="6"></el-table-column>
                   <el-table-column prop="bomId" label="BOM" min-width="140" :key="444" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
@@ -138,7 +138,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="isProductNameSwitch === '1'">
@@ -169,7 +169,7 @@
                 <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
                 <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="330" />
+                <el-table-column prop="drawingNo" label="型号" sortable="custom" min-width="330" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                 <el-table-column prop="inventoryQuantity" label="可用库存数量" min-width="160"

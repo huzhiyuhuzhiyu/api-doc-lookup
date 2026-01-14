@@ -6,8 +6,8 @@
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item>
-              <el-autocomplete  v-model="form.drawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入品名规格" @select="handleSelect($event)" ></el-autocomplete>
-              <!-- <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable
+              <el-autocomplete  v-model="form.drawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入型号" @select="handleSelect($event)" ></el-autocomplete>
+              <!-- <el-input v-model="listQuery.drawingNo" placeholder="请输入型号" clearable
                 @keyup.enter.native="search()" /> -->
             </el-form-item>
           </el-col>
@@ -50,7 +50,7 @@
           <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="100" show-overflow-tooltip/>
           <el-table-column prop="productName" label="产品名称"   width="160" v-if="isProductNameSwitch === '1'"
           show-overflow-tooltip></el-table-column>
-          <el-table-column prop="drawNo" label="品名规格"width="360" show-overflow-tooltip>
+          <el-table-column prop="drawNo" label="型号"width="360" show-overflow-tooltip>
             <template slot-scope="scope">
               <i :class="[
                 scope.row.childrenList.length >= 1
@@ -69,7 +69,7 @@
           </el-table-column>
           <el-table-column prop="mainUnit" key="mainUnit" label="单位" width="80" />
           <el-table-column prop="qty" key="qty" label="基本数量" width="80" />
-  
+
         </JNPF-table>
         <!-- <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" /> -->
@@ -79,7 +79,7 @@
   </div>
 </template>
 
-<script> 
+<script>
 import { getProducts,bomTopTree  } from '@/api/masterDataManagement/index.js' // 产品列表
 export default {
   name: 'completeQuery',
@@ -118,7 +118,7 @@ export default {
 
   },
   methods: {
-     querySearchAsync(queryString, cb) { 
+     querySearchAsync(queryString, cb) {
        if (queryString && queryString.length >= 3) {
         queryString=queryString.trim()
         let ProductListRequestObj = {
@@ -157,7 +157,7 @@ export default {
               cb(arr)
             } else {
               let air = []
-              this.$message.error("您输入的品名规格暂未匹配到对应的产品数据，请重新输入!")
+              this.$message.error("您输入的型号暂未匹配到对应的产品数据，请重新输入!")
               queryString = ""
               cb(air)
             }
@@ -173,7 +173,7 @@ export default {
         let air = []
         cb(air)
       }
-        
+
       },
       handleSelect(item) {
       console.log(666, item);

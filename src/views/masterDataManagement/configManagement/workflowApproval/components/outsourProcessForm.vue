@@ -301,7 +301,7 @@
                   </el-table-column>
 
 
-                  <el-table-column prop="drawingNo" label="产品图号" min-width="160" show-overflow-tooltip key="drawingNo">
+                  <el-table-column prop="drawingNo" label="型号" min-width="160" show-overflow-tooltip key="drawingNo">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
 

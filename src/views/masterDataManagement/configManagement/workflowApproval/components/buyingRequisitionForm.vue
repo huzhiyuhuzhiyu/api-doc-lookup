@@ -83,7 +83,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="productDrawingNo" label="产品图号" min-width="200" fixed="left"
+                  <el-table-column prop="productDrawingNo" label="型号" min-width="200" fixed="left"
                     show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"

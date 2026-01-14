@@ -108,7 +108,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="stockMoveOrderNo" label="出入库单号" width="180" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" width="180" sortable="custom" />
+          <el-table-column prop="drawingNo" label="型号" width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="180" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
@@ -205,7 +205,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
 
@@ -248,7 +248,7 @@ export default {
         {
           field: 'drawingNo',
           fieldValue: '',
-          label: '品名规格',
+          label: '型号',
           symbol: 'like',
           searchType: 1,
           width: 120
@@ -532,7 +532,7 @@ export default {
         {
           field: 'drawingNo',
           fieldValue: '',
-          label: '品名规格',
+          label: '型号',
           symbol: 'like',
           searchType: 1,
           width: 120

@@ -35,7 +35,7 @@
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addFun()">新建</el-button>
-             
+
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -50,14 +50,14 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"  
-            :fixedNO="true"  
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"
+            :fixedNO="true"
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="purchasePartnerName" label="采购供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="outPartnerName" label="委外供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="outProductName" label="产品名称" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="outProductCode" label="产品编码" min-width="120" sortable="custom"> </el-table-column>
-            <el-table-column prop="outProductDrawingNo" label="品名规格" min-width="120" sortable="custom"> </el-table-column>
+            <el-table-column prop="outProductDrawingNo" label="型号" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="yieldRate" label="成材率" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="buyBackPrice" label="回购单价" min-width="120" sortable="custom"> </el-table-column>
@@ -67,7 +67,7 @@
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="editFun(scope.row, 'edit')">编辑</el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id,)">删除</el-button>
-               
+
               </template>
             </el-table-column>
           </JNPF-table>
@@ -101,11 +101,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="品名规格" prop="outProductDrawingNo">
-              <el-input v-model="dataForm.outProductDrawingNo" placeholder="品名规格" :disabled="btnType === 'look'"  readonly @focus="addProduct"/>
+            <el-form-item label="型号" prop="outProductDrawingNo">
+              <el-input v-model="dataForm.outProductDrawingNo" placeholder="型号" :disabled="btnType === 'look'"  readonly @focus="addProduct"/>
             </el-form-item>
           </el-col>
-     
+
           <el-col :span="24">
             <el-form-item label="成材率" prop="yieldRate">
               <el-input v-model="dataForm.yieldRate" placeholder="成材率" clearable :disabled="btnType === 'look'"/>
@@ -189,12 +189,12 @@
         </el-col>
         <!-- <el-col :span="6" >
           <el-form-item>
-            <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.drawingNo" placeholder="请输入品名规格" clearable />
+            <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.drawingNo" placeholder="请输入型号" clearable />
           </el-form-item>
         </el-col> -->
         <el-col :span="6">
           <el-form-item>
-            <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+            <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入型号" clearable />
           </el-form-item>
         </el-col>
 
@@ -215,7 +215,7 @@
       <JNPF-table v-loading="listLoading" :data="allproductData"  ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_903180">
         <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
         <el-table-column prop="name" label="产品名称" width="160"  show-overflow-tooltip></el-table-column>
-        <el-table-column prop="drawingNo" label="品名规格" />
+        <el-table-column prop="drawingNo" label="型号" />
         <el-table-column prop="productCategoryName" label="所属分类" />
         <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch == 1" />
         <el-table-column prop="mainUnit" label="单位" />
@@ -236,7 +236,7 @@
     </div>
       </div>
       </div>
-    
+
     </el-dialog>
         <!-- 高级查询 -->
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -248,7 +248,7 @@
 <script>
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
- 
+
 import {  outRelatedProductList,addOutRelatedProduct,editOutRelatedProduct,delOutRelatedProduct} from '@/api/purchasingAndOutsourcingOrders/index';
 
 
@@ -407,9 +407,9 @@ export default {
       ],
       btnType:"",
 
-  
-    
- 
+
+
+
       columnList: [],
       superQueryVisible: false,
       btnLoading: false,
@@ -438,7 +438,7 @@ export default {
         },
         {
           prop: 'outProductDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input',
         },
         {
@@ -458,14 +458,14 @@ export default {
         buyBackPrice: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["回购单价不能为空", (errMsg, index) => { this.$message.error(`回购单价：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate({ type: 'decimal', params: [20, 12, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' } 
+          { validator: this.formValidate({ type: 'decimal', params: [20, 12, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' }
         ],
       },
-      
+
       workOrderData: [],
    productVisible:false,
-   
- 
+
+
     }
   },
   async created() {
@@ -640,7 +640,7 @@ export default {
         this.dataForm.warehouseType = ""
         this.dataForm.warehouseCode = ""
         return
-      } 
+      }
 
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
@@ -651,7 +651,7 @@ export default {
       })
     },
     getProductClassFun() {
-    
+
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
         res.data.list.forEach(item => {
@@ -790,7 +790,7 @@ export default {
         this.dataForm.purchasePartnerName = data[0].all.name
         this.dataForm.purchasePartnerCode = data[0].all.code
         this.dataForm.purchasePartnerId = data[0].all.id
-     
+
       }
     },
     selectOutPartner(id,data){
@@ -811,7 +811,7 @@ export default {
         this.dataForm.outPartnerName = data[0].all.name
         this.dataForm.outPartnerCode = data[0].all.code
         this.dataForm.outPartnerId = data[0].all.id
-     
+
       }
     },
     //  提交
@@ -820,7 +820,7 @@ export default {
       console.log("this.$refs['diaForm']",this.$refs['diaForm']);
       this.$refs['diaForm'].validate((valid) => {
         console.log(4444);
-        if (valid) { 
+        if (valid) {
           let methods=null
           this.btnLoading = true
           if(this.btnType=='add'){
@@ -839,9 +839,9 @@ export default {
         }
       })
     },
-    
- 
- 
+
+
+
 
     superQuerySearch(query) {
       this.orderForm.superQuery = query
@@ -863,7 +863,7 @@ export default {
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
- 
+
     initData() {
       this.listLoading = true
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
@@ -925,14 +925,14 @@ export default {
         })
       }).catch(() => { })
     },
- 
- 
+
+
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
- 
-    
- 
+
+
+
   }
 }
 </script>

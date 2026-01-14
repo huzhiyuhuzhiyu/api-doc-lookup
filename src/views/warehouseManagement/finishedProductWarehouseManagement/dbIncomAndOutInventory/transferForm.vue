@@ -50,7 +50,7 @@
 
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="false"
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" customKey="JNPFTableKey_555953">
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="300" />
+                    <el-table-column prop="drawingNo" label="型号" min-width="300" />
           <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
           <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>

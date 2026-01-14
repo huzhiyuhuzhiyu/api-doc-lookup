@@ -199,7 +199,7 @@
 
                 <el-table-column prop="productCode" label="产品编码" min-width="400" />
                 <el-table-column prop="productName" label="产品名称" min-width="400" />
-                <el-table-column prop="productDrawingNo" label="产品图号" min-width="400" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="400" />
                 <el-table-column prop="spec" label="规格型号" width="120" />
                 <el-table-column prop="mainUnit" label="单位(主)" width="120" />
                 <el-table-column prop="num" label="数量" width="120" />

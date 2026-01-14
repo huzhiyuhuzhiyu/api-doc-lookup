@@ -103,7 +103,7 @@
 <script>
 import FormItem from "@/components/JNPF-col-table/item"
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
-import { getInventoryLineReport } from '@/api/basicData/index' // 仓库 
+import { getInventoryLineReport } from '@/api/basicData/index' // 仓库
 import {
   getProductList,
 } from '@/api/masterDataManagement/productManage'
@@ -158,7 +158,7 @@ export default {
       ProductTableItems: [
         { prop: 'productCode', label: '产品编码', fixed: 'left' },
         { prop: 'productName', label: '产品名称', fixed: 'left' },
-        { prop: 'productDrawingNo', label: '品名规格' },
+        { prop: 'productDrawingNo', label: '型号' },
         { prop: 'pairingModeName', label: '配对方式' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'batchNumber', label: '批次号',width:'180' },
@@ -168,7 +168,7 @@ export default {
       ProductTableSearchList: [
         { prop: "productCode", label: "产品编码", type: 'input' },
         { prop: "productName", label: "产品名称", type: 'input' },
-        { prop: "productDrawingNo", label: "品名规格", type: 'input' }
+        { prop: "productDrawingNo", label: "型号", type: 'input' }
       ], // 产品选择弹出框搜索条件
     }
   },

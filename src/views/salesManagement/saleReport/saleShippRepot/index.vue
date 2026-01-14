@@ -65,7 +65,7 @@
             <el-table-column prop="partnerName" label="客户名称" min-width="220" sortable="custom"></el-table-column>
             <el-table-column prop="productsCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productsDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productsDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" />
             <el-table-column prop="num" label="出库数量" min-width="120" sortable="custom" />
@@ -192,7 +192,7 @@ export default {
         },
              {
           prop: 'productsDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
          {

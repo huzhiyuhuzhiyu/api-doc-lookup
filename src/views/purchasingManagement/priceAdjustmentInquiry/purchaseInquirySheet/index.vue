@@ -155,7 +155,7 @@
                 <el-table-column prop="productsCode" label="产品编码" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="productsName" label="产品名称" min-width="140" show-overflow-tooltip
                   sortable="custom" />
-                <el-table-column prop="productsDrawingNo" label="产品图号" min-width="370" show-overflow-tooltip
+                <el-table-column prop="productsDrawingNo" label="型号" min-width="370" show-overflow-tooltip
                   sortable="custom" />
                 <el-table-column prop="materialPrice" label="产品价格" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="taxRate" label="税率%" min-width="100" show-overflow-tooltip />

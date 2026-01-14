@@ -55,11 +55,11 @@
           @sort-change="sortChange" customKey="JNPFTableKey_270139">
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
-        
+
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -130,7 +130,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
@@ -192,7 +192,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
 
@@ -261,8 +261,8 @@ export default {
     this.isProjectSwitchFlag=true
     this.superForm = this.tableQuery
     this.search('basic')
-    
-    
+
+
   },
   methods: {
     // 导出

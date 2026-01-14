@@ -61,7 +61,7 @@
           <el-table-column prop="code" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="name" label="产品名称" width="120" sortable="custom" />
 
-          <el-table-column prop="drawingNo" label="产品图号" width="120" />
+          <el-table-column prop="drawingNo" label="型号" width="120" />
           <el-table-column prop="customerDrawingNo" label="客户产品图号" width="150" />
           <el-table-column prop="dosage" label="客户图号用量" width="150" />
 
@@ -151,7 +151,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品图号">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入产品图号" clearable />
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入型号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">

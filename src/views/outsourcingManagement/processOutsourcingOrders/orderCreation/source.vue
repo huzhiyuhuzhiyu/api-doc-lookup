@@ -19,7 +19,7 @@
               <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
               <el-table-column prop="projectName" label="所属项目" width="120"
                 v-if="isProjectSwitch === '1'"></el-table-column>
-              <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+              <el-table-column prop="drawingNo" label="型号" min-width="200" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
                     <div class="viewData">
@@ -163,12 +163,12 @@ export default {
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'code', label: '产品编码' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         { prop: 'classAttributeName', label: '类别属性' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+        { prop: 'productDrawingNo', label: '型号', type: 'input' }
 
         // { prop: "name", label: "产品名称", type: 'input', },
       ], // 产品选择弹出框搜索条件

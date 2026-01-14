@@ -18,7 +18,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="料品名规格"
+                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="料型号"
                   clearable />
               </el-form-item>
             </el-col>
@@ -75,7 +75,7 @@
 
             <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="料品名规格" width="160" sortable="custom" />
+            <el-table-column prop="drawingNo" label="型号" width="160" sortable="custom" />
             <!-- <el-table-column prop="productName" label="料产品名称" width="160" sortable="custom" /> -->
             <el-table-column prop="productCode" label="料产品编码" width="160" sortable="custom" />
 
@@ -238,7 +238,7 @@ export default {
         // },
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {
@@ -246,8 +246,8 @@ export default {
           label: '单位',
           type: 'input'
         },
-      
-       
+
+
         {
           prop: 'deliveryDate',
           label: '交货日期',

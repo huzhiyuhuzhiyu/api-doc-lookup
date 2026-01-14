@@ -245,7 +245,7 @@
                 <el-table-column prop="customerProductDrawingNo" label="客户产品图号" width="200" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="200" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" width="200" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="产品图号" width="200" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="200" sortable="custom" />
                 <el-table-column prop="outboundQuantity" label="已出库数量" width="140" />
                 <el-table-column prop="undeliveredQuantity" label="待出库数量" width="140" />
                 <el-table-column prop="exchangeGoodsFlag" label="换货标识" width="120">

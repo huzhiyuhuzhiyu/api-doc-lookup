@@ -74,7 +74,7 @@
             <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="productsName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
+            <el-table-column prop="drawingNo" label="型号" width="150" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
             <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
@@ -184,7 +184,7 @@ export default {
           searchType: 1,
           width: 120
         },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 }
       ],
       superQueryVisible: false,
       superQueryJson: [
@@ -211,7 +211,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {
@@ -873,7 +873,7 @@ export default {
           searchType: 1,
           width: 120
         },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 }
       ]
       if (this.isProductNameSwitch === '1') {
         this.searchList.push({

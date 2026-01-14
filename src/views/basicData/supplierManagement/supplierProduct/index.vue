@@ -67,7 +67,7 @@
                   v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="120"
                   v-if="isProductNameSwitch === '1'"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="160" />
+                <el-table-column prop="drawingNo" label="型号" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
@@ -153,7 +153,7 @@ export default {
       superQuery: {},
       lastSearchList: [
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 }
       ],
       historySearchList: [
         {
@@ -164,7 +164,7 @@ export default {
           searchType: 1,
           width: 120
         },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 }
       ],
       exportFormVisible: false,
       depFormVisible: false,
@@ -303,7 +303,7 @@ export default {
 
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {
@@ -701,7 +701,7 @@ export default {
       }
 
       this.lastSearchList = [
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 }
       ]
 

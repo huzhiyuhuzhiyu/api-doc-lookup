@@ -175,9 +175,9 @@
                         v-if="productNameFlag == '1'" />
                       <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCategoryName"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" key="productDrawingNo"
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="160" key="productDrawingNo"
                         v-if="dataForm.documentType == 'outbound'" />
-                      <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
+                      <el-table-column prop="drawingNo" label="型号" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
                         v-if="dataForm.businessType === 'outbound_sale_send'">
@@ -437,7 +437,7 @@
 
               <el-col :span="3" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
+                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入型号"
                     @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
@@ -464,7 +464,7 @@
 
               <el-col :span="3" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
+                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入型号"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
@@ -508,9 +508,9 @@
                 v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'" />
               <el-table-column prop="name" label="产品名称" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'" />
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"
+              <el-table-column prop="productDrawingNo" label="型号" min-width="300" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="productDrawingNo" />
-              <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"
+              <el-table-column prop="drawingNo" label="型号" min-width="300" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="drawingNo" />
               <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isPairingModeSwitch === '1'" />
               <el-table-column prop="productCategoryName" label="产品分类" width="160"/>
@@ -1287,13 +1287,13 @@ export default {
         this.ProductTableItems = [
             { prop: 'code', label: '产品编码', fixed: 'left' },
             { prop: 'name', label: '产品名称', fixed: 'left' },
-            { prop: 'drawingNo', label: '品名规格' },
+            { prop: 'drawingNo', label: '型号' },
             { prop: "mainUnit", label: "单位" },
             { prop: "inventoryQuantity", label: "库存数量" },
         ] // 产品选择弹出框表单展示字段
             this.ProductTableSearchList = [
             { prop: 'productCode', label: '产品编码', type: 'input' },
-            { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+            { prop: 'productDrawingNo', label: '型号', type: 'input' },
         ] // 产品选择弹出框搜索条件
         this.$refs.stockProduct.openDialog()
     },

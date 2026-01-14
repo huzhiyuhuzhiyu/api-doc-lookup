@@ -102,15 +102,16 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
-                          品名规格
+                          型号
                         </template>
+型号
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                             :rules="productRules.productDrawingNo">
-                            <el-input v-model="scope.row.productDrawingNo" disabled placeholder="品名规格" />
+                            <el-input v-model="scope.row.productDrawingNo" disabled placeholder="型号" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -279,7 +280,7 @@
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
+                    <el-table-column prop="drawingNo" label="型号" min-width="160"></el-table-column>
 
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                     <template v-if="isProportionSwitch === '1'">
@@ -378,15 +379,15 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                  <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip>
                     <template slot="header">
                       <span class="required">*</span>
-                      品名规格
+                      型号
                     </template>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                         :rules="productRules.productDrawingNo">
-                        <el-input v-model="scope.row.productDrawingNo" disabled placeholder="品名规格" />
+                        <el-input v-model="scope.row.productDrawingNo" disabled placeholder="型号" />
                       </el-form-item>
                     </template>
                   </el-table-column>
@@ -564,7 +565,7 @@
                 <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
                   show-overflow-tooltip></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
+                <el-table-column prop="drawingNo" label="型号" min-width="160"></el-table-column>
 
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                 <template v-if="isProportionSwitch === '1'">
@@ -686,13 +687,13 @@ export default {
         { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
         { prop: 'name', label: '产品名称', sortable: 'custom',render:false },
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
         // { prop: 'name', label: '产品名称', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
@@ -703,8 +704,8 @@ export default {
       // 供应商 列表
       ProcessTableItems: [
         { prop: 'code', label: '工序编码' },
-        { prop: 'name', label: '工序名称' },  
-        { prop: 'processTypeName', label: '工序类型' },  
+        { prop: 'name', label: '工序名称' },
+        { prop: 'processTypeName', label: '工序类型' },
 
       ],
       // 供应商搜索条件
@@ -810,7 +811,7 @@ export default {
   },
   async created() {
     await this.getProportionSwitch('warehouse', 'proportion')
-  
+
     this.getDeputyUnit()
     this.getBimBusinessDetail()
     this.switchStyleheight()
@@ -893,7 +894,7 @@ export default {
   methods: {
        listDataFormatting(res) {
       let treeData = res.data.records.map((item) => {
-      
+
         if (item.processType == 'normal') {
           item.processTypeName = '正常工序'
         } else if (item.processType == 'vibrate') {
@@ -915,7 +916,7 @@ export default {
         }else if (item.processType == 'boxing') {
           item.processTypeName = '装盒工序'
         }
-    
+
         return item
       })
       return treeData
@@ -1002,7 +1003,7 @@ export default {
     openSeleceProductDialog() {
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
       ]
       if (this.$store.getters.configData.product.enable_productName) {
       this.ProductTableItems.forEach(tc=>{
@@ -1075,7 +1076,7 @@ export default {
             productsId: item.all.id, // 产品id
             productName: item.all.name, // 产品名称
             productCode: item.all.code, // 产品编码
-            productDrawingNo: item.all.drawingNo, // 品名规格
+            productDrawingNo: item.all.drawingNo, // 型号
             taxRate: Number(item.taxRate), // 税率
             deliveryDate: this.dataForm.deliveryDate // 交期
            }
@@ -1256,7 +1257,7 @@ export default {
       this.dataForm.id = id || ''
       this.type = type
       this.approvalFlag = approvalFlag
-      
+
       if (id) {
         if (this.type == 'edit') {
           this.title = '编辑外协订单'

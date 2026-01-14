@@ -77,7 +77,7 @@ export default {
                 {prop:"partnerName", label:'供应商名称',minWidth:160,sortable:'custom'},
                 {prop:"productsCode", label:'产品编码',minWidth:140,sortable:'custom'},
                 {prop:"productsName", label:'产品名称',minWidth:140,render:this.isProductNameSwitch === '1',sortable:'custom'},
-                {prop:"productsDrawingNo", label:'品名规格',minWidth:140,sortable:'custom'},
+                {prop:"productsDrawingNo", label:'型号',minWidth:140,sortable:'custom'},
                 {prop:"costProjectName", label:'成本归属',minWidth:140,sortable:'custom'},
                 {prop:"mainUnit", label:'单位',minWidth:120},
                 {prop:"num", label:'数量',minWidth:140,sortable:'custom'},
@@ -101,7 +101,7 @@ export default {
                 },
                 {
                     prop: 'productsDrawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     type: 'input',
                 },
                 {

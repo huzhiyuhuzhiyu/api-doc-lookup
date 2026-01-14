@@ -8,7 +8,7 @@
               <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
               <el-table-column prop="productsCode" label="产品编码" min-width="120" show-overflow-tooltip />
               <el-table-column prop="productsName" label="产品名称" min-width="120" show-overflow-tooltip />
-              <el-table-column prop="productsDrawingNo" label="产品图号" min-width="120" show-overflow-tooltip />
+              <el-table-column prop="productsDrawingNo" label="型号" min-width="120" show-overflow-tooltip />
               <el-table-column prop="shoulderLength" label="夹肩长" min-width="120" show-overflow-tooltip />
               <el-table-column prop="bomsleeve" label="对应套筒" min-width="180" show-overflow-tooltip />
               <el-table-column prop="bomsheath" label="对应护套" min-width="180" show-overflow-tooltip />

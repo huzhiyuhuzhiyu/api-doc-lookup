@@ -140,7 +140,7 @@ export default {
           } else if (tc.prop === 'name') {
             tc.label = `${this.productName.slice(0, 4)}名称`
           } else if (tc.prop === 'drawingNo') {
-            tc.label = `${this.productName.slice(0, 4)}品名规格`
+            tc.label = `${this.productName.slice(0, 4)}型号`
           } else if (tc.prop === 'productSource') {
             tc.label = `${this.productName.slice(0, 4)}来源`
             tc.options = [{ label: '采购', value: 'purchase' }]
@@ -243,7 +243,7 @@ export default {
                     if (!res.data) {
                       callback()
                     } else {
-                      callback(new Error('此品名规格已存在'))
+                      callback(new Error('此型号已存在'))
                     }
                   })
                   .catch((err) => {
@@ -501,7 +501,7 @@ export default {
             })
           } else {
             this.fetchData(this.busSetId, false)
-             // 编辑时，如果已经品名规格那些，不允许修改
+             // 编辑时，如果已经型号那些，不允许修改
             this.tabs[0].tabContent.forEach((tc) => {
               if (
                 [

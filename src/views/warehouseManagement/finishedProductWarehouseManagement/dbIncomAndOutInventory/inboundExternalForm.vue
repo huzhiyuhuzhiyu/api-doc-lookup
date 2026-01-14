@@ -50,7 +50,7 @@
                             </el-form-item>
                           </el-col>
 
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')
                             && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="供应商" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -134,7 +134,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
@@ -284,7 +284,7 @@
                             </el-form-item>
                           </el-col>
 
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')
                             && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="供应商" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -368,7 +368,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
@@ -503,7 +503,7 @@
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -538,7 +538,7 @@
                 <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="300" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                 <el-table-column prop="purchaseQuantity" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
@@ -1036,7 +1036,7 @@ export default {
         this.$set(item, 'warehouseId', this.dataForm.warehouseId)
         this.$set(item, 'warehouseName', this.dataForm.warehouseName)
         this.$set(item, 'warehouseType', this.dataForm.warehouseType)
-        
+
 
 
 
@@ -1334,7 +1334,7 @@ export default {
               item.ordersId = item.purchaseOrderId
               item.noticeId = item.purchaseReceiptReturnGoodsId
               item.noticeLineId = item.id
-           
+
               item.costPrice = item.price
               item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1

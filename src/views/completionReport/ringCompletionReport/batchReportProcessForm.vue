@@ -98,7 +98,7 @@ export default {
                 { prop: 'processName', label: '工序名称', value: '', type: 'view', minWidth: 160 },
                 { prop: 'productionOrderNo', label: '生产任务单号', value: '', type: 'view', minWidth: 160 },
                 { prop: 'orderNo', label: '工单号', value: '', type: 'view', minWidth: 160 },
-                { prop: 'productDrawingNo', label: '品名规格', value: '', type: 'view', minWidth: 160 },
+                { prop: 'productDrawingNo', label: '型号', value: '', type: 'view', minWidth: 160 },
                 { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
                 { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160,render:this.$store.getters.configData.product.enable_productName },
                 { prop: 'productionQuantity', label: '加工数量', value: '', type: 'view', minWidth: 160 },

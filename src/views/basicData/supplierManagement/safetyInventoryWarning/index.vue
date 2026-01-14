@@ -66,7 +66,7 @@
           ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData" customKey="JNPFTableKey_195052" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
           <el-table-column prop="code" label="产品编码" width="220"></el-table-column>
           <el-table-column prop="name" label="产品名称" width="220"></el-table-column>
-          <el-table-column prop="drawingNo" label="产品型号" min-width="220" />
+          <el-table-column prop="drawingNo" label="型号" min-width="220" />
           <el-table-column prop="productCategoryName" label="产品分类" width="120" />
           <el-table-column prop="classAttribute" label="类别属性" width="120">
             <template slot-scope="scope">

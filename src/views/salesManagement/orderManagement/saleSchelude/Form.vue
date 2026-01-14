@@ -68,7 +68,7 @@
                 @row-click="handleRowClick" customKey="JNPFTableKey_861930">
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                 </el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
+                <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6">
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                 <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />

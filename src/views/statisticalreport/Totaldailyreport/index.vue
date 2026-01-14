@@ -20,7 +20,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入产品图号" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入型号" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -41,7 +41,7 @@
           <el-table-column prop="producerName" label="操作员" min-width="110" />
           <el-table-column prop="workOrderNo" label="工作令号" min-width="170" sortable="custom" />
           <el-table-column prop="dispatchNo" label="派工单号" min-width="180" />
-          <el-table-column prop="productDrawingNo" label="产品图号" min-width="220" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="220" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
           <el-table-column prop="dispatchQuantity" label="派工数量" min-width="110" sortable="custom" />
           <el-table-column prop="producerReportNum" label="完成数量" min-width="110" sortable="custom" />

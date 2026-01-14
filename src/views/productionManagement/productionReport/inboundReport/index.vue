@@ -65,7 +65,7 @@
                 <el-table-column prop="batchNumber" label="批次号" min-width="180" />
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="120" />
                 <el-table-column prop="num" label="入库数量" min-width="120" />
                 <el-table-column prop="warehouseName" label="仓库" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" min-width="120" />
@@ -176,7 +176,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
 

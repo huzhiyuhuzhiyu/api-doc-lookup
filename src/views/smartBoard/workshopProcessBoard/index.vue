@@ -194,7 +194,7 @@ export default {
         </template>
       </el-table-column>
       <el-table-column min-width="200" label="物料名称" prop="productName"/>
-      <el-table-column min-width="200" label="品名规格" prop="productDrawingNo"/>
+      <el-table-column min-width="200" label="型号" prop="productDrawingNo"/>
       <el-table-column width="100" label="生产数量" prop="productionQuantity">
         <template v-slot:default="{ row: column }">
           <span>{{ addComma(column.productionQuantity) }}</span>

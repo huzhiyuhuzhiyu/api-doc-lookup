@@ -23,7 +23,7 @@
               </el-col>
               <!-- <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()" placeholder="请输入品名规格"
+                  <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()" placeholder="请输入型号"
                     clearable />
                 </el-form-item>
               </el-col>
@@ -73,7 +73,7 @@
               partentOrChild="Form">
               <!-- <el-table-column prop="producerJobNumber" label="生产人工号" min-width="180" /> -->
               <el-table-column prop="producerName" label="生产人" min-width="120" />
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="250" sortable="custom" />
+              <el-table-column prop="productDrawingNo" label="型号" min-width="250" sortable="custom" />
               <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom" />
               <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
               <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
@@ -155,8 +155,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="品名规格">
-                <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable />
+              <el-form-item label="型号">
+                <el-input v-model="listQuery.productDrawingNo" placeholder="请输入型号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="12">

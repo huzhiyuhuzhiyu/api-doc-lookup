@@ -403,13 +403,13 @@ export default {
 
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           value: '',
           type: 'input',
           maxlength: '1000',
           itemDisabled: true,
           minWidth: 220,
-          placeholder: '品名规格自动生成',
+          placeholder: '型号自动生成',
           itemRules: [{ required: true, trigger: 'blur' }]
         },
         {

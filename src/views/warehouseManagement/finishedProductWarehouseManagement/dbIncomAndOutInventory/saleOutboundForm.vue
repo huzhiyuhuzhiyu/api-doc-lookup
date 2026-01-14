@@ -140,7 +140,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
@@ -362,7 +362,7 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="320" :key="6"
                           show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
@@ -485,7 +485,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -521,7 +521,7 @@
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
-                <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
+                <el-table-column prop="drawingNo" label="型号" width="300" sortable="custom" />
                 <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />

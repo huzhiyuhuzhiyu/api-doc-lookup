@@ -81,7 +81,7 @@
           <el-table-column prop="stockMoveOrderNo" label="出入库单号" width="180" />
           <el-table-column prop="productCode" label="产品编码" width="180" />
           <el-table-column prop="productName" label="产品名称" width="180" />
-          <el-table-column prop="drawingNo" label="品名规格" width="180"/>
+          <el-table-column prop="drawingNo" label="型号" width="180"/>
           <el-table-column prop="productCategoryName" label="产品分类" width="160"/>
           <el-table-column prop="mainUnit" label="单位" width="60"/>
           <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="120" />

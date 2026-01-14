@@ -112,7 +112,7 @@
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag == '1'" min-width="160"
             sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
+          <el-table-column prop="drawingNo" label="型号" sortable="custom" min-width="300" />
           <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
 
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
@@ -325,7 +325,7 @@ export default {
       searchList: [
         // { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户/供应商', symbol: 'like', searchType: 1, width: 120 },
-        // { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        // { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
       PurchaseOrderInboundFormVisible: false,
       outboundSaleSendFormVisible: false,
@@ -466,7 +466,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -1162,7 +1162,7 @@ export default {
       this.searchList = [
         // { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户/供应商', symbol: 'like', searchType: 1, width: 120 },
-        // { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        // { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ]
       if (this.productNameFlag == '1') {
         this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })

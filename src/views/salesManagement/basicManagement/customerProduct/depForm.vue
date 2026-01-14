@@ -88,10 +88,11 @@
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
+                    <el-table-column prop="productDrawingNo" label="型号" min-width="330">
                       <template slot="header">
-                        <span class="required">*</span> 品名规格
+                        <span class="required">*</span> 型号
                       </template>
+型号
                       <template slot-scope="scope">
                         <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入" prefix-icon="el-icon-search"
                           style="width: 100%;" @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)" :disabled="btnType == 'look'"
@@ -310,9 +311,9 @@
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
+                <el-table-column prop="productDrawingNo" label="型号" min-width="330">
                   <template slot="header">
-                    <span class="required">*</span> 品名规格
+                    <span class="required">*</span> 型号
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'productDrawingNo'" :rules='productRules.productDrawingNo'>
@@ -472,7 +473,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="getHistoryPriceFun()" v-model="historyPriceRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable/>
+                    <el-input @keyup.native.enter="getHistoryPriceFun()" v-model="historyPriceRequestObj.productDrawingNo" placeholder="请输入型号" clearable/>
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -502,7 +503,7 @@
               <JNPF-table :data="historyPriceData" ref="dataTable" custom-column customKey="JNPFTableKey_359630">
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200"/>
                 <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom"/>
-                <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom"/>
+                <el-table-column prop="productDrawingNo" label="型号" width="180" sortable="custom"/>
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom"/>
                 <el-table-column prop="num" label="数量" width="80" sortable="custom"/>
                 <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom"/>
@@ -578,7 +579,7 @@
                 </el-col>
                 <!-- <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col> -->
 
@@ -601,7 +602,7 @@
                 customKey="JNPFTableKey_145309">
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格"/>
+                <el-table-column prop="drawingNo" label="型号"/>
                 <el-table-column prop="productCategoryName" label="所属分类"/>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch == 1"/>
                 <el-table-column prop="mainUnit" label="单位"/>
@@ -801,11 +802,11 @@ export default {
             }), trigger: 'blur'
           }
         ],
-        // 品名规格
+        // 型号
         productDrawingNo: [
           {
             validator: this.formValidate({
-              type: 'noEmtry', params: [" 品名规格不能为空", (errMsg, index) => {
+              type: 'noEmtry', params: [" 型号不能为空", (errMsg, index) => {
                 this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
               }]
             }), trigger: 'blur'
@@ -1446,7 +1447,7 @@ export default {
               cb(arr)
             } else {
               let air = []
-              this.$message.error("您输入的品名规格暂未匹配到对应的产品数据，请重新输入!")
+              this.$message.error("您输入的型号暂未匹配到对应的产品数据，请重新输入!")
               queryString = ""
               cb(air)
             }
@@ -1508,7 +1509,7 @@ export default {
       this.dataFormTwo.lines = productArr
     },
 
-    // 输入品名规格  查找对应得产品数据 按下enter键 自动新增一行空白数据
+    // 输入型号  查找对应得产品数据 按下enter键 自动新增一行空白数据
     searchDrawingNoProduct(data, idx) {
       console.log(data, idx);
       let obj = JSON.parse(JSON.stringify(this.createdData))
@@ -1535,7 +1536,7 @@ export default {
             this.taxRateList.push(obj)
           }
         } else {
-          this.$message.error("您输入的品名规格未匹配到对应的产品，请重新输入")
+          this.$message.error("您输入的型号未匹配到对应的产品，请重新输入")
           data.productDrawingNo = ""
         }
 
@@ -1945,7 +1946,7 @@ export default {
           const item = this.dataFormTwo.lines[index];
           if (!item.productDrawingNo) {
             submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行品名规格不能为空")
+            this.$message.error("产品信息第" + (index + 1) + "行型号不能为空")
             return
           }
           if (!item.productsId) {

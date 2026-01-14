@@ -102,7 +102,7 @@
                         <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                         <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                         </el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
+                        <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6">
                         </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
@@ -272,7 +272,7 @@
                         <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                         <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                         </el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
+                        <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6">
                         </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
@@ -367,7 +367,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -396,7 +396,7 @@
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" v-if="this.dataForm.businessType=='outbound_sale_send'||this.dataForm.businessType=='inbound_sale_return'"/>
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="型号" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
                 <el-table-column prop="num" label="数量" width="160" sortable="custom"
                   v-if="this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return'" />

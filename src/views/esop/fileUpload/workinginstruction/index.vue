@@ -5,7 +5,7 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="品名规格" clearable />
+                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="型号" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -66,7 +66,7 @@
                     <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
                     <el-table-column prop="cooperativePartnerName" label="客户名称" width="120"  v-if="isCustomerProductPage" />
                     <template v-if="!isNoProductPage || isImage">
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
+                        <el-table-column prop="drawingNo" label="型号" min-width="305" />
                         <el-table-column prop="productsCode" label="产品编码" min-width="120" />
                         <el-table-column prop="productCategoryName" label="产品分类" width="140" />
                     </template>
@@ -282,7 +282,7 @@ export default {
                 },
                 {
                     prop: 'drawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     type: 'input'
                 },
 
@@ -498,7 +498,7 @@ export default {
                 res=[
                     {
                         prop: 'drawingNo',
-                        label: '品名规格',
+                        label: '型号',
                         type: 'input'
                     },  {
                         prop: 'productsCode',

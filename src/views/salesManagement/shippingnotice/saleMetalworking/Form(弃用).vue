@@ -180,7 +180,7 @@
                       <el-table-column prop="customerProductDrawingNo" label="客户型号" width="160" show-overflow-tooltip/>
                       <el-table-column prop="productName" label="产品名称" width="160" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="产品型号" width="290" key="3" show-overflow-tooltip />
+                      <el-table-column prop="productDrawingNo" label="型号" width="290" key="3" show-overflow-tooltip />
                       <el-table-column prop="mainUnit" label="单位" min-width="120" />
                       <el-table-column prop="ordersNum" label="订单数量" width="120" key="4" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="notifiedQuantity" label="已通知数" min-width="120"/>
@@ -563,7 +563,7 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                      <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="请输入型号" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
@@ -592,7 +592,7 @@
                   <el-table-column prop="productCode" label="产品编码" width="160" />
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" width="160" />
+                  <el-table-column prop="drawingNo" label="型号" width="160" />
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                   </el-table-column>

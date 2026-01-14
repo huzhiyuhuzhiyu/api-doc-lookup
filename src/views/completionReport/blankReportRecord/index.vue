@@ -42,7 +42,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading"> 
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-printer"
@@ -76,7 +76,7 @@
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
@@ -104,7 +104,7 @@
 
 
 
- 
+
             <el-table-column prop="aperture" label="孔径" min-width="120" sortable="custom" />
             <el-table-column prop="orderStatus" label="任务状态" min-width="120">
               <template slot-scope="scope">
@@ -294,10 +294,10 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
-      ], 
+      ],
       columnList: ["productsCode",],
 
       superQueryVisible: false,
@@ -384,7 +384,7 @@ export default {
         },
         {
           prop: 'productsDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -415,7 +415,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-         
+
 
 
         {
@@ -449,7 +449,7 @@ export default {
       isProjectSwitch: '',
     }
   },
-  
+
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -485,7 +485,7 @@ export default {
         });
       }
     },
-   
+
       closePrint() {
       this.printVisible = false
     },
@@ -616,7 +616,7 @@ export default {
           this.btnLoading = false
         })
       }
-      
+
     },
     // 获取打字内容等
     getProductClassFun() {
@@ -648,7 +648,7 @@ export default {
           });
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
           if (oilObj) {
-            // 将options赋值为5  
+            // 将options赋值为5
             oilObj.options = JSON.parse(JSON.stringify(arr));
           }
         })
@@ -700,7 +700,7 @@ export default {
         this.orderForm.reportStartDate = ""
         this.orderForm.reportEndDate = ""
       }
-      
+
      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
      getSalaryDetailList(this.orderForm).then(res => {
         console.log("报工记录", res);
@@ -750,7 +750,7 @@ export default {
 
       this.searchList=[
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
       ]

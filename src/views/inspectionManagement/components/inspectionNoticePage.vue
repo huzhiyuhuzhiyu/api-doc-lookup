@@ -250,7 +250,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           minWidth: 220,
         },
         {

@@ -80,12 +80,12 @@
             @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList" hasC @selection-change="selectFun"  customKey="JNPFTableKey_274404">
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom" 
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom"
               v-if="$store.getters.configData.produce.production_related_customers" />
             <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productsDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productsDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -194,7 +194,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productsDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
       columnList: ["productCode", "arithmeticNo", "remark", "createByName",],
 
@@ -262,7 +262,7 @@ export default {
         },
         {
           prop: 'productsDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -375,9 +375,9 @@ export default {
     },
     batchPrint() {
       if (!this.selectArr.length) return this.$message.error("请选择你要打印的数据")
-      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项  
+      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项
 
-      this.fullName2 = "未排产单" // 筛选出 businessType 等于 type 的项  
+      this.fullName2 = "未排产单" // 筛选出 businessType 等于 type 的项
       this.printVisible2 = true
       this.$nextTick(() => {
         console.log(345345);
@@ -582,7 +582,7 @@ export default {
 
       this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productsDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.search('basic')
     },

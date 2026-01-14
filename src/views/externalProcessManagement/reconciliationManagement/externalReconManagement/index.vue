@@ -91,9 +91,9 @@
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom"
             v-if="isProductNameSwitch === '1'" />
-          <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="drawingNo" label="型号" min-width="180" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
-        
+
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="businessType" label="收/退货类型" width="140" sortable="custom">
             <template slot-scope="scope">
@@ -214,10 +214,10 @@ export default {
         },
           { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: '==', searchType: 4, width: 120,options: [
             { label: "未核对", value: "unchecked" },
-            { label: "已核对", value: "checked" }, 
+            { label: "已核对", value: "checked" },
           ] },
       ],
-      
+
       superForm: {},
       columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
       superQueryVisible: false,
@@ -228,7 +228,7 @@ export default {
       tableDataList: [],
       formVisible: false,
       listLoading: false,
- 
+
       listQuery: {
         orderItems: [
           {
@@ -292,7 +292,7 @@ export default {
 
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {
@@ -317,7 +317,7 @@ export default {
 
           options: [
             { label: "未核对", value: "unchecked" },
-            { label: "已核对", value: "checked" }, 
+            { label: "已核对", value: "checked" },
           ]
 
         },
@@ -500,13 +500,13 @@ export default {
       this.selectData = val
       function calculateTotalValue(arr) {
         return arr.reduce((sum, item) => {
-          const value = Number(item.totalAmount); // 将 value 转换为数字  
+          const value = Number(item.totalAmount); // 将 value 转换为数字
           if (item.businessType === 'inbound_external') {
-            return sum + value;  // 对于 '正', 加上 value  
+            return sum + value;  // 对于 '正', 加上 value
           } else if (item.businessType === 'outbound_external') {
-            return sum - value;   // 对于 '负', 减去 value  
+            return sum - value;   // 对于 '负', 减去 value
           }
-          return sum;  // 默认情况，无需改变 sum  
+          return sum;  // 默认情况，无需改变 sum
         }, 0);
       }
       function calculateSum(data, type) {
@@ -650,7 +650,7 @@ export default {
         },
            { field: 'checkStatus', fieldValue: '', label: '核对状态', symbol: '==', searchType: 4, width: 120,options: [
             { label: "未核对", value: "unchecked" },
-            { label: "已核对", value: "checked" }, 
+            { label: "已核对", value: "checked" },
           ] },
       ]
       if (this.isProductNameSwitch === '1') {

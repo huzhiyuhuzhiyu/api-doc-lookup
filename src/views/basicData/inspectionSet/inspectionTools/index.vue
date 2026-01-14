@@ -85,7 +85,7 @@
           <el-table-column prop="name" label="检验工具名称" min-width="200" sortable />
           <el-table-column prop="categoryName" label="所属分类" width="140" sortable />
           <el-table-column prop="specModel" label="检验工具规格" min-width="200" sortable />
-          <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable />
+          <el-table-column prop="drawingNo" label="型号" min-width="200" sortable />
           <el-table-column prop="createByName" label="创建人" width="100" sortable />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable />
           <el-table-column label="操作" width="220" fixed="right">
@@ -157,7 +157,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {

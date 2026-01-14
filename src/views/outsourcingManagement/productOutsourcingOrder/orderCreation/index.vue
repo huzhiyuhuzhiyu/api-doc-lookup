@@ -89,15 +89,16 @@
                           <el-table-column prop="productName" label="产品名称" width="160" show-overflow-tooltip
                             v-if="$store.getters.configData.product.enable_productName"></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                          <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip>
                             <template slot="header">
                               <span class="required">*</span>
-                              品名规格
+                              型号
                             </template>
+型号
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                                 :rules="productRules.productDrawingNo">
-                                <el-input v-model="scope.row.productDrawingNo" placeholder="品名规格" disabled />
+                                <el-input v-model="scope.row.productDrawingNo" placeholder="型号" disabled />
                               </el-form-item>
                             </template>
                           </el-table-column>
@@ -416,14 +417,14 @@ export default {
         { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
         { prop: 'name', label: '产品名称', sortable: 'custom',render:false },
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
         { prop: 'mainUnit', label: '单位', width: 60 },
         { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
 
       ], // 产品选择弹出框搜索条件
       formLoading: false,
@@ -644,7 +645,7 @@ export default {
           item.productsId = item.id // 产品id
           item.productName = item.name // 产品名称
           item.productCode = item.code // 产品编码
-          item.productDrawingNo = item.productDrawingNo // 品名规格
+          item.productDrawingNo = item.productDrawingNo // 型号
           item.ratio = item.ratio // 转换系数
           item.calculationDirection = item.calculationDirection // 计算方向
           item.mainUnit = item.mainUnit // 主单位
@@ -766,7 +767,7 @@ export default {
             productsId: item.id, // 产品id
             productName: item.name, // 产品名称
             productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
+            productDrawingNo: item.drawingNo, // 型号
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位
@@ -960,7 +961,7 @@ export default {
     openSeleceProductDialog() {
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
       ]
       if (this.$store.getters.configData.product.enable_productName) {
       this.ProductTableItems.forEach(tc=>{

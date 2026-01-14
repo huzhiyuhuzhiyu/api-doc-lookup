@@ -47,7 +47,7 @@
             <el-table-column prop="materialCode" label="主产品图号" min-width="400"></el-table-column>
             <el-table-column prop="productsCode" label="产品编码" min-width="140"></el-table-column>
             <el-table-column prop="productsName" label="产品名称" width="160"></el-table-column>
-            <el-table-column prop="productsDrawingNo" label="产品图号" min-width="160" />
+            <el-table-column prop="productsDrawingNo" label="型号" min-width="160" />
             <el-table-column prop="qty" label="数量" width="120"></el-table-column>
             <el-table-column prop="mainUnit" label="单位" width="120" />
             <el-table-column prop="provisionalEstimate" label="暂估价" width="120">

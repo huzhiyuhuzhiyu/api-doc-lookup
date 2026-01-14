@@ -79,7 +79,7 @@
                     </div>
                     <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading"
                       :hasC="btnType != 'look'" @selection-change="handeleProductInfoData" customKey="JNPFTableKey_482712">
-                      <el-table-column prop="productDrawingNo" label="用料规格" min-width="130"></el-table-column>
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="130"></el-table-column>
                       <el-table-column prop="productName" label="用料名称" min-width="130"></el-table-column>
                       <el-table-column prop="productCode" label="用料编码" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />

@@ -1,11 +1,11 @@
 <template>
   <div class="JNPF-common-layout">
-  
+
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
-        
-      
+
+
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -55,15 +55,15 @@
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"  v-if="isProjectSwitchFlag"
           @sort-change="sortChange"  customKey="JNPFTableKey_549248">
-         
+
 
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
-       
+
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
@@ -90,7 +90,7 @@
           <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom"/>
           <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom"/>
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom"/>
-          
+
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
           @pagination="initData">
@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -131,11 +131,11 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible:false,
-      superQueryVisible:false, 
+      superQueryVisible:false,
       treeData: [],
       tableData: [],
       treeLoading: false,
@@ -143,7 +143,7 @@ export default {
       authorizeFormVisible: false,
       userRelationListVisible: false,
       organizeIdTree: [],
-     
+
       defaultProps: {
         children: 'childrenList',
         label: 'name'
@@ -165,7 +165,7 @@ export default {
         warehouseName:"",
         pageNum: 1,
         pageSize: 20,
-        
+
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
@@ -186,7 +186,7 @@ export default {
           prop: 'productCode',
           label: "产品编码",
           type: 'input'
-        }, 
+        },
         {
           prop: 'productName',
           label: "产品名称",
@@ -194,7 +194,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -202,19 +202,19 @@ export default {
           label: "产品分类",
           type: 'input',
         },
-    
+
         {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
-        },  
-            
+        },
+
         {
           prop: 'availableQuantity',
           label: "可用数量",
           type: 'input',
-        },  
-           
+        },
+
         {
           prop: 'occupancyQuantity',
           label: "占用数量",
@@ -229,7 +229,7 @@ export default {
           prop: 'warehouseName',
           label: "仓库名称",
           type: 'input'
-           
+
         },
         {
           prop: 'latestStorageTime',
@@ -240,8 +240,8 @@ export default {
           endPlaceholder: '创建结束时间',
           pickerOptions: this.global.timePickerOptions
         },
-         
-    
+
+
       ],
       isProjectSwitch:"",
       isProjectSwitchFlag:false,
@@ -252,7 +252,7 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
- 
+
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -262,8 +262,8 @@ export default {
     this.isProjectSwitchFlag=true
     this.superForm = this.tableQuery
     this.search('basic')
-    
-    
+
+
   },
   methods: {
        // 导出
@@ -309,14 +309,14 @@ export default {
         this.$refs.Form.init(id,type,warehouseId)
       })
     },
-    
-    
+
+
     columnSetFun() {
       this.$refs.tabForm.showDrawer()
     },
 
-    
-    
+
+
     initData() {
 
       this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
@@ -355,7 +355,7 @@ export default {
       this.initData()
     },
     reset() {
-      if (this.treeData.length > 1) { 
+      if (this.treeData.length > 1) {
         this.selectedNodeKey = this.tableQuery.warehouseId
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
@@ -369,7 +369,7 @@ export default {
         warehouseName:"",
         pageNum: 1,
         pageSize: 20,
-        
+
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
@@ -378,7 +378,7 @@ export default {
         superQuery:{},
         classAttribute:"semi_finished",
         inventoryFlag :1,
-      } 
+      }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
@@ -388,8 +388,8 @@ export default {
       ]
     this.initData()
   },
- 
-    
+
+
 
 
     sortChange({ prop, order }) {
@@ -430,6 +430,6 @@ export default {
 }
 .JNPF-common-search-box {
   padding: 8px 0 0 0 !important;
-  margin-left: 0!important; 
+  margin-left: 0!important;
 }
 </style>

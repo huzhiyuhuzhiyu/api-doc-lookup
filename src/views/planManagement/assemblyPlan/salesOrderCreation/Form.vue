@@ -54,8 +54,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="品名规格" prop="productDrawingNo">
-                          <el-input v-model="planForm.productDrawingNo" placeholder="请输入品名规格" disabled>
+                        <el-form-item label="型号" prop="productDrawingNo">
+                          <el-input v-model="planForm.productDrawingNo" placeholder="请输入型号" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -217,7 +217,7 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="360" :key="4"
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="360" :key="4"
                         show-overflow-tooltip />
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="deliveryDate" label="交货日期" width="150"

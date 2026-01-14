@@ -216,7 +216,7 @@ export default {
         {prop: 'orderNo', label: '变更单号', searchType: 'input'},
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           searchType: 'input',
         },
       ],
@@ -253,7 +253,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: () => '品名规格',
+          label: () => '型号',
           minWidth: 250,
         },
 

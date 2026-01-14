@@ -128,7 +128,7 @@
                     :height="customStyleData" customKey="JNPFTableKey_399716"   :partent-or-child="'child'" custom-column  :setColumnDisplayList="columnList">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip key="3" />
+                    <el-table-column prop="drawingNo" label="型号" min-width="200" show-overflow-tooltip key="3" />
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" key="4" />
@@ -388,7 +388,7 @@
                 :height="customStyleData"  >
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip key="3" />
+                <el-table-column prop="drawingNo" label="型号" width="200" show-overflow-tooltip key="3" />
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" key="4" />
@@ -638,7 +638,7 @@
                 <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productDrawingNo"
-                      placeholder="请输入品名规格" clearable />
+                      placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -674,7 +674,7 @@
                 <el-table-column prop="orderNo" label="订单号" width="180"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
+                <el-table-column prop="drawingNo" label="型号" width="200" show-overflow-tooltip />
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="130" />
@@ -2168,7 +2168,7 @@ export default {
         })
         let formMethod = null
 
-      
+
          if(this.mergeFlag==1){
           formMethod = mergeOutOrderAdd
 

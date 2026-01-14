@@ -77,7 +77,7 @@
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="drawingNo" label="型号" min-width="200" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
             <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
@@ -206,7 +206,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {
@@ -429,7 +429,7 @@ export default {
       })
     }
 
-   
+
     this.detailData()
   },
   methods: {
@@ -544,7 +544,7 @@ export default {
     columnSetFun() {
       this.$refs.detailTableData.showDrawer()
     },
-   
+
     sortChangeDetail({ prop, order }) {
       let newProp
       if (

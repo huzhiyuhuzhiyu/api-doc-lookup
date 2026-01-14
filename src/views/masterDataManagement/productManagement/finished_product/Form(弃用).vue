@@ -382,7 +382,7 @@ export default {
         //                   if (!res.data) {
         //                     callback()
         //                   } else {
-        //                     callback(new Error('此品名规格已存在'))
+        //                     callback(new Error('此型号已存在'))
         //                   }
         //                 })
         //                 .catch((err) => {
@@ -693,7 +693,7 @@ export default {
                     ],
                     render: true, itemDisabled: this.btnType ? true : !this.codeConfig.modifyFlag
                 },
-                { prop: "drawingNo", label: "品名规格", value: "", type: "input", maxlength: "1000", itemDisabled: this.dataForm.id && !this.btnType ? true : this.btnType,
+                { prop: "drawingNo", label: "型号", value: "", type: "input", maxlength: "1000", itemDisabled: this.dataForm.id && !this.btnType ? true : this.btnType,
                     itemRules: [{ required: true, trigger: "blur" },
                         { validator: (rule, value, callback) => {
                                 if (!value) {
@@ -708,7 +708,7 @@ export default {
                                             if (!res.data) {
                                                 callback()
                                             } else {
-                                                callback(new Error('此品名规格已存在'))
+                                                callback(new Error('此型号已存在'))
                                             }
                                         })
                                         .catch((err) => {

@@ -30,7 +30,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-        
+
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -57,7 +57,7 @@
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
-         
+
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -86,9 +86,9 @@
               <div v-if="scope.row.businessType == 'outbound_external'">外协退货</div>
               <div v-if="scope.row.businessType == 'inbound_other'">直接入库</div>
               <div v-if="scope.row.businessType == 'outbound_other'">直接出库</div>
-            </template> 
+            </template>
           </el-table-column>
-         
+
           <el-table-column prop="documentStatus" label="单据状态" min-width="120">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
@@ -164,7 +164,7 @@ export default {
       superQuery: {},
       superForm: {},
       basicQuery: {},
-      searchList: [ 
+      searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
       ],
       columnList: ["partnerCode", "documentStatus", "remark", "createByName",],
@@ -175,7 +175,7 @@ export default {
       listLoading: false,
 
       list: [
-       
+
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
       ],
@@ -283,7 +283,7 @@ export default {
       enCode: "",
     }
   },
- 
+
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -313,9 +313,9 @@ export default {
     // 打印
     PrintFun(row) {
       console.log(this.arr, row);
-      this.enCode = 'p031' // 筛选出 businessType 等于 type 的项  
+      this.enCode = 'p031' // 筛选出 businessType 等于 type 的项
       this.formId = row.id
-      this.fullName = "报废出库单" // 筛选出 businessType 等于 type 的项  
+      this.fullName = "报废出库单" // 筛选出 businessType 等于 type 的项
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)
@@ -363,7 +363,7 @@ export default {
       })
       this.listQuery.pageNum = 1
       this.listQuery.classAttribute=this.classAttribute
-      
+
       this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getWarehouseList(this.listQuery).then(res => {
 
@@ -420,10 +420,10 @@ export default {
         }).catch(() => { })
       }
     },
- 
 
 
- 
+
+
 
 
 
@@ -481,7 +481,7 @@ export default {
       this.superForm=this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
       ]

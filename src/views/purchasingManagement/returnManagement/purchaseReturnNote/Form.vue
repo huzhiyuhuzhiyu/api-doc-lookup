@@ -118,7 +118,7 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" width="160"
+                    <el-table-column prop="drawingNo" label="型号" width="160"
                       sortable="custom" show-overflow-tooltip />
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch ? 85 : 60" />
@@ -346,7 +346,7 @@
                   v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
+                <el-table-column prop="drawingNo" label="型号" width="160" sortable="custom"
                   show-overflow-tooltip />
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch ? 85 : 60" />
@@ -470,7 +470,7 @@
           </el-collapse-item>
         </el-collapse>
       </div>
-  
+
       <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
         width="500px">
@@ -831,7 +831,7 @@ export default {
         { prop: 'productCode', label: '产品编码', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
         { prop: 'productName', label: '产品名称', sortable: 'custom' },
-        { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
+        { prop: 'drawingNo', label: "型号", sortable: 'custom' },
         { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
         { prop: 'processName', label: '工序', sortable: 'custom' },
         { prop: 'remark', label: '备注', sortable: 'custom' },
@@ -843,7 +843,7 @@ export default {
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
+        { prop: 'productDrawingNo', label: "型号", type: 'input' },
 
       ], // 产品选择弹出框搜索条件
     }
@@ -987,7 +987,7 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-   
+
     getProductClassFun() {
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {
@@ -1111,23 +1111,23 @@ export default {
         if (this.isReturnSwitch) {
           list.forEach((item, index) => {
             item.ordersNum = item.num
-            item.taxRate = Number(item.taxRate) 
-            item.receiptQuantitys = item.purchaseQuantity 
+            item.taxRate = Number(item.taxRate)
+            item.receiptQuantitys = item.purchaseQuantity
             item.productName = item.productName
             item.deliveryDate = this.dataForm.deliveryDate // 交期
             selectArr.push(item)
           })
         } else {
           list.forEach((item, index) => {
-            item.taxRate = Number(item.taxRate) 
-            item.receiptQuantitys = item.inventoryQuantity 
+            item.taxRate = Number(item.taxRate)
+            item.receiptQuantitys = item.inventoryQuantity
             item.productsId = item.id
             item.productName = item.name
             item.deliveryDate = this.dataForm.deliveryDate // 交期
             selectArr.push(item)
           })
         }
-       
+
         if (this.dataFormTwo.productData && this.dataFormTwo.productData.length) {
           const deletedArray = []
           selectArr = selectArr.filter((item1) => {
@@ -1189,7 +1189,7 @@ export default {
       this.productVisible = false
     },
 
-  
+
     // 点击选择产品
     openSeleceProductDialog() {
       console.log(this.isReturnSwitch, ';')
@@ -1211,7 +1211,7 @@ export default {
           pageSize: 20,
         }
         this.ProductTableSearchList = [
-          { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
+          { prop: 'productDrawingNo', label: "型号", type: 'input' },
           // { prop: 'deliveryDate', label: '交货日期', type: 'date' },
         ]
         if (this.$store.getters.configData.product.enable_productName) {
@@ -1222,7 +1222,7 @@ export default {
           { prop: 'orderNo', label: '订单号', sortable: 'custom' },
           { prop: 'productCode', label: '产品编码', sortable: 'custom' },
           { prop: 'productName', label: '产品名称', sortable: 'custom' },
-          { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
+          { prop: 'drawingNo', label: "型号", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
           { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
           { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },
@@ -1231,7 +1231,7 @@ export default {
           { prop: 'remark', label: '备注', sortable: 'custom' },
           { prop: 'createTime', label: '创建时间', sortable: 'custom' },
         ]// 产品选择弹出框表单展示字段
-        
+
       } else {
         this.listMethod = getProducts
         this.ProductListRequestObj = {
@@ -1254,7 +1254,7 @@ export default {
         }
         this.ProductTableSearchList = [
           { prop: 'productCode', label: '产品编码', type: 'input' },
-          { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
+          { prop: 'productDrawingNo', label: "型号", type: 'input' },
         ]
         if (this.$store.getters.configData.product.enable_productName) {
           let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
@@ -1264,16 +1264,16 @@ export default {
           { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
           { prop: 'code', label: '产品编码', sortable: 'custom' },
           { prop: 'name', label: '产品名称', sortable: 'custom' },
-          { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
+          { prop: 'drawingNo', label: "型号", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
           { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
           { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },
           { prop: 'inventoryQuantity', label: '库存数量', sortable: 'custom' },
-        
+
         ]// 产品选择弹出框表单展示字段
       }
       this.$refs['ComSelect-page'].openDialog()
-    
+
     },
 
     // },
@@ -1394,14 +1394,14 @@ export default {
         }
       }
     },
- 
+
     // 获取产品列表字段 编排属性
     getAttributeline() {
       getAttributeline('product').then((res) => {
         this.attributeLines = res.data
       })
     },
-  
+
     // 切换table
     handleClick(tab, event) { },
     async fetchData(code) {
@@ -1414,7 +1414,7 @@ export default {
       } catch (error) { }
     },
     init(id, btnType, approvalFlag) {
-     
+
       this.dataForm.id = id || ''
       console.log('id', id, btnType)
       this.btnType = btnType
@@ -1620,7 +1620,7 @@ export default {
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '', 
+            // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',
             ordersId: item.ordersId,
@@ -1647,7 +1647,7 @@ export default {
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '', 
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',
             ordersId: item.ordersId,

@@ -142,7 +142,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         // { prop: 'spec', label: '规格型号' },
         { prop: 'productCategoryName', label: '产品分类' },
         { prop: 'pairingModeName', label: '配对方式' },
@@ -151,7 +151,7 @@ export default {
       ProductTableSearchList: [
         { prop: "productCode", label: "产品编码", type: 'input' },
         { prop: "productName", label: "产品名称", type: 'input' },
-        { prop: "productDrawingNo", label: "品名规格", type: 'input' }
+        { prop: "productDrawingNo", label: "型号", type: 'input' }
       ], // 产品选择弹出框搜索条件
     }
   },

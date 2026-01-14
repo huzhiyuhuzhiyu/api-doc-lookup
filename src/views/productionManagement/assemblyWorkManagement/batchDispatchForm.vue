@@ -40,8 +40,8 @@
             </el-col>
 
             <el-col :sm="12" :xs="24">
-              <el-form-item label="品名规格" prop="productDrawingNo">
-                <el-input placeholder="品名规格" disabled v-model="dispatchForm.productDrawingNo"></el-input>
+              <el-form-item label="型号" prop="productDrawingNo">
+                <el-input placeholder="型号" disabled v-model="dispatchForm.productDrawingNo"></el-input>
               </el-form-item>
             </el-col>
             <el-col :sm="12" :xs="24">
@@ -69,7 +69,7 @@
                 <el-input placeholder="不合格数量" disabled v-model="dispatchForm.unqualifiedQuantity"></el-input>
               </el-form-item>
             </el-col>
-        
+
             <el-col :sm="12" :xs="24">
               <el-form-item label="班组" prop="workGroupId">
                 <el-select v-model="dispatchForm.workGroupId" placeholder="" class="applySelect" disabled
@@ -300,7 +300,7 @@
           <el-table-column prop="productCode" label="产品编码" min-width="120"></el-table-column>
           <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
           v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="productDrawingNo" label="产品图号" min-width="300" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="productDrawingNo" label="型号" min-width="300" show-overflow-tooltip></el-table-column>
           <el-table-column prop="processCode" label="工序编码" width="100" />
           <el-table-column prop="processName" label="工序名称" width="100" />
           <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
@@ -331,7 +331,7 @@ import {
   prodOrderDispatch,
   dispatchListMap,
 } from "@/api/productOrdes/finishedProductOrders";
- 
+
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 import { detailDispatchData, reassignment } from '@/api/productOrdes/dispatchTicketInquiry'
 import { detailWorkData,changProdWork } from '@/api/productOrdes/index.js'
@@ -394,15 +394,15 @@ export default {
       }
       return totalNums
     },
-  }, 
+  },
   async created () {
     await this.getProductNameSwitch('product', 'enable_productName')
-     
+
   },
   methods: {
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
 
@@ -619,12 +619,12 @@ export default {
     },
 
     goBack() {
-      this.$emit("close",true); 
+      this.$emit("close",true);
     },
     init(id) {
       detailWorkData(id).then(res => {
         console.log("工单详情", res);
-        this.dispatchForm = res.data 
+        this.dispatchForm = res.data
         // this.dataForm = res.data.dispatch
         // this.tableData = res.data.workRecordList
 
@@ -663,7 +663,7 @@ export default {
                   this.dispatchForm.equipmentCode = item.workOrderResMap.device[0].resourceCode;
                   this.dispatchForm.pointLocationCode = item.workOrderResMap.device[0].pointLocationCode;
                   this.dispatchForm.pointLocationName = item.workOrderResMap.device[0].pointLocationName;
-                } 
+                }
 
               } else {
                 this.dispatchForm.workOrderResMap = []
@@ -677,7 +677,7 @@ export default {
       })
 
     },
-    
+
     fmatDateFun(data) {
       const date = new Date(data);
       const year = date.getFullYear();

@@ -72,7 +72,7 @@
                 <el-table-column type="index" label="序号" width="60" fixed="left" align="center" key="no" />
                 <el-table-column prop="productCode" label="产品编码" />
                 <el-table-column prop="productName" label="产品名称" />
-                <el-table-column prop="drawingNo" label="产品图号" />
+                <el-table-column prop="drawingNo" label="型号" />
                 <el-table-column prop="qty" label="数量">
                   <template slot="header">
                     <span class="required">*</span>数量

@@ -186,7 +186,7 @@
                   </el-table-column>
                   <el-table-column prop="partName" label="备件名称" min-width="160" show-overflow-tooltip>
                   </el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="drawingNo" label="型号" min-width="160" show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                   </el-table-column>
@@ -266,7 +266,7 @@
     </div>
   </transition>
 </template>
-    
+
 <script>
 import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
@@ -292,7 +292,7 @@ export default {
       sparepartItems: [
         { prop: 'productCode', label: '备件编码' },
         { prop: 'productName', label: '备件名称' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
         { prop: 'requisitionNum', label: '领用数量' },
       ],
       cycleTypeStateList: [
@@ -516,7 +516,7 @@ export default {
     },
     //保养时间
     // nextMaintenanceTimeaction(value) {
-    //   this.dataForm.actualMaintenanceDate = this.dateFormat(value) 
+    //   this.dataForm.actualMaintenanceDate = this.dateFormat(value)
     // },
     // 打开保养项目
     openSeleceProductDialog() {
@@ -715,7 +715,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -998,4 +998,3 @@ export default {
   padding: 5px 10px !important;
 }
 </style>
-    

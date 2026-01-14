@@ -10,7 +10,7 @@
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                            <el-input v-model="listQuery.productDrawingNo" placeholder="请输入型号" clearable
                                       @keyup.enter.native="search()" />
                         </el-form-item>
                     </el-col>
@@ -64,7 +64,7 @@
 <!--                            </el-link>-->
                         </template>
                     </el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+                    <el-table-column prop="drawingNo" label="型号" min-width="300" sortable="custom" />
                     <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
 
                     <el-table-column prop="productCategoryName" label="产品分类" width="120" />
@@ -198,7 +198,7 @@ export default {
             codeConfig: {},
             quickRules: {
                 code: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
-                drawingNo: [{ required: true, message: '请输入品名规格', trigger: 'blur' }],
+                drawingNo: [{ required: true, message: '请输入型号', trigger: 'blur' }],
                 unit: [{ required: true, message: '请输入单位', trigger: 'blur' }],
                 productCategoryName: [{ required: true, message: '请选择产品分类', trigger: 'change' }],
                 productSource: [{ required: true, message: '请选择产品来源', trigger: 'change' }]
@@ -222,7 +222,7 @@ export default {
                 },
                 {
                     prop: 'drawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     type: 'input'
                 },
 

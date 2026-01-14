@@ -60,7 +60,7 @@
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
           <el-table-column prop="name" label="配件名称" sortable="custom" />
           <el-table-column prop="code" label="配件编码"  sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格"  sortable="custom" />
+          <el-table-column prop="drawingNo" label="型号"  sortable="custom" />
           <el-table-column prop="accessoryReturnFlag" label="是否归还"  sortable="custom" >
               <template slot-scope="scope">
                 <div v-if="scope.row.accessoryReturnFlag"><el-tag type="success">是</el-tag></div>

@@ -231,7 +231,7 @@
                                             <el-table-column prop="productCode" label="产品编码"></el-table-column>
                                             <el-table-column prop="productName" label="产品名称"  width="160"
                                                              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                                            <el-table-column prop="drawingNo" label="品名规格" />
+                                            <el-table-column prop="drawingNo" label="型号" />
                                             <el-table-column prop="processName" label="工序名称">
                                                 <!-- <template slot="header">
                                                   <span class="required">*</span>工序名称
@@ -442,7 +442,7 @@
                     <el-table ref="product" :data="detailDataList" border max-height="380">
                         <el-table-column type="index" width="70" label="序号" fixed />
                         <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="300"
                                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="processName" label="工序名称" width="100" />
                         <el-table-column prop="processCode" label="工序编码" width="100" />

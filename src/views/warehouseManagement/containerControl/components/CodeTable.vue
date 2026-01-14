@@ -15,7 +15,7 @@
 					<el-table-column prop="barCode" label="装箱条码" min-width="200" show-overflow-tooltip />
 					<el-table-column prop="productsCode" label="产品编码" min-width="120" show-overflow-tooltip />
 					<el-table-column prop="productsName" label="产品名称" min-width="120" show-overflow-tooltip />
-					<el-table-column prop="drawingNo" label="产品图号" min-width="200" show-overflow-tooltip />
+					<el-table-column prop="drawingNo" label="型号" min-width="200" show-overflow-tooltip />
 					<template v-if="showRoutingLine">
 						<el-table-column prop="routingName" label="工艺路线名称" min-width="160" show-overflow-tooltip />
 						<el-table-column prop="processName" label="工序名称" min-width="160" show-overflow-tooltip />

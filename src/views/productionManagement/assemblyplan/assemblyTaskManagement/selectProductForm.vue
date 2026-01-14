@@ -15,10 +15,10 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input @keyup.native.enter="search()"  v-model="form.productDrawingNo" placeholder="品名规格" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.productDrawingNo" placeholder="型号" clearable />
               </el-form-item>
             </el-col>
-          
+
 
             <el-col :span="6">
               <el-form-item>
@@ -36,7 +36,7 @@
             <el-table-column prop="code" label="产品编码" sortable="custom" min-width="150"/>
             <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="150"></el-table-column>
+            <el-table-column prop="drawingNo" label="型号" sortable="custom" min-width="150"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="150" sortable="custom" />
@@ -96,7 +96,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -156,7 +156,7 @@ export default {
     reset() {
     this.form=JSON.parse(JSON.stringify(this.formList))
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-     
+
       this.search()
     },
   }

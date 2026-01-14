@@ -31,8 +31,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="品名规格" prop="productsDrawingNo">
-                          <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
+                        <el-form-item label="型号" prop="productsDrawingNo">
+                          <el-input v-model="dataForm.productsDrawingNo" placeholder="型号" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -293,7 +293,7 @@
                     <el-table-column prop="productCode" label="产品编码"></el-table-column>
                     <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productDrawingNo" label="品名规格" />
+                    <el-table-column prop="productDrawingNo" label="型号" />
 
                     <el-table-column prop="mainUnit" label="单位"></el-table-column>
                     <el-table-column prop="materialsUsedQuantity" label="投料数量">
@@ -476,7 +476,7 @@
           <el-table ref="product" :data="detailDataList" border max-height="380">
             <el-table-column type="index" width="70" label="序号" fixed />
             <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300"
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processName" show-overflow-tooltip label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
@@ -627,7 +627,7 @@ export default {
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
         ],
         productsDrawingNo: [
-          { required: true, message: '品名规格不能为空', trigger: 'blur' }
+          { required: true, message: '型号不能为空', trigger: 'blur' }
         ]
       },
       selectArr: [],

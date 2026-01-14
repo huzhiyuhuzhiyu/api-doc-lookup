@@ -119,7 +119,7 @@
                     :height="customStyleData" customKey="JNPFTableKey_407011">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
+                    <el-table-column prop="drawingNo" label="型号" min-width="200" show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="140"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140"
@@ -363,7 +363,7 @@
                 :height="customStyleData">
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
+                <el-table-column prop="drawingNo" label="型号" min-width="200" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="130" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCategoryName" label="产品分类" width="140"
                   show-overflow-tooltip></el-table-column>
@@ -603,7 +603,7 @@
                 <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productDrawingNo"
-                      placeholder="请输入品名规格" clearable />
+                      placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -640,7 +640,7 @@
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" />
-                <el-table-column prop="drawingNo" label="品名规格" width="160" />
+                <el-table-column prop="drawingNo" label="型号" width="160" />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="160" />
                 <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" />

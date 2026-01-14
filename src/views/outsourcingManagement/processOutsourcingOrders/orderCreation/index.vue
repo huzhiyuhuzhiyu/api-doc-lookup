@@ -34,7 +34,7 @@
                                 "></el-input>
                             </el-form-item>
                           </el-col> -->
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')
                             && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                               <!-- 供应商选择弹窗  -->
@@ -86,7 +86,7 @@
                         |
                       </div>
                       <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" :rules="productRules">
-                        <JNPF-table style="border: 1px solid #e3e7ee;" hasC :fixedNO="true" ref="multipleTable" 
+                        <JNPF-table style="border: 1px solid #e3e7ee;" hasC :fixedNO="true" ref="multipleTable"
                           @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                           id="table" border :height="customStyleData" customKey="JNPFTableKey_888913">
                           <el-table-column prop="projectName" label="所属项目" width="120"
@@ -97,15 +97,16 @@
                             v-if="isProductNameSwitch === '1'"></el-table-column>
                           <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip>
                           </el-table-column>
-                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                          <el-table-column prop="productDrawingNo" label="型号" min-width="200" show-overflow-tooltip>
                             <template slot="header">
                               <span class="required">*</span>
-                              品名规格
+                              型号
                             </template>
+型号
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                                 :rules="productRules.productDrawingNo">
-                                <el-input v-model="scope.row.productDrawingNo" placeholder="品名规格" disabled />
+                                <el-input v-model="scope.row.productDrawingNo" placeholder="型号" disabled />
                               </el-form-item>
                             </template>
                           </el-table-column>
@@ -303,7 +304,7 @@
         </span>
       </el-dialog>
       </div>
-     
+
   </transition>
 </template>
 <script>
@@ -385,7 +386,7 @@ export default {
       ProcessTableItems: [
         { prop: 'code', label: '工序编码' },
         { prop: 'name', label: '工序名称' },
-        { prop: 'processTypeName', label: '工序类型' }, 
+        { prop: 'processTypeName', label: '工序类型' },
       ],
       // 供应商搜索条件
       ProcessTableSearchList: [
@@ -460,14 +461,14 @@ export default {
         { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
         { prop: 'name', label: '产品名称', sortable: 'custom',render:false },
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
         { prop: 'mainUnit', label: '单位', width: 60 },
         { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
 
       ], // 产品选择弹出框搜索条件
       formLoading: false,
@@ -480,7 +481,7 @@ export default {
         shipmentStatus: [{ required: true, message: '请选择发料状态', trigger: ['change'] }],
       },
       productRules: {
-        productDrawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
+        productDrawingNo: [{ required: true, message: '请输入型号', trigger: ['blur'] }],
         purchaseQuantity: [
           // 数量
           {
@@ -515,7 +516,7 @@ export default {
             }),
             trigger: 'blur'
           },
-          
+
           { required: true, trigger: ['blur'] }
         ],
         processName: [
@@ -755,7 +756,7 @@ export default {
   methods: {
            listDataFormatting(res) {
       let treeData = res.data.records.map((item) => {
-      
+
         if (item.processType == 'normal') {
           item.processTypeName = '正常工序'
         } else if (item.processType == 'vibrate') {
@@ -777,7 +778,7 @@ export default {
         }else if (item.processType == 'boxing') {
           item.processTypeName = '装盒工序'
         }
-    
+
         return item
       })
       return treeData
@@ -801,7 +802,7 @@ export default {
       } else {
         this.customStyleData = maxHeight
       }
-      
+
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)
@@ -818,7 +819,7 @@ export default {
       console.log(result,'res')
       console.log(Math.floor(result.toFixed(4)),'jj')
       if (isNaN(result)) return
-      return Number(result.toFixed(2)) 
+      return Number(result.toFixed(2))
     //  return Math.floor(result.toFixed(4));
     },
     /**刷新发料清单 */
@@ -1005,7 +1006,7 @@ export default {
             productsId: item.id, // 产品id
             productName: item.name, // 产品名称
             productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
+            productDrawingNo: item.drawingNo, // 型号
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 单位
@@ -1245,7 +1246,7 @@ export default {
     openSeleceProductDialog() {
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
       ]
       if (this.isProductNameSwitch === '1') {
       this.ProductTableItems.forEach(tc=>{
@@ -1329,7 +1330,7 @@ export default {
           this.dataFormTwo.data[index].purchaseQuantity / this.dataFormTwo.data[index].ratio
         )
       }
-      
+
       if (this.preData) this.refreshOutShipmentList(true)
     },
     clearData() {
@@ -1431,7 +1432,7 @@ export default {
               return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
             }
           }
-          
+
         }
         if (!ele.taxRate) {
           submitFlag = false
@@ -1531,7 +1532,7 @@ export default {
                 this.btnLoading = true
 
                 if (this.type === 'add') {
-               
+
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
@@ -1551,7 +1552,7 @@ export default {
                             this.$emit('close', true)
                           }
                         })
-                      
+
                       this.btnLoading = false
                     })
                     .catch(() => {

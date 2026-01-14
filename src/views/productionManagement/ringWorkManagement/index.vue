@@ -63,7 +63,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag" :checkSelectable="checkSelectable" hasC @selection-change="handleSelectionChange" 
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag" :checkSelectable="checkSelectable" hasC @selection-change="handleSelectionChange"
             :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" min-width="120" sortable="custom" />
@@ -110,7 +110,7 @@
               sortable="custom"></el-table-column>
               <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="330" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="prodOrderStatus" label="任务状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
@@ -185,7 +185,7 @@ export default {
       searchList: [
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-      ], 
+      ],
       fullName: '',
       BatchDispatchVisible: false,
 
@@ -215,7 +215,7 @@ export default {
       btnLoading: false,
       title: "更多查询",
       tableData: [],
-      listLoading: false, 
+      listLoading: false,
       total: 0,
       formVisible: false,
       selectArr: [],
@@ -229,7 +229,7 @@ export default {
           prop: 'processCode',
           label: "工序编码",
           type: 'input',
-           
+
         },
         {
           prop: 'processingType',
@@ -240,7 +240,7 @@ export default {
           { label: "外协", value: "external_production" },
           ]
         },
-         
+
         {
           prop: 'planStartDate',
           label: '计划开始日期',
@@ -326,10 +326,10 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
-     
+
         {
           prop: 'prodOrderStatus',
           label: "任务状态",
@@ -367,7 +367,7 @@ export default {
     }
   },
   async created() {
-    await this.getProjectSwitch('system', 'project') 
+    await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(15, 0, {
@@ -391,7 +391,7 @@ export default {
         this.isProjectSwitchFlag = true
       } catch (error) { }
     },
-    
+
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
@@ -420,7 +420,7 @@ export default {
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })
     },
-   
+
     addition1(data) {
       this.form = data
       this.addOrderVisible = true
@@ -443,7 +443,7 @@ export default {
 
     },
 
- 
+
 
 
 
@@ -508,7 +508,7 @@ export default {
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-      this.formVisible = false 
+      this.formVisible = false
       this.BatchDispatchVisible = false
       this.search()
     },
@@ -553,8 +553,8 @@ export default {
       this.superForm = this.dataForm = JSON.parse(JSON.stringify(this.dataFormList))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 }, 
-        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.search('basic')
     },
@@ -578,7 +578,7 @@ export default {
         this.$refs.Form.init(id, btnType)
       })
     },
- 
+
     columnSetFun() {
 
       this.$refs.dataTable.showDrawer()

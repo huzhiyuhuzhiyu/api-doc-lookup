@@ -13,7 +13,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="form.prodDrawingNo" @keyup.enter.native="search()" placeholder="品名规格" clearable />
+                <el-input v-model="form.prodDrawingNo" @keyup.enter.native="search()" placeholder="型号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -68,11 +68,11 @@
             </el-table-column>
 
             <el-table-column prop="prodCode" label="产品编码" min-width="160" sortable="custom" />
-            <el-table-column prop="prodDrawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="prodDrawingNo" label="型号" min-width="160" sortable="custom" />
             <el-table-column prop="prodName" label="产品名称" min-width="150" sortable="custom" />
             <el-table-column prop="productCode" label="用料编码" min-width="160" sortable="custom" />
             <el-table-column prop="productName" label="用料名称" min-width="150" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="用料规格" min-width="160" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="型号" min-width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
             <el-table-column prop="processCode" label="工序编码" min-width="140" sortable="custom" />
             <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
@@ -175,7 +175,7 @@ export default {
         },
         {
           prop: 'prodDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {

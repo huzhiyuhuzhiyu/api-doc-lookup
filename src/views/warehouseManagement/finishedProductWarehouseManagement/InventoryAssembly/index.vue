@@ -68,7 +68,7 @@
                 <el-table-column prop="shelfSpaceName" label="库位" min-width="200" />
                 <el-table-column prop="batchNumber" label="批次号" width="200" />
                 <el-table-column prop="productCode" label="产品编码" width="200" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="200" />
                 <el-table-column prop="num" label="数量" width="160" />
                 <el-table-column prop="mainUnit" label="单位(主)" width="160" />
 
@@ -191,12 +191,12 @@
                 <el-table-column prop="masterShelfSpaceName" label="目标库位" width="200" />
                 <el-table-column prop="masterBatchNumber" label="目标批次号" width="200" sortable="custom" />
                 <el-table-column prop="masterProductCode" label="目标产品编码" width="200" sortable="custom" />
-                <el-table-column prop="masterProductDrawingNo" label="目标品名规格" min-width="400" />
+                <el-table-column prop="masterProductDrawingNo" label="目标型号" min-width="400" />
                 <!-- <el-table-column prop="masterProductSpec" label="目标产品规格型号" width="200" /> -->
                 <el-table-column prop="masterNum" label="目标数量" width="140" />
                 <el-table-column prop="masterMainUnit" label="目标单位" width="120" />
                 <el-table-column prop="productCode" label="原产品编码" width="200" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="原品名规格" min-width="400" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="400" />
                 <!-- <el-table-column prop="productSpec" label="原产品规格型号" width="200" /> -->
                 <el-table-column prop="warehouseName" label="原仓库" min-width="200" />
                 <el-table-column prop="shelfSpaceName" label="原库位" min-width="200" />
@@ -299,7 +299,7 @@ export default {
         },
         {
           prop: 'masterProductDrawingNo',
-          label: "目标品名规格",
+          label: "目标型号",
           type: 'input'
         },
         {
@@ -319,7 +319,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "原品名规格",
+          label: "原型号",
           type: 'input'
         },
         {
@@ -410,7 +410,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {

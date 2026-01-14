@@ -90,7 +90,7 @@ export default {
       this.tableItems = [
         { prop: 'partnerName', label: '原材料供应商名称', minWidth: 160 },
         { prop: 'salePurchaseOrderNo', label: '采购订单号', minWidth: 180, sortable: 'custom' },
-        { prop: 'drawingNo', label: '产品品名规格', minWidth: 160, sortable: 'custom' },
+        { prop: 'drawingNo', label: '产品型号', minWidth: 160, sortable: 'custom' },
         { prop: 'orderNum', label: '订单数量', minWidth: 140, sortable: 'custom' },
         { prop: 'num', label: '数量', minWidth: 140, sortable: 'custom' },
         { prop: 'remainingQuantity', label: '待收货数量', minWidth: 140, sortable: 'custom' },
@@ -113,7 +113,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '产品品名规格',
+          label: '产品型号',
           type: 'input'
         },
         {
@@ -211,7 +211,7 @@ export default {
         {
           fieldValue: '',
           field: 'drawingNo',
-          label: '产品品名规格',
+          label: '产品型号',
           prop: 'drawingNo',
           symbol: 'like',
           searchType: 1

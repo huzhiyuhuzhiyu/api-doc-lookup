@@ -20,8 +20,8 @@
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="品名规格" prop="productDrawingNo">
-                          <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" readonly
+                        <el-form-item label="型号" prop="productDrawingNo">
+                          <el-input v-model="dataForm.productDrawingNo" placeholder="型号" readonly
                             @focus="openSelectProductFun">
                           </el-input>
                         </el-form-item>
@@ -475,7 +475,7 @@ export default {
       this.linesFormItems_right = [
         { prop: "productsCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
         { prop: "productsName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
-        { prop: "productsDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        { prop: "productsDrawingNo", label: "型号", value: "", type: 'view', minWidth: 150 },
         {
           prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
           customComponent: 'ComSelect-page', renderTree: false, change: this.getProcessData,

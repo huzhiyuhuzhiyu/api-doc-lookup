@@ -69,7 +69,7 @@
 
           <el-table-column prop="productsCode" label="产品编码" min-width="120" show-overflow-tooltip sortable="custom" />
           <el-table-column prop="productsName" label="产品名称" min-width="120" show-overflow-tooltip sortable="custom" />
-          <el-table-column prop="productsDrawingNo" label="产品图号" min-width="240" show-overflow-tooltip />
+          <el-table-column prop="productsDrawingNo" label="型号" min-width="240" show-overflow-tooltip />
           <el-table-column prop="materialCost" label="材料成本" min-width="120" show-overflow-tooltip sortable="custom" />
           <el-table-column prop="feeAmount" label="总制造费用(元)" min-width="160" sortable="custom" />
           <el-table-column prop="totalCost" label="成本合计(元)(不含税)" min-width="200" sortable="custom" />

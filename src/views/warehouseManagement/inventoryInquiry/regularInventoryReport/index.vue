@@ -151,7 +151,7 @@ export default {
       superQuery: {},
       basicQuery: {},
       searchList: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         {
           field: 'excludeProcessFlag',
@@ -494,7 +494,7 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         {
           field: 'excludeProcessFlag',

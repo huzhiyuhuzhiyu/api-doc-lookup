@@ -15,7 +15,7 @@
           <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
             <div class="stoclInfo">
               <el-descriptions :column="1" class="box">
-                <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                <el-descriptions-item label="型号" class="drawingNo">{{ dataForm.productDrawingNo
                 }}</el-descriptions-item>
               </el-descriptions>
               <el-descriptions class="margin-top" :column="4">
@@ -100,7 +100,7 @@
 
               <el-col :sm="24" :xs="24">
                 <div class="info">
-                  <span class="left-title">品名规格：</span>
+                  <span class="left-title">型号：</span>
                   <el-tooltip class="item" effect="dark" :content="processInfo.productDrawingNo" placement="top-start">
                     <span class="left-title ts">
                       {{ processInfo.productDrawingNo }}
@@ -260,7 +260,7 @@
 
                     </el-form-item>
                   </el-col>
-       
+
                   <el-col :sm="24" :xs="24" v-if="currentProcessType === 4 || currentProcessType === 5">
                     <el-form-item label="总配对数量(对):" prop="matchedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -392,7 +392,7 @@
                       <!-- equipmentId -->
                     </el-form-item>
                   </el-col>
-             
+
                   <el-col :sm="24" :xs="24" v-if="currentProcess.cleanReportFlag">
                     <el-form-item label="是否修磨" class="iptLabel">
                       <el-select v-model="isregrindingFlag" placeholder="是否修磨" style="width: 100%;" class="ipt">
@@ -818,10 +818,10 @@ export default {
     },
     // 过滤已选择的数据
     getFilteredAccuracyLevelList(currentRow) {
-      // 生成当前行可以选择的精度等级列表  
+      // 生成当前行可以选择的精度等级列表
       const selectedLevels = this.tableDataList
-        .filter(row => row !== currentRow) // 排除当前行  
-        .map(row => row.accuracyLevel); // 获取其他行的已选择项  
+        .filter(row => row !== currentRow) // 排除当前行
+        .map(row => row.accuracyLevel); // 获取其他行的已选择项
 
       return this.accuracyLevelList.filter(item => !selectedLevels.includes(item.name));
     },
@@ -847,7 +847,7 @@ export default {
 
       const index = this.tableDataList2.findIndex(item => item.accuracyLevel === nameToFind);
 
-      // 输出结果  
+      // 输出结果
       if (index !== -1) {
         this.tableDataList2[index] = { accuracyLevel: "", qualifiedQuantity: "" }
       } else {
@@ -864,10 +864,10 @@ export default {
     },
     // 过滤01精度已选择的数据
     getFilteredAccuracyLevelList2(currentRow) {
-      // 生成当前行可以选择的精度等级列表  
+      // 生成当前行可以选择的精度等级列表
       const selectedLevels = this.tableDataList2
-        .filter(row => row !== currentRow) // 排除当前行  
-        .map(row => row.accuracyLevel); // 获取其他行的已选择项  
+        .filter(row => row !== currentRow) // 排除当前行
+        .map(row => row.accuracyLevel); // 获取其他行的已选择项
 
       return this.accuracyLevelList2.filter(item => !selectedLevels.includes(item.name));
     },
@@ -1115,7 +1115,7 @@ export default {
         this.$nextTick(() => {
           if (res.data.reportFlag) this.$refs['reportRef'].clearValidate()
         })
-  
+
         this.setProcessType()
         this.currentProcess.pairingModeId = ''
         this.stockFlag = 0
@@ -1129,7 +1129,7 @@ export default {
         }
         if (this.currentProcess.lastFlag === true) {
           this.stockFlag = 2
-  
+
         }
         console.log("object,this", this.stockFlag, this.currentProcessType);
         this.targetHeight = ""
@@ -1170,7 +1170,7 @@ export default {
       let total
       if (this.currentProcess.item) {
         total = Object.values(this.currentProcess.item)
-          .map(Number) // 将每个值转换为数字  
+          .map(Number) // 将每个值转换为数字
           .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
       } else {
         total = this.currentProcess.qualifiedQuantity
@@ -1183,7 +1183,7 @@ export default {
       let total
       if (this.currentProcess.item) {
         total = Object.values(this.currentProcess.item)
-          .map(Number) // 将每个值转换为数字  
+          .map(Number) // 将每个值转换为数字
           .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
       } else {
         total = this.currentProcess.qualifiedQuantity
@@ -1392,7 +1392,7 @@ export default {
     },
     // 报工
     report() {
-      // 先判断是否有测震工序(sort有值表示有测震工序)  
+      // 先判断是否有测震工序(sort有值表示有测震工序)
       // 如果有 拿当前工序排序值大于等于测震工序值 则表示是测震工序或测震后工序
       // 如果没有 则是测震前工序
 
@@ -1400,7 +1400,7 @@ export default {
         if (valid) {
           let submitFlag = null
            if(this.currentProcess.pickingWay=='production_order'&&this.$store.getters.configData.produce.work_exceed_report){
-     
+
                  let totalNum=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.waitReportNum, this.overChargeNum]), 6)
               if (this.totalReportNum > totalNum) {
                 this.submitFlag = false
@@ -1454,7 +1454,7 @@ export default {
                 }
               }
               totalQualifiedQuantity = this.tableDataList.reduce((sum, item) => {
-                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加  
+                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加
               }, 0);
               if (totalQualifiedQuantity > this.currentProcess.waitReportNum) {
                 this.$message.error("02精度总数量不能超过可报工数量")
@@ -1481,7 +1481,7 @@ export default {
                 }
               }
               totalQualifiedQuantity2 = this.tableDataList2.reduce((sum, item) => {
-                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加  
+                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加
               }, 0);
               if (totalQualifiedQuantity2 > totalQualifiedQuantity) {
                 this.$message.error("01精度总数量不能超过02精度总数量")
@@ -1527,7 +1527,7 @@ export default {
               obj.packagingMethod = this.currentProcess.packagingMethod
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.vibrationType = this.currentProcess.vibrationType
-              
+
               obj.workOrderId = this.currentProcess.id
               obj.stockFlag = this.stockFlag
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]

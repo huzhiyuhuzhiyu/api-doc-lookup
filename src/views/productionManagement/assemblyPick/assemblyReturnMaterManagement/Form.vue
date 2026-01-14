@@ -83,7 +83,7 @@
                       <el-table-column prop="productCode" label="产品编码" min-width="130"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
                       <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
@@ -193,7 +193,7 @@
                       <el-table-column prop="productCode" label="产品编码" min-width="130"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
+                      <el-table-column prop="productDrawingNo" label="型号" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
                       <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>

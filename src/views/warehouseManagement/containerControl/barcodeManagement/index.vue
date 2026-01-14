@@ -14,7 +14,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入产品图号" @keyup.enter.native="search()"
+                    <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入型号" @keyup.enter.native="search()"
                       clearable />
                   </el-form-item>
                 </el-col>
@@ -63,7 +63,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="productsName" label="产品名称" min-width="160" />
-                <el-table-column prop="drawingNo" label="产品图号" min-width="200" />
+                <el-table-column prop="drawingNo" label="型号" min-width="200" />
                 <el-table-column prop="documentType" label="来源类型" min-width="120" :formatter="documentTypeFormat" />
                 <el-table-column prop="standardBoxName" label="标准箱" min-width="160" />
                 <el-table-column prop="shelvesName" label="所属库位" min-width="160" />
@@ -183,7 +183,7 @@
 
                 <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                 <el-table-column prop="productsName" label="产品名称" min-width="160" sortable="custom" />
-                <el-table-column prop="drawingNo" label="产品图号" min-width="160" />
+                <el-table-column prop="drawingNo" label="型号" min-width="160" />
                 <el-table-column prop="routingName" label="工艺路线名称" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" min-width="160" />
                 <el-table-column prop="documentType" label="来源类型" min-width="120" :formatter="documentTypeFormat" />

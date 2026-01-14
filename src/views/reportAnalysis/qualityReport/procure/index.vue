@@ -20,7 +20,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入产品图号" clearable
+              <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入型号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -50,7 +50,7 @@
           <el-table-column prop="partnerName" label="供应商名称" min-width="180"> </el-table-column>
           <el-table-column prop="productsCode" label="产品编码" min-width="180"> </el-table-column>
           <el-table-column prop="productsName" label="产品名称" min-width="180"> </el-table-column>
-          <el-table-column prop="productsDrawingNo" label="产品图号" min-width="180"> </el-table-column>
+          <el-table-column prop="productsDrawingNo" label="型号" min-width="180"> </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="180"> </el-table-column>
           <el-table-column prop="receivedQuantity" label="来货数量" min-width="180"> </el-table-column>
           <el-table-column prop="inspectionMethod" label="检验类型" min-width="150">
@@ -140,7 +140,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品图号">
-              <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入产品图号" width="180" clearable maxlength="20">
+              <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入型号" width="180" clearable maxlength="20">
               </el-input>
             </el-form-item>
           </el-col>

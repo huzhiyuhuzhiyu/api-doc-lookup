@@ -295,7 +295,7 @@ export default {
     /* 列表数据请求体 */
     listRequestObj: {
       // type: Object | Function,
-      /* 
+      /*
         对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
         函数写法：(rowIndex) => {
           let id = this.linesList[rowIndex].id
@@ -336,7 +336,7 @@ export default {
         [
           { prop: 'code', label: '产品编码', type: 'input' },
           { prop: 'name', label: '产品名称', type: 'input' },
-          { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+          { prop: 'productDrawingNo', label: '型号', type: 'input' },
         ]
     },
     moreSearchList: {
@@ -344,7 +344,7 @@ export default {
       default:()=> [
         { prop: 'code', label: '产品编码', type: 'input' },
         { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
       ]
       /* [
           {prop:'code',label:'编码',type:'input'},
@@ -381,7 +381,7 @@ export default {
       default:()=> [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'drawingNo', label: '型号' },
       ]
       /* [
           { prop: 'code', label: '编码' }, // 标准
@@ -856,11 +856,11 @@ export default {
           let submitFlag = true
           if (this.beforeSubmit) { submitFlag = await this.beforeSubmit(this.rSelectData[0].all, this.paramsObj) }
           if (!submitFlag) return this.btnLoading = false
-     
+
           this.$emit('input', this.selectedIds[0])
           this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj)
         }
-        
+
         this.innerValue = this.selectedData[0]
         this.$nextTick(() => { this.btnLoading = false })
         this.visible = false
@@ -874,7 +874,7 @@ export default {
         else return null
       }
       this.itemScope = getFunction(this, "scope")
-      
+
       if (!this.value || !this.value.length) {
         this.innerValue = ''
         this.selectedIds = []
@@ -896,7 +896,7 @@ export default {
           this.selectedIds = []
           // this.selectedData = [this.value]
           this.rSelectData = [{ name: this.value }]
-        }        
+        }
         this.innerValue = this.selectedData[0]
       }
     },

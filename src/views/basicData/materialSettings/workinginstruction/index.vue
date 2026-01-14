@@ -79,7 +79,7 @@
 
                     <el-table-column prop="code" label="产品编码" sortable="custom" min-width="200"></el-table-column>
                     <el-table-column prop="name" label="产品名称" sortable="custom" min-width="200"></el-table-column>
-                    <el-table-column prop="drawingNo" label="产品图号" sortable="custom" min-width="200"></el-table-column>
+                    <el-table-column prop="drawingNo" label="型号" sortable="custom" min-width="200"></el-table-column>
                     <el-table-column prop="storageType" label="存储类型" width="130">
                         <template slot-scope="scope">
                             <div v-if="scope.row.storageType == 'network_path'">网络地址</div>

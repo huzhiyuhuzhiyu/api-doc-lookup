@@ -50,7 +50,7 @@ export function getColumns() {
     },
     {
       prop: "drawingNo",
-      label: "品名规格",
+      label: "型号",
       minWidth: 180,
     },
     {

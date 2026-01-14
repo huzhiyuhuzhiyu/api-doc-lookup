@@ -95,7 +95,7 @@
                             <el-tag type="success" v-else-if="scope.row.balanceState === 'finished'">已结存</el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="productsDrawingNo" label="品名规格" min-width="200"
+                    <el-table-column prop="productsDrawingNo" label="型号" min-width="200"
                                      sortable="custom"
                     />
                     <el-table-column prop="productsName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160" sortable="custom"/>
@@ -178,7 +178,7 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="产品图号">
-                            <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入产品图号" width="180"
+                            <el-input v-model="listQuery.productsDrawingNo" placeholder="请输入型号" width="180"
                                       clearable
                             >
                             </el-input>
@@ -329,7 +329,7 @@ export default {
             },
             tableItems: [
                 { prop: 'orderNo', label: '出入库单号', minWidth: '180' },
-                { prop: 'drawingNo', label: '品名规格', minWidth: '300' },
+                { prop: 'drawingNo', label: '型号', minWidth: '300' },
                 { prop: 'productName', label: '产品名称' },
                 { prop: 'productCode', label: '产品编码', minWidth: '140' },
                 { prop: 'batchNumber', label: '批次号', minWidth: '180' },
@@ -489,7 +489,7 @@ export default {
                 {
                     fieldValue: '',
                     field: 'productsDrawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     prop: 'productsDrawingNo',
                     symbol: 'like',
                     searchType: 1
@@ -543,7 +543,7 @@ export default {
                 },
                 {
                     prop: 'productsDrawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     type: 'input'
                 },
                 {

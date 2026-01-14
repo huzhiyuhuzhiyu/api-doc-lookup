@@ -55,7 +55,7 @@
               <el-table-column prop="customerProductDrawingNo" label="客户产品图号" width="150"></el-table-column>
               <el-table-column prop="productCode" label="产品编码" width="200" />
               <el-table-column prop="productName" label="产品名称" width="200"></el-table-column>
-              <el-table-column prop="drawingNo" label="产品图号" width="120" />
+              <el-table-column prop="drawingNo" label="型号" width="120" />
               <el-table-column prop="num" label="订单数量" width="120"></el-table-column>
               <el-table-column prop="planQuantity" label="已计划数量" width="120"></el-table-column>
               <el-table-column prop="dispatchingQuantity" label="已派工数量" width="120"></el-table-column>

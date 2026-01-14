@@ -20,8 +20,8 @@
           </el-col>
 
           <el-col :sm="8" :xs="24">
-            <el-form-item label="品名规格">
-              <el-input v-model="form.productDrawingNo" placeholder="品名规格" disabled />
+            <el-form-item label="型号">
+              <el-input v-model="form.productDrawingNo" placeholder="型号" disabled />
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -86,8 +86,8 @@
               <el-input v-model="form.qualifiedQuantity" placeholder="合格数量" />
             </el-form-item>
           </el-col>
-    
-          
+
+
           <el-col :sm="8" :xs="24">
             <el-form-item label="不合格数量">
               <el-input v-model="form.unqualifiedQuantity" placeholder="不合格数量" disabled />

@@ -41,7 +41,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入产品图号" clearable @keyup.enter.native="search()"/>
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入型号" clearable @keyup.enter.native="search()"/>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -75,7 +75,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="name" label="产品名称" min-width="140" fixed="left" sortable="custom" />
-          <el-table-column prop="drawingNo" label="产品图号" min-width="200" sortable="custom" />
+          <el-table-column prop="drawingNo" label="型号" min-width="200" sortable="custom" />
           <el-table-column prop="spec" label="规格型号" width="120" sortable="custom" />
           <el-table-column prop="inspectionMethod" label="检验方式" width="120">
             <template slot-scope="{row}">
@@ -151,7 +151,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品图号">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入产品图号" clearable />
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入型号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">

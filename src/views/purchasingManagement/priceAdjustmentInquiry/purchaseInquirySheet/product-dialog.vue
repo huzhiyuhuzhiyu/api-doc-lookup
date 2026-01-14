@@ -68,7 +68,7 @@
             @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" customKey="JNPFTableKey_192714">
             <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
             <el-table-column prop="name" label="产品名称" />
-            <el-table-column prop="drawingNo" label="产品图号" />
+            <el-table-column prop="drawingNo" label="型号" />
             <el-table-column prop="spec" label="规格型号" />
             <el-table-column prop="mainUnit" label="主单位" />
             <!-- <el-table-column prop="productSource" label="产品来源">

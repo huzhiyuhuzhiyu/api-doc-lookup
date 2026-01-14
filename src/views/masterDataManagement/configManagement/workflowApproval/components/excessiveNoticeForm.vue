@@ -77,7 +77,7 @@
                 <el-table-column prop="orderNo" label="订单号" width="auto" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="auto" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="auto" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productDrawingNo" label="产品图号" width="auto" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productDrawingNo" label="型号" width="auto" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="workOrderNo" label="工作令号" width="auto" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="deliveryDate" label="交货日期" width="auto" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip></el-table-column>
@@ -101,7 +101,7 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                 <el-table-column prop="productCode" label="产品编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productName" label="产品名称" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productDrawingNo" label="产品图号" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productDrawingNo" label="型号" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="routingCode" label="工艺路线编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="routingName" label="工艺路线名称" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="processCode" label="工序编码" show-overflow-tooltip></el-table-column>
@@ -294,7 +294,7 @@
                 </el-table-column>
                 <el-table-column
                   prop="productDrawingNo"
-                  label="产品图号"
+                  label="型号"
                   min-width="230"
                   :key="5"
                 />

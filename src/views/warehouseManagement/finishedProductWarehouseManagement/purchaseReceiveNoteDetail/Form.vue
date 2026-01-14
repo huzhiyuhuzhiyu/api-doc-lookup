@@ -137,7 +137,7 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                    <el-table-column prop="drawingNo" label="型号" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
                     <el-table-column prop="purchaseQuantity" label="入库数量" width="160" sortable="custom" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
@@ -308,7 +308,7 @@
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="型号" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="num" label="数量" width="160" sortable="custom" />
                 <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />

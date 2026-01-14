@@ -113,7 +113,7 @@
                         <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212"
                           v-if="dataForm.businessType != 'outbound_external_send' || dataForm.businessType != 'outbound_pick_out' || dataForm.businessType != 'inbound_return_materials'">
                         </el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                        <el-table-column prop="productDrawingNo" label="型号" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
@@ -241,7 +241,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -277,7 +277,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input v-model="orderForm.drawingNo" placeholder="请输入型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -300,7 +300,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -336,7 +336,7 @@
                 v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'">
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -395,7 +395,7 @@
                 <el-table-column prop="ordersNo" label="任务单号" width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="processName" label="工序" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'" />

@@ -55,7 +55,7 @@
         <JNPF-table ref="tabForm"  :data="tableData" custom-column row-key="id" :fixedNo="true" v-if="isProjectSwitchFlag"
           @sort-change="sortChange" customKey="JNPFTableKey_562547">
 
-          <el-table-column prop="productDrawingNo" label="品名规格" width="330" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" width="330" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -193,7 +193,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
 

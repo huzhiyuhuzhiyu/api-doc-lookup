@@ -61,7 +61,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="equipmentName" label="关联设备" min-width="120" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="关联产品" min-width="160" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="160" sortable="custom" />
           <el-table-column prop="createByName" label="发起人" min-width="120" sortable="custom" />
           <el-table-column prop="createTime" label="发起时间" min-width="180" sortable="custom" />
           <el-table-column prop="planPersonName" label="处理人" min-width="160" sortable="custom" />

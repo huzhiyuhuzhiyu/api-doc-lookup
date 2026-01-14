@@ -83,7 +83,7 @@
                 </el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="200" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="drawingNo" label="产品图号" width="200" show-overflow-tooltip>
+                <el-table-column prop="drawingNo" label="型号" width="200" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="contractQuantity" label="数量" width="160">
                   <template slot="header">
@@ -334,7 +334,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @selection-change="handleSelectionChange"
                 @row-click="rowaction" ref="dataTable" customKey="JNPFTableKey_846792">
-                <el-table-column prop="drawingNo" label="产品图号" />
+                <el-table-column prop="drawingNo" label="型号" />
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编号" /> -->
                 <el-table-column prop="productCode" label="产品编码"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" />

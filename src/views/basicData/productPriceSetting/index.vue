@@ -82,7 +82,7 @@
               </el-table-column>
               <el-table-column prop="name" label="产品名称" width="120"
                 v-if="isProductNameSwitch === '1'"></el-table-column>
-              <el-table-column prop="drawingNo" label="品名规格" min-width="300" />
+              <el-table-column prop="drawingNo" label="型号" min-width="300" />
               <el-table-column prop="productCategoryName" label="产品分类" width="120" />
               <el-table-column prop="productSource" label="产品来源" width="120">
                 <template slot-scope="{ row }">
@@ -205,7 +205,7 @@
               </el-table-column>
               <el-table-column prop="name" label="产品名称" min-width="140">
               </el-table-column>
-              <el-table-column prop="drawingNo" label="品名规格" min-width="300" />
+              <el-table-column prop="drawingNo" label="型号" min-width="300" />
               <el-table-column prop="productCategoryName" label="产品分类" width="120" />
               <el-table-column prop="productSource" label="产品来源" width="120">
                 <template slot-scope="{ row }">
@@ -378,7 +378,7 @@ export default {
       codeConfig: {},
       quickRules: {
         code: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
-        drawingNo: [{ required: true, message: '请输入品名规格', trigger: 'blur' }],
+        drawingNo: [{ required: true, message: '请输入型号', trigger: 'blur' }],
         unit: [{ required: true, message: '请输入单位', trigger: 'blur' }],
         productCategoryName: [{ required: true, message: '请选择产品分类', trigger: 'change' }],
         productSource: [{ required: true, message: '请选择产品来源', trigger: 'change' }]
@@ -603,7 +603,7 @@ export default {
           },
           {
             prop: 'drawingNo',
-            label: '品名规格',
+            label: '型号',
             type: 'input'
           },
           {
@@ -799,7 +799,7 @@ export default {
             },
             {
               prop: 'drawingNo',
-              label: '品名规格',
+              label: '型号',
               type: 'input'
             },
 
@@ -996,7 +996,7 @@ export default {
             },
             {
               prop: 'drawingNo',
-              label: '品名规格',
+              label: '型号',
               type: 'input'
             },
             {

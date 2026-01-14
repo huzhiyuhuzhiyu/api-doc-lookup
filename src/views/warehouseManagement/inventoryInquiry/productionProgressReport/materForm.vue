@@ -19,7 +19,7 @@
           </div>
           <JNPF-table custom-column ref="dataTable" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_303055">
             <el-table-column prop="productCode" label="产品编码" sortable="custom"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="领料单号" sortable="custom"></el-table-column>
             <el-table-column prop="num" label="领料数量" sortable="custom"></el-table-column>
             <el-table-column prop="receiveType" label="领料类型" sortable="custom">

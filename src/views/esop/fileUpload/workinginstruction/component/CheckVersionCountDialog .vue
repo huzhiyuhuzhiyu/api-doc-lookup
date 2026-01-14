@@ -174,7 +174,7 @@ export default {
             enabled-checkbox-plus
             ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_530266">
             <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
-            <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
+            <el-table-column prop="drawingNo" label="型号" min-width="305" />
             <el-table-column prop="productsCode" label="产品编码" min-width="120" />
             <el-table-column prop="productCategoryName" label="产品分类" width="140" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">

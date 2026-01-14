@@ -10,7 +10,7 @@
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
+                            <el-input v-model="listQuery.productDrawingNo" placeholder="请输入型号" clearable
                                       @keyup.enter.native="search()" />
                         </el-form-item>
                     </el-col>
@@ -52,7 +52,7 @@
                     <el-table-column prop="planNo" label="计划单号" min-width="190" />
                     <el-table-column prop="productCode" label="产品编码" min-width="140" />
                     <el-table-column prop="productName" label="产品名称" min-width="140" />
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
+                    <el-table-column prop="productDrawingNo" label="型号" min-width="180" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
                     <el-table-column prop="productSource" label="产品来源" align="center" min-width="120">

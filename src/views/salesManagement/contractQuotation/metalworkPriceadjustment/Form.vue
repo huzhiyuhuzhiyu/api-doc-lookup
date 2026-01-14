@@ -83,7 +83,7 @@
                 </el-table-column>
                 <el-table-column prop="productName" label="产品名称" min-width="140" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="drawingNo" label="产品图号" min-width="160" v-if="isproductDrawing" show-overflow-tooltip
+                <el-table-column prop="drawingNo" label="型号" min-width="160" v-if="isproductDrawing" show-overflow-tooltip
                   key="23">
                 </el-table-column>
                 <el-table-column prop="productDrawingNo" label="产品图号" min-width="160" v-else show-overflow-tooltip>
@@ -335,7 +335,7 @@
                 <el-table-column prop="customerProductDrawingNo" label="客户产品图号" />
                 <el-table-column prop="productCode" label="产品编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productName" label="产品名称" />
-                <el-table-column prop="drawingNo" label="产品图号" />
+                <el-table-column prop="drawingNo" label="型号" />
               </JNPF-table>
               <pagination :total="cusPrototal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
                 @pagination="getcooperativeProduct" />

@@ -81,7 +81,7 @@
                 <el-table-column prop="equipmentCode" label="设备编码" min-width="120" />
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="120" />
                 <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" />
                 <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" width="160" sortable="custom"></el-table-column>
                 <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
@@ -220,7 +220,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {

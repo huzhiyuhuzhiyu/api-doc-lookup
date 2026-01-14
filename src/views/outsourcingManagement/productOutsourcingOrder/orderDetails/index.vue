@@ -77,7 +77,7 @@
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="drawingNo" label="型号" min-width="200" sortable="custom" />
             <!-- <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
@@ -149,7 +149,7 @@
           <el-col :span="24">
             <el-form-item label="税率" prop="taxRates">
               <el-select v-model="form.taxRates" placeholder="请选择" style="width: 100%;"  @change="changeRate">
-                              <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"  
+                              <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                 :value="item.taxRate"></el-option>
                             </el-select>
             </el-form-item>
@@ -161,7 +161,7 @@
           </el-col>
         </el-form>
       </el-row>
-     
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="editPriceVisible = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
@@ -250,7 +250,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         // {
@@ -486,7 +486,7 @@ export default {
     this.detailData()
   },
   methods: {
-     editPriceFun(row){ 
+     editPriceFun(row){
       this.editPriceVisible=true
       this.form=row
     },
@@ -660,7 +660,7 @@ export default {
           })
       }
     },
-   
+
     columnSetFun() {
       this.$refs.detailTableData.showDrawer()
     },

@@ -31,8 +31,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="品名规格" prop="productsDrawingNo">
-                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格"
+                    <el-form-item label="型号" prop="productsDrawingNo">
+                      <el-input v-model="dataForm.productsDrawingNo" placeholder="型号"
                         readonly @focus="openSelectProductFun" disabled>
                       </el-input>
                     </el-form-item>
@@ -180,7 +180,7 @@ export default {
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
         ],
         productsDrawingNo: [
-          { required: true, message: '品名规格' + '不能为空', trigger: 'change' }
+          { required: true, message: '型号' + '不能为空', trigger: 'change' }
         ]
       },
       selectArr: [],
@@ -321,10 +321,10 @@ export default {
         productsId: item.productsId, // 产品id
         productName: item.productName, // 产品名称
         productCode: item.productCode, // 产品编码
-        productDrawingNo: item.productDrawingNo, // 品名规格
-        model: item.model, // 品名规格
-        spec: item.spec, // 品名规格
-        drawingSheetNo: item.drawingSheetNo, // 品名规格
+        productDrawingNo: item.productDrawingNo, // 型号
+        model: item.model, // 型号
+        spec: item.spec, // 型号
+        drawingSheetNo: item.drawingSheetNo, // 型号
         ratio: item.ratio, // 转换系数
         calculationDirection: item.calculationDirection, // 计算方向
         mainUnit: item.mainUnit, // 单位

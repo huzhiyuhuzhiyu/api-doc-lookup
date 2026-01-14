@@ -83,7 +83,7 @@ export default {
         setTableItems(){
             this.tableItems = [
                 {prop:"账期", label:"账期",minWidth:160,props:'accountPeriod'},
-                {prop:"品名规格", label:'品名规格',minWidth:160,sortable:'custom',props:'drawingNo'},
+                {prop:"型号", label:'型号',minWidth:160,sortable:'custom',props:'drawingNo'},
                 {prop:"产品名称", label:'产品名称',minWidth:140,render:this.isProductNameSwitch === '1',sortable:'custom',props:'productsName'},
                 {prop:"产品编码", label:'产品编码',minWidth:140,sortable:'custom',props:'productsCode'},
                 {prop:"工序名称", label:'工序名称',minWidth:140,sortable:'custom',props:'processName'},
@@ -99,7 +99,7 @@ export default {
                 },
                 {
                     prop: 'drawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     type: 'input',
                 },
                 {
@@ -142,7 +142,7 @@ export default {
                 },{
                     fieldValue: '',
                     field: 'drawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     prop: 'drawingNo',
                     symbol: 'like',
                     searchType: 1

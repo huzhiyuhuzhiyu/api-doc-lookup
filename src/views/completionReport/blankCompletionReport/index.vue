@@ -31,7 +31,7 @@
                 <el-col :span="4">
                   <el-form-item>
                     <el-input v-model="produceForm.productDrawingNo" @keyup.enter.native="searchProductData()"
-                      placeholder="品名规格" clearable />
+                      placeholder="型号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -62,9 +62,9 @@
                     <div slot="header" class="clearfix">
                       <span class="orderNo">单号：{{ item.orderNo }}</span>
                     </div>
-                    <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>                    -->
+                    <!-- <div class="label_title"> 型号:{{item.productDrawingNo}}</div>                    -->
                     <div class="label_title" v-if="$store.getters.configData.product.enable_productName&&item.productName"> 产品名称:{{ item.productName }}</div>
-                    <div class="label_title"> 品名规格:{{ item.productDrawingNo }}</div>
+                    <div class="label_title"> 型号:{{ item.productDrawingNo }}</div>
                     <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
                         }}</span></div>
                     <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity
@@ -669,7 +669,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
- 
+
   },
   methods: {
     closeTaskFun(row) {
@@ -787,7 +787,7 @@ export default {
 
       }
     },
- 
+
     // 生产任务列表
     searchProductData() {
       if (this.planDate.length) {

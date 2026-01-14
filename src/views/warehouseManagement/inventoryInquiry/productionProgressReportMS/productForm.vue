@@ -27,7 +27,7 @@
             </el-table-column>
             <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
               sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+            <el-table-column prop="productDrawingNo" label="型号" min-width="160" />
 
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />

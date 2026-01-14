@@ -99,7 +99,7 @@
                 </el-table-column>
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="400" />
+                <el-table-column prop="drawingNo" label="型号" min-width="400" />
                 <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
@@ -219,12 +219,12 @@ export default {
       searchList: [
         // { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
       searchList1: [
         { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerDrawingNumber', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
 
       ],
       superQueryVisible: false,
@@ -297,7 +297,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: "品名规格 ",
+          label: "型号 ",
           type: 'custom',
         },
 
@@ -342,7 +342,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格 ",
+          label: "型号 ",
           type: 'custom',
         },
 
@@ -975,7 +975,7 @@ export default {
           this.searchList = [
             // { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
             { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
-            { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
           ]
         if (this.isProductNameSwitch === '1') {
           this.superQueryJson.splice(4, 0, {

@@ -41,7 +41,7 @@
             <JNPF-table v-loading="listLoading" :data="tableData" hasNO fixedNO @sort-change="sortChange"
               ref="dataTables" customKey="JNPFTableKey_268595">
 
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
+              <el-table-column prop="productDrawingNo" label="型号" min-width="330" />
               <el-table-column prop="productCode" label="产品编码" width="160" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
               <el-table-column prop="processName" label="工序名称" width="120" />

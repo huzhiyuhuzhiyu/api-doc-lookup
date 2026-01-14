@@ -43,7 +43,7 @@
         <el-form @submit.native.prevent>
           <!-- <el-col :span="6">
             <el-form-item>
-              <el-input v-model="tableQuery.productDrawingNo" placeholder="品名规格" clearable
+              <el-input v-model="tableQuery.productDrawingNo" placeholder="型号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -106,7 +106,7 @@
 
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -184,7 +184,7 @@ export default {
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
       superQueryVisible: false,
@@ -240,10 +240,10 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
-    
+
 
            {
           prop: 'productCategoryName',
@@ -405,7 +405,7 @@ export default {
             totalAvailable: 0,
             totalOccupancy: 0,
           }
-        
+
         this.total = res.data.whPage.total
         this.listLoading = false
       }).catch(() => {
@@ -457,7 +457,7 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
       ]

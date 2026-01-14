@@ -49,7 +49,7 @@
               </template>
             </el-tab-pane>
           </template>
-        
+
         </el-tabs>
       </div>
       <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
@@ -173,12 +173,12 @@ export default {
       ProductTableSearchList: [
         { prop: 'code', label: '产品编码', type: 'input' },
         { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
       ],
       tableItems: [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'productDrawingNo', label: '品名规格' },
+        { prop: 'productDrawingNo', label: '型号' },
       ],
       listMethod: null,
       createdData: {},
@@ -542,14 +542,14 @@ export default {
           this.ProductTableSearchList = [
             { prop: "customerProductNo", label: "客户料号", type: 'input' },
             { prop: "productName", label: "产品名称", type: 'input' },
-            { prop: "drawingNo", label: "品名规格", type: 'input' },
+            { prop: "drawingNo", label: "型号", type: 'input' },
             { prop: "productCode", label: "产品编码", type: 'input' },
           ]
           this.tableItems = [
             { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
             { prop: 'productCode', label: '产品编码' },
             { prop: 'productName', label: '产品名称' },
-            { prop: 'drawingNo', label: '品名规格' },
+            { prop: 'drawingNo', label: '型号' },
             { prop: 'mainUnit', label: '单位(主)' },
           ]
           this.$refs["comSelect-product"].openDialog()
@@ -568,12 +568,12 @@ export default {
         this.ProductTableSearchList = [
           { prop: 'code', label: '产品编码', type: 'input' },
           { prop: 'name', label: '产品名称', type: 'input' },
-          { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+          { prop: 'productDrawingNo', label: '型号', type: 'input' },
         ]
         this.tableItems = [
           { prop: 'code', label: '产品编码' },
           { prop: 'name', label: '产品名称' },
-          { prop: 'drawingNo', label: '品名规格' },
+          { prop: 'drawingNo', label: '型号' },
           { prop: 'mainUnit', label: '单位(主)' }
         ]
         this.$refs["comSelect-product"].openDialog()
@@ -700,7 +700,7 @@ export default {
       a.setAttribute('href', location.origin + '/static/销售订单导入模板.xlsx')
       a.click()
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -738,7 +738,7 @@ export default {
             productsId: item.id || item.productsId,                 // 产品id
             productName: item.name || item.productName,              // 产品名称
             productCode: item.code || item.productCode,                // 产品编码
-            drawingNo: item.drawingNo,             // 品名规格
+            drawingNo: item.drawingNo,             // 型号
             availableQuantity: item.availableQuantity || 0,   // 可用库存
             customerProductNo: item.customerProductNo || '',
             price: item.costPrice || item.price,              // 含税单价
@@ -806,7 +806,7 @@ export default {
             options.push(obj)
           }
         } else {
-          this.$message.error("您输入的品名规格未匹配到对应的产品，请重新输入")
+          this.$message.error("您输入的型号未匹配到对应的产品，请重新输入")
         }
       })
     },

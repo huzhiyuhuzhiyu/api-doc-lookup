@@ -177,7 +177,7 @@
                       <!-- <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip
                         key="166"></el-table-column> -->
 
-                      <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3"
+                      <el-table-column prop="productDrawingNo" label="型号" width="290" key="3"
                         show-overflow-tooltip></el-table-column>
 
                       <el-table-column prop="mainUnit" label="单位" width="290" key="13"
@@ -342,7 +342,7 @@ export default {
       ProductTableItems: [
         { prop: 'orderNo', label: '订单号', sortable: 'custom' },
         { prop: 'cooperativePartnerName', label: '供应商名称', sortable: 'custom' },
-        { prop: 'drawingNo', label: '料品名规格', sortable: 'custom' },
+        { prop: 'drawingNo', label: '料型号', sortable: 'custom' },
         { prop: 'code', label: '料产品编码', sortable: 'custom' },
         { prop: 'processName', label: '料工序名称', sortable: 'custom' },
 
@@ -354,7 +354,7 @@ export default {
       ProductTableSearchList: [
         { prop: 'orderNo', label: '订单号', type: 'input' },
         { prop: 'cooperativePartnerName', label: '供应商名称', type: 'input' },
-        { prop: 'drawingNo', label: '料品名规格', type: 'input' }
+        { prop: 'drawingNo', label: '料型号', type: 'input' }
       ], // 产品选择弹出框搜索条件
 
       tipsvisible: false,
@@ -711,7 +711,7 @@ export default {
             productsId: item.id, // 产品id
             productName: item.name, // 产品名称
             productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
+            productDrawingNo: item.drawingNo, // 型号
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位

@@ -75,7 +75,7 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="drawingNo" label="型号" min-width="200" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="120" />
@@ -208,7 +208,7 @@ export default {
 
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
 
@@ -227,7 +227,7 @@ export default {
           label: '单位',
           type: 'input'
         },
-    
+
         {
           prop: 'deputyUnit',
           label: '交货日期',

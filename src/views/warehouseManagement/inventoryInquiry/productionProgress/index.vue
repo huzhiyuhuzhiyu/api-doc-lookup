@@ -57,7 +57,7 @@
 
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -194,7 +194,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
         {
@@ -259,8 +259,8 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
- 
-  
+
+
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -270,8 +270,8 @@ export default {
     this.isProjectSwitchFlag=true
     this.superForm = this.tableQuery
     this.search('basic')
-    
-    
+
+
   },
   methods: {
     // 导出
@@ -388,10 +388,10 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
       ]
- 
+
       this.initData()
     },
 

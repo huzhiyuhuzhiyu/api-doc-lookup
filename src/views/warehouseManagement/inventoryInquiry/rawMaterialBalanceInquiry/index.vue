@@ -89,7 +89,7 @@ export default {
                     }
                 }
                 },
-                {prop:"drawingNo", label:'品名规格',minWidth:160,sortable:'custom'},
+                {prop:"drawingNo", label:'型号',minWidth:160,sortable:'custom'},
                 {prop:"productsName", label:'产品名称',minWidth:140,render:this.isProductNameSwitch === '1',sortable:'custom'},
                 {prop:"productsCode", label:'产品编码',minWidth:140,sortable:'custom'},
                 {prop:"processName", label:'工序名称',minWidth:140,sortable:'custom'},
@@ -126,7 +126,7 @@ export default {
                 },
                 {
                     prop: 'drawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     type: 'input',
                 },
                 {
@@ -184,7 +184,7 @@ export default {
                 },{
                     fieldValue: '',
                     field: 'drawingNo',
-                    label: '品名规格',
+                    label: '型号',
                     prop: 'drawingNo',
                     symbol: 'like',
                     searchType: 1

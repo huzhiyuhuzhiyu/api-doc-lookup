@@ -280,12 +280,12 @@ export default {
             let newProp = ''
             console.log(prop)
             let sortArr = [
-                {label:'drawingNo',name:'品名规格'},
+                {label:'drawingNo',name:'型号'},
                 {label:'productsCode',name:'产品编码'},
                 {label:'productsName',name:'产品名称'},
                 {label:'processName',name:'工序名称'},
             ]
-            if (['品名规格','产品编码','产品名称','工序名称'].includes(prop)) {
+            if (['型号','产品编码','产品名称','工序名称'].includes(prop)) {
                 newProp = sortArr.find(item=>item.name === prop).label
             } else {
                 newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -356,7 +356,7 @@ export default {
             this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
             this.listMethod(this.listQuery).then(res => {
                 console.log(res)
-                const mapArr = ['账期','结存状态','品名规格','产品名称','产品编码','工序名称']
+                const mapArr = ['账期','结存状态','型号','产品名称','产品编码','工序名称']
                 const legendData = res.data.records.length ?  Object.keys(res.data.records[0]).filter(item=> !mapArr.includes(item)) : []
                 this.mapTableItems = legendData
                 this.tableData = res.data.records ? res.data.records : []

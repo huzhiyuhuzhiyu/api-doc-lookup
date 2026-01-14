@@ -78,7 +78,7 @@
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                      
+
 
                       <el-table-column prop="stockMoveOrderNo" label="出入库单号" min-width="180" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -109,7 +109,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                      <el-table-column prop="drawingNo" label="型号" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
 
@@ -187,7 +187,7 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <!-- 
+                      <!--
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="type === 'look'"
@@ -295,7 +295,7 @@
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                      
+
 
                       <el-table-column prop="stockMoveOrderNo" label="出入库单号" min-width="180" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -326,7 +326,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                      <el-table-column prop="drawingNo" label="型号" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
 
@@ -404,7 +404,7 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <!-- 
+                      <!--
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="type === 'look'"
@@ -479,7 +479,7 @@ export default {
         createByName: '',
         remark: "",
         totalReconciliationAmount: '',
-        approvalFlag: false, 
+        approvalFlag: false,
       },
       mainLoading: true,
       type: "",

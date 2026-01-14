@@ -140,7 +140,7 @@
                         <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                           show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                        <el-table-column prop="drawingNo" label="型号" min-width="160" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1"/>
                         <el-table-column prop="pairingModeName" label="配对方式" min-width="180" v-if="isPairingModeSwitch === '1'">
@@ -355,7 +355,7 @@
 
                     <el-col :span="6">
                       <el-form-item>
-                        <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.drawingNo" placeholder="品名规格" clearable/>
+                        <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.drawingNo" placeholder="型号" clearable/>
                       </el-form-item>
                     </el-col>
 
@@ -381,7 +381,7 @@
                     <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom"/>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"/>
+                    <el-table-column prop="drawingNo" label="型号" width="160" sortable="custom"/>
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120"/>
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                     </el-table-column>
@@ -457,7 +457,7 @@
 
                     <el-col :span="6">
                       <el-form-item>
-                        <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable/>
+                        <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入型号" clearable/>
                       </el-form-item>
                     </el-col>
 
@@ -481,7 +481,7 @@
                     <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="140" sortable="custom"/>
+                    <el-table-column prop="drawingNo" label="型号" min-width="140" sortable="custom"/>
                     <el-table-column prop="productCategoryName" min-width="140" label="所属分类" sortable="custom"/>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1"/>
                     <el-table-column prop="mainUnit" label="单位"/>

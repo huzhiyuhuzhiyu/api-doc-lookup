@@ -32,7 +32,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
-                        <el-form-item label="品名规格">
+                        <el-form-item label="型号">
                           <el-input :value="dataForm.productDrawingNo" disabled />
                         </el-form-item>
                       </el-col>
@@ -72,7 +72,7 @@
                                         </el-form-item>
                                     </el-col>
                                     <el-col :span="12">
-                                        <el-form-item label="品名规格">
+                                        <el-form-item label="型号">
                                             <el-input :value="dataForm.productDrawingNo" disabled />
                                         </el-form-item>
                                     </el-col>
@@ -155,7 +155,7 @@ export default {
       this.linesFormItems_left = [
         // { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
         // { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 30 },
-        { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        { prop: "productDrawingNo", label: "型号", value: "", type: 'view', minWidth: 150 },
         { prop: "qty", label: "数量", type: 'view', minWidth: 80 },
         { prop: "reduceType", label: "扣减料方式", type: 'select', disabled:true,
           options: [

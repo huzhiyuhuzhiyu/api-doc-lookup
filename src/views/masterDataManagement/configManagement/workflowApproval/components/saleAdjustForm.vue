@@ -86,7 +86,7 @@
                 </el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="auto" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="drawingNo" label="产品图号" width="auto" v-if="isproductDrawing" show-overflow-tooltip
+                <el-table-column prop="drawingNo" label="型号" width="auto" v-if="isproductDrawing" show-overflow-tooltip
                   key="23">
                 </el-table-column>
                 <el-table-column prop="productDrawingNo" label="产品图号" width="auto" v-else show-overflow-tooltip>
@@ -329,7 +329,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @selection-change="handleSelectionChange"
                 @row-click="rowaction" ref="dataTable" customKey="JNPFTableKey_243899">
-                <el-table-column prop="drawingNo" label="产品图号" />
+                <el-table-column prop="drawingNo" label="型号" />
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编号" /> -->
                 <el-table-column prop="productCode" label="产品编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productName" label="产品名称" />

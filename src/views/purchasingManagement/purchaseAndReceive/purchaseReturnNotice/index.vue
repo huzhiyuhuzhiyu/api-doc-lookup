@@ -213,7 +213,7 @@
                 <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" />
                 <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="产品图号" min-width="140" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="型号" min-width="140" sortable="custom" />
                 <el-table-column prop="receiptQuantity" label="已出库数量" min-width="140" />
                 <!-- <el-table-column prop="requiredReceivedQuantity" label="待出库数量" min-width="140" /> -->
                 <el-table-column prop="receivedQuantity" label="退货数量" min-width="140" />

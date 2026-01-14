@@ -9,7 +9,7 @@
               @click="openSeleceProductDialog()">
               选择产品
             </el-button>
-          
+
           <!-- 人员配置 -->
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
             <el-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
@@ -153,14 +153,14 @@ export default {
         { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
         { prop: 'name', label: '产品名称', sortable: 'custom',render:false },
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
         { prop: 'mainUnit', label: '单位', width: 60 },
         { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
 
       ], // 产品选择弹出框搜索条件
       isProjectSwitch: '',
@@ -220,7 +220,7 @@ export default {
             productsId: item.id, // 产品id
             productName: item.name, // 产品名称
             productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
+            productDrawingNo: item.drawingNo, // 型号
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位
@@ -249,7 +249,7 @@ export default {
             return true
           })
         }
-   
+
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
 
         // 审批
@@ -260,7 +260,7 @@ export default {
     openSeleceProductDialog() {
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
       ]
       if (this.$store.getters.configData.product.enable_productName) {
       this.ProductTableItems.forEach(tc=>{
@@ -287,8 +287,8 @@ export default {
       //   this.$refs.productRef.initData2()
       // })
     },
- 
-   
+
+
     // 校验发料数量
     checktaxDemandQuantity1() {
       return (rule, value, callback) => {
@@ -309,7 +309,7 @@ export default {
 
       console.log(this.row)
       this.dataFormTwo.data = JSON.parse(JSON.stringify(data))
-    
+
       console.log(this.dataFormTwo.data)
       this.drawer = true
     },
@@ -334,7 +334,7 @@ export default {
               productsId: item.productsId,
               productName: item.productName, // 产品名称
               productCode: item.productCode, // 产品编码
-              productDrawingNo: item.productDrawingNo, // 品名规格
+              productDrawingNo: item.productDrawingNo, // 型号
               qty: item.qty,
               ratio: item.ratio,
               routingLineId: item.routingLineId,

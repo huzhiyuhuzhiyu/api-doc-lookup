@@ -19,7 +19,7 @@
           </el-col>
           <!-- <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="型号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col> -->
@@ -72,7 +72,7 @@
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="120"
             v-if="isProductNameSwitch === '1'"></el-table-column>
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="departmentName" label="申请部门" width="160" sortable="custom" />
           <el-table-column prop="userName" label="申请人" width="160" sortable="custom" />
@@ -221,7 +221,7 @@ export default {
         },
         {
           prop: 'productDrawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {
@@ -355,7 +355,7 @@ export default {
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称
-        productDrawingNo: '', //品名规格
+        productDrawingNo: '', //型号
         sourceOrderNo: '', //来源单号
         startTime: '', //创建开始时间
         hasPrice: ''

@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
- 
+
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
@@ -17,7 +17,7 @@
                   <el-form-item>
                     <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                       @keyup.enter.native="search('basic')" />
-                  
+
                     <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                       clearable>
                       <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -29,7 +29,7 @@
                       :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                   </el-form-item>
                 </el-col>
-              </template> 
+              </template>
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -37,7 +37,7 @@
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                     </el-button>
                   </el-form-item>
-                </el-col> 
+                </el-col>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -57,11 +57,11 @@
                   </el-tooltip>
                 </div>
               </div>
-            
+
               <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="tableData"   custom-column customKey="JNPFTableKey_7668545512749">
                 <el-table-column prop="productsName" label="产品名称" />
                 <el-table-column prop="productsCode" label="产品编码" />
-                <el-table-column prop="productDrawingNo" label="品名规格" />
+                <el-table-column prop="productDrawingNo" label="型号" />
             <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
                 <el-table-column prop="unit" label="单位" />
                 <el-table-column prop="saleNum" label="累计销售发货次数" />
@@ -74,25 +74,25 @@
                   </template>
                 </el-table-column>
               </JNPF-table>
-              <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize" @pagination="initData" > 
+              <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize" @pagination="initData" >
                 <span>总发货数量:{{ totalSaleNum }}</span>
               <span style="margin-left: 10px;">总销售金额:{{ sumAmount }}</span>
               </pagination>
             </div>
-           
+
             <!-- 高级查询 -->
             <SuperQuery   :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
            <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
 
           </div>
- 
+
     </div>
   </div>
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
-import { saleProductReport} from '@/api/salesManagement/assemblyOrders' 
+import { saleProductReport} from '@/api/salesManagement/assemblyOrders'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 export default {
@@ -137,10 +137,10 @@ export default {
             matchLogic: "AND",
             condition: []
         }
-      }, 
+      },
       searchList2:[
                { field: 'productsName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-      ], 
+      ],
       superQueryJson: [
           {
           prop: 'productsName',
@@ -154,18 +154,18 @@ export default {
         },
             {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: "型号",
           type: 'input'
         },
 
-        
+
       ],
       superQueryVisible: false,
 
 
-    
 
- 
+
+
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
       visible: false,
@@ -173,8 +173,8 @@ export default {
       listLoading: false,
       activeName: "produce",
       reportCode:'',
-    
-    
+
+
       total: 0,
       formVisible: false,
       exportFormVisible:false,
@@ -182,10 +182,10 @@ export default {
       sumAmount:0,
     }
   },
-  async created() { 
- 
+  async created() {
+
     this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.inboundFormList))
-   
+
    this.search()
   },
   watch: {
@@ -194,18 +194,18 @@ export default {
     }
   },
   methods: {
-   
+
     columnSetFunInbound(){
       this.$refs['dataTableInbound'].showDrawer()
     },
-   
- 
+
+
        superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },
-     
+
     //排序
     sortChange({ prop, order }) {
       let newProp;
@@ -216,7 +216,7 @@ export default {
         }
         this.orderForm.orderItems[0].asc = order !== "descending"
         this.orderForm.orderItems[0].column = order === null ? "" : newProp
- 
+
       this.initData()
     },
     moreQueries() {
@@ -229,18 +229,18 @@ export default {
           this.tableData = res.data.page.records||[]
         this.total = res.data.page.total||0
         this.totalSaleNum=res.data.total.sumNum||0
-        this.sumAmount=res.data.total.sumAmount||0 
+        this.sumAmount=res.data.total.sumAmount||0
           this.listLoading = false
           this.visible = false
         }).catch(() => {
           this.listLoading = false
         })
-    
-       
-    }, 
-  
+
+
+    },
+
     search(type) {
-    
+
         if (this.inboundDate && this.inboundDate.length > 0) {
           this.orderForm.orderDateStart = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
           this.orderForm.orderDateEnd = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
@@ -264,25 +264,25 @@ export default {
                   fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
                 }
               })
-          } 
+          }
         this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-      
-      
-    
+
+
+
       this.initData()
     },
     reset() {
         this.$refs['dataTableInbound'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
         this.inboundDate = []
-        this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.inboundFormList)) 
+        this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.inboundFormList))
         this.searchList2=[
            { field: 'productsName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
       ]
-  
+
       this.search('basic')
     },
       // 导出
@@ -299,7 +299,7 @@ export default {
       for (let i = 0; i < data.selectKey.length; i++) {
         includeFieldMap[data.selectKey[i]] = data.selectVal[i];
       }
-      
+
       let _data = {
         ...this.orderForm,
         exportType: '1259',

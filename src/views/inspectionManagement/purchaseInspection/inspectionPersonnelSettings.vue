@@ -47,14 +47,14 @@ export default {
       },
       tableItems: [
         { prop: 'code', label: '产品编码', minWidth: '160', sortable: 'custom' },
-        { prop: 'drawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
+        { prop: 'drawingNo', label: '型号', minWidth: '160', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', minWidth: '120', sortable: 'custom' },
         { prop: 'productSource', label: '产品来源', minWidth: '100' },
         { prop: 'productSettingNames', label: '检验人员', minWidth: '140', sortable: 'custom' }
       ],
       searchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
         { prop: 'productSettingName', label: '配置人员', type: 'select',options:[] }
       ],
       superQueryJson: [
@@ -65,7 +65,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '品名规格',
+          label: '型号',
           type: 'input'
         },
         {
@@ -97,7 +97,7 @@ export default {
     if (this.abProjectId) {
       this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '120' })
     }
-    
+
 
   }
 }

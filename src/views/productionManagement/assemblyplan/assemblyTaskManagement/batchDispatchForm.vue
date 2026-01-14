@@ -35,8 +35,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="品名规格" prop="productDrawingNo">
-                          <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled>
+                        <el-form-item label="型号" prop="productDrawingNo">
+                          <el-input v-model="dataForm.productDrawingNo" placeholder="型号" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -248,7 +248,7 @@
               <el-collapse v-model="activeNames3">
                 <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
                   <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_364279">
-                    <el-table-column prop="productDrawingNo" label="用料规格"></el-table-column>
+                    <el-table-column prop="productDrawingNo" label="型号"></el-table-column>
                     <el-table-column prop="productCode" label="用料编码" />
                     <el-table-column prop="processName" label="工序名称" />
                     <el-table-column prop="mainUnit" label="单位" />
@@ -270,7 +270,7 @@
                   <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_606525">
                     <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
                     <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>
+                    <el-table-column prop="productDrawingNo" label="型号" min-width="180"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" width="160" />
                     <el-table-column prop="reportingTime" label="报工时间" min-width="160" />
                     <el-table-column prop="producerName" label="生产人" min-width="160" />
@@ -470,7 +470,7 @@
           <el-table ref="product" :data="detailDataList" border max-height="380">
             <el-table-column type="index" width="70" label="序号" fixed />
             <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300"
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processName" label="工序名称" width="100" show-overflow-tooltip />
             <el-table-column prop="processCode" label="工序编码" width="100" />

@@ -187,9 +187,9 @@ export default {
                                 </el-row>
                                 <el-row v-if="isImage" :gutter="10">
                                     <el-col :span="6">
-                                        <el-form-item label="品名规格" prop="drawingNo">
+                                        <el-form-item label="型号" prop="drawingNo">
                                                 <ComSelect-page
-                                                    placeholder="请选择品名规格"
+                                                    placeholder="请选择型号"
                                                     ref="ComSelect-page"
                                                     v-model="dataForm.drawingNo"
                                                     @change="submitCustomerProduct"

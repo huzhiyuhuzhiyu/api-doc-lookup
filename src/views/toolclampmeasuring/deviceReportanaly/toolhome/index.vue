@@ -79,7 +79,7 @@
                     </el-table-column>
                     <el-table-column prop="categoryName" label="分类名称" width="200" sortable="custom" />
                     <el-table-column prop="specModel" label="工具规格" min-width="200" sortable="custom" />
-                    <el-table-column prop="drawingNo" label="图号" min-width="200" sortable="custom" />
+                    <el-table-column prop="drawingNo" label="型号" min-width="200" sortable="custom" />
                     <el-table-column prop="createByName" label="创建人" min-width="200" sortable="custom" />
                     <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom" />
                   </JNPF-table>

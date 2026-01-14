@@ -78,7 +78,7 @@
           </el-table-column>
           <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
             show-overflow-tooltip></el-table-column>
-          <el-table-column prop="drawNo" label="品名规格" min-width="160" />
+          <el-table-column prop="drawNo" label="型号" min-width="160" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" />
 
           <el-table-column prop="pickingWay" label="领料方式" min-width="180">

@@ -43,7 +43,7 @@
                         <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
                         <el-table-column v-if="isCustomerProductPage" prop="cooperativePartnerName" label="客户名称" sortable="custom" min-width="150" />
                         <template v-if="!noProductCol">
-                            <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
+                            <el-table-column prop="drawingNo" label="型号" min-width="150" />
                             <el-table-column prop="productsCode" label="产品编码" min-width="120" />
                         </template>
                         <template v-if="noProductCol || isImage ">

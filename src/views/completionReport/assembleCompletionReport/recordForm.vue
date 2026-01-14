@@ -21,7 +21,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="form.productDrawingNo" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+                <el-input v-model="form.productDrawingNo" placeholder="型号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -53,7 +53,7 @@
             <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
             <el-table-column prop="reportingTime" label="报工时间" min-width="160" sortable="custom" />
@@ -117,8 +117,8 @@ export default {
   },
   methods: {
           sortChange({ prop, order }) {
-      let newProp; 
-           
+      let newProp;
+
       if (prop === 'code' ||prop=='name'|| prop == 'projectName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'

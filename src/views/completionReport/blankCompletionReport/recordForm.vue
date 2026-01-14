@@ -21,7 +21,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="form.productDrawingNo" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+                <el-input v-model="form.productDrawingNo" placeholder="型号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -52,7 +52,7 @@
             <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="型号" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
             <el-table-column prop="reportingTime" label="报工时间" min-width="160" sortable="custom" />
@@ -68,7 +68,7 @@
             <el-table-column prop="totalWeight" label="总重量" min-width="120" v-if="this.isBOOS" sortable="custom" />
             <el-table-column prop="trayTotalWeight" label="托盘重量" min-width="120" v-if="this.isBOOS" sortable="custom" />
             <el-table-column prop="cases" label="箱数" min-width="120" v-if="this.isBOOS" sortable="custom" />
-            <el-table-column prop="bagNumber" label="袋子个数" min-width="120" v-if="this.isBOOS" sortable="custom" /> 
+            <el-table-column prop="bagNumber" label="袋子个数" min-width="120" v-if="this.isBOOS" sortable="custom" />
             <el-table-column prop="productWeight" label="产品单重" min-width="120" v-if="this.isBOOS" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
@@ -118,8 +118,8 @@ export default {
   },
   methods: {
           sortChange({ prop, order }) {
-      let newProp; 
-           
+      let newProp;
+
       if (prop === 'code' ||prop=='name'|| prop == 'projectName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'

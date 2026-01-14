@@ -89,10 +89,10 @@
                   <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
+                  <el-table-column prop="productDrawingNo" label="型号" min-width="160" sortable="custom"
                     v-if="dataForm.documentType == 'outbound'" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"
+                  <el-table-column prop="drawingNo" label="型号" min-width="320" :key="6"
                     v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                   <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
                     v-if="dataForm.documentType == 'outbound'">
@@ -165,7 +165,7 @@
 
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入型号" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
@@ -181,7 +181,7 @@
 
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入型号" clearable />
                 </el-form-item>
               </el-col>
               <!-- <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
@@ -229,9 +229,9 @@
               <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160"
                 v-if="dataForm.documentType == 'outbound' && isProductNameSwitch === '1'"
                 show-overflow-tooltip></el-table-column>
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
+              <el-table-column prop="productDrawingNo" label="型号" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom"
+              <el-table-column prop="drawingNo" label="型号" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />

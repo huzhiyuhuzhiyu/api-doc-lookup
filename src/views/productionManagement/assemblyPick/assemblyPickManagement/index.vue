@@ -160,7 +160,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'personName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'personId', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
       ],
       formVisible: false,
       columnList: ["productionOrderNo", "createByName"],
@@ -393,7 +393,7 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'personId', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.search('basic')
     },

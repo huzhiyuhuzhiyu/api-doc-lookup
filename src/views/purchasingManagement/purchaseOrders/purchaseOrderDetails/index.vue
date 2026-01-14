@@ -36,6 +36,7 @@
                 </el-link>
               </template>
             </el-table-column>
+            <el-table-column prop="saleOrderNo" label="销售单号" min-width="160" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" />
             <el-table-column prop="productCode" label="产品编码" min-width="140" />
@@ -228,6 +229,7 @@ export default {
             //   fixed: true // 是否在搜索栏显示
             // },
             { prop: 'orderNo', symbol: 'like', fixed: true },
+            { prop: 'saleOrderNo', symbol: 'like', fixed: true },
             { prop: 'cooperativePartnerName', symbol: 'like', fixed: true },
             { prop: 'classType', symbol: '==', fixed: true },
             {

@@ -9,6 +9,11 @@
                 <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号" clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="3">
+              <el-form-item>
+                <el-input v-model="orderForm.saleOrderNo" @keyup.enter.native="search()" placeholder="销售单号" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="3" v-if="isProductNameSwitch === '1'">
               <el-form-item>
                 <el-input v-model="orderForm.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
@@ -27,14 +32,14 @@
                   style="width: 100%;" placeholder="交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
-              </el-form-item>
-            </el-col>
+<!--            <el-col :span="6">-->
+<!--              <el-form-item>-->
+<!--                <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>-->
+<!--                <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>-->
+<!--                <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>-->
+<!--                <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
 
             <el-col :span="4">
               <el-form-item>
@@ -79,6 +84,7 @@
                 </el-link>
               </template>
             </el-table-column>
+            <el-table-column prop="saleOrderNo" label="销售单号" min-width="160" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
@@ -190,6 +196,7 @@ export default {
       detailFlag: false,
       initOrderForm: {
         ...this.queryObject,
+        saleOrderNo: '',
         approvalStatus: 'ok',
         documentStatus: 'submit',
         orderState: 'not_finish',

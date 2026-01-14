@@ -77,6 +77,7 @@ export function getColumns() {
       label: "完成进度",
       minWidth: 180,
       slot: true,
+      sortProp: null,
     },
     {
       prop: "routingName",

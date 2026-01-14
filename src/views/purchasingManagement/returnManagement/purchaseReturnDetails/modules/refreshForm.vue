@@ -81,12 +81,15 @@ export default {
         cooperativePartnerName: mainData.partnerName,
         cooperativePartnerId: mainData.cooperativePartnerId,
         source: 'return_receipt',
+        orderType: 'procure',
       };
 
       this.linesList = sourceData.map(item => ({
         ...createEmptyObject(this.linesListItems),
         ...item,
         procurementDemandPoolId: item.id,
+        ordersId: item.saleOrdersId,
+        ordersLineId: item.saleOrdersLineId,
       }));
     },
     setLinesListItems() {
@@ -130,7 +133,7 @@ export default {
           minWidth: 80,
         },
         {
-          prop: 'unqualifiedQuantity',
+          prop: 'receivedQuantity',
           label: '退货数量',
           type: 'view',
           minWidth: 120,
@@ -152,7 +155,7 @@ export default {
             {
               validator: this.formValidate({
                 type: 'calc',
-                params: [(rowIndex, value) => Number(value) <= Number(this.linesList[rowIndex].returnQuantity), `收货数量不能大于退货数量`, (...args) => validErrorMessage('收货数量', ...args)]
+                params: [(rowIndex, value) => Number(value) <= Number(this.linesList[rowIndex].receivedQuantity), `收货数量不能大于退货数量`, (...args) => validErrorMessage('收货数量', ...args)]
               }), trigger: 'blur'
             },
             { required: true, trigger: "blur" },

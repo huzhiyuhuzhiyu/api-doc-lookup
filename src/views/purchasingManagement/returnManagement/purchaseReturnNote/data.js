@@ -8,7 +8,7 @@ export function getColumns() {
     {
       prop: "orderNo",
       label: "单号",
-      minWidth: 220,
+      minWidth: 180,
       align: "left",
       sortable: 'custom',
       slot: true
@@ -16,7 +16,7 @@ export function getColumns() {
     {
       prop: "partnerCode",
       label: "供应商编码",
-      minWidth: 220,
+      minWidth: 180,
       align: "left",
       sortable: 'custom',
     },

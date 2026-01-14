@@ -182,7 +182,7 @@ export function getColumns() {
       sortable: 'custom'
     },
     {
-      prop: "unqualifiedQuantity",
+      prop: "receivedQuantity",
       label: "数量",
       minWidth: 120,
       sortable: 'custom'

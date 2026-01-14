@@ -618,6 +618,10 @@ async  created() {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_1.fields)
       }
+      if (!this.dataFormTwo.data.length) {
+        this.$message.error('请添加退料清单！')
+        return
+      }
 
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)

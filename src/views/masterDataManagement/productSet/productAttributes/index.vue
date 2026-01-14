@@ -267,6 +267,10 @@ export default {
       this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
+      if (!this.file) {
+        this.$message.warning('请先选择文件')
+        return
+      }
       this.UploadProduct(this.file)
     },
     // 提示

@@ -64,7 +64,7 @@ export default {
           minWidth: 180,
         },
         {
-          prop: 'unqualifiedQuantity',
+          prop: 'receivedQuantity',
           label: '数量',
           type: 'view',
           minWidth: 90,
@@ -103,7 +103,7 @@ export default {
       return this.btnType !== 'look'
     },
     totalNum() {
-      return this.linesList.reduce((sum, item) => sum + (parseFloat(item.unqualifiedQuantity) || 0), 0);
+      return this.linesList.reduce((sum, item) => sum + (parseFloat(item.receivedQuantity) || 0), 0);
     }
   },
   created() {

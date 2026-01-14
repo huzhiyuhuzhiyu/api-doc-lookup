@@ -133,21 +133,23 @@ export function getColumns() {
     {
       prop: "orderNo",
       label: "单号",
-      minWidth: 220,
-      align: "left",
+      minWidth: 180,
       slot: true
+    },
+    {
+      prop: "saleOrderNo",
+      label: "销售单号",
+      minWidth: 180,
     },
     {
       prop: "partnerCode",
       label: "供应商编码",
-      minWidth: 220,
-      align: "left",
+      minWidth: 180,
     },
     {
       prop: "partnerName",
       label: "供应商名称",
       minWidth: 180,
-      align: "left",
     },
     {
       prop: "deliverDate",
@@ -155,7 +157,7 @@ export function getColumns() {
       minWidth: 120,
     },
     {
-      prop: "unqualifiedQuantity",
+      prop: "receivedQuantity",
       label: "退货数量",
       minWidth: 120,
     },

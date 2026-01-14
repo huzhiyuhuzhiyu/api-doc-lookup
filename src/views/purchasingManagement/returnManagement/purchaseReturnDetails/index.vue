@@ -26,6 +26,7 @@ export default {
             //   fixed: true // 是否在搜索栏显示
             // },
             { prop: 'orderNo', symbol: 'like', fixed: true },
+            { prop: 'saleOrderNo', symbol: 'like', fixed: true },
             { prop: 'partnerName', symbol: 'like', fixed: true },
           ],
           // keywordQuery: this.jnpf.getKeywordQuery('product'), // 带有产品信息的表使用此预设

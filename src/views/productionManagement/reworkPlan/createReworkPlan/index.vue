@@ -179,7 +179,7 @@ export default {
               :prop="column.prop"
               :label="column.label"
               :min-width="column.minWidth"
-              :sortable="column.sortable"
+              :sortProp="column.sortProp"
               :fixed="column.fixed"
               :align="getAlign(column.align)"
             >

@@ -69,6 +69,7 @@
                 </el-link>
               </template>
             </el-table-column>
+            <el-table-column prop="saleOrderNo" label="销售单号" min-width="160" />
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" width="120"
@@ -190,6 +191,7 @@ export default {
       superQuery: {},
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '通知单单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'saleOrderNo', fieldValue: '', label: '销售单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 }
       ],
@@ -375,21 +377,6 @@ export default {
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    if (this.isProductNameSwitch === '1') {
-      this.searchList.push({
-        field: 'productName',
-        fieldValue: '',
-        label: '产品名称',
-        symbol: 'like',
-        searchType: 1,
-        width: 120
-      })
-      this.superQueryJson.splice(4, 0, {
-        prop: 'productName',
-        label: '产品名称',
-        type: 'input'
-      })
-    }
     if (this.isDeputyUnitSwitch === '1') {
       this.superQueryJson.forEach(item => {
         if (item.prop === 'mainUnit') {
@@ -734,6 +721,7 @@ export default {
       this.superForm = JSON.parse(JSON.stringify(this.initOrderForm))
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'saleOrderNo', fieldValue: '', label: '销售单号', symbol: 'like', searchType: 1, width: 120 },
         {
           field: 'cooperativePartnerName',
           fieldValue: '',
@@ -744,16 +732,6 @@ export default {
         },
         { field: 'productDrawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 120 }
       ]
-      if (this.isProductNameSwitch === '1') {
-        this.searchList.push({
-          field: 'productName',
-          fieldValue: '',
-          label: '产品名称',
-          symbol: 'like',
-          searchType: 1,
-          width: 120
-        })
-      }
       this.search('basic')
     },
     addSupplier(id, btntype) {

@@ -85,7 +85,8 @@ export function getColumns() {
     {
       prop: "arrangeOrderNum",
       label: "生产订单/已编排数",
-      minWidth: 220
+      minWidth: 220,
+      sortProp: null,
     },
     {
       prop: "urgentFlag",

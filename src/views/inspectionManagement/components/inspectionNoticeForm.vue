@@ -281,14 +281,14 @@ export default {
           {
             label: '全检',
             value: 'all',
-            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished', 'work_report'].includes(
+            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished', 'work_report','library'].includes(
               inspectionType
             )
           },
           {
             label: '抽检',
             value: 'spot_check',
-            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished', 'work_report'].includes(inspectionType)
+            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished', 'work_report','library'].includes(inspectionType)
           },
           // {
           //   label: '免检',

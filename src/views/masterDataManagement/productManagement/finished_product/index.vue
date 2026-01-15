@@ -148,12 +148,12 @@
           <el-table-column prop="createByName" label="创建人"/>
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit', configFlag)"
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
                 @del="handleDel(scope.row.id)">
-                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, 'look', configFlag)">
+                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                   查看详情
                 </el-button>
-                <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, 'copy', configFlag,scope.row)">
+                <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, 'copy')">
                   复制
                 </el-button>
                 <!-- <el-dropdown hide-on-click>
@@ -1034,11 +1034,11 @@ export default {
 
 
 
-    addOrUpdateHandle(id, btnType, flag = false) {
+     addOrUpdateHandle(id, btnType) {
       this.formVisible = true
 
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, flag, '', '')
+        this.$refs.Form.init(id, btnType)
       })
     },
     // 复制

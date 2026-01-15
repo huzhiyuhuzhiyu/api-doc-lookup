@@ -6,7 +6,7 @@
                     <el-col :span="4">
                         <el-form-item>
                             <el-select v-model="tableQuery.type" placeholder="不良类型" clearable>
-                                <el-option v-for="item in typeData" :key="item.value" :label="item.label"
+                                <el-option v-for="item in global.defectType" :key="item.value" :label="item.label"
                                     :value="item.value"></el-option>
                             </el-select>
                         </el-form-item>

@@ -223,6 +223,15 @@ const global = {
     { label: '免检', value: 'exempt', type: 'success' }
   ],
 
+  // 项目检验方式
+  inspectionWays: [
+    { label: '测量', value: 'measure' },
+    { label: '是否通过', value: 'whether_passed' },
+    { label: '拍照', value: 'take_photo' },
+    { label: '记录', value: 'record' },
+    { label: '其他', value: 'other' },
+  ],
+
   // 检验结果
   inspectionResultsType: [
     { label: '合格', value: 'qualified', type: 'success' },

@@ -40,7 +40,60 @@ export default {
       },
       basicFormSchema: [],
       linesList: [],
-      linesListItems: [
+      linesListItems: [],
+      linesTableHeight: 0,
+      fileList: [],
+      activeName: 'jcInfo',
+      activeNames: ['basicInfo', 'productInfo'],
+      actions: {
+        edit: async (id) => {
+          await this.getDetail(id);
+        },
+        look: async (id) => {
+          await this.getDetail(id);
+        },
+        copy: async (id) => {
+          await this.getDetail(id);
+          await this.getOrderNoConfig();
+        },
+        default: async () => {
+          await this.getOrderNoConfig();
+        },
+      },
+
+      standardizeFields: {
+        cooperativePartnerName: { from: 'partnerName' },
+      }
+    }
+  },
+  computed: {
+    activeType() {
+      return this.btnType !== 'look'
+    },
+  },
+  mounted() {
+    this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
+  },
+  methods: {
+    async init(id = '', type) {
+      this.btnType = type
+      this.title = this.getTitle(type)
+
+      this.setLinesListItems()
+      await this.getUnitData()
+      if (id && this.actions[type]) {
+        await this.actions[type](id);
+      } else {
+        await this.actions.default();
+      }
+      this.$nextTick(() => {
+        this.$refs.dataForm.$refs.main.clearValidate()
+        this.refreshTableHeight()
+      })
+    },
+
+    setLinesListItems() {
+      this.linesListItems = [
         {
           prop: "cooperativePartnerName",
           label: "客户",
@@ -123,58 +176,7 @@ export default {
           type: 'input',
           minWidth: 220,
         }
-      ],
-      linesTableHeight: 0,
-      fileList: [],
-      activeName: 'jcInfo',
-      activeNames: ['basicInfo', 'productInfo'],
-      approvalFlag: false,
-      actions: {
-        edit: async (id) => {
-          await this.getDetail(id);
-        },
-        look: async (id) => {
-          await this.getDetail(id);
-        },
-        copy: async (id) => {
-          await this.getDetail(id);
-          await this.getOrderNoConfig();
-        },
-        default: async () => {
-          await this.getOrderNoConfig();
-        },
-      },
-
-      standardizeFields: {
-        cooperativePartnerName: { from: 'partnerName' },
-      }
-    }
-  },
-  computed: {
-    activeType() {
-      return this.btnType !== 'look'
-    },
-  },
-  created() {
-  },
-  mounted() {
-    this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
-  },
-  methods: {
-    async init(id = '', type, approvalFlag = false) {
-      this.btnType = type
-      this.approvalFlag = approvalFlag
-      this.title = this.getTitle(type)
-      await this.getUnitData()
-      if (id && this.actions[type]) {
-        await this.actions[type](id);
-      } else {
-        await this.actions.default();
-      }
-      this.$nextTick(() => {
-        this.$refs.dataForm.$refs.main.clearValidate()
-        this.refreshTableHeight()
-      })
+      ]
     },
 
     async getUnitData() {
@@ -268,7 +270,6 @@ export default {
           url: item.url
         }))
       }
-
     },
 
     async refreshTableHeight(...args) {
@@ -338,12 +339,11 @@ export default {
               </div>
             </div>
             <div class="main" v-loading="loading" ref="main">
-              <el-tabs v-model="activeName" v-if="!approvalFlag">
+              <el-tabs v-model="activeName">
                 <el-tab-pane label="基础信息" name="jcInfo">
                   <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
-                      <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                                :btnType="btnType"/>
+                      <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm" :btnType="btnType"/>
                     </el-collapse-item>
                     <el-collapse-item class="productInfo" title="客户型号信息" name="productInfo">
                       <TableForm-product

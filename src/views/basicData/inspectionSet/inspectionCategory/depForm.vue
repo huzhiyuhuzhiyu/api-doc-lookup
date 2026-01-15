@@ -12,7 +12,7 @@
         label-position="top" label-width="120px" hide-required-asterisk="fasle">
         <el-form-item label="上级分类" prop="parentName">
           <inspectionComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
-            :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.type" />
+            :currOrgId="dataForm.id" :type="dataForm.type" :isdisabled="isRoot" :classAttribute="dataForm.type" />
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
           <template slot="label">
@@ -84,6 +84,11 @@ export default {
           }]
       }
     }
+  },
+  computed: {
+    isRoot() {
+      return this.dataForm.parentId === '-1'
+    },
   },
   methods: {
     async fetchData(code, flag) {

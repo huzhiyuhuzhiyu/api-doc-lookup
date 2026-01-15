@@ -146,9 +146,9 @@
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'deliveryDate'"
                           :rules='productRules.deliveryDate'>
-                          <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择交期" :disabled="status">
-                          </el-date-picker>
+                          <el-input :title="scope.row.deliveryDate" v-model="scope.row.deliveryDate" placeholder="请输入交期"
+                                    :disabled="status" maxlength="10">
+                          </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
@@ -179,6 +179,9 @@
           </el-tab-pane>
           <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
             <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+          </el-tab-pane>
+          <el-tab-pane label="附件" name="annex">
+            <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -315,6 +318,7 @@
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick"
                 customKey="JNPFTableKey_612241">
+                <el-table-column prop="drawingNo" label="型号" min-width="150" sortable="custom"></el-table-column>
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip sortable="custom"></el-table-column>
                 <el-table-column prop="name" label="产品名称" show-overflow-tooltip sortable="custom"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" />
@@ -781,14 +785,14 @@ export default {
     submitAllCustomerProduct(id,data){
       const newData = data.map(item => ({
         ...item.all,
-        productName: item.all.name,
-        productCode: item.all.code,
+        productName: item.all.productName,
+        productCode: item.all.productCode,
         productsDrawingNo: item.all.drawingNo,
         productsId: item.all.productsId,
         cooperativePartnerProductId: item.all.id
       }));
 
-      this.dataFormTwo.lines = [...this.linesList, ...newData]
+      this.dataFormTwo.lines = [...this.dataFormTwo.lines, ...newData]
     },
     selectProductRefOpenDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
@@ -1479,19 +1483,7 @@ export default {
             this.dataForm.approvalCompletionDate = ''
             this.dataForm.id = ''
             this.dataForm.reasonRejection = ''
-            if (res.data.attachmentList) {
-              res.data.attachmentList.forEach((item) => {
-                this.datafilelist.push(
-                  {
-                    name: item.document.fullName,
-                    fileSize: item.document.fileSize,
-                    filename: item.document.filePath,
-                    id: item.document.id,
-                    url: item.url
-                  }
-                )
-              })
-            }
+            this.datafilelist = this.fileListMap('', res.data.attachmentList)
             this.fetchData("XSBJ", true)
             // 审批
             this.$nextTick(() => {
@@ -1533,19 +1525,7 @@ export default {
           this.dataForm.approvalCompletionDate = ''
           this.dataForm.id = ''
           this.dataForm.reasonRejection = ''
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push(
-                {
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                }
-              )
-            })
-          }
+          this.datafilelist = this.fileListMap('', res.data.attachmentList)
           this.fetchData("XSBJ", true)
           // 审批
           this.$nextTick(() => {
@@ -1568,19 +1548,7 @@ export default {
             });
             this.dataFormTwo.lines = res.data.lines
             this.dataForm.totalAmount = 0
-            if (res.data.attachmentList) {
-              res.data.attachmentList.forEach((item) => {
-                this.datafilelist.push(
-                  {
-                    name: item.document.fullName,
-                    fileSize: item.document.fileSize,
-                    filename: item.document.filePath,
-                    id: item.document.id,
-                    url: item.url
-                  }
-                )
-              })
-            }
+            this.datafilelist = this.fileListMap('', res.data.attachmentList)
             this.formLoading = false
             if (this.btnType === 'edit') {
               this.getBusInfo('b001')
@@ -1592,6 +1560,30 @@ export default {
         }).catch(err => {
           this.formLoading = false
         })
+      }
+    },
+    fileListMap(type, fileList) {
+      if (!fileList && !fileList?.length) return
+      if (['submit', 'draft'].includes(type)) {
+        return fileList.map((item, index) => ({
+          ...item,
+          bimAttachments: {
+            businessType: '',
+            configKey: '',
+            documentId: item.id,
+            fileFlag: '',
+            sort: index
+          }
+        }))
+      } else {
+        return fileList.map((item, index) => ({
+          ...item,
+          name: item.document.fullName,
+          fileSize: item.document.fileSize,
+          filename: item.document.filePath,
+          id: item.document.id,
+          url: item.url
+        }))
       }
     },
     async handleConfirm(value) {
@@ -1690,8 +1682,9 @@ export default {
         // const totalAmount = filteredArr.reduce((sum, item) => sum + item.amounts, 0);
         // 将总和赋值给form中的amounts
         // this.dataForm.totalAmount = totalAmount;
+        const attachmentList = this.fileListMap(value, this.datafilelist)
         let obj = {
-          attachmentList: this.datafilelist,
+          attachmentList: attachmentList,
           sale: this.dataForm,
           lines: filteredArr,
           flowData: this.flowData

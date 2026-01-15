@@ -27,7 +27,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add','purchase_quotation')" :addText="'报价'">
+            <topOpts @add="addSupplier('', 'add','purchase_quotation')" :addText="'新建报价'">
               <el-button type="primary" size="mini" icon="el-icon-plus"
                          @click="addSupplier('', 'add', 'directly_quotation')">直接报价</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"

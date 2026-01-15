@@ -212,10 +212,10 @@ export default {
         {
           prop: 'deliveryDate',
           label: '交货日期',
-          type: 'date',
+          type: 'input',
           minWidth: 180,
           itemRules: [
-            { required: true, message: '交货日期不能为空', trigger: 'change', },
+            { required: true, message: '交货日期不能为空', trigger: 'blur', },
           ]
         },
         {
@@ -371,6 +371,7 @@ export default {
       const updatedProduct = {
         ...this.linesList[this.currentSelectedIndex],
         ...enquiryData,
+        amounts: enquiryData.procurementAmounts,
         remark2: enquiryData.remark1,
         supplierPartnerId: enquiryData.cooperativePartnerId,
       };

@@ -60,6 +60,7 @@ export default {
         },
       ],
       listQuery: {
+        shipmentStatus: 'not_finish',
         confirmedStatus: 'need_purchase',
         productSourceList: ['purchase', 'assemble', 'virtual_assemble'],
         waitIssuanceNumFlag: true,
@@ -107,8 +108,8 @@ export default {
         case 'feedback':
           if (!this.selectedRow.length) return this.$message.warning('请至少选择一条数据')
           if (this.selectedRow.length > 1) return this.$message.warning('只能选择一条数据')
-          if (this.selectedRow[0].feedbackDeliveryDate) {
-            return this.$message.warning('该订单已反馈，不可重复操作');
+          if (this.selectedRow[0].deliveryStatus !== 'pending_reply') {
+            return this.$message.warning('仅“交期待回复”的订单可执行交期反馈');
           }
           this.showDialog = true
           break;

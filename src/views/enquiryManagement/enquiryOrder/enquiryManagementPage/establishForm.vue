@@ -34,6 +34,9 @@
               <template #actions>
                 <el-table-column label="操作" width="120" :fixed="'right'" v-if="activeType" key="actionBar">
                   <template slot-scope="scope">
+                    <el-button size="mini" type="text" @click="copy(scope.row)">
+                      复制
+                    </el-button>
                     <el-button type="text" @click="deltable(scope)" class="JNPF-table-delBtn">删除</el-button>
                   </template>
                 </el-table-column>
@@ -201,7 +204,7 @@ export default {
         {
           prop: 'deliveryDate',
           label: '交期',
-          type: 'date',
+          type: 'input',
           minWidth: 160,
           itemRules: [
             { required: false, trigger: 'blur' },
@@ -547,6 +550,10 @@ export default {
         // 清除供应商的验证爆红
         this.$refs['dataForm'].$refs.main.clearValidate(['cooperativePartnerName'])
       }
+    },
+    // 复制
+    copy(row) {
+      this.dataFormTwoList.push({ ...row })
     },
     // 删除当前行
     deltable(row, index) {

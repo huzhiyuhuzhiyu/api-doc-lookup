@@ -2,13 +2,13 @@
  * @description 按钮权限列表
  */
 export const buttonList = [
-  {
-    buttonType: 'primary',
-    type: 'add',
-    permission: 'btn_add',
-    icon: 'el-icon-plus',
-    text: '新建'
-  },
+  // {
+  //   buttonType: 'primary',
+  //   type: 'add',
+  //   permission: 'btn_add',
+  //   icon: 'el-icon-plus',
+  //   text: '新建'
+  // },
   {
     buttonType: 'primary',
     type: 'addRules',

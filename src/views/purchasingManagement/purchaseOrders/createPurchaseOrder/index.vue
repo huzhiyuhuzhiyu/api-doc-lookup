@@ -232,8 +232,10 @@ export default {
         return {
           ...createEmptyObject(this.linesListItems),
           ...item,
+          demandDate: item.feedbackDeliveryDate,
           orderQuantity: num,
           purchaseQuantity: num,
+          procurementDemandPoolId: item.id,
         }
       })
     },
@@ -516,6 +518,7 @@ export default {
             { prop: 'deliveryDate', label: '交货日期', minWidth: '160px', sortable: 'custom' },
             { prop: 'productDrawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
             { prop: 'mainUnit', label: '单位', sortable: 'custom' },
+            { prop: 'planDemandQuantity', label: '需求数量', sortable: 'custom' },
             { prop: 'createTime', label: '创建时间', minWidth: '180px', sortable: 'custom' }
           ],
           listRequestObj: {

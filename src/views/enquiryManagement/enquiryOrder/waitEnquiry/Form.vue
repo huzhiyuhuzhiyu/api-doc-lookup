@@ -318,16 +318,16 @@ export default {
         {
           prop: 'deliveryDate',
           label: '交期',
-          type: 'date',
+          type: 'input',
           minWidth: 180,
           itemRules: [{
             validator: this.formValidate({
               type: 'noEmtry', params: ["交期不能为空", (errMsg, index) => {
                 this.$message.error(`产品信息第${ index + 1 }行：${ errMsg }`)
               }]
-            }), trigger: 'change'
+            }), trigger: 'blur'
           },
-            { required: true, trigger: 'change' }]
+            { required: true, trigger: 'blur' }]
         },
       ],
       formData: {

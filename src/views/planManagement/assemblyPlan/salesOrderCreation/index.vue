@@ -92,6 +92,14 @@
                              v-if="isProjectSwitch == 1"/>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"/>
             <el-table-column prop="feedbackDeliveryDate" label="交期反馈" min-width="120" sortable="custom"/>
+            <el-table-column prop="deliveryStatus" label="交期状态" min-width="120" sortable="custom">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="global.getDictLabelGlobal('deliveryStatus', scope.row.deliveryStatus, { withType: true }).type">{{
+                    global.getDictLabelGlobal('deliveryStatus', scope.row.deliveryStatus)
+                  }}</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom"/>
             <el-table-column prop="mainUnit" label="单位" min-width="80"/>
             <el-table-column prop="num" label="订单数量" min-width="120" sortable="custom"/>
@@ -359,8 +367,8 @@ export default {
       if (!this.selectList.length) return this.$message.warning('请至少选择一条数据')
       if (this.selectList.length > 1) return this.$message.warning('只能选择一条数据')
 
-      if (this.selectList[0].feedbackDeliveryDate) {
-        return this.$message.warning('该订单已反馈，不可重复操作');
+      if (this.selectList[0].deliveryStatus !== 'pending_reply') {
+        return this.$message.warning('仅“交期待回复”的订单可执行交期反馈');
       }
       this.showDialog = true
     },

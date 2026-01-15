@@ -55,7 +55,7 @@
           <el-col :span="4">
             <el-form-item>
               <el-select clearable v-model="tableQuery.inspectionMethod" placeholder="检验方式" style="width: 100%;">
-                <el-option v-for="(item, index) in wayList" :key="index" :label="item.label"
+                <el-option v-for="(item, index) in global.inspectionWays" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
             </el-form-item>
@@ -98,7 +98,13 @@
 
           <el-table-column prop="name" label="检验项目名称" sortable="custom" width="150"  />
           <el-table-column prop="equipmentName" label="检验工具" min-width="140" />
-          <el-table-column prop="inspectionMethod" label="检验方式" sortable="custom" width="120" />
+          <el-table-column prop="inspectionMethod" label="检验方式" sortable="custom" width="120">
+            <template slot-scope="scope">
+              <el-tag>
+                {{ global.getDictLabelGlobal('inspectionWays', scope.row.inspectionMethod) }}
+              </el-tag>
+            </template>
+          </el-table-column>
           <el-table-column prop="inspectionBasis" label="检验依据" width="120" />
           <el-table-column prop="normalValue" label="正常值" />
           <el-table-column prop="minimum" label="最低值" />
@@ -236,28 +242,6 @@ export default {
       background: true, //分页器背景颜色
       visible: false,
       tableDataList: [],
-      wayList: [
-        {
-          label: "测量",
-          value: "measure"
-        },
-        {
-          label: "是否通过",
-          value: "whether_passed"
-        },
-        {
-          label: "拍照",
-          value: "take_photo"
-        },
-        {
-          label: "记录",
-          value: "record"
-        },
-        {
-          label: "其他",
-          value: "other"
-        }
-      ],
       listLoading: false,
       tableQuery: {
         pageNum: 1,
@@ -363,16 +347,7 @@ export default {
       // this.tableQuery.classAttribute = "inspection_items",
       getBimInspectionItemsList(this.tableQuery)
         .then((res) => {
-          console.log('货位表格', res)
           this.tableDataList = res.data.records
-          this.tableDataList.forEach((item) => {
-            if (item.inspectionMethod === 'other') {
-              item.inspectionMethod = '其他'
-            }
-            if (item.inspectionMethod === 'measure') {
-              item.inspectionMethod = '测量'
-            }
-          })
           this.total = res.data.total
           this.listLoading = false
         })

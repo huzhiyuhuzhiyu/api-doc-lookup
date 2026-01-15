@@ -102,7 +102,7 @@
             <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
             </el-table-column>
             <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-
+            <el-table-column prop="feedbackDeliveryDate" label="交期反馈" min-width="120" sortable="custom"/>
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom"></el-table-column>
             <el-table-column prop="taxRate" label="税率" width="120" sortable="custom"></el-table-column>
@@ -114,6 +114,14 @@
 
             <el-table-column prop="remark" label="备注" width="120" sortable="custom" />
               <el-table-column prop="assistantNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+            <el-table-column prop="deliveryStatus" label="交期状态" min-width="120" sortable="custom">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="global.getDictLabelGlobal('deliveryStatus', scope.row.deliveryStatus, { withType: true }).type">{{
+                    global.getDictLabelGlobal('deliveryStatus', scope.row.deliveryStatus)
+                  }}</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="shipmentStatus" label="订单状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <el-tag
@@ -591,7 +599,7 @@ if (classAttributeObj) {
     async handleBatchAction(type) {
       const config = {
         cancel: {
-          isValid: (state) => state !== 'cancel',
+          isValid: (row) => row.shipmentStatus !== 'cancel',
           invalidMsg: '已取消的订单无法再次取消',
           title: '取消订单',
           message: '确定要取消所选订单吗？',
@@ -601,7 +609,7 @@ if (classAttributeObj) {
           errorMsg: '取消失败'
         },
         uncancel: {
-          isValid: (state) => state === 'cancel',
+          isValid: (row) => row.shipmentStatus === 'cancel',
           invalidMsg: '仅已取消的订单可恢复',
           title: '恢复订单',
           message: '确定要恢复所选订单吗？',
@@ -611,7 +619,7 @@ if (classAttributeObj) {
           errorMsg: '恢复失败'
         },
         close: {
-          isValid: (state) => state !== 'closed',
+          isValid: (row) => row.shipmentStatus !== 'closed',
           invalidMsg: '已关闭的订单无法再次关闭',
           title: '关闭订单',
           message: '确定要关闭所选订单吗？',
@@ -621,7 +629,7 @@ if (classAttributeObj) {
           errorMsg: '关闭失败'
         },
         unclose: {
-          isValid: (state) => state === 'closed',
+          isValid: (row) => row.shipmentStatus === 'closed',
           invalidMsg: '仅已关闭的订单可恢复',
           title: '恢复关闭订单',
           message: '确定要恢复所选已关闭订单吗？',
@@ -631,8 +639,8 @@ if (classAttributeObj) {
           errorMsg: '恢复失败'
         },
         withdraw: {
-          isValid: (state) => state !== 'withdrawn',
-          invalidMsg: '已撤回的订单交期无法再次撤回',
+          isValid: (row) => row.deliveryStatus === 'replied',
+          invalidMsg: '仅“交期已回复”的订单可执行交期撤回',
           title: '撤回订单交期',
           message: '确定要撤回所选订单交期吗？',
           confirmType: 'warning',
@@ -648,14 +656,12 @@ if (classAttributeObj) {
         return;
       }
 
-      // 获取所有选中行
       const selectedRows = this.selectedRow;
       if (!selectedRows || selectedRows.length === 0) {
         return this.$message.warning('请先选择订单');
       }
 
-      const ids = selectedRows.map(row => row.id);
-      const invalidRows = selectedRows.filter(row => !action.isValid(row.shipmentStatus));
+      const invalidRows = selectedRows.filter(row => !action.isValid(row));
 
       if (invalidRows.length > 0) {
         return this.$message.warning(action.invalidMsg);
@@ -668,6 +674,7 @@ if (classAttributeObj) {
           type: action.confirmType
         });
 
+        const ids = selectedRows.map(row => row.id);
         await action.api(ids);
 
         this.$message.success(action.successMsg);

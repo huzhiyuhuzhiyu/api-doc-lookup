@@ -240,7 +240,7 @@
                     </el-table-column>
 
                     <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
-                    <el-table-column prop="processName" label="工序" width="160" />
+<!--                    <el-table-column prop="processName" label="工序" width="160" />-->
                     <el-table-column prop="ordersNo" label="订单号" width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -494,7 +494,7 @@
                 </el-table-column>
 
                 <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
-                <el-table-column prop="processName" label="工序" width="160" />
+<!--                <el-table-column prop="processName" label="工序" width="160" />-->
                 <el-table-column prop="ordersNo" label="订单号" width="180" />
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
@@ -647,7 +647,7 @@
                 <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
 
                 <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
-                <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
+<!--                <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>-->
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" />
               </JNPF-table>
@@ -1735,7 +1735,7 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data, classAttribute) {
+    init(id, btnType, approvalFlag, data, classAttribute,sourceList) {
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
@@ -1803,6 +1803,7 @@ export default {
         this.fetchData('CGSH')
         this.dataForm.salesman = this.userInfo.userName
         this.dataForm.deliverDate = this.jnpf.getToday()
+        this.dataForm.source = sourceList[0]
         this.getBusInfo()
       }
       if (this.btnType == 'edit') {

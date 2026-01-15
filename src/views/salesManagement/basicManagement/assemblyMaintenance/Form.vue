@@ -1,5 +1,5 @@
 <script>
-import {deepClone} from "@/utils";
+import { createEmptyObject, deepClone } from "@/utils";
 import {getBasicFormSchema} from "./data";
 import {addBusinessComponent, getBusinessComponent, updateBusinessComponent} from "@/api/assemblyMaintenance";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
@@ -41,6 +41,51 @@ export default {
           label: '型号',
           type: 'view',
           minWidth: 160,
+        },
+        {
+          prop: 'price',
+          label: '单价(含税)',
+          type: 'input',
+          minWidth: 180,
+          itemRules: [
+            {
+              validator: this.formValidate('noZero', '单价(含税)不能为0', (errMsg, rowIndex) => {
+                this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
+              }), trigger: ['blur', 'change']
+            },
+            {
+              validator: this.formValidate({
+                type: 'noEmtry', params: ['单价(含税)不能为空', (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
+                }]
+              }), trigger: 'blur',
+            },
+            {
+              validator: this.formValidate({
+                type: 'decimal', params: [20, 4, null, (errMsg, rowIndex) => {
+                  this.$message.error(`产品信息第${ rowIndex + 1 }行：单价(含税)${ errMsg }`)
+                }]
+              }),
+              trigger: ['blur', 'change'],
+            },
+            { required: true, message: '单价(含税)不能为空', trigger: ['blur', 'change'], },
+          ]
+        },
+        {
+          prop: 'taxRate',
+          label: '税率',
+          type: 'select',
+          options: this.getDictDataSync('taxrate'),
+          minWidth: 160,
+          itemRules: [
+            { required: true, message: '税率不能为空', trigger: 'change', },
+          ]
+        },
+        {
+          prop: 'excludingTaxPrice',
+          label: '单价(不含税)',
+          type: 'view',
+          minWidth: 120,
         },
         {
           prop: 'qty',
@@ -148,6 +193,19 @@ export default {
     activeType() {
       return this.btnType !== 'look'
     },
+    computedLinesList() {
+      return this.linesList.map(item => {
+        // 计算不含税单价 = 含税单价 / (1 + 税率)
+        const excludingTaxPrice = this.jnpf.numberFormat(
+          this.calcExcludingTaxPrice(item.price, item.taxRate),
+          2
+        );
+        return {
+          ...item,
+          excludingTaxPrice,
+        };
+      });
+    },
   },
   created() {
   },
@@ -164,6 +222,12 @@ export default {
         this.$refs.dataForm.$refs.main.clearValidate()
         this.refreshTableHeight()
       })
+    },
+
+    calcExcludingTaxPrice(price, taxRate) {
+      if (!price || !taxRate) return 0;
+      const rate = parseFloat(taxRate) / 100 || 0;
+      return price / (1 + rate);
     },
 
     async refreshTableHeight(...args) {
@@ -191,9 +255,9 @@ export default {
     async submitAllProduct(id, data) {
       const newData = data.map(item => ({
         ...item.all,
-        productsName: item.name,
-        productsCode: item.code,
-        productsDrawingNo: item.drawingNo,
+        productsName: item.all.name,
+        productsCode: item.all.code,
+        productsDrawingNo: item.all.drawingNo,
         productsId: item.id,
         qty: 1
       }))
@@ -294,9 +358,10 @@ export default {
                       </div>
                       <TableForm-product
                         @input="contentChanges"
-                        :value="linesList"
+                        :value="computedLinesList"
                         :hasToolbar="false"
-                        ref="tableForm" :tableItems="linesListItems"
+                        ref="tableForm"
+                        :tableItems="linesListItems"
                         :btnType="btnType"
                         :hasActionbar="false"
                         :tableProps="{

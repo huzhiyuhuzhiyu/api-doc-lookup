@@ -332,7 +332,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     this.tableDataFlag = true
-    this.superForm = this.listQuery
+    this.superForm = JSON.parse(JSON.stringify(this.listQuery))
     // this.initData()
     this.getcategoryTree()
     this.getBusinessOptions()
@@ -716,18 +716,6 @@ export default {
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },
-    sortChange({ prop, order }) {
-      let newProp = ""
-      if (prop == 'steelBall' || prop == "outerCircle" || prop == "innerCircle" || prop == "createByName") {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase());
-
-      }
-      this.listQuery.orderItems[0].asc = order === "ascending";
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp;
-      this.initData();
-    },
     columnSetFun() {
       console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.listTable.showDrawer()
@@ -824,11 +812,11 @@ export default {
     sortChange({ prop, order }) {
       console.log(order);
       let newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase())
-      this.listQuery.orderItems[0].asc = order === "ascending"
+      this.superForm.orderItems[0].asc = order === "ascending"
       if (newProp === "class_attribute_text") { newProp = "baa.class_attribute" }
       if (newProp === "product_category_id_text") { newProp = "productCategoryIdText" }
       // this.listQuery.orderItems[0].column = newProp
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
+      this.superForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
     initData() {

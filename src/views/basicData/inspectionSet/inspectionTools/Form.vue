@@ -255,6 +255,7 @@ export default {
       console.log(r, s)
       this.parentId = s.parentId
       this.dataForm.userDepartmentName = s.organize
+      this.dataForm.userDepartmentId = s.parentId
     },
     onOrganizeChange(val, data, param) {
       if (!val && data.length) return

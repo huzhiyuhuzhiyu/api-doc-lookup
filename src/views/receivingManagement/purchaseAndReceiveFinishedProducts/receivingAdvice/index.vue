@@ -535,7 +535,7 @@ export default {
       // }
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, [])
+        this.$refs.Form.init(id, btntype, false, [],'',this.queryObject.sourceList)
       })
     },
     addOrUpdateHandle(id, btntype) {

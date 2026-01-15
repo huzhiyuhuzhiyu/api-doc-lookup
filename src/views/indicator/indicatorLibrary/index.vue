@@ -205,12 +205,12 @@ export default {
           </template>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'edit')">
-                编辑
-              </el-button>
-              <el-button class="JNPF-table-delBtn" size="mini" type="text" @click="handleColumnClick(row, 'delete')">
-                删除
-              </el-button>
+<!--              <el-button size="mini" type="text" @click="handleColumnClick(row, 'edit')">-->
+<!--                编辑-->
+<!--              </el-button>-->
+<!--              <el-button class="JNPF-table-delBtn" size="mini" type="text" @click="handleColumnClick(row, 'delete')">-->
+<!--                删除-->
+<!--              </el-button>-->
               <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">

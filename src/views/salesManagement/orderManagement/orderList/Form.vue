@@ -212,13 +212,13 @@ export default {
                 this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
               }), trigger: ['blur', 'change']
             },
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['目标价不能为空', (errMsg, rowIndex) => {
-                  this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
-                }]
-              }), trigger: 'blur',
-            },
+            // {
+            //   validator: this.formValidate({
+            //     type: 'noEmtry', params: ['目标价不能为空', (errMsg, rowIndex) => {
+            //       this.$message.error(`产品信息第${ rowIndex + 1 }行：${ errMsg }`)
+            //     }]
+            //   }), trigger: 'blur',
+            // },
             {
               validator: this.formValidate({
                 type: 'decimal', params: [20, 4, null, (errMsg, rowIndex) => {
@@ -227,7 +227,7 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
-            { required: true, message: '目标价不能为空', trigger: ['blur', 'change'], },
+            { required: false, message: '目标价不能为空', trigger: ['blur', 'change'], },
           ]
         },
         {
@@ -280,6 +280,12 @@ export default {
         {
           prop: 'vibrationLevel',
           label: '图纸版本号',
+          type: 'input',
+          minWidth: 180,
+        },
+        {
+          prop: 'remark',
+          label: '备注',
           type: 'input',
           minWidth: 180,
         }

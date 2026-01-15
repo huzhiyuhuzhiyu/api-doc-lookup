@@ -37,7 +37,7 @@
               <el-form-item label="检验方式" prop="inspectionMethod">
                 <el-select v-model="dataForm.inspectionMethod" placeholder="请选择检验方式" style="width: 100%;"
                   :disabled="btntype ? true : false" @change="hangleWay">
-                  <el-option v-for="(item, index) in wayList" :key="index" :label="item.label"
+                  <el-option v-for="(item, index) in global.inspectionWays" :key="index" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -110,28 +110,6 @@ export default {
       btnLoading: false,
       isdisabled: false,
       parentId: '',
-      wayList: [
-        {
-          label: "测量",
-          value: "measure"
-        },
-        {
-          label: "是否通过",
-          value: "whether_passed"
-        },
-        {
-          label: "拍照",
-          value: "take_photo"
-        },
-        {
-          label: "记录",
-          value: "record"
-        },
-        {
-          label: "其他",
-          value: "other"
-        }
-      ],
       requestObj: {
         orderItems: [{
           asc: false,
@@ -177,7 +155,6 @@ export default {
       categoryIdOptions: [],
       getCategoryTrees,
       btntype: false,
-      isdisabled: false,
       dataRule: {
         name: [
           { required: true, message: '请输入检验项目名称', trigger: 'blur' },

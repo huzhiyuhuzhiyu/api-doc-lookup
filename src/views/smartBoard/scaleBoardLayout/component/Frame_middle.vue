@@ -140,8 +140,8 @@ export default {
             <span>{{ item.personLiable }}</span>
           </div>
           <div class="row">
-            <span>提出时间：</span>
-            <span>{{ item.introducerTime }}</span>
+            <span>提出日期：</span>
+            <span>{{ item.introducerTime?.split(' ')[0] }}</span>
           </div>
           <div class="row">
             <span>提出人：</span>

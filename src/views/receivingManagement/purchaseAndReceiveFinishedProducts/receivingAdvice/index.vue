@@ -48,8 +48,8 @@
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                   导出
                 </el-button>
-<!--                <el-button  :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"-->
-<!--                  icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>-->
+                <el-button  :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+                  icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>
               </topOpts>
             </div>
             <div class="JNPF-common-head-right">
@@ -83,8 +83,10 @@
 
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
-                <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+                <el-tag
+                  :type="global.getDictLabelGlobal('documentStatusList', scope.row.documentStatus, { withType: true }).type">{{
+                    global.getDictLabelGlobal('documentStatusList', scope.row.documentStatus)
+                  }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>

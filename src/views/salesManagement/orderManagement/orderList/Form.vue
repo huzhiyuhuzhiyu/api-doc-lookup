@@ -14,6 +14,7 @@ import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue'
 import TypingEditorDialog from './typingEditDialog.vue'
 import RecordList from "@/views/workFlow/components/RecordList.vue";
 import Process from "@/components/Process/index.vue";
+import { getBusinessComponent, getBusinessComponentPage } from "@/api/assemblyMaintenance";
 
 export default {
   name: "Form",
@@ -81,7 +82,7 @@ export default {
           label: '型号',
           type: 'input',
           remote: true,
-          minWidth: 160,
+          minWidth: 200,
           remoteMethod: this.drawingNoFetchSuggestions,
           select: (item, scope) => this.drawingSelect(item, scope),
         },
@@ -430,8 +431,6 @@ export default {
         ]
       },
 
-      approvalFlag: false,
-
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
       actions: {
@@ -449,6 +448,111 @@ export default {
         default: async () => {
           await this.getOrderNoConfig('KHDD');
         },
+      },
+      apiMethodActions: {
+        add: addOrders,
+        copy: addOrders,
+        edit: editOrders,
+      },
+
+      productRefConfigs: {
+        customer: {
+          title: '选择客户产品',
+          renderTree: false,
+          tableItems: [
+            { prop: 'customerProductNo', label: '客户料号', fixed: 'left' },
+            { prop: 'customerProductName', label: '客户产品名称', fixed: 'left' },
+            { prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom' },
+            { prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom' },
+            { prop: 'productCode', label: '产品编码', sortable: 'custom' },
+            { prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
+            { prop: 'mainUnit', label: '单位', sortable: 'custom' },
+            { prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom' }
+          ],
+          searchList: [
+            { prop: 'customerProductDrawingNo', label: '客户型号', type: 'input' },
+            { prop: 'drawingNo', label: '型号', type: 'input' },
+          ],
+          listRequestObj: (partnerId) => ({
+            partnerId,
+            partnerType: 'customer',
+            productCode: "",
+            productName: "",
+            productStatus: 'enable',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              { asc: false, column: '' },
+              { asc: false, column: 'create_time' }
+            ]
+          }),
+          listMethod: getcooperativeProduct,
+          mapItem: (item) => ({
+            ...item,
+            productsId: item.productsId,
+            cooperativePartnerProductId: item.id,
+            productName: item.customerProductName || item.name,
+            productCode: item.productCode || item.code,
+            drawingNo: item.customerProductDrawingNo || item.drawingNo,
+          })
+        },
+        product: {
+          title: '选择产品',
+          renderTree: true,
+          tableItems: [
+            { prop: 'drawingNo', label: '型号', minWidth: '180px', sortable: 'custom' },
+            { prop: 'name', label: '产品名称', minWidth: '180px', sortable: 'custom' },
+            { prop: 'code', label: '产品编码', minWidth: '180px', sortable: 'custom' },
+            { prop: 'mainUnit', label: '单位', minWidth: '90px', sortable: 'custom' },
+            { prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom' }
+          ],
+          searchList: [
+            { prop: 'drawingNo', label: '型号', type: 'input' },
+            { prop: 'name', label: '产品名称', type: 'input' },
+          ],
+          listRequestObj: () => ({
+            productCode: "",
+            productName: "",
+            productStatus: 'enable',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              { asc: false, column: '' },
+              { asc: false, column: 'create_time' }
+            ]
+          }),
+          listMethod: getProducts,
+          mapItem: (item) => ({
+            ...item,
+            productsId: item.id,
+            cooperativePartnerProductId: undefined,
+            productName: item.name,
+            productCode: item.code,
+            drawingNo: item.drawingNo,
+          })
+        },
+        assemblingUnit: {
+          title: '选择组合件',
+          multiple: false,
+          renderTree: false,
+          tableItems: [
+            { prop: 'name', label: '机型', minWidth: '180px' },
+            { prop: 'cooperativePartnerCode', label: '客户编码', minWidth: '180px', sortable: 'custom' },
+            { prop: 'cooperativePartnerName', label: '客户名称', minWidth: '180px', sortable: 'custom' },
+          ],
+          searchList: [
+            { prop: 'name', label: '机型', type: 'input' },
+          ],
+          listRequestObj: () => ({
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              { asc: false, column: '' },
+              { asc: false, column: 'create_time' }
+            ]
+          }),
+          listMethod: getBusinessComponentPage,
+        }
       }
     }
   },
@@ -769,48 +873,49 @@ export default {
     },
 
     selectProductRefOpenDialog(type) {
-      this.productRefType = type
-      if (type === 'customer') {
-        if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
-        this.addProductProps = {
-          ...this.addProductProps,
-          renderTree: false,
-          tableItems: [
-            { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
-            { prop: 'customerProductName', label: ' 客户产品名称', fixed: 'left' },
-            { prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom' },
-            { prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom' },
-            { prop: 'productCode', label: '产品编码', sortable: 'custom' },
-            { prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
-            { prop: 'mainUnit', label: '单位', sortable: 'custom' },
-            { prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom' }
-          ],
-          listRequestObj: {
-            ...this.addProductProps.listRequestObj,
-            partnerId: this.dataForm.cooperativePartnerId,
-            partnerType: 'customer'
-          }
-        }
-      } else {
-        this.addProductProps = {
-          ...this.addProductProps,
-          renderTree: true,
-          tableItems: [
-            { prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom' },
-            { prop: 'code', label: '产品编码', sortable: 'custom' },
-            { prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
-            { prop: 'mainUnit', label: '单位', sortable: 'custom' },
-            { prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom' }
-          ],
-          listRequestObj: {
-            ...this.addProductProps.listRequestObj,
-          }
-        }
-        delete this.addProductProps.listRequestObj.partnerId
-        delete this.addProductProps.listRequestObj.partnerType
+      const config = this.productRefConfigs[type];
+      if (!config) {
+        console.warn(`Unsupported productRefType: ${ type }`);
+        return;
       }
-      this.addProductProps.listMethod = type === 'customer' ? getcooperativeProduct : getProducts
-      this.$refs.ComSelectProductRef.openDialog()
+
+      if (type === 'customer' && !this.dataForm.cooperativePartnerId) {
+        return this.$message.error("请先选择客户");
+      }
+
+      const baseListRequestObj = {
+        productCode: "",
+        productName: "",
+        productStatus: 'enable',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          { asc: false, column: '' },
+          { asc: false, column: 'create_time' }
+        ]
+      };
+
+      const listRequestObj = config.listRequestObj(
+        type === 'customer' ? this.dataForm.cooperativePartnerId : undefined
+      );
+
+      this.addProductProps = {
+        ...this.addProductProps,
+        title: config.title,
+        renderTree: config.renderTree,
+        tableItems: config.tableItems,
+        searchList: config.searchList,
+        listMethod: config.listMethod,
+        listRequestObj
+      };
+
+      if (type !== 'customer') {
+        delete this.addProductProps.listRequestObj.partnerId;
+        delete this.addProductProps.listRequestObj.partnerType;
+      }
+
+      this.productRefType = type;
+      this.$refs.ComSelectProductRef.openDialog();
     },
     deleteLines(scope) {
       this.linesList.splice(scope.$index, 1)
@@ -824,17 +929,59 @@ export default {
     },
 
     async submitAllProduct(id, data) {
-      const newData = data.map(item => ({
-        ...createEmptyObject(this.linesListItems),
-        ...item.all,
-        productName: item.all.name,
-        productCode: item.all.code,
-        productsDrawingNo: item.all.drawingNo,
-        productsId: this.productRefType === 'customer' ? item.all.productsId : item.all.id,
-        ...(this.productRefType === 'customer' && { cooperativePartnerProductId: item.all.id })
-      }));
+      const type = this.productRefType;
+      const config = this.productRefConfigs[type];
 
-      this.linesList = [...this.linesList, ...newData]
+      if (!config) {
+        console.warn(`No config for productRefType: ${ type }`);
+        return;
+      }
+
+      if (type === 'customer' || type === 'product') {
+        const newData = data.map(item => {
+          const base = createEmptyObject(this.linesListItems);
+          const mapped = config.mapItem(item.all);
+          return {
+            ...base,
+            ...mapped,
+            taxRate: '13',
+          };
+        });
+        this.linesList = [...this.linesList, ...newData];
+        return;
+      }
+
+      if (type === 'assemblingUnit') {
+        this.loading = true;
+        try {
+          const selectedItem = data[0]?.all;
+          if (!selectedItem) {
+            this.$message.warning('未选择有效的组合件');
+            return;
+          }
+
+          const res = await getBusinessComponent(selectedItem.id);
+          const { businessComponentLineList } = res.data
+
+          const newLines = businessComponentLineList.map(sub => {
+            const base = createEmptyObject(this.linesListItems);
+            return {
+              ...base,
+              productName: sub.productsName,
+              productCode: sub.productsCode,
+              drawingNo: sub.productsDrawingNo,
+              oil: selectedItem.name,
+              taxRate: '13',
+            };
+          });
+
+          this.linesList = [...this.linesList, ...newLines];
+        } catch ( error ) {
+          this.$message.error('加载组合件明细失败');
+        } finally {
+          this.loading = false;
+        }
+      }
     },
 
     getTitle(type) {
@@ -914,8 +1061,7 @@ export default {
       }
       let MSG = '提交成功'
       try {
-        const apiMethod = params.order.id ? editOrders : addOrders
-        const res = await apiMethod(params)
+        const res = await this.apiMethodActions[this.btnType](params)
         const { msg } = res
         if (msg === 'Success') {
           this.$message.success(MSG)
@@ -990,11 +1136,13 @@ export default {
                     <div class="tableTopContainer">
                       <div class="left">
                         <template v-if="activeType">
-                          <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('customer')">选择客户产品</el-button>
-                          <span>|</span>
                           <el-button type="text" icon="el-icon-plus" @click="addLineForm">新增一行</el-button>
                           <span>|</span>
-                          <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('')">选择产品</el-button>
+                          <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('customer')">选择客户产品</el-button>
+                          <span>|</span>
+                          <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('product')">选择产品</el-button>
+                          <span>|</span>
+                          <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('assemblingUnit')">选择组合件</el-button>
                           <span>|</span>
                           <el-button type="text" icon="el-icon-plus" @click="importProduct">导入产品</el-button>
                           <span>|</span>

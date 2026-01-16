@@ -121,49 +121,42 @@ export default {
           label: '型号',
           type: 'view',
           minWidth: 160,
-          align: 'center',
         },
         {
           prop: 'customerProductDrawingNo',
           label: '客户型号',
           type: 'view',
           minWidth: 160,
-          align: 'center',
         },
         {
           prop: 'content1',
           label: '内容1',
-          type: 'view',
+          type: 'input',
           minWidth: 160,
-          align: 'center',
         },
         {
           prop: 'content2',
           label: '内容2',
-          type: 'view',
+          type: 'input',
           minWidth: 160,
-          align: 'center',
         },
         {
           prop: 'content3',
           label: '内容3',
-          type: 'view',
+          type: 'input',
           minWidth: 160,
-          align: 'center',
         },
         {
           prop: 'sealingCoverTyping',
           label: '内容4',
           type: 'input',
           minWidth: 160,
-          align: 'center',
         },
         {
           prop: 'content',
           label: '',
           type: 'view',
           minWidth: 360,
-          align: 'center',
           formatter: (row) => {
             return row.noTyping ? '不打字' : row.sealingCoverTyping;
           },
@@ -185,24 +178,44 @@ export default {
   },
   methods: {
     extractBatchNumber(fullString) {
-      const quotedContent = fullString.match(/"([^"]+)"/)?.[1];
-      if (!quotedContent) return '';
+      const template = this.templates.find(t => t.value === this.selectedTemplate);
 
-      const parts = quotedContent.split(' ');
-      return parts.length > 0 ? parts[parts.length - 1] : '';
+      const defaults = {
+        content1: template?.prefix || '',
+        content2: template?.model || '',
+        content3: template?.batch || '',
+        sealingCoverTyping: ''
+      };
+
+      if (!fullString) {
+        return defaults;
+      }
+
+      const quotedMatch = fullString.match(/"([^"]+)"/);
+      if (!quotedMatch) {
+        return defaults;
+      }
+
+      const parts = quotedMatch[1].split(' ');
+
+      return {
+        content1: parts[0] ?? defaults.content1,
+        content2: parts[1] ?? defaults.content2,
+        content3: parts[2] ?? defaults.content3,
+        sealingCoverTyping: parts[3] ?? defaults.sealingCoverTyping
+      };
     },
     updateLinesList(type) {
-      const template = this.templates.find(t => t.value === this.selectedTemplate);
       this.linesList = (type === 'init' ? this.linesFormList : this.linesList).map(item => {
-        const sealingCoverTyping = this.extractBatchNumber(item.sealingCoverTyping)
+        const { content1, content2, content3, sealingCoverTyping } = this.extractBatchNumber(item.sealingCoverTyping)
         const content = item.noTyping
           ? '不打字'
-          : `"${ template.prefix } ${ template.model } ${ template.batch } ${ sealingCoverTyping }"${ sealingCoverTyping ? '四等分' : '三等分' }`;
+          : `"${ content1 } ${ content2 } ${ content3 } ${ sealingCoverTyping }"${ sealingCoverTyping ? '四等分' : '三等分' }`;
         return {
           ...item,
-          content1: template.prefix,
-          content2: template.model,
-          content3: template.batch,
+          content1,
+          content2,
+          content3,
           noTyping: item.sealingCoverTyping === '',
           sealingCoverTyping,
           content
@@ -223,8 +236,7 @@ export default {
     },
 
     updateRowContent(row) {
-      const template = this.templates.find(t => t.value === this.selectedTemplate);
-      row.content = `"${ template.prefix } ${ template.model } ${ template.batch } ${ row.sealingCoverTyping }"${ row.sealingCoverTyping ? '四等分' : '三等分' }`;
+      row.content = `"${ row.content1 } ${ row.content2 } ${ row.content3 } ${ row.sealingCoverTyping }"${ row.sealingCoverTyping ? '四等分' : '三等分' }`;
     },
 
     toggleTyping(row) {

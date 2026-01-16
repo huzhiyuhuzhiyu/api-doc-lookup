@@ -14,6 +14,11 @@
                 <el-input v-model="orderForm.saleOrderNo" @keyup.enter.native="search()" placeholder="销售单号" clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="3">
+              <el-form-item>
+                <el-input v-model="orderForm.productDrawingNo" @keyup.enter.native="search()" placeholder="型号" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="3" v-if="isProductNameSwitch === '1'">
               <el-form-item>
                 <el-input v-model="orderForm.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
@@ -196,6 +201,7 @@ export default {
       detailFlag: false,
       initOrderForm: {
         ...this.queryObject,
+        productDrawingNo: '',
         saleOrderNo: '',
         approvalStatus: 'ok',
         documentStatus: 'submit',

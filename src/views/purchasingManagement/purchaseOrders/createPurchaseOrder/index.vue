@@ -236,6 +236,7 @@ export default {
           orderQuantity: num,
           purchaseQuantity: num,
           procurementDemandPoolId: item.id,
+          taxRate: '13',
         }
       })
     },

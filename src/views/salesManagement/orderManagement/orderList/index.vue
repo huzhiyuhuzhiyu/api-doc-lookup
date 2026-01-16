@@ -361,8 +361,6 @@ export default {
     getAlign(align) {
       return align || 'left'
     },
-
-
   }
 }
 </script>

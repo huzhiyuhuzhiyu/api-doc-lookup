@@ -4,7 +4,7 @@ import { getPrintBusInfo } from "@/api/system/printDev";
 import Form from '../createPurchaseOrder/index.vue'
 import PrintDialog from '@/components/no_mount/printDialog/index.vue';
 import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
-import { deletePurPurchaseOrder, purchaseOrderList } from "@/api/purchasingAndOutsourcingOrders";
+import { deletePurPurchaseOrder, purchaseOrderList, reviewPurPurchaseOrder } from "@/api/purchasingAndOutsourcingOrders";
 
 export default {
   name: "index",
@@ -170,11 +170,28 @@ export default {
             })
           })
           break;
+        case 'review':
+          this.handleReview(row)
+          break;
         case 'delete':
           this.handleRemove(row.id)
           break;
         default:
       }
+    },
+    // 采购订单反审核
+    async handleReview(row) {
+      this.$confirm('您确定要反审核当前数据吗, 是否继续？', '提示', {
+        type: 'warning'
+      }).then(async () => {
+        const res = await reviewPurPurchaseOrder(row.id);
+        const { msg } = res
+        if (msg === 'Success') {
+          this.$message.success('反审核成功')
+          this.initData()
+        }
+      }).catch((e) => {
+      })
     },
     handleRemove(id) {
       this.$confirm('您确定要删除这些数据吗, 是否继续？', '提示', {
@@ -283,6 +300,9 @@ export default {
                     </el-button>
                   </span>
                 <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleColumnClick(row, 'review')">
+                    反审核
+                  </el-dropdown-item>
                   <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
                     查看详情
                   </el-dropdown-item>

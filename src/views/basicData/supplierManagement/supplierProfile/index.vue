@@ -95,17 +95,16 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
-          <div style="display:flex;">
-            <topOpts @add="addSupplier()">
-                <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parter')">导入供应商档案</el-button>
-                <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterContacts')">导入供应商联系人</el-button>
-                <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入供应商收货地址</el-button>
-              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-                icon="el-icon-download" @click="exportForm">
-                导出
-              </el-button>
-
-            </topOpts>
+          <div class="JNPF-common-head-left">
+            <el-button size="mini" type="primary" icon="el-icon-plus" v-has="'btn_add'" @click.native="addSupplier()">
+              {{ isSupplier ? '新建' : '新建供应商产品' }}
+            </el-button>
+            <template v-if="isSupplier">
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parter')">导入供应商档案</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterContacts')">导入供应商联系人</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入供应商收货地址</el-button>
+              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
+            </template>
           </div>
 
           <div class="JNPF-common-head-right">
@@ -165,7 +164,7 @@
           <el-table-column prop="remark" label="备注" width="160" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" />
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right" v-if="isSupplier">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
                 @del="handleDel(scope.row.id)">
@@ -217,6 +216,8 @@
 
     </el-tabs> -->
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <SupplierProductForm v-if="supplierProductVisible" ref="SupplierProductForm" @refreshDataList="initData" @close="closeForm" />
+    <SupplierProductIndex v-if="supplierProductIndexVisible" ref="SupplierProductIndex" :supplierId="supplierId" @close="closeForm" />
     <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" />
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -243,11 +244,23 @@ import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { log } from 'mathjs'
+import { mapGetters, mapState } from "vuex";
+import SupplierProductForm from "@/views/basicData/supplierManagement/supplierProduct/Form.vue";
+import SupplierProductIndex from "@/views/basicData/supplierManagement/supplierProduct/supplierProductIndex.vue";
 export default {
   name: 'supplierProfile',
-  components: { Form, UserRelationList, ExportForm, SuperQuery },
+  components: { SupplierProductForm, SupplierProductIndex, Form, UserRelationList, ExportForm, SuperQuery },
+  props: {
+    type: {
+      type: String,
+      default: 'supplier'
+    }
+  },
   data() {
     return {
+      supplierProductVisible: false,
+      supplierProductIndexVisible: false,
+      supplierId: '',
       downType:'',
       fileList: [],
       loadingText: '',
@@ -512,6 +525,11 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.treeBox.filter(val)
+    }
+  },
+  computed: {
+    isSupplier() {
+      return this.type === 'supplier'
     }
   },
   mounted() {
@@ -971,6 +989,8 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.supplierProductVisible = false
+      this.supplierProductIndexVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -1112,11 +1132,18 @@ export default {
       loop(node)
       return fullPath
     },
-    addSupplier() {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init()
-      })
+     addSupplier() {
+       if (this.isSupplier) {
+         this.formVisible = true
+         this.$nextTick(() => {
+           this.$refs.Form.init()
+         })
+       } else {
+         this.supplierProductVisible = true
+         this.$nextTick(() => {
+           this.$refs.SupplierProductForm.init('', 'add', false, 'other')
+         })
+       }
     },
     addOrUpdateHandle(id, parentId) {
       this.formVisible = true
@@ -1159,10 +1186,15 @@ export default {
         .catch(() => { })
     },
     handleUserRelation(id, parentId, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, false, parentId)
-      })
+      if (this.isSupplier) {
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(id, btnType, false, parentId)
+        })
+      } else {
+        this.supplierId = id
+        this.supplierProductIndexVisible = true
+      }
     }
   }
 }

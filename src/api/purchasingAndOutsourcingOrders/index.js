@@ -297,3 +297,11 @@ export function divideTransferCard(data) {
     data
   })
 }
+
+// 采购订单反审核
+export const reviewPurPurchaseOrder = (id) => {
+  return request({
+    url: `/api/erp/purPurchaseOrder/review/${id}`,
+    method: 'delete'
+  })
+}

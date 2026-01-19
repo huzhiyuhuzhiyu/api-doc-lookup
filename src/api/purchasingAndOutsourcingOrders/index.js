@@ -302,6 +302,6 @@ export function divideTransferCard(data) {
 export const reviewPurPurchaseOrder = (id) => {
   return request({
     url: `/api/erp/purPurchaseOrder/review/${id}`,
-    method: 'delete'
+    method: 'put'
   })
 }

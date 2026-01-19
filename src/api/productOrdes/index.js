@@ -125,6 +125,14 @@ export function ordershengchanList(data) {
     data
   })
 }
+// 装配入库申请
+export function submitAssemblyInboundApplication(data) {
+  return request({
+    url: `/api/zgt/prod/plan/transfer/packaging`,
+    method: 'post',
+    data
+  })
+}
 //包装任务进度列表
 export function packagingTaskProgressList(data) {
   return request({

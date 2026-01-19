@@ -136,6 +136,9 @@
                     <el-dropdown-item @click.native="addition1(scope.row)">
                       追加生产
                     </el-dropdown-item>
+                    <el-dropdown-item @click.native="handleInventoryApplication(scope.row)">
+                      入库申请
+                    </el-dropdown-item>
                     <el-dropdown-item @click.native="updataDispatch(scope.row.id)"
                       v-if="scope.row.taskMethod != 'not_appoint'">
                       改派
@@ -282,6 +285,7 @@
     :visible.sync="dialogVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px" style="text-align: center;">
       <div id="qrcode" ref="qrCode" style="text-align: center;"></div>
     </el-dialog>
+    <InventoryApplicationForm :visible.sync="inventoryApplicationFormVisible" :formData="inventoryApplicationFormData" @initData="initData"/>
   </div>
 </template>
 <script>
@@ -309,16 +313,19 @@ import TaskForm from './taskFormCopy.vue'
 import AddTaskForm from './addTaskForm.vue'
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
+import InventoryApplicationForm from "@/views/productionManagement/assemblyplan/assemblyTaskManagement/InventoryApplicationForm.vue";
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2 },
+  components: { InventoryApplicationForm, SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2 },
   mixins: [getProjectList],
   data() {
     return {
+      inventoryApplicationFormVisible:false,
       dateVisible:false,
       dialogVisible:false,
       qrCode:"",
       addTaskFormVisible: false,
+      inventoryApplicationFormData: {},
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -542,6 +549,14 @@ export default {
   mounted() {
   },
   methods: {
+    handleInventoryApplication(row){
+      if (row.completedQuantity <= 0) {
+        this.$message.warning("无可申请数量,已完成数量为" + row.completedQuantity)
+        return
+      }
+      this.inventoryApplicationFormVisible = true
+      this.inventoryApplicationFormData = row
+    },
      // 配对方式显示隐藏
      async getPairingModeSwitch(code, type) {
       try {

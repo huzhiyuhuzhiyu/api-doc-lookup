@@ -199,6 +199,7 @@ export default {
             if (index !== -1) {
                 this.$message.error(`替代产品第${index + 1}行：替换产品不能与主产品相同`)
                 submitFlag = false
+                this.btnLoading = false
             }
             if (submitFlag) {
                 this.drawer = false

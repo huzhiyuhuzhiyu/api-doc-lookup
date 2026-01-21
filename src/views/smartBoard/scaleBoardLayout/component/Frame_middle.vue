@@ -53,7 +53,7 @@ export default {
       getScreenTrackingData({
         tenantId: 'zsk',
         _title: this.title,
-        mattersGradeList: this.title === '及时跟踪' ? ["sim_1", "sim_2"] : ["sim_3"],
+        mattersGradeList: this.title === '及时跟踪' ? ["sim_1", "sim_2", "sim_3"] : ["sim_3"],
         pageSize: this.title === '及时跟踪' ? 6 : 3,
         pageNum: this.pageNum,
         ...this.query,

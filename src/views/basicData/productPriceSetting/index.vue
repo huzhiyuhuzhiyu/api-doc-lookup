@@ -198,7 +198,7 @@
               <el-table-column prop="createByName" label="创建人" />
             </JNPF-table>
             <JNPF-table v-show="!dataTableFlag" :data="tableData" :fixedNO="true"
-              custom-column ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_970309" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+              custom-column ref="otherTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_970309" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
               <el-table-column prop="projectName" label="所属项目" width="140"
                 v-if="isProjectSwitch === '1'"></el-table-column>
               <el-table-column prop="code" label="产品编码" min-width="140">

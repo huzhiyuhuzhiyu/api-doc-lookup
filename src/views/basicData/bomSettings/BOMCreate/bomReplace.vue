@@ -130,12 +130,14 @@ export default {
             ],
             bomLineIndex:null,
             btnLoading:false,
+            currentProduct:{},
         }
     },
     methods:{
         init(data,replaceLines){
             console.log('init')
             console.log('data',data)
+            this.currentProduct = data.row
             this.bomLineIndex = data.$index
             this.replaceLines = replaceLines
             this.drawer = true
@@ -201,6 +203,17 @@ export default {
                 submitFlag = false
                 this.btnLoading = false
             }
+
+          const currentConflictIndex = this.replaceLines.findIndex(
+            (line) => line.productId === this.currentProduct?.productId
+          );
+          if (currentConflictIndex !== -1) {
+            this.$message.error(`替代产品第${ currentConflictIndex + 1 }行：不能与当前子件产品相同`);
+            submitFlag = false;
+            this.btnLoading = false;
+            return;
+          }
+
             if (submitFlag) {
                 this.drawer = false
                 this.$emit('submitBomReplace', this.replaceLines,this.bomLineIndex)

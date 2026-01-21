@@ -497,9 +497,9 @@ export default {
               <el-button type="primary" :loading="btnLoading" @click="handleOpenTransitionPage('autoRecommend','add')">
                 自动推荐批次
               </el-button>
-              <el-button type="primary" :loading="btnLoading">
-                完成
-              </el-button>
+<!--              <el-button type="primary" :loading="btnLoading">-->
+<!--                完成-->
+<!--              </el-button>-->
               <el-button type="danger" :loading="withdrawLoading" @click="handleWithdraw">
                 箱单撤回
               </el-button>

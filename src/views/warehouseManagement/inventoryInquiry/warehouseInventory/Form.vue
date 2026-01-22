@@ -309,6 +309,7 @@ export default {
       this.initData()
     },
     reset() {
+      this.$refs['dataTables'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.originalListQuery))
       this.initData()
     },

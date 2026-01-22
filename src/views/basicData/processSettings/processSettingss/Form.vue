@@ -620,12 +620,12 @@ export default {
       index: null,
       needDisabled: false,
       dataForm: {
-        source: '',
         projectId: '',
         id: '',
         code: '', //  编码
         name: '', //  名称
         state: 'enable', //  状态
+        source: 'production', // 类型
         reportRulesFlag: true,
         // status: "", //  状态
         documentStatus: '', //  状态

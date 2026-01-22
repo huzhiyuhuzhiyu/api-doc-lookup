@@ -217,7 +217,9 @@ export default {
       inputHovering: false,
       inputWidth: 0,
       initialInputHeight: 0,
-      loadingTotal: 0
+      loadingTotal: 0,
+      lastClickNodeId: null,
+      lastClickTime: 0,
     }
   },
   computed: {
@@ -357,28 +359,53 @@ export default {
       }
     },
     handleNodeClick(data) {
-      console.log("data",data);
-      if (data.disabled) return
-      let currId = data.id
-      let currData = data.name
-      if (this.multiple) {
-        const boo = this.selectedIds.some(o => o === currId)
-        if (boo) return
-        this.selectedIds.push(currId)
-        this.selectedData.push(currData)
-      } else {
-        this.selectedIds = [currId]
-        this.selectedData = [currData]
+      if (data.disabled) return;
+
+      const now = Date.now();
+      const isDoubleClick = (
+        this.lastClickNodeId === data.id &&
+        now - this.lastClickTime < 300
+      );
+
+      this.lastClickNodeId = data.id;
+      this.lastClickTime = now;
+
+      if (isDoubleClick) {
+        if (!this.multiple) {
+          this.selectedIds = [data.id];
+          this.selectedData = [data.name];
+          this.rSelectData = [{ id: data.id, name: data.name, all: data }];
+        } else {
+          if (!this.selectedIds.includes(data.id)) {
+            this.selectedIds.push(data.id);
+            this.selectedData.push(data.name);
+            this.rSelectData.push({ id: data.id, name: data.name, all: data });
+          }
+        }
+        this.confirm();
+        return;
       }
-      let selectedData = []
+
+      let currId = data.id;
+      let currData = data.name;
+      if (this.multiple) {
+        const boo = this.selectedIds.some((o) => o === currId);
+        if (boo) return;
+        this.selectedIds.push(currId);
+        this.selectedData.push(currData);
+      } else {
+        this.selectedIds = [currId];
+        this.selectedData = [currData];
+      }
+      let selectedData = [];
       for (let i = 0; i < this.selectedIds.length; i++) {
         selectedData.push({
           id: this.selectedIds[i],
           name: this.selectedData[i],
-          all: data
-        })
+          all: data,
+        });
       }
-      this.rSelectData = selectedData
+      this.rSelectData = selectedData;
     },
     removeData(index) {
       this.selectedIds.splice(index, 1)

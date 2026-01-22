@@ -46,7 +46,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       change: (val, data) => {
         // dom更新后重新校验此元素
         context.$nextTick(() => {
-          context.dataFormRef[0].$children[0].validateField('productCategoryName')
+          dataFormRef.$refs.main.validateField('productCategoryName')
         })
         if (!val && data.length) return
         if (!data || !data.length) return

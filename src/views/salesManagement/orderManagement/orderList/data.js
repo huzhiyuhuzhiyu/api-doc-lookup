@@ -56,6 +56,7 @@ export function getBasicFormSchema(dataFormRef, context) {
     context.dataForm.cooperativePartnerId = data[0].all.id;
     context.dataForm.cooperativePartnerCode = data[0].all.code;
     context.dataForm.cooperativePartnerName = data[0].all.name;
+    context.dataForm.contractRemark = data[0].all.remark;
     context.dataForm.departmentId = data[0].all.departmentId;
 
     await context.fetchOrganization()
@@ -148,6 +149,7 @@ export function getBasicFormSchema(dataFormRef, context) {
             context.dataForm.cooperativePartnerId = originalData.cooperativePartnerId;
             context.dataForm.cooperativePartnerCode = originalData.cooperativePartnerCode;
             context.dataForm.cooperativePartnerName = originalData.cooperativePartnerName;
+            context.dataForm.contractRemark = originalData.remark;
           });
         } else {
           executeCustomerChange(context, data, false);
@@ -161,6 +163,13 @@ export function getBasicFormSchema(dataFormRef, context) {
       type: "input",
       disabled: true,
       itemRules: [{ required: true, trigger: "blur" }],
+    },
+    {
+      prop: "contractRemark",
+      label: "客户备注",
+      value: "",
+      type: "input",
+      disabled: true,
     },
     {
       prop: "contractNo",

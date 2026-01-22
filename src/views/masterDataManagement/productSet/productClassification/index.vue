@@ -135,62 +135,20 @@ export default {
       categoryPropertList: [],
       columnList: [],
       superQueryVisible: false,
-      superQueryJson: [{
-        prop: 'classAttribute',
-        label: '类别属性',
-        type: 'select',
-        options: [{
-          label: '原材料',
-          value: 'raw_material'
-        }, {
-          label: '半成品',
-          value: 'semi_finished'
-        }, {
-          label: '成品',
-          value: 'finish_product'
-        }, {
-          label: '辅料',
-          value: 'accessories'
-        }]
-      }, {
-        prop: 'classType',
-        label: '类型',
-        type: 'select',
-        options: [{
-          label: '包装物',
-          value: 'packaging'
-        }, {
-          label: '内圈毛坯',
-          value: 'inner_ring_blank'
-        }, {
-          label: '外圈毛坯',
-          value: 'outer_ring_blank'
-        }, {
-          label: '内圈',
-          value: 'inner_ring'
-        }, {
-          label: '外圈',
-          value: 'outer_ring'
-        }, {
-          label: '磨料',
-          value: 'abrasive'
-        }, {
-          label: '油料',
-          value: 'oil'
-        }, {
-          label: '配件',
-          value: 'accessory'
-        }, {
-          label: '周转箱',
-          value: 'turnover_box'
-        }, {
-          label: '保持架',
-          value: 'holder'
-        }, {
-          label: '密封盖',
-          value: 'sealing_cap'
-        }]
-      }]
+      superQueryJson: [
+        {
+          prop: 'classAttribute',
+          label: '类别属性',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'classType',
+          label: '类型',
+          type: 'select',
+          options: this.global.productClassType
+        }
+      ]
     }
   },
   mounted() {
@@ -203,7 +161,7 @@ export default {
   methods: {
     getclassAttributeList() {
       let obj = {
-
+        pageNum: 1,
         pageSize: -1
       }
       getclassAttributeList(obj).then((res) => {
@@ -213,6 +171,7 @@ export default {
             value: item.code
           }
         })
+        this.superQueryJson[0].options = this.categoryPropertList
       })
     },
 

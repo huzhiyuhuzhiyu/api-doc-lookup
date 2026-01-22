@@ -288,6 +288,7 @@ export default {
         case 'inbound_production':
         case 'inbound_sale_return':
         case 'inbound_other':
+        case 'inbound_finished_package':
           this.dataForm.documentType = 'inbound';
           this.getOrderNoConfig('RKDH')
           break;
@@ -296,6 +297,8 @@ export default {
         case 'outbound_pick_out':
         case 'outbound_external_send':
         case 'outbound_other':
+        case 'finished_product_picking_send':
+        case 'outbound_change_package':
           this.dataForm.documentType = 'outbound';
           this.getOrderNoConfig('CKDH')
           break;

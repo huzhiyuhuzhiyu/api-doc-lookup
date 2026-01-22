@@ -86,7 +86,7 @@
                   </el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
 
-                      <el-table-column prop="price" key="price" label="协议价" min-width="160">
+                      <el-table-column prop="price" key="price" label="协议价" min-width="160" :show-overflow-tooltip="false">
                         <template slot="header">
                           协议价(含税)
                           <span class="required">*</span>

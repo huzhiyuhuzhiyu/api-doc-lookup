@@ -22,7 +22,7 @@
                     :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                 </el-form-item>
               </el-col>
-            </template> 
+            </template>
 
 
             <el-col :span="6">
@@ -49,7 +49,7 @@
               <el-button type="primary" size="mini" icon="el-icon-download"
               @click="exportForm('dataTable')">导出</el-button>
             </div>
-            
+
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -74,8 +74,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="orderDate" label="日期" min-width="160" sortable="custom"></el-table-column>
-            
-         
+
+
             <el-table-column prop="personName" label="制单人" min-width="120" sortable="custom" align="center">  </el-table-column>
             <!-- <el-table-column prop="documentStatus" label="单据状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
@@ -102,9 +102,9 @@
             <!-- <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column> -->
             <!-- <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" /> -->
             <el-table-column label="操作" width="180" fixed="right">
-              <template slot-scope="scope"> 
+              <template slot-scope="scope">
                 <el-button size="mini" type="text"  @click="handleUserRelation(scope.row.id,'look')">查看详情</el-button>
-                 
+
               </template>
             </el-table-column>
           </JNPF-table>
@@ -123,7 +123,7 @@
   </div>
 </template>
 
-<script> 
+<script>
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -131,7 +131,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {getstockTakingAdjustList} from '@/api/warehouseManagement/stocktak.js'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
-export default { 
+export default {
   name: 'inventoryAdjustmentSheet',
   components: { Form, SuperQuery, ExportForm },
   mixins: [getProjectList],
@@ -144,12 +144,12 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
 
       ],
-      columnList: [], 
+      columnList: [],
       rdeDateArr:[],
       orderForm:{},
       tableData:[],
       total:0,
-      superQueryVisible: false, 
+      superQueryVisible: false,
 
       orderFormlist: {
         orderNo: "",
@@ -179,7 +179,7 @@ export default {
       defaultProps: {
         children: 'childrenList',
         label: 'name'
-      },   
+      },
       diagramVisible: false,
       formVisible: false,
       superQueryJson: [
@@ -229,7 +229,7 @@ export default {
       isProjectSwitch: '',
     }
   },
-  
+
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -238,21 +238,21 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.superForm=this.orderForm
-    this.search('basic')  
+    this.search('basic')
   },
   methods: {
- 
+
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },
- 
-    
-   
-   
-    
-    
+
+
+
+
+
+
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'personName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
@@ -327,6 +327,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.rdeDateArr=[]
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.superForm=this.orderForm
       this.searchList=[
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
 
@@ -370,7 +371,7 @@ export default {
         this.$refs.Form.init(id, btnType)
       })
     },
- 
+
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

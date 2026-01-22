@@ -95,15 +95,10 @@
           <el-table-column prop="mainUnit" label="主单位" width="120" />
           <el-table-column prop="productSource" label="产品来源" width="120">
             <template slot-scope="{ row }">
-              <template v-if="row.productSource == 'produce'">
-                生产
-              </template>
-              <template v-else-if="row.productSource == 'purchase'">
-                采购
-              </template>
-              <template v-else-if="row.productSource == 'out'">
-                外协
-              </template>
+              <el-tag
+                :type="global.getDictLabelGlobal('productSource', row.productSource, { withType: true }).type">{{
+                  global.getDictLabelGlobal('productSource', row.productSource)
+                }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">

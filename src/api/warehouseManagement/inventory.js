@@ -27,6 +27,15 @@ export function inventoryWarehouseList(data) {
   })
 }
 
+// 库存管理明细-查询库存数量
+export function inventoryLineInventory(data) {
+  return request({
+    url: `/api/wms/stock/inventory/line/inventory`,
+    method: 'POST',
+    data
+  })
+}
+
 // 占用库存查询
 
 export function occupyStockList(data) {
@@ -116,7 +125,7 @@ export function withdrawApi(id) {
   return request({
     url: `/api/wms/stock/move/revoke/${id}`,
     method: 'get',
-    
+
   })
 }
 

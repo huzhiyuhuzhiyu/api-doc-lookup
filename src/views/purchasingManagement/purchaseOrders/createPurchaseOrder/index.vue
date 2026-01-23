@@ -229,6 +229,7 @@ export default {
       })
     },
     generateOperation(data) {
+      this.dataForm.source = data[0]?.source
       this.linesList = standardizeFields(data, this.productFieldMap).map(item => {
         const num = this.jnpf.math('-', [item.planDemandQuantity, item.orderedQuantity])
         return {

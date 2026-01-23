@@ -1,18 +1,19 @@
 <script>
-import {deepClone} from "@/utils";
-import {getBasicFormSchema} from "./data";
+import { deepClone } from "@/utils";
+import { getBasicFormSchema } from "./data";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
-import {getsaleOrderDetailList} from "@/api/salesManagement/assemblyOrders";
-import {getAddressInfo} from "@/api/basicData";
+import { getsaleOrderDetailList } from "@/api/salesManagement/assemblyOrders";
+import { getAddressInfo } from "@/api/basicData";
 import * as _ from "highcharts";
 import changeAddress from "@/views/salesManagement/shippingnotice/saleMetalworking/changeAddress.vue";
-import {addQuotationsendlist, editQuotationMsendlist, getQuotationsendlist} from "@/api/salesManagement";
+import { addQuotationsendlist, editQuotationMsendlist, getQuotationsendlist } from "@/api/salesManagement";
+import { inventoryLineInventory } from "@/api/warehouseManagement/inventory";
 
 export default {
   name: "Form",
-  components: {changeAddress, TableFormProduct},
+  components: { changeAddress, TableFormProduct },
   mixins: [flowMixin, busFlow],
   data() {
     return {
@@ -117,6 +118,7 @@ export default {
           label: '包装方式',
           type: 'select',
           options: this.getDictDataSync('packaging'),
+          change: this.handlePackagingMethod,
           minWidth: 170,
         },
         {
@@ -151,7 +153,7 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
-            {required: true, message: '本次发货数不能为空', trigger: ['blur', 'change'],},
+            { required: true, message: '本次发货数不能为空', trigger: ['blur', 'change'], },
           ]
         },
         {
@@ -173,15 +175,15 @@ export default {
         methodArr: {},
         listMethod: getsaleOrderDetailList,
         tableItems: [
-          {prop: 'orderNo', label: '订单号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-          {prop: 'productCode', label: '产品编码', sortable: 'custom'},
-          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
-          {prop: 'mainUnit', label: '单位', sortable: 'custom'},
-          {prop: 'waitDeliverNum', label: '待发货数量', minWidth: '160px', sortable: 'custom'},
-          {prop: 'deliveryDate', label: '交货日期', minWidth: '160px', sortable: 'custom'},
-          {prop: 'remark', label: '备注', minWidth: '160px'},
-          {prop: 'createTime', label: '创建时间', sortable: 'custom'}
+          { prop: 'orderNo', label: '订单号', minWidth: '220px', sortable: 'custom' },
+          { prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom' },
+          { prop: 'productCode', label: '产品编码', sortable: 'custom' },
+          { prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
+          { prop: 'mainUnit', label: '单位', sortable: 'custom' },
+          { prop: 'waitDeliverNum', label: '待发货数量', minWidth: '160px', sortable: 'custom' },
+          { prop: 'deliveryDate', label: '交货日期', minWidth: '160px', sortable: 'custom' },
+          { prop: 'remark', label: '备注', minWidth: '160px' },
+          { prop: 'createTime', label: '创建时间', sortable: 'custom' }
         ],
         listRequestObj: {
           cooperativePartnerId: '',
@@ -200,8 +202,8 @@ export default {
           ]
         },
         searchList: [
-          {prop: 'productName', label: '产品名称', type: 'input'},
-          {prop: 'productCode', label: '产品编码', type: 'input'},
+          { prop: 'productName', label: '产品名称', type: 'input' },
+          { prop: 'productCode', label: '产品编码', type: 'input' },
         ]
       },
 
@@ -288,8 +290,26 @@ export default {
       })) || []
     },
 
+    async handlePackagingMethod(value, scopeOrRow) {
+      const row = scopeOrRow?.row ? scopeOrRow.row : scopeOrRow;
+
+      this.loading = true;
+      try {
+        const params = {
+          packagingMethod: value,
+          productsId: row.productsId
+        };
+        const { data } = await inventoryLineInventory(params);
+        row.availableQuantity = data;
+      } catch (e) {
+        this.$message.error('库存查询失败');
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async getAddressInfo(id) {
-      const {data} = await getAddressInfo(id)
+      const { data } = await getAddressInfo(id)
       const defaultAddress = data.find(item => item.defaultFlag) || {};
       const {
         recipient = '',
@@ -323,11 +343,12 @@ export default {
     globalChange(val, prop) {
       this.linesList.forEach(item => {
         item[prop] = val;
+        this.handlePackagingMethod(val, item)
       });
     },
 
     async getOrderNoConfig() {
-      const {number} = await this.$store.dispatch('base/getOrderNoConfig', 'SSDH')
+      const { number } = await this.$store.dispatch('base/getOrderNoConfig', 'SSDH')
       this.dataForm.orderNo = `${ number }`
     },
 
@@ -403,7 +424,7 @@ export default {
     },
 
     getTitle(type) {
-      switch (type) {
+      switch ( type ) {
         case 'add':
         case 'copy':
           return `创建${ this.title }`
@@ -418,9 +439,9 @@ export default {
       this.loading = true
       try {
         const res = await getQuotationsendlist(id)
-        const {msg, data} = res
+        const { msg, data } = res
         if (msg === 'Success') {
-          const {country, countryName, provinceName, cityName, areaName, address} = data.notice
+          const { country, countryName, provinceName, cityName, areaName, address } = data.notice
           this.dataForm = data.notice
           this.originalFormData = deepClone(this.dataForm)
           this.fileList = this.fileListMap('', data.attachmentList)
@@ -430,7 +451,7 @@ export default {
             : `${ countryName }${ address }`
           this.loading = false
         }
-      } catch (err) {
+      } catch ( err ) {
         this.loading = false
       }
     },
@@ -484,13 +505,13 @@ export default {
       try {
         const apiMethod = this.apiMethodActions[this.btnType].api
         const res = await apiMethod(params)
-        const {msg} = res
+        const { msg } = res
         if (msg === 'Success') {
           this.$message.success(MSG)
           this.goBack()
         }
         this.btnLoading = false
-      } catch (error) {
+      } catch ( error ) {
         this.btnLoading = false
       }
     },
@@ -528,11 +549,11 @@ export default {
                   <el-collapse v-model="activeNames" style="margin-top: 5px;" @change="refreshTableHeight">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" ref="dataFormRegion">
                       <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm"
-                        :btnType="btnType"/>
+                                :btnType="btnType"/>
                     </el-collapse-item>
                     <el-collapse-item class="productInfo"
-                      title="产品信息"
-                      name="productInfo">
+                                      title="产品信息"
+                                      name="productInfo">
                       <div class="TableForm_title">
                       </div>
                       <TableForm-product
@@ -561,7 +582,7 @@ export default {
                                 </el-button>
                                 <span>|</span>
                                 <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn"
-                                  @click="$refs.tableForm.batchDelete()">批量删除
+                                           @click="$refs.tableForm.batchDelete()">批量删除
                                 </el-button>
                               </template>
                             </div>
@@ -570,24 +591,24 @@ export default {
                                 <el-form class="height-full" inline label-width="60px" v-if="linesList.length">
                                   <el-form-item label="包装">
                                     <el-select v-model="globalPackagingMethod" placeholder="包装"
-                                      @change="(val) => globalChange(val,'packagingMethod')"
-                                      style="width: 80px">
+                                               @change="(val) => globalChange(val,'packagingMethod')"
+                                               style="width: 80px">
                                       <el-option v-for="item in getDictDataSync('packaging')" :key="item.value"
-                                        :label="item.label" :value="item.value"/>
+                                                 :label="item.label" :value="item.value"/>
                                     </el-select>
                                   </el-form-item>
                                 </el-form>
                               </template>
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                                  @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
+                                         @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
                               </el-tooltip>
                             </div>
                           </div>
                         </template>
                       </TableForm-product>
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;"
-                        class="text">
+                           class="text">
                         <span style="font-weight:500;margin-right:10px">共发数量：{{ totalNum }}</span>
                       </div>
                     </el-collapse-item>
@@ -603,7 +624,7 @@ export default {
       </div>
       <changeAddress v-if="addressVisible" ref="addressRef" @getChangeAddress="submitAddress"></changeAddress>
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false"
-        @change="submitAllProduct"/>
+                      @change="submitAllProduct"/>
     </div>
   </transition>
 </template>

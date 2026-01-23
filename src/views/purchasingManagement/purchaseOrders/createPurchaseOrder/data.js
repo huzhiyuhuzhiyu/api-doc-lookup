@@ -289,16 +289,6 @@ export function getColumns() {
       minWidth: 120,
     },
     {
-      prop: "sealingCoverTyping",
-      label: "打字要求",
-      minWidth: 180,
-    },
-    {
-      prop: "packagingRequirements",
-      label: "包装要求",
-      minWidth: 180,
-    },
-    {
       prop: "documentStatus",
       label: "单据状态",
       minWidth: 120,

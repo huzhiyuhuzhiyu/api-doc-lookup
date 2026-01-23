@@ -610,6 +610,7 @@ export default {
     }
   },
   created() {
+    this.$unsavedGuard.set(true, this.$route.fullPath);
   },
   mounted() {
     this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)

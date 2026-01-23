@@ -147,8 +147,18 @@ export function getColumns() {
       minWidth: 180,
     },
     {
-      prop: "packagingRequirements",
+      prop: "specialRequire",
       label: "包装要求",
+      minWidth: 180,
+    },
+    {
+      prop: "ordersRemark",
+      label: "销售订单备注",
+      minWidth: 180,
+    },
+    {
+      prop: "remark",
+      label: "销售订单产品备注",
       minWidth: 180,
     },
   ]

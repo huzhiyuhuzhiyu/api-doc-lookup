@@ -356,6 +356,8 @@ export default {
     this.getclassAttributeList()
   },
   async created() {
+    this.$unsavedGuard.set(true, this.$route.fullPath);
+
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()

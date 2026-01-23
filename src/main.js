@@ -27,6 +27,8 @@ import * as filters from './filters' // global filters
 
 import * as echarts from 'echarts'
 
+import UnsavedGuard from '@/plugins/unsaved-guard';
+Vue.use(UnsavedGuard);
 
 
 

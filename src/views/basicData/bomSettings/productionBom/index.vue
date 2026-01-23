@@ -116,7 +116,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180" >
+          <el-table-column label="操作" width="180">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
@@ -200,6 +200,12 @@ export default {
   name: 'productionBom',
   components: { Form, ExportForm },
   mixins: [getProjectList],
+  props: {
+    approvalFlag: {
+      type: Boolean,
+      default: true
+    },
+  },
   data() {
     return {
       systemSearchView: [{
@@ -256,7 +262,9 @@ export default {
       tableData: [],
 
       listLoading: false,
-      listQuery: {},
+      listQuery: {
+        approvalFlag: this.approvalFlag,
+      },
       total: 0,
       treeLoading: true,
       treeData: [],

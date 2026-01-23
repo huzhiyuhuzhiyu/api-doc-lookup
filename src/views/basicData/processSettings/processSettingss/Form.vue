@@ -747,6 +747,8 @@ export default {
     window.addEventListener('resize', this.clientResize)
   },
   async created() {
+    this.$unsavedGuard.set(true, this.$route.fullPath);
+
     this.responseLoading = true
     await this.getProjectList()
     await this.getTechnicalSwitch('produce', 'technical_requirement')

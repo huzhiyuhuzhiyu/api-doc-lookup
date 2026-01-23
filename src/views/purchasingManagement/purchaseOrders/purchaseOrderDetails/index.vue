@@ -85,6 +85,8 @@
                 <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
+            <el-table-column prop="sealingCoverTyping" label="打字要求" width="180" />
+            <el-table-column prop="specialRequire" label="包装要求" width="180" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" align="center">
               <template slot-scope="scope">
                 <el-tag type="warning" v-if="scope.row.documentStatus === DocumentStatus.DRAFT">草稿</el-tag>

@@ -195,6 +195,8 @@ export default {
   },
   // 列表操作进入 走created
   created() {
+    this.$unsavedGuard.set(true, this.$route.fullPath);
+
     this.autoInit && this.init('', 'add')
   },
   methods: {

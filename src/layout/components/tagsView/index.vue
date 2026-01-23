@@ -223,10 +223,16 @@ export default {
       })
     },
     closeSelectedTag(view) {
+      const hasUnsaved = this.$unsavedGuard.get(view.fullPath);
+      if (hasUnsaved) {
+        const result = confirm('当前页面有未保存的内容，确定要关闭吗？');
+        if (!result) return;
+      }
       this.selectedTag = view
       this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
           this.toLastView(visitedViews, view)
+          this.$unsavedGuard.clear(view.fullPath);
         }
       })
     },
@@ -242,6 +248,7 @@ export default {
           return
         }
         this.toLastView(visitedViews, view)
+        this.$unsavedGuard.clearAll();
       })
     },
     toLastView(visitedViews, view) {

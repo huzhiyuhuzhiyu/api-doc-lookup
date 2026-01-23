@@ -1,5 +1,6 @@
 import { getcategoryTree } from "@/api/basicData/materialSettings";
 import { getHsProductsList } from "@/api/shipmentNote/hsCodes";
+import { getProcessList } from "@/api/basicData/processSettingss";
 
 /**
  * @description 成品型号表单数据
@@ -117,6 +118,50 @@ export function getBasicFormSchema(dataFormRef, context) {
         context.dataForm.hsProductsId = data[0].all.id
         context.dataForm.hsProductsCode = data[0].all.code
         context.dataForm.hsProductsName = data[0].all.name
+      },
+      sm: 12
+    },
+    {
+      prop: "routingName",
+      label: "工艺路线",
+      value: "",
+      type: "custom",
+      customComponent: "ComSelect-page",
+      itemRules: [{ required: true, trigger: "change" }],
+      title: '选择工艺路线',
+      renderTree: false,
+      multiple: false,
+      clearable: true,
+      listMethod: getProcessList,
+      tableItems: [
+        { prop: 'name', label: '工艺路线名称', minWidth: '220px', sortable: 'custom' },
+        { prop: 'code', label: '工艺路线编码', minWidth: '220px', sortable: 'custom' },
+      ],
+      listRequestObj: {
+        code: "",
+        name: "",
+        documentStatus: "submit",
+        source: "production",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ]
+      },
+      searchList: [
+        { prop: 'name', label: '工艺路线名称', type: 'input' },
+        { prop: 'code', label: '工艺路线编码', type: 'input' },
+      ],
+      change: (id, data) => {
+        context.dataForm.routingId = data[0].all.id;
+        context.dataForm.routingName = data[0].all.name;
       },
       sm: 12
     },

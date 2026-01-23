@@ -74,6 +74,40 @@ export default {
     getAlign(align) {
       return align || 'left'
     },
+    getCellBackgroundColor({ column }) {
+      const prop = column.property;
+
+      const colorMap = [
+        {
+          props: ['randomConfirmedStatus', 'randomTreatmentResults'],
+          color: '#e6f7ee'
+        },
+        {
+          props: ['fullConfirmedStatus', 'fullTreatmentResults', 'patrolInspectionDate'],
+          color: '#d1e4ff'
+        },
+        {
+          props: ['typingQualifiedQuantity', 'waitTypingQuantity', 'typingDate'],
+          color: '#f5e6d3'
+        },
+        {
+          props: ['packingQualifiedQuantity', 'waitPackingQuantity', 'packingDate'],
+          color: '#d4edda'
+        },
+        {
+          props: ['packQuantity', 'waitPackQuantity', 'packDate'],
+          color: '#fff9db'
+        }
+      ];
+
+      for (const group of colorMap) {
+        if (group.props.includes(prop)) {
+          return { backgroundColor: group.color };
+        }
+      }
+
+      return {};
+    }
   }
 }
 </script>
@@ -119,6 +153,7 @@ export default {
           :listQuery="listQuery"
           @queryChange="initData"
           :queryJson="superQueryJson"
+          :cell-style="getCellBackgroundColor"
         >
           <template v-for="column in columnsConfig">
             <el-table-column

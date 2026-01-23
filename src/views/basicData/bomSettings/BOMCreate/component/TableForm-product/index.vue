@@ -149,7 +149,7 @@ export default {
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'code', label: '子件编码', width: 160 },
-        { prop: 'drawingNo', label: '子件规格' },
+        { prop: 'drawingNo', label: '型号' },
         // { prop: 'name', label: '子件名称' },
         { prop: 'classTypeName', label: '子件类型' },
         // { prop: 'spec', label: '规格型号' },
@@ -158,7 +158,7 @@ export default {
       ProductTableSearchList: [
         { prop: 'productCode', label: '子件编码', type: 'input' },
         // { prop: 'productName', label: '子件名称' },
-        { prop: 'productDrawingNo', label: '子件规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
 
         // { prop: "name", label: "产品名称", type: 'input' },
       ] // 产品选择弹出框搜索条件
@@ -326,14 +326,14 @@ export default {
       this.ProductTableItems = [
         { prop: 'code', label: '子件编码', width: 160 },
         { prop: 'name', label: '子件名称', width: 160 },
-        { prop: 'drawingNo', label: '子件规格', width: 160 },
+        { prop: 'drawingNo', label: '型号', width: 160 },
         { prop: 'classTypeName', label: '子件类型' },
         { prop: 'classAttributeName', label: '子件分类' }
       ]
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '子件编码', type: 'input' },
         { prop: 'productName', label: '子件名称', type: 'input' },
-        { prop: 'productDrawingNo', label: '子件规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
       ]
       // if (this.isProductNameSwitch === '1') {
       //   this.ProductTableItems.splice(1, 0, { prop: 'name', label: '子件名称' })

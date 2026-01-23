@@ -61,7 +61,7 @@ export function getColumns() {
       minWidth: 120,
     },
     {
-      prop: 'deliveryDate',
+      prop: 'confirmDate',
       label: '确认日期',
       minWidth: 120,
     },

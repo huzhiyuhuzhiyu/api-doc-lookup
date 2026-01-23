@@ -37,3 +37,12 @@ export function getChangeRecordListPage(data) {
     data: data
   })
 }
+
+// 采购图纸历史确认
+export function getHistoricalDrawings(productsId) {
+  return request({
+    url: `/api/erp/purPurchaseDrawing/historical/drawings/view/${productsId}`,
+    method: 'GET',
+  })
+}
+

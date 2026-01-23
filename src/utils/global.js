@@ -64,7 +64,7 @@ const global = {
     { label: "生产", value: "produce", type: "success" },
     { label: "采购", value: "purchase", type: "danger" },
     { label: "外协", value: "out", type: "danger" },
-    { label: "虚拟组装", value: "virtual_assemble", type: "processing" },
+    // { label: "虚拟组装", value: "virtual_assemble", type: "processing" },
   ],
 
   // 产品类型
@@ -330,6 +330,13 @@ const global = {
   reInspectionStatus: [
     { label: '未确认', value: 'not_confirm', type: 'danger' },
     { label: '已确认', value: 'confirm', type: 'success' },
+  ],
+  // 对账状态
+  reconciliationStatus: [
+    // { label: '未对账', value: 'not_reconciled', type: 'danger' },
+    { label: '已对账', value: 'reconciled', type: 'success' },
+    { label: '已开票', value: 'invoiced', type: 'warning' },
+    { label: '已付款', value: 'already_paid', type: 'info' }
   ],
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {

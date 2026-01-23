@@ -539,6 +539,7 @@ export default {
             { prop: 'name', label: '机型', minWidth: '180px' },
             { prop: 'cooperativePartnerCode', label: '客户编码', minWidth: '180px', sortable: 'custom' },
             { prop: 'cooperativePartnerName', label: '客户名称', minWidth: '180px', sortable: 'custom' },
+            { prop: 'num', label: '数量', minWidth: '160px', },
           ],
           searchList: [
             { prop: 'name', label: '机型', type: 'input' },
@@ -961,11 +962,14 @@ export default {
             return;
           }
 
+          const assemblingUnitNum = parseFloat(selectedItem.num) || 1;
+
           const res = await getBusinessComponent(selectedItem.id);
           const { businessComponentLineList } = res.data
 
           const newLines = businessComponentLineList.map(sub => {
             const base = createEmptyObject(this.linesListItems);
+            const actualNum = this.jnpf.math('*', [assemblingUnitNum, sub.qty])
             return {
               ...base,
               productName: sub.productsName,
@@ -973,6 +977,7 @@ export default {
               drawingNo: sub.productsDrawingNo,
               oil: selectedItem.name,
               taxRate: '13',
+              num: actualNum,
             };
           });
 
@@ -1201,7 +1206,11 @@ export default {
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct"/>
+      <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct">
+        <template #num="{row}" v-if="this.productRefType === 'assemblingUnit'">
+          <el-input-number v-model="row.num" :controls="false" :min="1" :max="99999"></el-input-number>
+        </template>
+      </ComSelect-page>
       <TypingEditorDialog
         :visible.sync="showDialog"
         :linesFormList="linesList"

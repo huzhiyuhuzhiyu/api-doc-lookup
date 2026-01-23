@@ -109,7 +109,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       disabled: true,
     },
     {
-      prop: "deliveryDate",
+      prop: "confirmDate",
       label: "确认日期",
       value: "",
       type: "date",
@@ -232,7 +232,7 @@ export function getColumns() {
     },
     {
       prop: 'drawingNo',
-      label: '产品型号',
+      label: '型号',
       minWidth: 220,
     },
     {
@@ -258,11 +258,6 @@ export function getColumns() {
     {
       prop: 'orderDate',
       label: '下单日期',
-      minWidth: 120,
-    },
-    {
-      prop: 'deliveryDate',
-      label: '确认日期',
       minWidth: 120,
     },
     {

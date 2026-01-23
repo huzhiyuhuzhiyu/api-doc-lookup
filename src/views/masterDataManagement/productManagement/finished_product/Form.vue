@@ -34,6 +34,8 @@ export default {
         productCategoryId: '',
         productCategoryName: '',
         hsProductsId: '',
+        routingId: '',
+        routingName: '',
         productSource: 'assemble',
         sealingCoverTyping: '',
         remark: '',

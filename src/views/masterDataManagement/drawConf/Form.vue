@@ -3,26 +3,47 @@ import { deepClone } from "@/utils";
 import { getBasicFormSchema } from "./data";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
+import HistoricalDrawings from "./historicalDrawings.vue";
 import { addPurPurchaseDrawing, getPurPurchaseDrawing } from "@/api/drawConf";
 
 export default {
   name: "Form",
+  components: { HistoricalDrawings },
   mixins: [flowMixin, busFlow],
   data() {
     return {
       title: '图纸确认',
       btnType: '',
       loading: false,
+      historicalDrawingsVisible: false,
       btnLoading: false,
       dataForm: {
-        code: '',
-        name: '',
+        purchaseOrderNo: '',
+        purchaser: '',
+        cooperativePartnerName: '',
+        cooperativePartnerCode: '',
+        cooperativePartnerPhone: '',
+        cooperativePartnerFax: '',
+        cooperativePartnerContacts: '',
+        cooperativePartnerMobilePhone: '',
+        cooperativePartnerEmail: '',
         drawingNo: '',
-        tradeName: '',
-        purpose: '',
-        type: '',
-        brand: '',
-        remark: '',
+        productName: '',
+        customerProductDrawingNo: '',
+        orderDate: null,
+        confirmDate: null,
+        sizeReportFlag: false,
+        heatTreatmentReportFlag: false,
+        materialReportFlag: false,
+        paralympicReportFlag: false,
+        ultrasonicDetectionReportFlag: false,
+        annealingSpectrumFlag: false,
+        quenchingPatternFlag: false,
+        ppapFlag: false,
+        paymentTerms: '',
+        qualityRequirements: '',
+        sealingCoverTyping: '',
+        remark: ''
       },
       fileList: [],
       basicFormSchema: getBasicFormSchema(this.$refs.dataForm, this),
@@ -61,13 +82,23 @@ export default {
         this.$refs.dataForm.$refs.main.clearValidate()
       })
     },
+    handleQuoteCallBack(data) {
+      this.fileList = this.fileListMap('', data?.attachmentList)
+    },
+    handleHistoricalSubmit() {
+      this.historicalDrawingsVisible = true
+    },
     async getDetail(params) {
       this.loading = true
       try {
         const res = await getPurPurchaseDrawing(params)
         const { msg, data } = res
         if (msg === 'Success') {
-          this.dataForm = data
+          this.dataForm = {
+            ...this.dataForm,
+            ...data,
+            confirmDate: this.jnpf.getToday()
+          }
           this.fileList = this.fileListMap('', data.attachmentList)
           this.loading = false
         }
@@ -170,9 +201,9 @@ export default {
             <el-button type="primary" :loading="btnLoading" @click="handleSubmit('last_confirmed')">
               按上次已确认图纸
             </el-button>
-            <!--                <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">-->
-            <!--                  历史确认-->
-            <!--                </el-button>-->
+            <el-button type="primary" :loading="btnLoading" @click="handleHistoricalSubmit()">
+              历史确认
+            </el-button>
             <el-button type="primary" :loading="btnLoading" @click="handleSubmit('confirmed')">
               保存并提交
             </el-button>
@@ -198,6 +229,7 @@ export default {
           </el-tab-pane>
         </el-tabs>
       </div>
+      <HistoricalDrawings :visible.sync="historicalDrawingsVisible" :formData="dataForm" @quoteClick="handleQuoteCallBack"/>
     </div>
   </transition>
 </template>

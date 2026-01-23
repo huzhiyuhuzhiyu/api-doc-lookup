@@ -108,6 +108,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="productionLineName" label="产线" min-width="120"/>
+          <el-table-column prop="routingName" label="工艺路线" min-width="120"/>
           <el-table-column prop="customerProductDrawingNo" label="客户型号" min-width="220"/>
           <el-table-column prop="createTime" label="创建时间" min-width="180" />
           <el-table-column prop="createByName" label="创建人" />

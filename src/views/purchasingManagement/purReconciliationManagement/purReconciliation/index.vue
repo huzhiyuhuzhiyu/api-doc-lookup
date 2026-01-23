@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="tableForm" />
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" :searchList="searchList" tableRef="tableForm" />
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div></div>
@@ -199,6 +199,14 @@ export default {
           ]
         },
       }],
+      searchList: [
+        {
+          prop: 'billStatus',
+          label: '对账状态',
+          type: 'select',
+          options: this.global.reconciliationStatus
+        },
+      ],
       columnList: [],
       withdrawnVisible: false,
       title: '更多查询',
@@ -208,11 +216,11 @@ export default {
       listLoading: false,
       listQuery: {
         reconciliationType: 'payable',
+        billStatus: 'reconciled',
         active: true,
         ...this.queryObject,
       },
       total: 0,
-      superQueryVisible: false,
       superQueryJson: [],
       showAppCodeFlag: true
     }

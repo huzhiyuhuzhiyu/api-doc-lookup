@@ -8,5 +8,5 @@ export default {
 </script>
 
 <template>
-  <incomingWasteCreate :paramsObj="{responsibilityWasteQuantityFlag:true}" type="process"/>
+  <incomingWasteCreate :paramsObj="{responsibilityWasteQuantityFlag:true}" type="responsibility"/>
 </template>

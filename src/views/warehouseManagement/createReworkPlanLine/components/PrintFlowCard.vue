@@ -20,7 +20,7 @@
         >
           <el-col :span="12">
             <el-form-item label="生产数量：" prop="productionQuantity">
-              <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量" />
+              <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -49,15 +49,11 @@
         :checkSelectable="row => !row.selectFlag"
         customKey="JNPFTableKey_PrintFlowCard"
       >
-        <el-table-column prop="orderNo" label="工单号" min-width="160" />
-        <el-table-column prop="processName" label="工序名称" min-width="120" />
-        <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
+        <el-table-column prop="orderNo" label="任务单号" min-width="160"/>
         <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
         <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
         <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
         <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
-        <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
-        <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
       </JNPF-table>
 
       <span slot="footer" class="dialog-footer">
@@ -86,8 +82,8 @@
 </template>
 
 <script>
-import { detailordershengchan } from '@/api/productOrdes/index.js'
-import { getPrintList, getPrintBusInfo } from '@/api/system/printDev'
+import { getOrderSplitCardList } from '@/api/productOrdes/index.js'
+import { getPrintBusInfo, getPrintList } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 
 export default {
@@ -168,15 +164,15 @@ export default {
         this.tableLoading = true
 
         const [workOrderRes, printListRes] = await Promise.all([
-          detailordershengchan(this.selectedRows[0].id),
+          getOrderSplitCardList(this.selectedRows[0].id),
           getPrintList(this.printQuery)
         ])
 
-        if (workOrderRes.data?.workOrderList) {
-          workOrderRes.data.workOrderList.forEach(item => {
+        if (workOrderRes.data) {
+          workOrderRes.data.forEach(item => {
             item.selectFlag = false
           })
-          this.workOrderList = workOrderRes.data.workOrderList
+          this.workOrderList = workOrderRes.data
         }
 
         if (printListRes.data?.[this.enCode]) {
@@ -189,7 +185,7 @@ export default {
             }
           }
         }
-      } catch (error) {
+      } catch ( error ) {
         console.error('初始化数据失败:', error)
         this.$message.error('数据加载失败，请稍后重试')
       } finally {
@@ -244,7 +240,7 @@ export default {
         } else {
           this.$message.warning('未找到相应打印模版')
         }
-      } catch (error) {
+      } catch ( error ) {
         if (error !== 'cancel') {
           this.$message.error('打印操作失败，请稍后重试')
         }

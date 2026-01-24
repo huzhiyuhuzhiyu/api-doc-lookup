@@ -187,6 +187,11 @@ export default {
           this.$message.warning('选中的箱列表中包含已装托的项，不可重复装托');
           return;
         }
+        const planPackageIds = [...new Set(this.selectedSingleBoxList.map(item => item.documentId))];
+        if (planPackageIds.length > 1) {
+          this.$message.warning('只能对同一个包装计划下的箱进行合并装托');
+          return;
+        }
         const stockPlanPalletLineList = this.selectedSingleBoxList.map(item => ({
           ...item,
           documentId: item.planPackageId,

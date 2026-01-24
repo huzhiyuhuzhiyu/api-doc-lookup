@@ -83,7 +83,7 @@ import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
 import { getcooperativeProduct, uploadProduct } from "@/api/salesManagement/assemblyOrders";
 import { getProducts } from "@/api/masterDataManagement";
-import { getQuotationInfo } from "@/api/salesManagement/index";
+import { getQuotationDetailMinimum, getQuotationInfo } from "@/api/salesManagement/index";
 import { submitWaitEnquiryData } from '@/api/enquiryManagement/waitEnquiry'
 import { getEnquiryManagementInfo, getEnquiryManagementList } from '@/api/enquiryManagement/index'
 
@@ -688,7 +688,7 @@ export default {
     async getDetail(id) {
       this.loading = true
       try {
-        const res = await getQuotationInfo(id)
+        const res = await getQuotationDetailMinimum(id)
         const { msg, data } = res
         if (msg === 'Success') {
           this.dataForm = Object.assign(this.dataForm, data.sale, {

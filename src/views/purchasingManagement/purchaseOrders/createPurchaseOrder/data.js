@@ -139,6 +139,12 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "date",
       itemRules: [{required: true, trigger: "blur"}],
+      change: () => {
+        if (!context.linesList.length) return
+        context.linesList.forEach(item => {
+          item.demandDate = context.dataForm.deliveryDate || ''
+        })
+      }
     }
   ]
 }

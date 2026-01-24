@@ -8,5 +8,5 @@ export default {
 </script>
 
 <template>
-  <incomingWasteCreate inspectionMethod="spot_check"/>
+  <incomingWasteCreate :paramsObj="{materialWasteQuantityFlag:true}" type="material"/>
 </template>

@@ -156,6 +156,13 @@ export default {
           minWidth: 170,
         },
         {
+          prop: 'clearance',
+          label: '品牌',
+          type: 'select',
+          options: this.getDictDataSync('brand'),
+          minWidth: 150,
+        },
+        {
           prop: 'oil',
           label: '机型',
           type: 'view',

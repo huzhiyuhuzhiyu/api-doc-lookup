@@ -1803,7 +1803,9 @@ export default {
         this.fetchData('CGSH')
         this.dataForm.salesman = this.userInfo.userName
         this.dataForm.deliverDate = this.jnpf.getToday()
-        this.dataForm.source = sourceList[0]
+        if (!data.length) {
+          this.dataForm.source = sourceList[0]
+        }
         this.getBusInfo()
       }
       if (this.btnType == 'edit') {
@@ -2060,9 +2062,9 @@ export default {
               this.$nextTick(() => {
                 this.$refs.printTemplate.init(this.enCode)
               })
-            } else {
-              this.tipsvisible = true
             }
+            this.btnLoading = false
+            this.$emit('close',true)
           })
           .catch(() => {
             this.btnLoading = false

@@ -321,7 +321,7 @@ export default {
       return this.btnType === 'arrange' ? '编排数量' : '生产数量';
     },
     isShowMaterialList() {
-      return this.dataForm.productSource === 'assemble'
+      return this.dataForm.materialFlag
     }
   },
   mounted() {

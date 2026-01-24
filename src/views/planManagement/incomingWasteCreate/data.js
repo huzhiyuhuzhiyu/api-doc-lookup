@@ -8,28 +8,47 @@ export const buttonList = [
   }
 ]
 
-export function getColumns() {
+const SCRAP_CONFIG = {
+  process: {
+    label: '工废',
+    quantityProp: 'processScrapQty'
+  },
+  material: {
+    label: '料废',
+    quantityProp: 'materialWasteQuantity'
+  },
+  responsibility: {
+    label: '责废',
+    quantityProp: 'responsibilityWasteQuantity'
+  }
+};
+
+export function getColumns(type) {
+
+  const { label, quantityProp } = SCRAP_CONFIG[type];
+  const scrapLabel = `${ label }数量`;
+
   return [
+    // {
+    //   prop: "incomingDate",
+    //   label: "来料日期",
+    //   minWidth: 150,
+    // },
     {
-      prop: "incomingDate",
-      label: "来料日期",
-      minWidth: 150,
-    },
-    {
-      prop: "personInCharge",
+      prop: "inspectorName",
       label: "负责人",
       minWidth: 120,
     },
-    {
-      prop: "supplierCode",
-      label: "供应商编号",
-      minWidth: 180,
-    },
-    {
-      prop: "supplierName",
-      label: "供应商名称",
-      minWidth: 180,
-    },
+    // {
+    //   prop: "supplierCode",
+    //   label: "供应商编号",
+    //   minWidth: 180,
+    // },
+    // {
+    //   prop: "supplierName",
+    //   label: "供应商名称",
+    //   minWidth: 180,
+    // },
     {
       prop: "productCode",
       label: "产品编号",
@@ -41,12 +60,12 @@ export function getColumns() {
       minWidth: 180,
     },
     {
-      prop: "productModel",
-      label: "产品型号",
+      prop: "productDrawingNo",
+      label: "型号",
       minWidth: 220,
     },
     {
-      prop: "productTypeName",
+      prop: "productCategoryName",
       label: "产品分类",
       minWidth: 160,
     },
@@ -60,14 +79,14 @@ export function getColumns() {
       label: "检验数量",
       minWidth: 160,
     },
+    // {
+    //   prop: "qualifiedQuantity",
+    //   label: "合格数量",
+    //   minWidth: 160,
+    // },
     {
-      prop: "qualifiedQuantity",
-      label: "合格数量",
-      minWidth: 160,
-    },
-    {
-      prop: "reworkQuantity",
-      label: "工费数量",
+      prop: quantityProp,
+      label: scrapLabel,
       minWidth: 160,
     },
     {

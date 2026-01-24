@@ -149,6 +149,14 @@ export function detailordershengchan(id) {
   })
 }
 
+// 生产任务-根据来源ID查询分卡列表
+export function getOrderSplitCardList(id) {
+  return request({
+    url: `/api/mrp/prod/order/split/card/list/${id}`,
+    method: 'GET'
+  })
+}
+
 // 成品变更流程卡  列表
 export function finishChangeList(data) {
   return request({

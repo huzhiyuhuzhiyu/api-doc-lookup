@@ -70,38 +70,38 @@
         <JNPF-table @selection-change="handeleProductInfoData" hasC highlight-current-row v-if="isProjectSwitchFlag"
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable" customKey="JNPFTableKey_843476">
-          <el-table-column prop="orderNo" label="出入库单号" min-width="200" sortable="custom" />
-          <el-table-column prop="saleOrderNo" label="销售订单号" min-width="200" sortable="custom" />
-          <el-table-column prop="saleNoticeNo" label="销售通知单号" min-width="200" sortable="custom" />
-          <el-table-column prop="deliverDate" label="发货日期" min-width="200" sortable="custom" />
+          <el-table-column prop="ordersNo" label="销售订单号" min-width="200" sortable="custom" />
+<!--          <el-table-column prop="saleOrderNo" label="销售订单号" min-width="200" sortable="custom" />-->
+          <el-table-column prop="orderNo" label="销售通知单号" min-width="200" sortable="custom" />
+          <el-table-column prop="deliveryCompletionDate" label="发货日期" min-width="200" sortable="custom" />
           <el-table-column prop="customerProductNo" label="客户料号" min-width="200" sortable="custom" />
           <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="drawingNo" label="型号" min-width="180" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="型号" min-width="180" sortable="custom" />
             <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
           <!-- <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" /> -->
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="businessType" label="发/退货类型" min-width="150" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.businessType == 'outbound_sale_send'">发货</div>
-              <div v-else-if="scope.row.businessType == 'inbound_sale_return'">退货</div>
+              <div v-if="scope.row.businessType == 'delivery'">发货</div>
+              <div v-else-if="scope.row.businessType == 'back'">退货</div>
             </template>
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="num" label="出入库数量" min-width="120" >
             <template slot-scope="scope">
-              <div v-if="scope.row.businessType == 'outbound_sale_send'" style="color: #67C23A">+{{
+              <div v-if="scope.row.businessType == 'delivery'" style="color: #67C23A">+{{
                 scope.row.num }}</div>
-              <div v-else-if="scope.row.businessType == 'inbound_sale_return'" style="color:red">-{{
+              <div v-else-if="scope.row.businessType == 'back'" style="color:red">-{{
                 scope.row.num
               }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="costPrice" label="单价(含税)" min-width="120" />
+          <el-table-column prop="price" label="单价(含税)" min-width="120" />
           <el-table-column prop="taxRate" label="税率" min-width="80">
             <template slot-scope="scope">
               <div>{{ scope.row.taxRate }}%</div>
@@ -109,9 +109,9 @@
           </el-table-column>
           <el-table-column prop="totalAmount" label="金额" min-width="80">
             <template slot-scope="scope">
-              <div v-if="scope.row.businessType == 'outbound_sale_send'" style="color: #67C23A">+{{
+              <div v-if="scope.row.businessType == 'delivery'" style="color: #67C23A">+{{
                 scope.row.totalAmount }}</div>
-              <div v-else-if="scope.row.businessType == 'inbound_sale_return'" style="color:red">-{{
+              <div v-else-if="scope.row.businessType == 'back'" style="color:red">-{{
                 scope.row.totalAmount
               }}</div>
             </template>
@@ -158,6 +158,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import {
    getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
+import { linesReceiptGoods } from "@/api/purchasingManagement/purchaseInquirySheet";
 export default {
   name: 'salefinAccount',
   mixins: [getProjectList],
@@ -194,19 +195,23 @@ export default {
         pageNum: 1,
         pageSize: 20,
         partnerName: "",
-        businessType: 'send_return',
+        // businessType: 'send_return',
+        notifyType: "sale",
+        returnDeliveryType: "delivery",
         superQuery: {},
         deliverStartDate:"",
         deliverEndDate:"",
+        billStatus:"no_billing",
+        deliveryStatus:"finished"
       },
       receiptReturnTypeList: [
         {
           label: '发货',
-          value: 'outbound_sale_send'
+          value: 'delivery'
         },
         {
           label: '退货',
-          value: 'inbound_sale_return'
+          value: 'back'
         },
       ],
       createRequirementDate: [],
@@ -558,9 +563,9 @@ export default {
       function calculateTotalValue(arr) {
         return arr.reduce((sum, item) => {
           const value = Number(item.totalAmount); // 将 value 转换为数字
-          if (item.businessType === 'outbound_sale_send') {
+          if (item.businessType === 'delivery') {
             return sum + value;  // 对于 '正', 加上 value
-          } else if (item.businessType === 'inbound_sale_return') {
+          } else if (item.businessType === 'back') {
             return sum - value;   // 对于 '负', 减去 value
           }
           return sum;  // 默认情况，无需改变 sum
@@ -573,8 +578,8 @@ export default {
       }
       this.totalNum = this.selectData.reduce((sum, e) => sum + Number(e.num || 0), 0)
       this.totalTotalAmount = calculateTotalValue(this.selectData)
-      this.InTotalNum = calculateSum(this.selectData, 'outbound_sale_send')
-      this.outTotalNum = calculateSum(this.selectData, 'inbound_sale_return')
+      this.InTotalNum = calculateSum(this.selectData, 'delivery')
+      this.outTotalNum = calculateSum(this.selectData, 'back')
 
     },
     moreQueries() {
@@ -632,7 +637,7 @@ export default {
       if (localStorage.getItem('loginTenant')) {
         this.listQuery.tenant = localStorage.getItem('loginTenant')
       }
-      getsalefinAccountList(this.listQuery).then(res => {
+      linesReceiptGoods(this.listQuery).then(res => {
         console.log(res, '销售发/退货列表');
         res.data.records.forEach(item => {
           // if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
@@ -640,11 +645,11 @@ export default {
           // } else {
           //   item.disabled = fals
           // }
-          item.excludingTaxAmount = this.jnpf.numberFormat(item.actualQuantity * item.price)
+          item.businessType = item.returnDeliveryType
+          item.num = item.outboundQuantity
         });
 
         this.tableDataList = res.data.records
-        console.log("this.tableDataList ", this.tableDataList);
         this.total = res.data.total
         this.listLoading = false
         this.visible = false

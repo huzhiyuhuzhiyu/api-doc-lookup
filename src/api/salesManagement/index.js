@@ -161,6 +161,13 @@ export function getQuotationInfo (id) {
     method: 'get',
   })
 }
+// 详情
+export function getQuotationDetailMinimum (id) {
+  return request({
+    url: `/api/erp/sale/quotation/detail/minimum/${id}`,
+    method: 'get',
+  })
+}
 // 销售报价-提交
 export function submitSaleQuotation (id) {
   return request({

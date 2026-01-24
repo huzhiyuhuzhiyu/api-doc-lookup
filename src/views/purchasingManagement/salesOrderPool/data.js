@@ -104,11 +104,11 @@ export function getColumns() {
       label: "产品编码",
       minWidth: 200
     },
-    {
-      prop: "customerProductDrawingNo",
-      label: "客户型号",
-      minWidth: 200
-    },
+    // {
+    //   prop: "customerProductDrawingNo",
+    //   label: "客户型号",
+    //   minWidth: 200
+    // },
     {
       prop: "vibrationLevel",
       label: "图纸版本号",

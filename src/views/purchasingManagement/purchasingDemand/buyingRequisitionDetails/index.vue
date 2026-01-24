@@ -28,7 +28,7 @@ export default {
             },
             {
               asc: false,
-              column: 't1.create_time'
+              column: 'createTime'
             }
           ]
         },

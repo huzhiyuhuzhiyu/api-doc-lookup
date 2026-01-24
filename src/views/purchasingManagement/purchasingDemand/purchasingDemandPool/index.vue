@@ -132,23 +132,23 @@
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
 
-          <el-table-column label="操作" min-width="180" fixed="right">
-            <template slot-scope="scope">
-              <el-button size="mini" type="text" :disabled="scope.row.demandStatus === 'finished'" @click="withdrawFun(scope.row.id,)">撤回</el-button>
-              <!-- <el-dropdown hide-on-click>
-                <span class="el-dropdown-link">
-                  <el-button type="text" size="mini">
-                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                  </el-button>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                    查看详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown> -->
-            </template>
-          </el-table-column>
+<!--          <el-table-column label="操作" min-width="180" fixed="right">-->
+<!--            <template slot-scope="scope">-->
+<!--&lt;!&ndash;              <el-button size="mini" type="text" :disabled="scope.row.demandStatus === 'finished'" @click="withdrawFun(scope.row.id,)">撤回</el-button>&ndash;&gt;-->
+<!--              &lt;!&ndash; <el-dropdown hide-on-click>-->
+<!--                <span class="el-dropdown-link">-->
+<!--                  <el-button type="text" size="mini">-->
+<!--                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+<!--                  </el-button>-->
+<!--                </span>-->
+<!--                <el-dropdown-menu slot="dropdown">-->
+<!--                  <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">-->
+<!--                    查看详情-->
+<!--                  </el-dropdown-item>-->
+<!--                </el-dropdown-menu>-->
+<!--              </el-dropdown> &ndash;&gt;-->
+<!--            </template>-->
+<!--          </el-table-column>-->
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />

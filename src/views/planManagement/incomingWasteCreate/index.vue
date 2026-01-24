@@ -5,9 +5,14 @@ import { getInspectionList } from "@/api/inspectionManagement";
 export default {
   name: "index",
   props: {
-    inspectionMethod: {
+    paramsObj: {
+      type: Object,
+      default: () => {
+      }
+    },
+    type: {
       type: String,
-      default: ''
+      required: true,
     }
   },
   data() {
@@ -41,14 +46,14 @@ export default {
       btnList: buttonList,
       superQueryJson: [],
       listQuery: {
-        inspectionMethod: this.inspectionMethod,
-        notificationType: 'work_report',
-        inspectStatus: 'wait_confirmed'
+        ...this.paramsObj,
+        notificationType: 'finished',
+        inspectStatus: 'confirmed'
       },
       tableData: [],
       total: 0,
       columnList: [],
-      columnsConfig: getColumns(),
+      columnsConfig: getColumns(this.type),
       selectedRow: []
     }
   },
@@ -176,11 +181,11 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" width="120" fixed="right">
-            <template slot-scope="{ row }">
+<!--          <el-table-column label="操作" width="120" fixed="right">-->
+<!--            <template slot-scope="{ row }">-->
 
-            </template>
-          </el-table-column>
+<!--            </template>-->
+<!--          </el-table-column>-->
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
         />

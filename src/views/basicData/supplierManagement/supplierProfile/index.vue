@@ -931,7 +931,7 @@ export default {
           exportName: '供应商管理信息',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.form.pageSize : -1,
-          totalRowFlag: true
+          totalRowFlag: false
         }
         excelExport(_data)
           .then((res) => {

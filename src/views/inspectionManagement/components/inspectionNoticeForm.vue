@@ -437,27 +437,6 @@ export default {
           ]
         },
         {
-          prop: 'inspectionResults',
-          label: '检验结果',
-          value: undefined,
-          type: 'select',
-          options: [{label: '合格', value: 'qualified'}, {label: '不合格', value: 'unqualified'}],
-          itemDisabled: this.dataForm.inspectionMethod == 'exempt' || this.openMode === '只读',
-          change: this.inspectionResultsChange,
-          itemRules: [{required: true, trigger: 'change'}],
-          sm: 6
-        },
-        {
-          prop: 'treatmentResults',
-          label: '处理结果',
-          value: undefined,
-          type: 'select',
-          options: [{label: '全检', value: 'full_inspection'}, {label: '退货', value: 'back'}],
-          itemRules: [{required: true, trigger: 'change'}],
-          render: this.isWorkReport && this.dataForm.inspectionResults === 'unqualified',
-          sm: 6
-        },
-        {
           prop: 'unqualifiedQuantity',
           label: '不合格数量',
           value: '',
@@ -513,6 +492,27 @@ export default {
           type: 'input',
           sm: 6,
           render: this.isFinished,
+        },
+        {
+          prop: 'inspectionResults',
+          label: '检验结果',
+          value: undefined,
+          type: 'select',
+          options: [{label: '合格', value: 'qualified'}, {label: '不合格', value: 'unqualified'}],
+          itemDisabled: this.dataForm.inspectionMethod == 'exempt' || this.openMode === '只读',
+          change: this.inspectionResultsChange,
+          itemRules: [{required: true, trigger: 'change'}],
+          sm: 6
+        },
+        {
+          prop: 'treatmentResults',
+          label: '处理结果',
+          value: undefined,
+          type: 'select',
+          options: [{label: '全检', value: 'full_inspection'}, {label: '退货', value: 'back'}],
+          itemRules: [{required: true, trigger: 'change'}],
+          render: this.isWorkReport && this.dataForm.inspectionResults === 'unqualified',
+          sm: 6
         },
         // {
         //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 6, multiple: true,

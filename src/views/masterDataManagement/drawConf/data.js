@@ -209,15 +209,9 @@ export function getBasicFormSchema(dataFormRef, context) {
 
 export function getColumns() {
   return [
-    // {
-    //   prop: 'purchaseOrderNo',
-    //   label: '采购单号',
-    //   minWidth: 120,
-    //
-    // },
     {
       prop: 'purchaseOrderNo',
-      label: '订单号',
+      label: '采购单号',
       minWidth: 180,
     },
     {
@@ -247,12 +241,12 @@ export function getColumns() {
     },
     {
       prop: 'cooperativePartnerCode',
-      label: '客户编码',
+      label: '供应商编码',
       minWidth: 180,
     },
     {
       prop: 'cooperativePartnerName',
-      label: '客户名称',
+      label: '供应商名称',
       minWidth: 180,
     },
     {

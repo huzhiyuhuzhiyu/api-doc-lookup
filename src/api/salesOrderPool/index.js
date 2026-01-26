@@ -26,3 +26,12 @@ export function addPurProcurementDemandPool(data) {
     data: data
   })
 }
+
+// 销售需求池 转生产
+export function saleTransferProduction(data) {
+  return request({
+    url: '/api/erp/sale/orders/line/transfer/production',
+    method: 'post',
+    data: data
+  })
+}

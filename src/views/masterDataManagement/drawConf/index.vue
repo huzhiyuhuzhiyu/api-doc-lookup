@@ -5,6 +5,13 @@ import { getPurPurchaseDrawingPage } from "@/api/drawConf";
 
 export default {
   name: "index",
+  props: {
+    type: {
+      type: String,
+      required: true,
+      validator: (value) => ['purchase', 'produce'].includes(value)
+    }
+  },
   components: {
     Form
   },

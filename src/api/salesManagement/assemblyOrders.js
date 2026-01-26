@@ -88,6 +88,14 @@ export function issuePoolSaleLines(data) {
   })
 }
 
+// 销售订单创建 撤回
+export function withdrawTransferToProduction(id) {
+  return request({
+    url: `/api/erp/sale/orders/line/transfer/production/withdraw/${id}`,
+    method: 'put',
+  })
+}
+
 // 获取订单类型的编排属性
 export const getAttributeline = (type) => {
   return request({

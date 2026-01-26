@@ -507,7 +507,7 @@ export default {
             { prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom' }
           ],
           searchList: [
-            { prop: 'drawingNo', label: '型号', type: 'input' },
+            { prop: 'productDrawingNo', label: '型号', type: 'input' },
             { prop: 'name', label: '产品名称', type: 'input' },
           ],
           listRequestObj: () => ({

@@ -35,6 +35,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "需求数量",
       value: "",
       type: "input",
+      disabled: true,
       itemRules: [
         {
           validator: context.formValidate('noZero', '需求数量不能为0', (errMsg) => {

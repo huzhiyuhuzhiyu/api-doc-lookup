@@ -1103,7 +1103,7 @@ export default {
         documentStatus: "draft",
       },
       purchaseForm: {
-        demandType: "purchase",
+        demandTypeList: ['purchase', 'customer_supply'],
         demandState: "not_finish",
         orderItems: [{
           asc: false,

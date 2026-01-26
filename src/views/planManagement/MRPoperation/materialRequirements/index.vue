@@ -753,10 +753,9 @@ export default {
         productDrawingNo: "",
         planNo: "",
         immediatelyBuyFlag: "",
-        demandType: "purchase",
+        demandTypeList: ['purchase', 'customer_supply'],
         demandState: "not_finish",
         documentStatus: "submit",
-        planNo: "",
         planSed: "",
         planSsd: "",
         orderItems: [{

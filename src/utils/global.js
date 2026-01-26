@@ -64,6 +64,7 @@ const global = {
     { label: "生产", value: "produce", type: "success" },
     { label: "采购", value: "purchase", type: "danger" },
     { label: "外协", value: "out", type: "danger" },
+    { label: "客供", value: "customer_supply", type: "info" },
     // { label: "虚拟组装", value: "virtual_assemble", type: "processing" },
   ],
 

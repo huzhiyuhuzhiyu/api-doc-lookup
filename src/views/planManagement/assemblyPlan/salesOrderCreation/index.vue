@@ -108,10 +108,11 @@
             <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom"/>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"/>
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom"/>
-            <el-table-column label="操作" min-width="220" fixed="right">
+            <el-table-column label="操作" min-width="90" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click.native="printFun(scope.row.id)">打印备货工艺</el-button>
-                <el-button v-has="'btn_issuePoolSaleLines'" size="mini" type="text" @click="handleIssuePool(scope.row)">下达需求池</el-button>
+                <el-button size="mini" type="text" @click.native="handleWithdraw(scope.row)">撤回</el-button>
+<!--                <el-button size="mini" type="text" @click.native="printFun(scope.row.id)">打印备货工艺</el-button>-->
+<!--                <el-button v-has="'btn_issuePoolSaleLines'" size="mini" type="text" @click="handleIssuePool(scope.row)">下达需求池</el-button>-->
               </template>
             </el-table-column>
           </JNPF-table>
@@ -146,7 +147,7 @@
 
 <script>
 import { excelExport } from '@/api/basicData/index'
-import { deleteOrders, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
+import { deleteOrders, getsaleOrderDetailList, withdrawTransferToProduction } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -159,6 +160,7 @@ import tenantMinix from "@/mixins/generator/TenantMinix";
 import LssueRequirements from "@/views/planManagement/assemblyPlan/salesOrderCreation/module/LssueRequirements.vue";
 import { feedbackDeliveryOrderPool } from "@/api/salesOrderPool";
 import FeedbackEditDialog from "@/views/purchasingManagement/salesOrderPool/feedbackEditDialog.vue";
+import { getQueryConfirm } from "@/utils";
 
 export default {
   name: 'salesOrderCreation',
@@ -206,7 +208,6 @@ export default {
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
-        orderState: "recognised",
         approvalStatus: 'ok',
         canIssueFlag: true,
         orderItems: [{
@@ -350,6 +351,19 @@ export default {
     this.search('basic')
   },
   methods: {
+    async handleWithdraw(row) {
+      try {
+        await getQueryConfirm(this, '是否将该订单撤回转生产？')
+
+        await withdrawTransferToProduction(row.id);
+        this.$message.success('撤回成功')
+        await this.initData()
+      } catch ( error ) {
+        if (error !== 'cancel') {
+          this.$message.error('撤回失败，请稍后再试')
+        }
+      }
+    },
     async handleConfirm(selectedDate) {
       const params = {
         feedbackDeliveryDate: selectedDate,

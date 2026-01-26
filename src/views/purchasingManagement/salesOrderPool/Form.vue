@@ -3,7 +3,7 @@ import { deepClone } from "@/utils";
 import { getBasicFormSchema } from "./data";
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue';
 import { getBomByProductBomLine } from "@/api/basicData";
-import { addPurProcurementDemandPool } from "@/api/salesOrderPool";
+import { addPurProcurementDemandPool, saleTransferProduction } from "@/api/salesOrderPool";
 
 export default {
   name: "Form",
@@ -19,116 +19,116 @@ export default {
         drawingNo: '',
         productName: '',
         issuanceNum: '',
+        waitIssuanceNum: '',
         source: '',
       },
       basicFormSchema: [],
       linesList: [],
       linesListItems: [
-        {
-          prop: 'productDrawingNo',
-          label: '物料型号',
-          type: 'view',
-          minWidth: 160,
-        },
-        {
-          prop: 'productName',
-          label: '物料名称',
-          type: 'view',
-          minWidth: 160,
-        },
-        {
-          prop: 'deliveryDate',
-          label: '订单交期',
-          type: 'view',
-          minWidth: 160,
-        },
-        {
-          prop: 'planDemandQuantity',
-          label: '数量',
-          type: 'view',
-          minWidth: 90,
-        },
+        { prop: 'productDrawingNo', label: '物料型号', type: 'view', minWidth: 160 },
+        { prop: 'productName', label: '物料名称', type: 'view', minWidth: 160 },
+        { prop: 'deliveryDate', label: '订单交期', type: 'view', minWidth: 160 },
+        { prop: 'planDemandQuantity', label: '数量', type: 'view', minWidth: 90 },
       ],
       linesTableHeight: 0,
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'productInfo'],
+
       demandTypeMap: {
         product: {
           label: '成品需求',
           value: 'sale_order_finished_product',
+          api: addPurProcurementDemandPool,
+          hasBom: false,
         },
         component: {
           label: '子件需求',
           value: 'sale_order_material',
+          api: addPurProcurementDemandPool,
+          hasBom: true,
         },
         mainComponent: {
           label: '主子件需求',
           value: 'sale_order_finished_material',
+          api: addPurProcurementDemandPool,
+          hasBom: true,
         },
-      }
-    }
+        productionTransfer: {
+          label: '转生产',
+          value: '',
+          api: saleTransferProduction,
+          hasBom: false,
+          submitMode: 'transfer-array',
+        },
+      },
+      currentConfig: null,
+    };
   },
-  created() {
-  },
+
   mounted() {
-    this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this)
+    this.basicFormSchema = getBasicFormSchema(this.$refs.dataForm, this);
   },
+
   methods: {
     async init(row, type, productSource) {
-      this.btnType = type
-      this.isLinesShow = ['mainComponent', 'component'].includes(productSource)
-      this.title = this.getTitle(productSource)
-      this.dataForm = deepClone(row)
-      this.dataForm.source = this.demandTypeMap[productSource].value
-      if (this.isLinesShow) {
-        await this.getBomLine(row.productsId)
-      } else {
-        this.linesList = [row].map(item => {
-          return {
-            ...item,
-            planDemandQuantity: item.issuanceNum
-          }
-        })
+      const config = this.demandTypeMap[productSource];
+      if (!config) {
+        this.$message.error(`不支持的操作类型: ${ productSource }`);
+        return;
       }
+
+      this.currentConfig = config;
+      this.btnType = type;
+      this.isLinesShow = config.hasBom;
+      this.title = config.label;
+      this.dataForm = deepClone(row);
+      this.dataForm.source = config.value;
+
+      if (config.hasBom) {
+        await this.getBomLine(row.productsId);
+      } else {
+        this.linesList = [{
+          ...row,
+          planDemandQuantity: row.issuanceNum,
+        }];
+      }
+
       this.$nextTick(() => {
-        this.$refs.dataForm.$refs.main.clearValidate()
-        this.refreshTableHeight()
-      })
+        this.$refs.dataForm?.$refs.main?.clearValidate?.();
+        this.refreshTableHeight();
+      });
     },
 
     async refreshTableHeight(...args) {
-      if (args.length) await new Promise(resolve => setTimeout(resolve, 500))
-      const mainRef = this.$refs.main
-      const dataFormRegion = this.$refs.dataFormRegion
-      let maxHeight = mainRef.clientHeight - dataFormRegion.$el.offsetHeight
-      maxHeight -= 160 // 安全距离
-      maxHeight = maxHeight > 300 ? maxHeight : 300
-      this.linesTableHeight = maxHeight
-    },
+      if (args.length) await new Promise(resolve => setTimeout(resolve, 500));
+      const mainRef = this.$refs.main;
+      const dataFormRegion = this.$refs.dataFormRegion;
+      if (!mainRef || !dataFormRegion) return;
 
-    getTitle(type) {
-      return this.demandTypeMap[type].label
+      let maxHeight = mainRef.clientHeight - dataFormRegion.$el.offsetHeight - 160;
+      this.linesTableHeight = Math.max(maxHeight, 300);
     },
 
     calcQuantity(a, b, c, d) {
-      const _a = !a ? 1 : a
-      const _c = !c ? 1 : c
-      const result = +_a * +b * (1 + (+_c / 100)) + +d;
-      if (isNaN(result)) return
-      return Math.floor(result.toFixed(4));
+      const qty = parseFloat(a) || 1;
+      const lossRate = parseFloat(c) || 0;
+      const fixedLoss = parseFloat(d) || 0;
+      const result = qty * b * (1 + lossRate / 100) + fixedLoss;
+      return isNaN(result) ? 0 : Math.floor(result.toFixed(4));
     },
 
     async getBomLine(id) {
-      this.loading = true
+      this.loading = true;
       try {
-        const res = await getBomByProductBomLine(id)
+        const res = await getBomByProductBomLine(id);
         const { msg, data } = res
         if (msg === 'Success') {
           this.linesList = this.formatLinesList(data);
-          this.loading = false
         }
       } catch ( err ) {
-        this.loading = false
+        console.error('获取BOM失败:', err);
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -146,45 +146,54 @@ export default {
       }));
     },
 
-    updatePlanDemandQuantity() {
-      this.linesList = this.formatLinesList(this.linesList);
-    },
-
     async handleSubmit() {
-      if (!this.linesList.length) return this.$message.error('无BOM子件信息，无法提交！')
+      const { currentConfig, dataForm, linesList } = this;
+
       // 校验表单
-      this.btnLoading = true
-      const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
-      if (!valid_1) return this.btnLoading = false
-      const deepParams = deepClone(this.dataForm)
-      const params = {
-        ...deepParams,
-        orderNo: deepParams.orderNo,
-        ordersId: deepParams.ordersId,
-        ordersLineId: deepParams.id,
-        productsId: deepParams.productsId,
-        poolList: this.linesList
-      }
-      let MSG = '提交成功'
+      this.btnLoading = true;
       try {
-        const apiMethod = addPurProcurementDemandPool
-        const res = await apiMethod(params)
-        const { msg } = res
-        if (msg === 'Success') {
-          this.$message.success(MSG)
-          this.goBack()
+        const valid = await this.$refs.dataForm.$refs.main.validate().catch(() => false);
+        if (!valid) return;
+
+        let params;
+
+        if (currentConfig.submitMode === 'transfer-array') {
+          params = [{
+            saleOrdersLineId: dataForm.id,
+            issueQuantity: dataForm.issuanceNum,
+          }];
+        } else {
+          if (!linesList.length) {
+            return this.$message.error('无有效子件信息，无法提交！');
+          }
+          params = {
+            ...deepClone(dataForm),
+            orderNo: dataForm.orderNo,
+            ordersId: dataForm.ordersId,
+            ordersLineId: dataForm.id,
+            productsId: dataForm.productsId,
+            poolList: linesList,
+          };
         }
-        this.btnLoading = false
+
+        const res = await currentConfig.api(params);
+        if (res.msg === 'Success') {
+          this.$message.success('提交成功');
+          this.$emit('close', true);
+        }
       } catch ( error ) {
-        this.btnLoading = false
+        console.error('提交失败:', error);
+        this.$message.error('提交失败，请重试');
+      } finally {
+        this.btnLoading = false;
       }
     },
 
     goBack() {
-      this.$emit('close', this.activeType);
+      this.$emit('close', false);
     }
   }
-}
+};
 </script>
 
 <template>
@@ -193,14 +202,14 @@ export default {
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="JNPF-preview-main transitionForm org-form">
           <div class="JNPF-common-page-header">
-            <el-page-header @back="goBack" :content="title"/>
+            <el-page-header @back="$emit('close', false)" :content="title"/>
             <div class="options">
               <template>
                 <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">
                   保存并提交
                 </el-button>
               </template>
-              <el-button @click="goBack">{{
+              <el-button @click="$emit('close', false)">{{
                   $t('common.cancelButton')
                 }}
               </el-button>

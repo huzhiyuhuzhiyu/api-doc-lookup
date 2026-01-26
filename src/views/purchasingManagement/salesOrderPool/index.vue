@@ -60,9 +60,7 @@ export default {
         },
       ],
       listQuery: {
-        shipmentStatus: 'not_finish',
-        confirmedStatus: 'need_purchase',
-        productSourceList: ['purchase', 'assemble', 'virtual_assemble'],
+        planStatus: 'order_pool',
         waitIssuanceNumFlag: true,
       },
       btnList: buttonList,
@@ -199,7 +197,7 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" width="260" fixed="right">
+          <el-table-column label="操作" width="300" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text" @click="handleColumnClick(row, 'add','product')">
                 成品需求
@@ -209,6 +207,9 @@ export default {
               </el-button>
               <el-button size="mini" type="text" @click="handleColumnClick(row, 'add','mainComponent')">
                 主子件需求
+              </el-button>
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'add','productionTransfer')">
+                转生产
               </el-button>
             </template>
           </el-table-column>

@@ -19,7 +19,7 @@ export function getPurPurchaseDrawing(data) {
   })
 }
 
-// 新增公司信息
+// 新增采购图纸确认
 export function addPurPurchaseDrawing(data) {
   return request({
     url: '/api/erp/purPurchaseDrawing/insert',
@@ -54,3 +54,11 @@ export function getProductionDrawingPage(data) {
   })
 }
 
+// 生产图纸确认-详情
+export function getProductionDrawing(data) {
+  return request({
+    url: `/api/erp/purPurchaseDrawing/production/detail`,
+    method: 'post',
+    data
+  })
+}

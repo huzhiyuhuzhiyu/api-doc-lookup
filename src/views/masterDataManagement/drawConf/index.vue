@@ -1,7 +1,7 @@
 <script>
 import { buttonList, getColumns } from "./data";
 import Form from './Form.vue'
-import { getPurPurchaseDrawingPage } from "@/api/drawConf";
+import { getProductionDrawingPage, getPurPurchaseDrawingPage } from "@/api/drawConf";
 
 export default {
   name: "index",
@@ -10,12 +10,31 @@ export default {
       type: String,
       required: true,
       validator: (value) => ['purchase', 'produce'].includes(value)
-    }
+    },
   },
   components: {
     Form
   },
   data() {
+    const getDefaultListQuery = (type) => {
+      const base = {};
+
+      if (type === 'purchase') {
+        return {
+          ...base,
+        };
+      }
+
+      if (type === 'produce') {
+        return {
+          ...base,
+          source: "normal",
+          classAttributeList: ["finish_product", "semi_finished"],
+        };
+      }
+
+      return base;
+    };
     return {
       systemSearchView: [{
         matchLogic: "AND", // 条件逻辑（固定）*
@@ -49,11 +68,11 @@ export default {
       visible: false,
       btnList: buttonList,
       superQueryJson: [],
-      listQuery: {},
+      listQuery: getDefaultListQuery(this.type),
       tableData: [],
       total: 0,
       columnList: [],
-      columnsConfig: getColumns(),
+      columnsConfig: getColumns(this.type),
       selectedRow: [],
     }
   },
@@ -67,7 +86,13 @@ export default {
       this.loading = true
       try {
         if (listLoadKey !== this.listLoadKey) return; // 请求过期
-        const res = await getPurPurchaseDrawingPage(this.listQuery);
+        const apiMap = {
+          purchase: getPurPurchaseDrawingPage,
+          produce: getProductionDrawingPage
+        };
+
+        const api = apiMap[this.type] || apiMap.purchase;
+        const res = await api(this.listQuery);
         const { total, records } = res.data
         this.tableData = records;
         this.total = total
@@ -186,6 +211,6 @@ export default {
         />
       </div>
     </div>
-    <Form ref="Form" v-if="visible" @close="close"/>
+    <Form ref="Form" v-if="visible" :type="type" @close="close"/>
   </div>
 </template>

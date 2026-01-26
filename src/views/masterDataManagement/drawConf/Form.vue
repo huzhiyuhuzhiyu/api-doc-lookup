@@ -4,10 +4,17 @@ import { getBasicFormSchema } from "./data";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
 import HistoricalDrawings from "./historicalDrawings.vue";
-import { addPurPurchaseDrawing, getPurPurchaseDrawing } from "@/api/drawConf";
+import { addPurPurchaseDrawing, getProductionDrawing, getPurPurchaseDrawing } from "@/api/drawConf";
 
 export default {
   name: "Form",
+  props: {
+    type: {
+      type: String,
+      required: true,
+      validator: (value) => ['purchase', 'produce'].includes(value)
+    }
+  },
   components: { HistoricalDrawings },
   mixins: [flowMixin, busFlow],
   data() {
@@ -55,11 +62,19 @@ export default {
 
       activeName: 'jcInfo',
       activeNames: ['basicInfo'],
+
+      apiMethodDetail: {
+        purchase: getPurPurchaseDrawing,
+        produce: getProductionDrawing,
+      }
     }
   },
   computed: {
     activeType() {
       return this.btnType !== 'look'
+    },
+    isPurchase() {
+      return this.type === 'purchase'
     },
   },
   created() {
@@ -91,7 +106,7 @@ export default {
     async getDetail(params) {
       this.loading = true
       try {
-        const res = await getPurPurchaseDrawing(params)
+        const res = await this.apiMethodDetail[this.type](params)
         const { msg, data } = res
         if (msg === 'Success') {
           this.dataForm = {
@@ -166,6 +181,9 @@ export default {
       this.dataForm.status = type
       const attachmentList = this.fileListMap('submit', this.fileList)
       const deepParams = this.normalizeFlags(deepClone(this.dataForm))
+
+      deepParams.drawingType = this.type
+
       const params = {
         purchaseDrawing: deepParams,
         attachmentList: attachmentList,
@@ -201,7 +219,7 @@ export default {
             <el-button type="primary" :loading="btnLoading" @click="handleSubmit('last_confirmed')">
               按上次已确认图纸
             </el-button>
-            <el-button type="primary" :loading="btnLoading" @click="handleHistoricalSubmit()">
+            <el-button type="primary" :loading="btnLoading" @click="handleHistoricalSubmit()" v-if="isPurchase">
               历史确认
             </el-button>
             <el-button type="primary" :loading="btnLoading" @click="handleSubmit('confirmed')">

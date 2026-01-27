@@ -1953,3 +1953,31 @@ export function getSalesOrdersInventoryLineReport(data) {
     data
   })
 }
+
+
+// 获取模具档案
+export function getEquMoldUsedRecordsList(data) {
+  return request({
+    url: `/api/zgt/equMoldUsedRecords/mold/list`,
+    method: 'post',
+    data
+  })
+}
+
+// 获取模具使用记录列表
+export function getEquMoldUsedRecordsMoldList(data) {
+  return request({
+    url: `/api/zgt/equMoldUsedRecords/mold/used/list`,
+    method: 'post',
+    data
+  })
+}
+
+// 报废模具
+export function scrapEquMoldUsedRecords(id, data) {
+  return request({
+    url: `/api/zgt/equMoldUsedRecords/mold/scrapped/${id}`,
+    method: 'put',
+    data
+  })
+}

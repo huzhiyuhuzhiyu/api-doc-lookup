@@ -1,6 +1,7 @@
 import { getcategoryTree } from "@/api/basicData/materialSettings";
 import { getHsProductsList } from "@/api/shipmentNote/hsCodes";
 import { getProcessList } from "@/api/basicData/processSettingss";
+import { getProducts } from "@/api/masterDataManagement";
 
 /**
  * @description 成品型号表单数据
@@ -127,7 +128,6 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "custom",
       customComponent: "ComSelect-page",
-      itemRules: [{ required: true, trigger: "change" }],
       title: '选择工艺路线',
       renderTree: false,
       multiple: false,
@@ -252,6 +252,71 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "打字位置",
       value: "",
       type: "input",
+      sm: 12
+    },
+    {
+      prop: "moldDrawingNo",
+      label: "模具",
+      value: "",
+      type: "custom",
+      customComponent: "ComSelect-page",
+      title: '模具绑定',
+      renderTree: false,
+      multiple: false,
+      clearable: true,
+      listMethod: getProducts,
+      tableItems: [
+        { prop: 'drawingNo', label: '型号', minWidth: '180px', sortable: 'custom' },
+        { prop: 'name', label: '产品名称', minWidth: '180px', sortable: 'custom' },
+        { prop: 'code', label: '产品编码', minWidth: '180px', sortable: 'custom' },
+        { prop: 'mainUnit', label: '单位', minWidth: '90px', sortable: 'custom' },
+        { prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom' }
+      ],
+      listRequestObj: {
+        pageNum: 1,
+        pageSize: 20,
+        classAttributeList: ['mold'],
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ]
+      },
+      searchList: [
+        { prop: 'productDrawingNo', label: '型号', type: 'input' },
+      ],
+      change: (id, data) => {
+        // dom更新后重新校验此元素
+        context.$nextTick(() => {
+          dataFormRef.$refs.main.validateField('moldDrawingNo')
+        })
+        context.dataForm.moldId = data[0].all.id
+        context.dataForm.moldDrawingNo = data[0].all.drawingNo
+      },
+      sm: 12
+    },
+    {
+      prop: "moldUsedNumber",
+      label: "模具使用次数",
+      value: "",
+      type: "input",
+      itemRules: [
+        {
+          validator: context.formValidate('noZero', '模具使用次数不能为0', (errMsg) => {
+            context.$message.error(errMsg)
+          }), trigger: ['blur', 'change']
+        },
+        {
+          validator: context.formValidate('bigInt', '模具使用次数只能为整数', (errMsg) => {
+            context.$message.error(errMsg)
+          }), trigger: ['blur', 'change']
+        },
+      ],
       sm: 12
     },
     {

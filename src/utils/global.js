@@ -339,6 +339,12 @@ const global = {
     { label: '已开票', value: 'invoiced', type: 'warning' },
     { label: '已付款', value: 'already_paid', type: 'info' }
   ],
+  // 模具状态
+  moldStatusList: [
+    { label: '正常', value: 'normal', type: 'success' },
+    { label: '维修', value: 'maintenance', type: 'warning' },
+    { label: '报废', value: 'scrapped', type: 'danger' }
+  ],
   // 字典数据映射方法
   getDictLabelGlobal(dictType, enCode, options = {}) {
     // 先从本地获取字典

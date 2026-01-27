@@ -949,6 +949,7 @@ export default {
     },
     goBack() {
       this.$emit('close')
+      this.$unsavedGuard.set(false, this.$route.fullPath);
     },
     init(id, type, approvalFlag) {
       // rowData = JSON.parse(rowData)

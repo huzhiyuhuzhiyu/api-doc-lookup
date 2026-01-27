@@ -917,6 +917,7 @@ export default {
           path: '/basicData/bomSettings/productNoBomQuery'
         })
       }
+      this.$unsavedGuard.set(false, this.$route.fullPath);
     },
     goBom() {
       this.tipsvisible = false

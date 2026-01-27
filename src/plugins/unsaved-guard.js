@@ -4,11 +4,11 @@ const dirtyMap = new Map();
 
 function updateGlobalListener() {
   const hasAnyDirty = Array.from(dirtyMap.values()).some(v => v);
-  // if (hasAnyDirty) {
-  //   window.addEventListener('beforeunload', handleBeforeUnload, { capture: true });
-  // } else {
-  //   window.removeEventListener('beforeunload', handleBeforeUnload, { capture: true });
-  // }
+  if (hasAnyDirty) {
+    window.addEventListener('beforeunload', handleBeforeUnload, { capture: true });
+  } else {
+    window.removeEventListener('beforeunload', handleBeforeUnload, { capture: true });
+  }
 }
 
 function handleBeforeUnload(event) {

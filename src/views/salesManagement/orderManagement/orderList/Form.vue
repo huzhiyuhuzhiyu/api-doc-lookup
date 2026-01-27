@@ -1081,6 +1081,7 @@ export default {
 
     goBack() {
       this.$emit('close', this.activeType);
+      this.$unsavedGuard.set(false, this.$route.fullPath);
     }
   }
 }

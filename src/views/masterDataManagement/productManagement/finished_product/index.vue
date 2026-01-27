@@ -123,6 +123,9 @@
           <el-table-column prop="routingName" label="工艺路线" min-width="120"/>
           <el-table-column prop="customerProductDrawingNo" label="客户型号" min-width="220"/>
           <el-table-column prop="model" label="型号" width="120"/>
+          <el-table-column prop="moldDrawingNo" label="模具型号" width="140"/>
+          <el-table-column prop="moldName" label="模具名称" width="140"/>
+          <el-table-column prop="moldUsedNumber" label="模具使用次数" width="120"/>
           <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120"/>
           <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"/>
           <el-table-column prop="structureType" label="结构类型" width="120"/>

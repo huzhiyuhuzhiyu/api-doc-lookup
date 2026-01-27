@@ -641,6 +641,7 @@ export default {
           this.$router.push('/purchasingManagement/purchaseOrders/purchaseOrder')
         }, 100)
       }
+      this.$unsavedGuard.set(false, this.$route.fullPath);
     }
   }
 }

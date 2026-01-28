@@ -48,6 +48,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       ],
       listRequestObj: {
         name: '',
+        code: '',
         type: "customer",
         pageNum: 1,
         pageSize: 20,
@@ -63,12 +64,13 @@ export function getBasicFormSchema(dataFormRef, context) {
         ]
       },
       searchList: [
+        {prop: 'code', label: '客户编码', type: 'input'},
         {prop: 'name', label: '客户名称', type: 'input'},
       ],
       change: (id, data) => {
         // dom更新后重新校验此元素
         context.$nextTick(() => {
-          context.dataFormRef[0].$children[0].validateField('cooperativePartnerName')
+          dataFormRef.$refs.main.validateField('cooperativePartnerName')
         })
         context.dataForm.cooperativePartnerId = data[0].all.id
         context.dataForm.cooperativePartnerCode = data[0].all.code

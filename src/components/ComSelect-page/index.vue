@@ -1,69 +1,3 @@
-<!-- --- ComSelect-page 使用说明 ---
-================================================================
-  -- 组件属性/事件/方法 --
-  --------------------------------------------------------------
-  * 属性
-  - value 绑定的值（dom显示内容）
-  - title 弹出窗口标题（即将弃用，建议使用dialogTitle）
-  - placeholder dom占位符
-  - paramsObj 其他参数(会跟随@change一起返回，传什么就回什么)
-  - collapseTags 多选情况下在页面中的显示模式（默认false；true显示一项其他收起 / false全部显示）
-  - elementShow 是否在页面上显示此表单元素（默认true；true正常显示 / false不显示）
-  - isdisabled 是否禁用页面上的此表单元素（默认false；true禁用 / false不禁用）
-  - tagMultipleLine 多选模式下，选择的标签是否多行显示（默认false；true多行 / false单行）
-  - clearable 是否带有删除按钮（默认false；true带有删除按钮 / false不带有删除按钮）
-  * 事件
-  - beforeOpen 打开之前的回调方法
-  - beforeSubmit 提交之前的回调方法
-  * 方法
-  - input 提交时触发
-  - change 提交时触发
-================================================================
-================================================================
-  -- 组件左侧(树)属性/事件 --
-  --------------------------------------------------------------
-  * 属性
-  - renderTree 是否渲染左侧树（默认true；true渲染 / false不渲染）
-  - treeTitle 左侧树状列表的标题
-  - methodArr 左侧树状列表的请求方法
-  * 事件
-  - treeNodeClick 树节点被点击的回调方法
-  - dataFormatting 树数据格式化方法
-================================================================
-================================================================
-  -- 组件右侧(列表)属性/事件/插槽 --
-  --------------------------------------------------------------
-  * 属性
-  - tableItems 表格展示的字段
-  - listMethod 表格数据的请求方法
-  - listRequestObj 表格数据的请求体
-  - searchList 搜素条件列表
-  - dialogWidth 窗口宽度（默认70%）
-  - maxShowSearchField 搜索栏最多展示多少个搜索条件（超出内容会收缩至更多查询）
-  - moreSearchList 更多查询中的搜素条件列表（传入会覆盖searchList收缩到更多查询中的搜索条件）
-  - isNeedDate 是否需要有日期的查询
-  - searchDateList 需要搜索的数组
-  - multiple 是否开启多选（默认false；true多选 / false单选）
-  - listDataTreeFlag 列表是否树状结构（默认false；true列表结构树状 / false列表结构平级）
-  * 事件
-  - checkSelectable 判断列表行是否可选的方法
-  - listDataFormatting 列表数据格式化方法
-  - rowDblclick 列表行双击事件
-  * 插槽
-  - table-action 自定义操作栏
-================================================================
-  change事件推荐写法
-  单选：(val, data, paramsObj) => {
-    this.$nextTick(() => { this.$refs['dataForm'].validateField('name') }) // 校验操作的元素(name是组件绑定的value)
-    if (data && data.length) { // 数据有效，进行更新
-      this.dataForm.id = data[0].id // 或者this.dataForm['id'] = data[0].all.id
-      this.dataForm.name = data[0].name // 或者this.dataForm['name'] = data[0].all.name
-    } else { // 不选择任何内容，置空绑定的值
-      this.dataForm.id = ""
-      this.dataForm.name = ""
-    }
-  }
- -->
 <template>
   <div :class="[elementShow ? 'popupSelect-container' : '']">
     <div class="el-select" @click.stop="openDialog" @keyup.enter="openDialog" v-show="elementShow">
@@ -317,38 +251,17 @@ export default {
       type: Boolean,
       default: false
     },
-    methodArr: {
-      /*
-        数组写法：[
-          { label: "原材料分类", classAttribute: "raw_material", method: getcategoryTree, requestObj: { classAttribute: "raw_material" } },
-          { label: "半成品分类", classAttribute: "semi_finished", method: getcategoryTree, requestObj: { classAttribute: "semi_finished" } },
-          { label: "成品分类", classAttribute: "finish_product", method: getcategoryTree, requestObj: { classAttribute: "finish_product" } },
-          { label: "辅料分类", classAttribute: "accessories", method: getcategoryTree, requestObj: { classAttribute: "accessories" } },
-          { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
-        ]
-        对象写法：{ method: getWarehouseList, requestObj: { chooseUserFlag: true } }
-      */
-    },
-    /* 列表数据请求方法 */
+    methodArr: {},
     listMethod: {
       required: true
     },
-    /* 列表数据请求体 */
     listRequestObj: {
       type: Object | Function,
       required: true
-      /*
-        对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-        函数写法：(rowIndex) => {
-          let id = this.linesList[rowIndex].id
-          return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-        }
-      */
     },
     paramsObj: {
       type: Object | Array,
-      default: () => {
-      }
+      default: () => {}
     },
     treeTitle: {
       type: String,
@@ -357,38 +270,15 @@ export default {
     searchList: {
       type: Array,
       default: () => []
-      /* [
-          {prop:'code',label:'编码',type:'input'},
-          {prop:'name',label:'名称',type:'input'}
-        ] */
     },
     moreSearchList: {
       type: Array
-      /* [
-          {prop:'code',label:'编码',type:'input'},
-          {prop:'name',label:'名称',type:'input'}
-        ] */
     },
-    // 数据格式化方法
     dataFormatting: {
-      type: Function,
-      /* (res) => {
-          let treeData = res.data.records.map(item => {
-            item.name = item.code;
-            return item;
-          });
-          return treeData
-        } */
+      type: Function
     },
     listDataFormatting: {
-      type: Function,
-      /* (res) => {
-          let treeData = res.data.records.map(item => {
-            item.name = item.code;
-            return item;
-          });
-          return treeData
-        } */
+      type: Function
     },
     placeholder: {
       type: String,
@@ -397,11 +287,6 @@ export default {
     tableItems: {
       type: Array,
       default: () => []
-      /* [
-          { prop: 'code', label: '编码' }, // 标准
-          { prop: 'name', label: '名称', sortable: 'custom' }, // 附带排序（会把prop驼峰转为下划线形式）
-          { prop: 'drawingNo', label: '图号', sortable: 'custom2' }, // 附带排序（保留原prop形式）
-        ] */
     },
     disabled: {
       type: Boolean,
@@ -411,7 +296,7 @@ export default {
       type: Boolean,
       default: false
     },
-    confirms: { // 用于无需多选也无需进行选择数据时
+    confirms: {
       type: Boolean,
       default: false
     },
@@ -459,36 +344,20 @@ export default {
     rowDblclick: {
       type: Function
     },
-    beforeOpen: {
-      /* async (paramsObj) => {
-          if (!this.dataForm.transferOutWarehouseName) return true // 如果判断条件真，直接提交，不弹出提示
-          let flag = await this.$confirm('提示内容', '提示标题', { type: 'warning' }).catch(err => false)
-          return flag
-        } */
-    },
-    beforeSubmit: {
-      /* async (data, paramsObj) => {
-          if (!this.dataForm.transferOutWarehouseName) return true // 如果判断条件真，直接提交，不弹出提示
-          let flag = await this.$confirm('提示内容', '提示标题', { type: 'warning' }).catch(err => false)
-          return flag
-        } */
-    },
-    // 是否需要有日期的查询
+    beforeOpen: {},
+    beforeSubmit: {},
     isNeedDate: {
       type: Boolean,
       default: false
     },
-    // 需要搜索的数组
     searchDateList: {
       type: Array,
       default: () => []
     },
-    // 搜索栏最多展示多少个搜索条件
     maxShowSearchField: {
       type: Number,
       default: 3
     },
-    // 窗口宽度
     dialogWidth: {
       type: String,
       default: '70%'
@@ -533,7 +402,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
+          column: "create_time"
         }],
         pageNum: 1,
         pageSize: 20
@@ -544,9 +413,10 @@ export default {
       total: 0,
       btnLoading: false,
       refreshTree: true,
-      expandsTable: true,
       initRSelectData: [],
-      throttleFlag: true
+      throttleFlag: true,
+      // ===== 新增缓存字段 =====
+      selectedDataCache: [] // 缓存所有已选项（含 id/name/all）
     }
   },
   computed: {
@@ -656,14 +526,13 @@ export default {
         } else {
           this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
         }
-        // 判断是否要渲染树
+
         if (this.renderTree) {
-          // 判断树请求是否为数组
           if (Array.isArray(this.methodArr)) {
             if (!this.methodArr.length) {
               console.warn(`<ComSelect-page/> ${ this.computedDialogTitle } 请求方法无效：methodArr长度为0，如果不需要渲染左侧树状列表请将 renderTree 设为 false`);
             } else {
-              if (this.methodArr.length === 1 && this.methodArr[0].classAttribute === 'material') { // 产品专项优化
+              if (this.methodArr.length === 1 && this.methodArr[0].classAttribute === 'material') {
                 this.treeName = this.methodArr[0].label
               }
               let tempTreeData = [...this.methodArr]
@@ -724,11 +593,10 @@ export default {
         }
       })
     },
-    // 获取列表数据
     initData() {
       this.moreQueriesVisible = false
       this.listLoading = true
-      // 增加搜索日期使用
+
       if (this.listQuery !== null && typeof this.listQuery === 'object') {
         if (this.searchDateList.length) {
           this.searchDateList.forEach((item) => {
@@ -740,34 +608,49 @@ export default {
           this.listQuery[key] = typeof item === 'string' ? item.trim() : item
         })
       }
+
       this.listMethod(this.listQuery).then(async listRes => {
+        let records = [];
         if (this.listDataFormatting) {
-          this.tableData = this.listDataFormatting({ ...listRes, listQuery: this.listQuery })
+          records = this.listDataFormatting({ ...listRes, listQuery: this.listQuery })
         } else if (Array.isArray(listRes.data)) {
-          this.tableData = listRes.data || listRes.data.whPage.records || listRes.data.page.records
+          records = listRes.data;
         } else {
-          if (listRes.data.records) {
-            this.tableData = listRes.data.records
-          } else if (listRes.data.whPage) {
-
-            this.tableData = listRes.data.whPage.records
-          } else if (listRes.data.page) {
-
-            this.tableData = listRes.data.page.records
-          }
+          records = listRes.data.records || listRes.data.whPage?.records || listRes.data.page?.records || [];
         }
-        this.tableData.forEach((row, index) => {
-          row._index = index
+
+        this.tableData = records.map((row, index) => ({
+          ...row,
+          _index: index
+        }));
+
+        this.total = listRes.data.total || listRes.data.whPage?.total || listRes.data.page?.total || undefined;
+
+        // ========== 恢复缓存选中状态 ==========
+        this.$nextTick(() => {
+          if (this.multiple && this.selectedDataCache.length > 0) {
+            const dataTable = this.$refs.dataTable?.$refs.JNPFTable;
+            if (dataTable) {
+              // 先清空当前选中（避免旧状态干扰）
+              dataTable.clearSelection();
+              // 再根据缓存重新选中
+              this.tableData.forEach(row => {
+                const isInCache = this.selectedDataCache.some(cached => cached.id === row.id);
+                if (isInCache) {
+                  dataTable.toggleRowSelection(row, true);
+                }
+              });
+            }
+          }
+
+          if (!this.multiple && !this.$refs.defaultTableActionRef && !this.rowDblclick) {
+            const allLines = [...document.querySelectorAll('.even-row'), ...document.querySelectorAll('.odd-row')]
+            allLines.forEach(line => {
+              line.style.cursor = 'default'
+            })
+          }
         });
 
-        this.total = listRes.data.records ? listRes.data.total : 0 || listRes.data.whPage ? listRes.data.whPage.total : listRes.data.page ? listRes.data.page.total : undefined
-        await this.$nextTick()
-        if (!this.multiple && !this.$refs.defaultTableActionRef && !this.rowDblclick) { // 使用了自定义插槽且没有设置行双击事件的
-          const allLines = [...document.querySelectorAll('.even-row'), ...document.querySelectorAll('.odd-row')]
-          allLines.forEach(line => {
-            line.style.cursor = 'default'
-          })
-        }
         this.treeLoading = false
         this.listLoading = false
       })
@@ -782,15 +665,12 @@ export default {
         })
       })
     },
-    // 设置默认展开
     setexpand(expands) {
-      console.log("expands", expands);
       this.refreshTree = false
       this.expands = expands
       this.$nextTick(() => {
         this.refreshTree = true
         localStorage.setItem(`${ this.treeName }Flag`, expands)
-
       })
     },
     handleNodeClick(data, node) {
@@ -814,81 +694,62 @@ export default {
       this.initData()
     },
     reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort()
       this.getData()
-      // this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
-      // this.search()
     },
-    onClose() {
-    },
-    getNodePath(node) {
-      let fullPath = []
-      const loop = (node) => {
-        if (node.level) fullPath.unshift(node.data)
-        if (node.parent) loop(node.parent)
-      }
-      loop(node)
-      return fullPath
-    },
-    // 双击行
     rowDblclickFun(data) {
-      if (this.activeType === 'look') return // 查看模式下不触发双击事件
-      if (!this.checkSelectable(data)) return // 行被禁用时此方法不生效
+      if (this.activeType === 'look') return
+      if (!this.checkSelectable(data)) return
       if (this.rowDblclick) {
         this.rowDblclick(data)
       } else if (this.$refs.defaultTableActionRef) {
         this.multiple ? '' : this.currentChange(data)
       }
     },
-    // 选择事件
-    async currentChange(data) {
-      if (this.activeType === 'look') return // 查看模式下不触发选择事件
-      if (!data || data.disabled) return
-      if (this.checkSelectable && !(this.checkSelectable(data))) return
-      if (this.multiple) {
-        let selectedData = []
-        for (let i = 0; i < data.length; i++) {
-          selectedData.push({
-            id: data[i].id,
-            name: data[i].name,
-            all: data[i]
-          })
-        }
-        if (this.elementShow) {
-          this.rSelectData = [...this.initRSelectData, ...selectedData]
-          this.selectedIds = this.rSelectData.map(o => o.id)
-          this.selectedData = this.rSelectData.map(o => o.name)
-        } else {
-          this.rSelectData = selectedData
-          this.selectedIds = selectedData.map(o => o.id)
-          this.selectedData = selectedData.map(o => o.name)
-        }
-      } else {
-        if (!this.throttleFlag) return
-        this.throttleFlag = false
-        setTimeout(() => {
-          this.throttleFlag = true
-        }, 500);
-        let currId = data.id
-        let currData = data.name
-        this.selectedIds = [currId]
-        this.selectedData = [currData]
+    currentChange(selection) {
+      if (this.activeType === 'look') return
+      if (!this.multiple) {
+        // 单选：selection 是单个 row 对象
+        const data = selection;
+        if (!data || data.disabled) return;
+        if (this.checkSelectable && !this.checkSelectable(data)) return;
 
-        let selectedData = []
-        for (let i = 0; i < this.selectedIds.length; i++) {
-          selectedData.push({
-            id: this.selectedIds[i],
-            name: this.selectedData[i],
-            all: data
-          })
-        }
-        this.rSelectData = selectedData
-        this.confirm()
+        if (!this.throttleFlag) return;
+        this.throttleFlag = false;
+        setTimeout(() => {
+          this.throttleFlag = true;
+        }, 500);
+
+        this.selectedIds = [data.id];
+        this.selectedData = [data.name];
+        this.rSelectData = [{ id: data.id, name: data.name, all: data }];
+        this.confirm(); // 单选直接确认
+        return;
       }
+
+      // 多选：selection 是数组
+      const newSelected = selection.map(row => ({
+        id: row.id,
+        name: row.name,
+        all: row
+      }));
+
+      // 合并去重（基于 id）
+      const merged = [...new Map([...this.selectedDataCache, ...newSelected].map(item => [item.id, item])).values()];
+      this.selectedDataCache = merged;
+
+      this.rSelectData = [...this.initRSelectData, ...this.selectedDataCache];
+      this.selectedIds = this.rSelectData.map(o => o.id);
+      this.selectedData = this.rSelectData.map(o => o.name);
     },
     async handleRowClick(row, column, event) {
       let flag = this.checkSelectable ? await this.checkSelectable(row) : true
-      if (this.multiple && flag) this.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(row);
+      if (this.multiple && flag) {
+        const dataTable = this.$refs.dataTable?.$refs.JNPFTable;
+        if (dataTable) {
+          dataTable.toggleRowSelection(row);
+        }
+      }
     },
     sortChange({ prop, order }) {
       let newProp;
@@ -901,65 +762,37 @@ export default {
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.search()
     },
-    confirm() {
-      setTimeout(async () => {
-        let selectedData = []
-        this.btnLoading = true
-        for (let i = 0; i < this.selectedIds.length; i++) {
-          let item = []
-          let selectedNames = this.selectedData[i]
-          for (let j = 0; j < this.selectedIds.length; j++) {
-            item.push({
-              id: this.selectedIds[i],
-              name: selectedNames,
-              all: this.rSelectData[i].all
-            })
-          }
-          selectedData.push(item)
+    async confirm() {
+      this.btnLoading = true;
+      try {
+        let submitFlag = true;
+        if (this.beforeSubmit) {
+          submitFlag = await this.beforeSubmit(
+            this.multiple ? this.rSelectData : (this.rSelectData[0]?.all || null),
+            this.paramsObj
+          );
         }
-        console.log(selectedData, 'selectedData')
-        if (selectedData.length === 0) {
-          let submitFlag = true
-          if (this.beforeSubmit) {
-            submitFlag = await this.beforeSubmit(undefined, this.paramsObj)
-          }
-          if (!submitFlag) return this.btnLoading = false
-          // this.innerValue = ''
-          // this.tagsList = ""
-          this.$emit('input', "")
-          this.$emit('change', [], [], this.paramsObj, this.index)
-        } else if (this.multiple) {
-          // this.innerValue = ''
-          this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
+        if (!submitFlag) return;
 
-          let submitFlag = true
-          if (this.beforeSubmit) {
-            submitFlag = await this.beforeSubmit(this.rSelectData, this.paramsObj)
-          }
-          if (!submitFlag) return this.btnLoading = false
-
-
-          this.selectedIds.length ? this.$emit('input', this.selectedIds) : ''
-          this.$emit('change', this.selectedIds, this.rSelectData, this.paramsObj)
+        if (this.multiple) {
+          this.tagsList = [...this.selectedData];
+          this.$emit('input', this.selectedIds);
+          this.$emit('change', this.selectedIds, this.rSelectData, this.paramsObj);
         } else {
-          let submitFlag = true
-          if (this.beforeSubmit) {
-            submitFlag = await this.beforeSubmit(this.rSelectData[0].all, this.paramsObj)
+          if (this.rSelectData.length > 0) {
+            this.$emit('input', this.selectedIds[0]);
+            this.$emit('change', this.selectedIds[0], [this.rSelectData[0]], this.paramsObj, this.index);
+          } else {
+            this.$emit('input', "");
+            this.$emit('change', [], [], this.paramsObj, this.index);
           }
-          if (!submitFlag) return this.btnLoading = false
-          // this.innerValue = this.selectedData[0]
-          this.$emit('input', this.selectedIds[0])
-          this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj, this.index)
         }
-        if (this.confirms) this.$emit('confirm', this.tableData)
-        this.visible = false
-        this.$nextTick(() => {
-          this.handleResize()
-          setTimeout(() => {
-            this.btnLoading = false
-          }, 300);
-        })
-      }, 100)
+
+        if (this.confirms) this.$emit('confirm', this.tableData);
+        this.visible = false;
+      } finally {
+        this.btnLoading = false;
+      }
     },
     setDefault() {
       let getFunction = (e, property) => {
@@ -968,6 +801,7 @@ export default {
         else return null
       }
       this.itemScope = getFunction(this, "scope")
+
       if (!this.value || !this.value.length) {
         this.innerValue = ''
         this.selectedIds = []
@@ -975,39 +809,45 @@ export default {
         this.rSelectData = []
         this.tagsList = []
         this.initRSelectData = []
+        this.selectedDataCache = [] // 清空缓存
       } else if (this.multiple) {
-        if (!this.rSelectData.length || JSON.parse(JSON.stringify(this.selectedData)) !== JSON.parse(JSON.stringify(this.tagsList))) {
-          this.selectedIds = typeof this.ids === 'function' ? this.ids(this.paramsObj) : [...this.ids]
-          this.selectedData = [...this.value]
-          this.rSelectData = this.value.map((item, index) => {
-            return { id: this.selectedIds[index], name: this.selectedData[index], all: undefined }
-          })
-          this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
-          this.initRSelectData = JSON.parse(JSON.stringify(this.rSelectData));
-        }
-        this.innerValue = ''
+        // 从 value 和 ids 初始化缓存
+        const ids = typeof this.ids === 'function' ? this.ids(this.paramsObj) : this.ids || [];
+        this.selectedIds = Array.isArray(ids) ? ids : [];
+        this.selectedData = Array.isArray(this.value) ? this.value : [this.value];
+        this.selectedDataCache = this.selectedData.map((name, idx) => ({
+          id: this.selectedIds[idx] || '',
+          name,
+          all: undefined // 无法还原完整对象，后续靠匹配 id 补全
+        }));
+        this.rSelectData = [...this.selectedDataCache];
+        this.tagsList = [...this.selectedData];
+        this.initRSelectData = [...this.selectedDataCache];
+        this.innerValue = '';
       } else {
-        if (!this.rSelectData.length || this.selectedData[0] !== this.value) {
-          this.selectedIds = []
-          this.selectedData = [this.value]
-          this.rSelectData = [{ name: this.value }]
-        }
-        this.innerValue = this.value
+        this.selectedIds = [];
+        this.selectedData = [this.value];
+        this.rSelectData = [{ name: this.value }];
+        this.innerValue = this.value;
+        this.selectedDataCache = []; // 单选不缓存
       }
     },
     deleteTag(event, index) {
-      this.selectedData.splice(index, 1)
-      this.selectedIds.splice(index, 1)
-      this.rSelectData.splice(index, 1)
-      this.confirm()
+      const removedId = this.selectedIds[index];
+      this.selectedIds.splice(index, 1);
+      this.selectedData.splice(index, 1);
+      this.rSelectData.splice(index, 1);
+      // 从缓存中移除
+      this.selectedDataCache = this.selectedDataCache.filter(item => item.id !== removedId);
+      this.confirm();
       event.stopPropagation();
     },
     handleClearClick(event) {
-      this.selectedData = []
-      this.selectedIds = []
-      this.rSelectData = []
-
-      this.confirm()
+      this.selectedData = [];
+      this.selectedIds = [];
+      this.rSelectData = [];
+      this.selectedDataCache = []; // 清空缓存
+      this.confirm();
       event.stopPropagation();
     },
     resetInputWidth() {
@@ -1036,8 +876,6 @@ export default {
       });
     },
     getRowClassName({ row, rowIndex }) {
-      // return ""
-      // if (this.multiple) return ""
       return rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
     }
   }

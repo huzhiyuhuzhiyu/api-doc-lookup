@@ -50,11 +50,8 @@
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <JNPF-table customKey="customerProduct" ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" v-bind="customStyleData" fixedNO :has-c="btnType === 'add'"  custom-column>
                     <el-table-column prop="customerProductNo" label=" 客户料号" min-width="160">
-                      <template slot="header">
-                        <span class="required">*</span> 客户料号（编码）
-                      </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'" :rules='productRules.customerProductNo'>
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'">
                           <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo" placeholder="请输入" :disabled="btnType == 'look'">
                           </el-input>
                         </el-form-item>
@@ -273,11 +270,8 @@
                 <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType === 'add'" key="1"/>
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left'/>
                 <el-table-column prop="customerProductNo" label=" 客户料号" min-width="120">
-                  <template slot="header">
-                    <span class="required">*</span> 客户料号（编码）
-                  </template>
                   <template slot-scope="scope">
-                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'" :rules='productRules.customerProductNo'>
+                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'">
                       <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo" placeholder="请输入" :disabled="btnType == 'look'">
                       </el-input>
                     </el-form-item>
@@ -569,6 +563,11 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入型号" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
                     <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable/>
                   </el-form-item>
                 </el-col>
@@ -577,12 +576,6 @@
                     <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable/>
                   </el-form-item>
                 </el-col>
-                <!-- <el-col :span="6">
-                  <el-form-item>
-                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入型号" clearable />
-                  </el-form-item>
-                </el-col> -->
-
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
@@ -1929,34 +1922,42 @@ export default {
         });
       }
 
-      if (this.dataFormTwo.lines.length > 1) {
-        let index = this.dataFormTwo.lines.findIndex(item =>
-          item.customerProductNo === "" &&
-          item.price === "" &&
-          item.productDrawingNo == ""
-        )
-        console.log(index);
-        if (index !== -1) {
-          this.dataFormTwo.lines.splice(index, 1);
-        }
-      }
       if (this.dataFormTwo.lines.length) {
-
         for (let index = 0; index < this.dataFormTwo.lines.length; index++) {
           const item = this.dataFormTwo.lines[index];
-          if (!item.productDrawingNo) {
-            submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行型号不能为空")
-            return
-          }
-          if (!item.productsId) {
-            submitFlag = false
-            this.$message({
-              message: "第" + (index + 1) + "行产品不存在",
-              type: 'error',
-              duration: 1500,
-            })
-            break
+
+          // 需要校验的字段
+          const requiredFields = ['customerProductNo', 'price','productDrawingNo'];
+
+          // 检查是否所有需要校验的字段都为空
+          const isEmptyRow = requiredFields.every(field => !item[field]);
+
+          if (isEmptyRow) {
+            // 如果所有字段都为空，则删除该行，但至少保留一条数据
+            if (this.dataFormTwo.lines.length > 1) {
+              this.dataFormTwo.lines.splice(index, 1);
+              index--; // 因为删除了当前行，所以需要调整索引
+              submitFlag = true;
+            } else {
+              // 如果只剩一条数据，不能删除，直接跳过
+              continue;
+            }
+          } else {
+            // 如果至少有一个字段填写，则进行校验
+            if (!item.productDrawingNo) {
+              submitFlag = false;
+              this.$message.error("产品信息第" + (index + 1) + "行产品不能为空");
+              return;
+            }
+            if (!item.productsId) {
+              submitFlag = false;
+              this.$message({
+                message: "第" + (index + 1) + "行产品不存在",
+                type: 'error',
+                duration: 1500,
+              });
+              break;
+            }
           }
         }
       }

@@ -32,6 +32,8 @@
                          @click="addSupplier('', 'add', 'directly_quotation')">直接报价</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
                          @click="exportForm('dataTable')">导出</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                         @click="exportSingleRecord()">导出单个报价单</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -148,7 +150,15 @@
 </template>
 
 <script>
-import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation, submitSaleQuotation, saleAgainQuotation } from '@/api/salesManagement/index'
+import {
+  getQuotationLists,
+  deleteQuotationData,
+  getQuotationmxLists,
+  exportSaleQuotation,
+  submitSaleQuotation,
+  saleAgainQuotation,
+  exportSingleSaleQuotation
+} from '@/api/salesManagement/index'
 import DepForm from './depForm'
 import QuoteForm from './quoteForm'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
@@ -339,6 +349,7 @@ export default {
       ],
       listQuery: {},
 
+      selectedRow: [],
       downloadDialogVisible: false,
       currentDownloadId: null,
       hasInclude: true
@@ -569,8 +580,20 @@ export default {
         })
       }).catch(() => { })
     },
+    exportSingleRecord() {
+      // 必须选择一条数据
+      if (this.selectedRow.length !== 1) {
+        this.$message.error('请选择一条报价单导出')
+        return
+      }
+      let id = this.selectedRow[0].id
+      exportSingleSaleQuotation(id).then(res => {
+        if (!res.data.url) return
+        this.jnpf.downloadFile(res.data.url, res.data.name)
+      })
+    }
   }
-}
+  }
 </script>
 
 <style scoped>

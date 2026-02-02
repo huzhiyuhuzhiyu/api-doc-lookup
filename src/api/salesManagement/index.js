@@ -361,6 +361,13 @@ export function exportSaleQuotation (id,hasInclude) {
     method: 'get',
   })
 }
+// 报价单-导出
+export function exportSingleSaleQuotation (id) {
+  return request({
+    url: `/api/erp/sale/quotation/export/${id}`,
+    method: 'get',
+  })
+}
 //批量取消发货
 export function Cancelshipmentlist (data) {
   return request({

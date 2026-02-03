@@ -368,6 +368,13 @@ export function exportSingleSaleQuotation (id) {
     method: 'get',
   })
 }
+// 采购询价单-导出
+export function exportSingleBimInquiry (id) {
+  return request({
+    url: `/api/erp/bimInquiry/template/export/${id}`,
+    method: 'get',
+  })
+}
 //批量取消发货
 export function Cancelshipmentlist (data) {
   return request({

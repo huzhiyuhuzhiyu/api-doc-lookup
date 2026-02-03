@@ -45,6 +45,8 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addEnquiry('', 'add')" :addText="'新建'">
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportSingleRecord()">导出单个询价单</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -60,7 +62,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table customKey="hsCodes" v-loading="listLoading" :data="tableDataList"
+          <JNPF-table customKey="hsCodes" v-loading="listLoading" :data="tableDataList" hasC
             @selection-change="(val) => selectedRow = val" :row-key="'id'" fixedNO :setColumnDisplayList="columnList"
             @sort-change="sortChange" ref="dataTable" custom-column>
             <template v-for="column in columnsConfig">
@@ -118,6 +120,7 @@
 import { getEnquiryManagementList, deleteEnquiryManagement } from '@/api/enquiryManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import EstablishForm from './establishForm'
+import { exportSingleBimInquiry } from "@/api/salesManagement";
 export default {
   name: 'enquiryManagementPage',
   components: {
@@ -129,6 +132,7 @@ export default {
       establishVisible: false,
       form: {},
       tableDataList: [],
+      selectedRow: [],
       total: 0,
       listLoading: false,
       basicQuery: {},
@@ -308,6 +312,18 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
+    exportSingleRecord() {
+      // 必须选择一条数据
+      if (this.selectedRow.length !== 1) {
+        this.$message.error('请选择一条报价单导出')
+        return
+      }
+      let id = this.selectedRow[0].id
+      exportSingleBimInquiry(id).then(res => {
+        if (!res.data.url) return
+        this.jnpf.downloadFile(res.data.url, res.data.name)
+      })
+    }
   }
 }
 </script>

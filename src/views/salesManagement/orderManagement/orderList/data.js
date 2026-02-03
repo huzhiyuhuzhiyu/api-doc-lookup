@@ -133,6 +133,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       },
       searchList: [
         { prop: 'name', label: '客户名称', type: 'input' },
+        { prop: 'code', label: '客户编码', type: 'input' },
       ],
       change: (id, data) => {
         context.dataForm.cooperativePartnerName = data[0].all.name

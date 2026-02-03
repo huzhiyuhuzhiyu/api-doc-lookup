@@ -154,7 +154,7 @@ export default {
         },
         {
           prop: 'content',
-          label: '',
+          label: '打字内容',
           type: 'view',
           minWidth: 360,
           formatter: (row) => {
@@ -216,7 +216,7 @@ export default {
           content1,
           content2,
           content3,
-          noTyping: item.sealingCoverTyping === '',
+          noTyping: false,
           sealingCoverTyping,
           content
         };

@@ -60,6 +60,15 @@ export default {
       linesList: [],
       formLinesListItems: [
         {
+          prop: 'drawingNo',
+          label: '型号',
+          type: 'input',
+          remote: true,
+          minWidth: 200,
+          remoteMethod: this.drawingNoFetchSuggestions,
+          select: (item, scope) => this.drawingSelect(item, scope),
+        },
+        {
           prop: 'customerProductNo',
           label: '客户料号',
           type: 'input',
@@ -76,15 +85,6 @@ export default {
           label: '客户型号',
           type: 'view',
           minWidth: 200,
-        },
-        {
-          prop: 'drawingNo',
-          label: '型号',
-          type: 'input',
-          remote: true,
-          minWidth: 200,
-          remoteMethod: this.drawingNoFetchSuggestions,
-          select: (item, scope) => this.drawingSelect(item, scope),
         },
         {
           prop: 'productName',

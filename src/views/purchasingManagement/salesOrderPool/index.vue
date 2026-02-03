@@ -42,6 +42,12 @@ export default {
       }],
       loading: false,
       visible: false,
+      printVisible: false,
+      printQuery: {
+        category: ''
+      },
+      fullName: '',
+      enCode: '',
       showDialog: false,
       tableData: [],
       total: 0,
@@ -133,6 +139,33 @@ export default {
     getAlign(align) {
       return align || 'left'
     },
+    closePrint() {
+      this.printVisible = false
+    },
+    printView(row, enCode, fullName) {
+      this.selectArr = [row]
+      this.enCode = enCode
+      this.fullName = fullName
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
+    async printOrder(enCode) {
+      try {
+        const res = await getPrintBusInfo(enCode)
+        if (!res.data) {
+          return this.$message.warning('未找到相应打印模版')
+        }
+        const id = res.data.id
+        const printData = this.selectArr.map(item => ({
+          formId: item.id,
+          id: id
+        }))
+        this.$refs.batchPrint.print(printData);
+      } catch ( e ) {
+      }
+    },
   }
 }
 </script>
@@ -197,7 +230,7 @@ export default {
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" width="300" fixed="right">
+          <el-table-column label="操作" width="340" fixed="right">
             <template slot-scope="{ row }">
               <el-button size="mini" type="text" @click="handleColumnClick(row, 'add','product')">
                 成品需求
@@ -211,6 +244,9 @@ export default {
               <el-button size="mini" type="text" @click="handleColumnClick(row, 'add','productionTransfer')">
                 转生产
               </el-button>
+              <el-button size="mini" type="text" @click.native="printView(row, 'p002', '销售单打印')">
+                打印
+              </el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -223,5 +259,8 @@ export default {
       :visible.sync="showDialog"
       @confirm="handleConfirm"
     />
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
+                 :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
+    <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
   </div>
 </template>

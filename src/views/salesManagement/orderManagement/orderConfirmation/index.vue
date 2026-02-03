@@ -267,6 +267,9 @@ export default {
               <el-button size="mini" type="text" @click="handleColumnClick(row, 'confirmDeliveryDate')">
                 完成
               </el-button>
+              <el-button size="mini" type="text" @click.native="printView(row, 'p002', '销售单打印')">
+                打印
+              </el-button>
             </template>
           </el-table-column>
         </JNPF-table>

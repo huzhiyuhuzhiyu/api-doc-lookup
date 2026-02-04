@@ -15,10 +15,11 @@ import TypingEditorDialog from './typingEditDialog.vue'
 import RecordList from "@/views/workFlow/components/RecordList.vue";
 import Process from "@/components/Process/index.vue";
 import { getBusinessComponent, getBusinessComponentPage } from "@/api/assemblyMaintenance";
+import CustomerProductForm from '@/views/salesManagement/basicManagement/customerProduct/depForm.vue'
 
 export default {
   name: "Form",
-  components: { Process, RecordList, TableFormProduct, TypingEditorDialog },
+  components: { Process, RecordList, TableFormProduct, TypingEditorDialog, CustomerProductForm },
   mixins: [flowMixin, busFlow],
   props: {
     fromPage: {
@@ -380,6 +381,7 @@ export default {
       linesListItems: [],
       linesTableHeight: 0,
       uploadProduct,
+      customerProductVisible: false,
       productRefType: '',
       addProductProps: {
         title: '选择产品',
@@ -923,6 +925,12 @@ export default {
       this.productRefType = type;
       this.$refs.ComSelectProductRef.openDialog();
     },
+    addCustomer() {
+      this.customerProductVisible = true
+      this.$nextTick(() => {
+        this.$refs.CustomerProductForm.init('', 'add')
+      })
+    },
     deleteLines(scope) {
       this.linesList.splice(scope.$index, 1)
     },
@@ -1151,6 +1159,8 @@ export default {
                           <span>|</span>
                           <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('customer')">选择客户产品</el-button>
                           <span>|</span>
+                          <el-button type="text" icon="el-icon-plus" @click="addCustomer()">新增客户产品</el-button>
+                          <span>|</span>
                           <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('product')">选择产品</el-button>
                           <span>|</span>
                           <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog('assemblingUnit')">选择组合件</el-button>
@@ -1224,6 +1234,7 @@ export default {
       <!--  导入-->
       <UploadImportData ref="uploadRef" v-if="uploadVisible" :extraFormData="extraFormData" :uploadApi="uploadProduct" @success="importDataSuccess"
                         @close="uploadVisible = false" templateDownLoadPath="/static/销售订单导入模板.xlsx"/>
+      <CustomerProductForm v-if="customerProductVisible" ref="CustomerProductForm" @refreshDataList="" @close="customerProductVisible = false" :customList="[]" />
     </div>
   </transition>
 </template>

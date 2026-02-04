@@ -306,9 +306,9 @@ export default {
                   <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
                     查看详情
                   </el-dropdown-item>
-                  <el-dropdown-item @click.native="printView(row, 'p006', '采购单打印')">
+                  <!-- <el-dropdown-item @click.native="printView(row, 'p006', '采购单打印')">
                     打印
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                 </el-dropdown-menu>
               </el-dropdown>
             </template>

@@ -66,6 +66,8 @@ export function getBasicFormSchema(dataFormRef, context) {
     if (isClear) {
       clearFormOnCustomerChange();
     }
+
+    if (!context.computedLinesList.length) context.addLineForm()
   }
 
   function clearFormOnCustomerChange() {

@@ -170,6 +170,22 @@ export function getSaleordersTotal(data) {
     data: data
   })
 }
+// 获取合作方产品新增数据
+export function getCooperativeProductNewData(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/product/new/data`,
+    method: 'post',
+    data: data
+  })
+}
+// 获取合作方产品新增数据
+export function getSaleOrderLineNewData(data) {
+  return request({
+    url: `/api/erp/sale/orders/line/new/data`,
+    method: 'post',
+    data: data
+  })
+}
 
 
 

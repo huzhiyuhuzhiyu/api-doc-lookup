@@ -6,7 +6,16 @@ import { getBasicFormSchema } from "./data";
 import { getcategoryTree } from "@/api/basicData/materialSettings";
 import { getOrganization } from "@/api/permission/user";
 import { getOrganizeInfo } from "@/api/permission/organize";
-import { addOrders, editOrders, getcooperativeProduct, getOrderDetail, getOrderNumberByCode, uploadProduct } from "@/api/salesManagement/assemblyOrders";
+import {
+  addOrders,
+  editOrders,
+  getcooperativeProduct,
+  getOrderDetail,
+  getOrderNumberByCode,
+  uploadProduct,
+  getCooperativeProductNewData,
+  getSaleOrderLineNewData
+} from "@/api/salesManagement/assemblyOrders";
 import { getProducts } from "@/api/masterDataManagement";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
@@ -787,6 +796,36 @@ export default {
         customerProductNo,
         taxRate,
       });
+
+      const params = {
+        cooperativePartnerId: this.dataForm.cooperativePartnerId,
+        productsId: id,
+      }
+
+      try {
+        this.loading = true
+        const [cooperativeRes, saleOrderRes] = await Promise.all([
+          getCooperativeProductNewData(params),
+          getSaleOrderLineNewData(params)
+        ])
+
+        const coopData = cooperativeRes.data || this.linesList[scope.$index]
+        const saleData = saleOrderRes.data || this.linesList[scope.$index]
+
+        Object.assign(this.linesList[scope.$index], {
+          customerProductNo: coopData.customerProductNo,
+          customerProductDrawingNo: coopData.customerProductDrawingNo,
+          customerProductName: coopData.customerProductName,
+          price: coopData.price,
+          taxRate: coopData.taxRate,
+          excludingTaxPrice: coopData.excludingTaxPrice,
+          sealingCoverTyping: saleData.sealingCoverTyping,
+        })
+
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
       // 触发这个事件，判断当前computedLinesList是否存在空的drawingNo，如果没有则触发新增一行
       if (!this.computedLinesList.some(item => !item.drawingNo)) {
         this.addLineForm()
@@ -877,6 +916,7 @@ export default {
     },
 
     addLineForm() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       this.linesList.push(createEmptyObject(this.linesListItems));
     },
 

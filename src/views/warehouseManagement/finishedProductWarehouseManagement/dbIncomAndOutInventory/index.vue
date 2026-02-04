@@ -390,9 +390,23 @@ export default {
         case 'outboundSaleSendConfirm':
           this.handleOutboundSaleSendConfirmation();
           break;
+        case 'print':
+         if (!this.validateRowSelection()) return;
+
+        const selectedRow = this.selectedRows[0];
+        // 根据业务类型设置不同的打印模板编码
+        const printTemplateMap = {
+          'outbound_sale_send': { enCode: 'p032', fullName: '打印装箱清单' },
+        };
+        const printTemplate = printTemplateMap[this.activeBusinessType];
+        if (!printTemplate) {
+          this.$message.error('未配置打印模板');
+          return;
+        }
+        this.openPrintPreview(selectedRow, printTemplate.enCode, printTemplate.fullName);
+        break;
       }
     },
-
     handleOutboundSaleSendConfirmation() {
       if (!this.validateRowSelection()) return;
 

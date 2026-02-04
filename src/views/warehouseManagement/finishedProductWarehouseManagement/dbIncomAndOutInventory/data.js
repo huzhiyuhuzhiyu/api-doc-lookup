@@ -14,6 +14,13 @@ export function getButtonList(type = 'default') {
         icon: '',
         text: '确认'
       },
+      {
+        buttonType: 'primary',
+        type: 'print',
+        permission: 'btn_print',
+        icon: 'el-icon-printer',
+        text: '打印'
+      },
     ],
     // 销售退货
     inbound_sale_return: [],

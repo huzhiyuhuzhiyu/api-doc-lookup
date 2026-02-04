@@ -785,6 +785,10 @@ export default {
         customerProductNo,
         taxRate,
       });
+      // 触发这个事件，判断当前computedLinesList是否存在空的drawingNo，如果没有则触发新增一行
+      if (!this.computedLinesList.some(item => !item.drawingNo)) {
+        this.addLineForm()
+      }
     },
 
     async drawingNoFetchSuggestions(queryString, cb) {

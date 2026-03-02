@@ -58,7 +58,8 @@ export default {
         methodArr: {
           method: getcategoryTree,
           requestObj: {
-            classAttribute: ''
+            classAttribute: '',
+            type: 'material',
           },
         },
         listMethod: getProductList,
@@ -372,15 +373,15 @@ export default {
       @superQuery="superQuerySearch" @close="superQueryVisible = false"/>
     <Form ref="Form" v-if="visible" @close="close"/>
     <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct">
-      <template #hsProductsCode="{row}">
-        <el-input
-          v-model="row.hsProductsCode"
-          placeholder="请选择HS编码"
-          clearable
-          @click.native.stop="openHSCodeComSelect(row)"
-          readonly
-        />
-      </template>
+<!--      <template #hsProductsCode="{row}">-->
+<!--        <el-input-->
+<!--          v-model="row.hsProductsCode"-->
+<!--          placeholder="请选择HS编码"-->
+<!--          clearable-->
+<!--          @click.native.stop="openHSCodeComSelect(row)"-->
+<!--          readonly-->
+<!--        />-->
+<!--      </template>-->
     </ComSelect-page>
     <ComSelect-page v-bind="addHSCodeProps" ref="ComSelectHSCodeRef" :element-show="false" @change="submitAllHSCode"/>
   </div>

@@ -20,6 +20,7 @@ import PackingForm from './module/PackingForm.vue'
 import AutoRecBatchPacking from "./module/components/AutoRecBatchPacking.vue";
 import InboundForm from "./module/InboundForm.vue";
 import OutboundForm from "./module/OutboundForm.vue";
+import SingleBoxPrintDialog from "./singleBoxPrintDialog.vue";
 import { getDakeReceiveList } from "@/api/warehouseManagement/inboundAndOutbound";
 
 export default {
@@ -32,6 +33,7 @@ export default {
     PackingForm,
     BatchPrintBrowse,
     PrintDialog,
+    SingleBoxPrintDialog,
   },
   props: {
     warehouseCode: {
@@ -503,17 +505,29 @@ export default {
       });
     },
 
-    async executePrint(templateCode) {
+    async executePrint(templateCode, params = null) {
       try {
         const response = await getPrintBusInfo(templateCode);
         if (!response.data) {
           return this.$message.warning('未找到相应打印模版');
         }
 
+        // 单箱打印，需要选择前置数据
+        if (!params && response.data.fullName === '单箱打印') {
+          const firstRow = this.selectedRows[0];
+          if (firstRow.packingStatus !== 'boxed') {
+            return this.$message.warning('只有已装箱的数据才能单箱打印');
+          }
+          this.currentPrintTemplateCode = templateCode;
+          this.$refs.singleBoxPrintDialog.open(firstRow.id, templateCode);
+          return;
+        }
+
         const templateId = response.data.id;
         const printData = this.selectedRows.map(item => ({
           formId: item.id,
-          id: templateId
+          id: templateId,
+          params
         }));
 
         this.$refs.batchPrint.print(printData);
@@ -524,6 +538,10 @@ export default {
 
     closePrintDialog() {
       this.isPrintDialogVisible = false;
+    },
+
+    handleSingleBoxPrint(templateCode, trayNo) {
+      this.executePrint(templateCode, { trayNo: trayNo });
     },
 
     closeDialog(shouldReloadData = true) {
@@ -693,6 +711,10 @@ export default {
       ref="OutboundForm"
       v-if="isOutboundDialogVisible"
       @close="closeDialog"
+    />
+    <SingleBoxPrintDialog
+      ref="singleBoxPrintDialog"
+      @confirm="handleSingleBoxPrint"
     />
     <!-- 详情组件 -->
     <component

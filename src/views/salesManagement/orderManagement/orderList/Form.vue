@@ -112,16 +112,15 @@ export default {
           label: "工厂单价",
           minWidth: 120,
           type: 'input',
-          render: this.currentSystem == 'dake_wm'
+          render: this.$store.getters.currentSystem == 'dake_wm'
         },
         {
-          prop: "supplierName",
+          prop: "supplierCode",
           label: "工厂号",
-          value: "",
           type: "custom",
-          render: this.currentSystem == 'dake_wm',
+          render: this.$store.getters.currentSystem == 'dake_wm',
           customComponent: "ComSelect-page",
-          itemRules: [{ required: true, trigger: "change" }],
+          itemRules: [{ required: false, trigger: "change" }],
           title: '选择供应商',
           treeTitle: '供应商分类',
           renderTree: true,
@@ -159,11 +158,13 @@ export default {
           ],
           change: (val, data, paramsObj) => {
             if (!data.length) return
-            // const index = paramsObj.scope.$index
+            const index = paramsObj.scope.$index
             const row = paramsObj.scope.row
             const _data = data[0]
-            row.cooperativePartnerId = _data.id;
-            row.cooperativePartnerName = _data.name;
+            row.supplierCode =  _data?.all?.code;
+            this.linesList[index].supplierId =  _data?.id;
+            this.linesList[index].supplierCode =  _data?.all?.code;
+            console.log( row, _data)
             // this.$nextTick(() => {
               // this.$refs.dataForm.$refs.main.validateField(`data.${ index }.cooperativePartnerName`);
             // });
@@ -174,7 +175,7 @@ export default {
             listQuery.classAttribute = data.classAttribute
             return listQuery
           },
-          minWidth: 220,     
+          minWidth: 220,
         },
         {
           prop: 'productCode',
@@ -329,14 +330,14 @@ export default {
           label: '汇率',
           type: 'input',
           minWidth: 120,
-          render: this.currentSystem == 'dake_wm'
+         render: this.$store.getters.currentSystem == 'dake_wm'
         },
         {
           prop: 'foreignExchangePrice',
           label: '外汇单价',
           type: 'input',
           minWidth: 120,
-          render: this.currentSystem == 'dake_wm'
+          render: this.$store.getters.currentSystem == 'dake_wm'
         },
         {
           prop: 'sealingCoverTyping',

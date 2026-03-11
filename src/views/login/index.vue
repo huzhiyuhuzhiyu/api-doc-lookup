@@ -539,6 +539,9 @@ export default {
               localStorage.setItem('qhxt', false)
               that.$store.commit('jx/SET_LOGO')
               localStorage.setItem("sys", data.tenantId)
+              // 这里暂时兼容这两种情况，后续可以优化
+              localStorage.setItem('currentSystem',  data.tenantId)
+              this.$store.commit('user/SET_CURRENT_SYSTEM', data.tenantId)
               location.href = location.origin + '/' + response.data.systemVO.homeAdress
             }).catch(error => {
               that.$store.commit('user/SET_LOGIN_LOADING', false)
@@ -624,6 +627,9 @@ export default {
               localStorage.setItem('qhxt', false)
               this.$store.commit('jx/SET_LOGO')
               localStorage.setItem("sys", this.loginForm.busCode)
+              // 手动登录时候，需要在存储一次标识符
+              localStorage.setItem('currentSystem', this.loginForm.busCode)
+              this.$store.commit('user/SET_CURRENT_SYSTEM', this.loginForm.busCode)
               if (['zgt_zy','zhongya'].includes(this.loginForm.busCode)) {
                 localStorage.setItem('loginTenant', 'zhongya')
               } else if (['zgt_xzy','xzhongya'].includes(this.loginForm.busCode)) {

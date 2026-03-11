@@ -229,6 +229,53 @@ export function getBasicFormSchema(dataFormRef, context) {
       }
     },
     {
+      prop: "currencySystem",
+      label: "币种",
+      value: "",
+      type: "select",
+      itemRules: [{ required: true, trigger: "blur" }],
+      render: context.currentSystem == 'dake_wm',
+      get options() {
+        return context.systemOptions
+      },
+      change: (val) => {
+        // 修改币种设置汇率
+        const selectedCurrency = context.systemOptions.find(option => option.value === val);
+        context.dataForm.exchangeRate = selectedCurrency ? selectedCurrency.exchangeRate : '';
+         // 同步修改表格中所有行的汇率
+         if (context.linesList && Array.isArray(context.linesList)) {
+           context.linesList.forEach(item => {
+             if (item) {
+               item.exchangeRate = context.dataForm.exchangeRate || ''
+             }
+           })
+         }
+      }
+    },
+    {
+      prop: "exchangeRate",
+      label: "汇率",
+      value: "",
+      type: "input",
+      render: context.currentSystem == 'dake_wm',
+      get value() {
+        // 默认空或者者根据选中的币种设置汇率
+        const selectedCurrency = context.systemOptions.find(option => option.value === context.dataForm.currencySystem);
+        return selectedCurrency ? selectedCurrency.exchangeRate : '';
+      },
+      change: (val) => {
+        console.log('汇率修改了', val, context.linesList)
+        // 汇率修改后，修改表格的汇率数据同步
+        if (context.linesList && Array.isArray(context.linesList)) {
+          context.linesList.forEach(item => {
+            if (item) {
+              item.exchangeRate = val || ''
+            }
+          })
+        }
+      }
+    },
+    {
       prop: "remark",
       label: "备注",
       value: "",

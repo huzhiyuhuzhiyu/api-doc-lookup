@@ -16,7 +16,8 @@ const state = {
   userInfo: {},
   permissionList: [],
   loginLoading: false,
-  socket: ''
+  socket: '',
+  currentSystem: localStorage.getItem('currentSystem') || '' // 区分内贸和外码的标识符
 }
 
 const mutations = {
@@ -60,6 +61,9 @@ const mutations = {
     console.log(state,'state')
     console.log(projectId,'kkk')
     state.userInfo.projectId = projectId
+  },
+  SET_CURRENT_SYSTEM: (state, currentSystem) => {
+    state.currentSystem = currentSystem
   },
 }
 
@@ -305,6 +309,8 @@ const actions = {
       commit('SET_LOGIN_LOADING', false)
       commit('generator/SET_COMPANY_TREE', [], { root: true })
       commit('generator/SET_DEP_TREE', [], { root: true })
+      commit('SET_CURRENT_SYSTEM', '')
+      localStorage.removeItem('currentSystem')
       removeToken()
       resolve()
     })

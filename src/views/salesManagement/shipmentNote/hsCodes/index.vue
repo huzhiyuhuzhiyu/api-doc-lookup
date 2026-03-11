@@ -55,6 +55,7 @@ export default {
         renderTree: true,
         multiple: true,
         treeTitle: '产品分类',
+        customKey: 'custom-product',
         methodArr: {
           method: getcategoryTree,
           requestObj: {
@@ -65,7 +66,6 @@ export default {
         listMethod: getProductList,
         tableItems: [
           {prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom'},
-          {prop: 'code', label: '产品编码', sortable: 'custom'},
           {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
           {prop: 'mainUnit', label: '单位', sortable: 'custom'},
           {prop: 'hsProductsCode', label: 'HS编码', minWidth: '220px', sortable: 'custom'},

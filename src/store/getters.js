@@ -22,6 +22,7 @@ const getters = {
     departmentList: state => state.generator.departmentList,
     groupList: state => state.generator.groupList,
     socket: state => state.user.socket,
+    currentSystem: state => state.user.currentSystem,
     hasTable: state => state.generator.hasTable,
     leftMenuList: state => state.user.leftMenuList,
     sysConfig: state => state.settings.sysConfig,

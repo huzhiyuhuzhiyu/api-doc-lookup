@@ -62,7 +62,8 @@
         </div>
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <el-row :class="['JNPF-common-search-box', searchList === undefined ? 'noSearchList' : '']" :gutter="16">
-            <el-form @submit.native.prevent>
+           <div class="flex-row search-left">
+             <el-form @submit.native.prevent>
               <template v-for="(item, index) in searchList">
                 <el-col :span="searchFieldSpan" :key="item.prop" v-if="index < maxShowSearchField"
                         :class="(index == 0 && !renderTree) ? 'killPaddingLeft' : ''">
@@ -98,6 +99,12 @@
                          icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueriesVisible = true">更多查询
               </el-button>
             </el-form>
+            <div v-if="customKey" class="search-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="$refs.dataTable.showDrawer()"/>
+            </el-tooltip>
+            </div>
+           </div>
           </el-row>
           <slot name="top"></slot>
           <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -105,7 +112,7 @@
                         :highlight-current-row="false" @row-dblclick="rowDblclickFun" @selection-change="currentChange"
                         :row-class-name="getRowClassName" :checkSelectable="checkSelectable" ref="dataTable"
                         @row-click="handleRowClick" :tree-props="{ children: 'childrenList', hasChildren: '' }" :row-key="'id'"
-                        :default-expand-all="expands" @sort-change="sortChange" custom-column>
+                        :default-expand-all="expands" @sort-change="sortChange" custom-column :custom-key="customKey ?  customKey : ''">
               <template v-if="!listDataTreeFlag">
                 <template v-for="item in tableItems">
                   <el-table-column
@@ -370,6 +377,10 @@ export default {
       type: Boolean,
       default: true
     },
+    customKey: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
@@ -937,5 +948,8 @@ $footerPadding: '10px';
 .singleLine {
   flex-wrap: nowrap;
   overflow-x: auto;
+}
+.search-right{
+  padding-top: 8px; // 原始外层容器有8-px的偏移，这里新的box多8px做兼容
 }
 </style>

@@ -15,6 +15,12 @@
         <el-form-item label="兑换比" prop="exchangeRate">
           <el-input v-model="dataForm.exchangeRate" placeholder="请输入兑换比" maxlength="20" />
         </el-form-item>
+         <el-form-item label="num1" prop="num">
+          <el-input v-model="dataForm.num" placeholder="请输入num1" maxlength="20" />
+        </el-form-item>
+         <el-form-item label="符号" prop="symbol">
+          <el-input v-model="dataForm.symbol" placeholder="请输入符号" maxlength="20" />
+        </el-form-item>
       </el-form>
       <span class="button-bottom">
         <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
@@ -47,7 +53,9 @@ export default {
         currencySystem: [{ required: true, message: '请输入币制', trigger: 'blur' }],
         exchangeRate: [
           { required: true, message: '请输入兑换比', trigger: 'blur' },
-        ]
+        ],
+        num: [{ required: true, message: '请输入num1', trigger: 'blur' }],
+        symbol: [{ required: true, message: '请输入符号', trigger: 'blur' }],
       }
     }
   },
@@ -71,7 +79,7 @@ export default {
       this.$nextTick(() => {
         if (this.dataForm.id) {
           // this.fetchData('bm_gy_gxfl', false)
-          detailCategory(this.dataForm.id).then((res) => {
+           detailCategory(this.dataForm.id).then((res) => {
             this.dataForm = res.data
             this.formLoading = false
           })

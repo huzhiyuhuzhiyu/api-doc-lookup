@@ -28,7 +28,8 @@
           custom-column customKey="JNPFTableKey_619371" :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
           <el-table-column prop="currencySystem" label="币制" min-width="200"></el-table-column>
           <el-table-column prop="exchangeRate" label="兑换比" min-width="120" />
-
+          <el-table-column prop="num" label="num1" min-width="120" />
+          <el-table-column prop="symbol" label="符号" min-width="120" />
 <!--          <el-table-column prop="createTime" label="创建时间" width="180" />-->
 <!--          <el-table-column prop="createByName" label="创建人" width="180" />-->
 <!--          <el-table-column prop="remark" label="备注" min-width="200" />-->

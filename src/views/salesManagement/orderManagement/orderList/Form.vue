@@ -25,7 +25,9 @@ import RecordList from "@/views/workFlow/components/RecordList.vue";
 import Process from "@/components/Process/index.vue";
 import { getBusinessComponent, getBusinessComponentPage } from "@/api/assemblyMaintenance";
 import CustomerProductForm from '@/views/salesManagement/basicManagement/customerProduct/depForm.vue'
-
+import { getExchangeRateList } from "@/api/masterDataManagement/productManage";
+import { getcategoryTrees } from "@/api/salesManagement/assemblyOrders";
+import { getCooperativeData } from "@/api/basicData";
 export default {
   name: "Form",
   components: { Process, RecordList, TableFormProduct, TypingEditorDialog, CustomerProductForm },
@@ -63,7 +65,10 @@ export default {
         deliveryDate: '',
         remark: '',
         remark1: '',
+        currencySystem: '',
+        exchangeRate: '',
       },
+      systemOptions :[],
       extraFormData: {},
       fileList: [],
       basicFormSchema: [],
@@ -101,6 +106,75 @@ export default {
           label: '产品名称',
           type: 'view',
           minWidth: 180,
+        },
+        {
+          prop: "factoryPrice",
+          label: "工厂单价",
+          minWidth: 120,
+          type: 'input',
+          render: this.currentSystem == 'dake_wm'
+        },
+        {
+          prop: "supplierName",
+          label: "工厂号",
+          value: "",
+          type: "custom",
+          render: this.currentSystem == 'dake_wm',
+          customComponent: "ComSelect-page",
+          itemRules: [{ required: true, trigger: "change" }],
+          title: '选择供应商',
+          treeTitle: '供应商分类',
+          renderTree: true,
+          multiple: false,
+          clearable: true,
+          methodArr: { method: getcategoryTrees, requestObj: { type: 'customer' } },
+          listMethod: getCooperativeData,
+          tableItems: [
+            { prop: 'code', label: '供应商编码', minWidth: 180, sortable: 'custom' },
+            { prop: 'name', label: '供应商名称', minWidth: 180, sortable: 'custom' },
+            { prop: 'nameEn', label: '英文名称', minWidth: 180, sortable: 'custom' },
+            { prop: 'taxId', label: '税号', minWidth: 120, sortable: 'custom' }
+          ],
+          listRequestObj: {
+            code: '',
+            name: '',
+            type: 'supplier',
+            partnerCategoryId: '',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 'create_time'
+              }
+            ]
+          },
+          searchList: [
+            { prop: 'code', label: '供应商编码', type: 'input' },
+            { prop: 'name', label: '供应商名称', type: 'input' }
+          ],
+          change: (val, data, paramsObj) => {
+            if (!data.length) return
+            // const index = paramsObj.scope.$index
+            const row = paramsObj.scope.row
+            const _data = data[0]
+            row.cooperativePartnerId = _data.id;
+            row.cooperativePartnerName = _data.name;
+            // this.$nextTick(() => {
+              // this.$refs.dataForm.$refs.main.validateField(`data.${ index }.cooperativePartnerName`);
+            // });
+          },
+          treeNodeClick: (data, node, listQuery) => {
+            if (listQuery.partnerCategoryId === data.id) return listQuery
+            listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+            listQuery.classAttribute = data.classAttribute
+            return listQuery
+          },
+          minWidth: 220,     
         },
         {
           prop: 'productCode',
@@ -249,6 +323,20 @@ export default {
           itemRules: [
             { required: true, message: '交货日期不能为空', trigger: 'change', },
           ]
+        },
+        {
+          prop: 'exchangeRate',
+          label: '汇率',
+          type: 'input',
+          minWidth: 120,
+          render: this.currentSystem == 'dake_wm'
+        },
+        {
+          prop: 'foreignExchangePrice',
+          label: '外汇单价',
+          type: 'input',
+          minWidth: 120,
+          render: this.currentSystem == 'dake_wm'
         },
         {
           prop: 'sealingCoverTyping',
@@ -439,7 +527,7 @@ export default {
         searchList: [
           { prop: 'productName', label: '产品名称', type: 'input' },
           { prop: 'productCode', label: '产品编码', type: 'input' },
-        ]
+        ],
       },
 
       activeName: 'jcInfo',
@@ -569,7 +657,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
+    ...mapGetters(['userInfo', 'currentSystem']),
     activeType() {
       return this.btnType !== 'look'
     },
@@ -639,6 +727,7 @@ export default {
       }
       this.updateLinesListItems()
       this.dataForm.approvalFlag && this.getFlowDetail(id)
+      this.getExchangeRateOptions(); // 获取汇率选项
       this.$nextTick(() => {
         this.$refs.dataForm.$refs.main.clearValidate()
         this.refreshTableHeight()
@@ -904,6 +993,18 @@ export default {
         this.loading = false
       }
     },
+    async getExchangeRateOptions() {
+      try {
+       await getExchangeRateList({
+        pageNum: 1,
+        pageSize: -1
+      }).then(res => {
+        this.systemOptions = res.data.records.map(item => ({ label: item.currencySystem, value: item.currencySystem, exchangeRate: item.exchangeRate, symbol: item.currencySymbol }))
+      })
+      } catch ( error ) {
+        return [];
+      }
+    },
 
     async refreshTableHeight(...args) {
       if (args.length) await new Promise(resolve => setTimeout(resolve, 500))
@@ -917,7 +1018,15 @@ export default {
 
     addLineForm() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
-      this.linesList.push(createEmptyObject(this.linesListItems));
+      const newLine = createEmptyObject(this.linesListItems);
+      // 设置默认汇率
+      newLine.exchangeRate = this.dataForm.exchangeRate || '';
+      this.linesList.push(newLine);
+      // 手动同步一次交货日期
+      if (this.dataForm.deliveryDate !='') {
+        this.linesList[this.linesList.length - 1].deliveryDate = this.dataForm.deliveryDate
+        console.log(this.linesList[this.linesList.length - 1])
+      }
     },
 
     selectProductRefOpenDialog(type) {
@@ -1029,7 +1138,7 @@ export default {
               drawingNo: sub.productsDrawingNo,
               oil: selectedItem.name,
               taxRate: '13',
-              num: actualNum,
+              num: actualNum
             };
           });
 

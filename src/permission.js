@@ -53,6 +53,11 @@ async function singleSignOn() {
     store.commit('user/SET_TOKEN', urlParams.token)
     setToken(urlParams.token)
     setAccessToken(urlParams.accessToken)
+    // 存储当前系统标识，区分内贸和外贸系统
+    if(urlParams.sys) {
+      localStorage.setItem('currentSystem', urlParams.sys)
+      store.commit('user/SET_CURRENT_SYSTEM', urlParams.sys)
+    }
     // 清除地址栏中的 token 参数
     const url = new URL(window.location.href)
     url.searchParams.delete('token')

@@ -38,7 +38,10 @@
             分类编码
             <span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
+          <!-- 原逻辑：分类编码新增时可手动输入。 -->
+          <!-- <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" /> -->
+          <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20"
+            :disabled="!dataForm.id && codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
         </el-form-item>
         <el-form-item label="打字位置" prop="typingPosition">
           <el-input v-model="dataForm.typingPosition" placeholder="请输入打字位置" maxlength="20" />
@@ -98,6 +101,7 @@ export default {
         typingPosition: ''
       },
       classAttribute: '',
+      codeConfig: {},
       categoryPropertList: [
         {
           label: '原材料',
@@ -157,6 +161,17 @@ export default {
     this.getclassAttributeList()
   },
   methods: {
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.code = data.number
+        }
+        return data
+      } catch (error) {
+      }
+    },
     getclassAttributeList() {
       let obj = {
         pageNum: 1,
@@ -196,7 +211,11 @@ export default {
           })
         } else if (btntype == 'add') {
           this.title = '新建产品分类'
-          this.formLoading = false
+          // 原逻辑：新增时不取编码规则配置，分类编码手动输入。
+          // this.formLoading = false
+          this.fetchData('CPFL', true).then(()=>{
+            this.formLoading = false
+          })
         }
       })
     },

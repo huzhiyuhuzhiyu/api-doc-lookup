@@ -40,13 +40,13 @@
                             "></el-input>
                       </el-form-item>
                     </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="工序分类" prop="productCategoryIdText">
-                        <ComSelect-list :placeholder="placeholder" :requestObj="{ type: 'process' }"
-                          :dialogTitle="'选择工序分类'" v-model="dataForm.productCategoryIdText" :isdisabled="disabled"
-                          :method="getcategoryTree" :paramsObj="{}" @change="changeProductCategory"></ComSelect-list>
-                      </el-form-item>
-                    </el-col>
+<!--                    <el-col :span="12">-->
+<!--                      <el-form-item label="工序分类" prop="productCategoryIdText">-->
+<!--                        <ComSelect-list :placeholder="placeholder" :requestObj="{ type: 'process' }"-->
+<!--                          :dialogTitle="'选择工序分类'" v-model="dataForm.productCategoryIdText" :isdisabled="disabled"-->
+<!--                          :method="getcategoryTree" :paramsObj="{}" @change="changeProductCategory"></ComSelect-list>-->
+<!--                      </el-form-item>-->
+<!--                    </el-col>-->
                     <el-col :span="12">
                       <el-form-item label="加工类型" prop="processingType">
                         <el-select v-model="dataForm.processingType" placeholder="请选择加工类型" :disabled="disabled"
@@ -125,12 +125,12 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="报工排序" prop="reportingSort">
-                        <el-input v-model="dataForm.reportingSort" placeholder="请输入报工排序" maxlength="20"
-                          :disabled="disabled"></el-input>
-                      </el-form-item>
-                    </el-col>
+<!--                    <el-col :sm="12" :xs="24">-->
+<!--                      <el-form-item label="报工排序" prop="reportingSort">-->
+<!--                        <el-input v-model="dataForm.reportingSort" placeholder="请输入报工排序" maxlength="20"-->
+<!--                          :disabled="disabled"></el-input>-->
+<!--                      </el-form-item>-->
+<!--                    </el-col>-->
                     <el-col :span="24">
                       <el-form-item label="备注">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" show-word-limit
@@ -384,7 +384,7 @@ export default {
         id: '', // 工序id
         name: null, //  工序名称
         code: null, // 工序编码
-        processingType: null, // 工序类型
+        processingType: 'self_produced', // 工序类型
         unitPrice: null, // 正品单价
         rejectUnitPrice: null, // 次品单价
         scrapUnitPrice: null, // 废品单价
@@ -394,11 +394,11 @@ export default {
         productCategoryIdText: '',
         productCategoryId: '',
         processType: 'normal',
-        pickingFlag:false,
-        checkFlag:false,
-        reportFlag:false,
-        stockFlag:false,
-        workOrderFlag:false,
+        pickingFlag:true,
+        checkFlag:true,
+        reportFlag:true,
+        stockFlag:true,
+        workOrderFlag:true,
       },
       placeholder: '请选择工序分类',
       pricingTypeList: [

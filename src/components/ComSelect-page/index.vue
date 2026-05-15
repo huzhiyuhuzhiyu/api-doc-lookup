@@ -776,6 +776,12 @@ export default {
     async confirm() {
       this.btnLoading = true;
       try {
+        console.log('[ComSelect-page] confirm 提交前:', {
+          multiple: this.multiple,
+          selectedIds: this.selectedIds,
+          rSelectData: this.rSelectData,
+          paramsObj: this.paramsObj
+        });
         let submitFlag = true;
         if (this.beforeSubmit) {
           submitFlag = await this.beforeSubmit(

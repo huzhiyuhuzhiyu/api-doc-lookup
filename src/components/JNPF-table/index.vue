@@ -442,7 +442,6 @@ export default {
       let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
       this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) //
       let list = JSON.parse(JSON.stringify(this.defaultColumns))
-
       let cacheList = this.jnpf.storageGet(this.menuId + this._customKey)
       if (!cacheList) {
         list.forEach(item => {

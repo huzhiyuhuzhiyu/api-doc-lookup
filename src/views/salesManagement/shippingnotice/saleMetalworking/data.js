@@ -122,7 +122,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "select",
       options: context.getDictDataSync('logisticsCompany'),
-      itemRules: [{required: true, trigger: "change"}],
+      // itemRules: [{required: true, trigger: "change"}],
     },
     {
       prop: "priority",
@@ -130,14 +130,14 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "select",
       options: context.global.shippingPriority,
-      itemRules: [{required: true, trigger: "change"}],
+      // itemRules: [{required: true, trigger: "change"}],
     },
     {
       prop: "deliverDate",
       label: "计划发货日期",
       value: "",
       type: "date",
-      itemRules: [{required: true, trigger: "blur"}],
+      // itemRules: [{required: true, trigger: "blur"}],
     },
     {
       prop: "defaultAddress",

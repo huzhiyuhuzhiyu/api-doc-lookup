@@ -31,8 +31,18 @@
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <JNPF-table customKey="salesQuotationOld" ref="product" :has-c="this.btnType !== 'look'" fixedNO :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
                     v-if="tableFlag" v-bind="customStyleData" custom-column>
-                    <el-table-column prop="productCode" label="产品型号" width="180"
-                      show-overflow-tooltip></el-table-column>
+<!--                    <el-table-column prop="productCode" label="产品型号" width="180"-->
+<!--                      show-overflow-tooltip></el-table-column>-->
+<!--                    原产品型号仅展示产品编码，保留旧逻辑方便回退。-->
+<!--                    <el-table-column prop="productCode" label="产品型号" width="180"-->
+<!--                                     show-overflow-tooltip></el-table-column>-->
+                    <el-table-column prop="productDrawingNo" label="产品型号" width="180" show-overflow-tooltip>
+                      <template slot-scope="scope">
+                        <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
+                          placeholder="请输入产品型号" prefix-icon="el-icon-search" style="width: 100%;"
+                          :disabled="status" @select="handleSelect(scope.row, scope.$index, $event)" />
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="180"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="customerProductDrawingNo" label="客户型号" width="160" show-overflow-tooltip></el-table-column>
@@ -152,9 +162,11 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="remark" label="备注" min-width="180">
+                    <el-table-column prop="remark" label="备注1" min-width="180">
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="status" maxlength="200" />
+                        <!-- 原逻辑保留：备注最多 200 字。 -->
+                        <!-- <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="status" maxlength="200" /> -->
+                        <el-input type="textarea"  v-model="scope.row.remark" placeholder="请输入备注" :disabled="status"   />
                       </template>
                     </el-table-column>
                     <el-table-column prop="remark2" label="反馈备注" min-width="180" v-if="dataForm.quotationStatus === 'feedback_received'">
@@ -724,6 +736,7 @@ export default {
           label: "备注",
           value: "",
           type: "textarea",
+          maxlength:'9999'
         },
       ],
       changeNum: 0,
@@ -914,6 +927,7 @@ export default {
       this.listLoading = true
 
       getProducts(this.ProductListRequestObj).then(listRes => {
+        console.log('[salesQuotationOld/depForm] 选择产品列表接口返回 /api/zgt/product/list:', listRes);
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
         } else {
@@ -959,12 +973,16 @@ export default {
     },
     // 所有产品列表 多选
     handleSelectionChangeAllPruduct(val) {
+      console.log('[salesQuotationOld/depForm] 选择产品弹框选中值:', val);
       this.selectArr = val
     },
     submitAllProduct() {
+      console.log('[salesQuotationOld/depForm] 选择产品确认提交前 selectArr:', this.selectArr);
       this.allProVisible = false
       this.selectArr.forEach(item => {
+        // const { name: productName, purchasePrice: procurementAmounts, id: productsId, code: productCode, salesPrice: amounts, drawingNo: productDrawingNo, salesExcludingTaxPrice: excludingTaxUnitPrice, excludingTaxPrice: excludingTaxAmounts } = item
         const { name: productName, purchasePrice: procurementAmounts, id: productsId, code: productCode, salesPrice: amounts, drawingNo: productDrawingNo, salesExcludingTaxPrice: excludingTaxUnitPrice, excludingTaxPrice: excludingTaxAmounts } = item
+
         item.productName = productName
         item.productCode = productCode
         item.productsId = productsId
@@ -972,6 +990,7 @@ export default {
         item.excludingTaxUnitPrice = excludingTaxUnitPrice
         this.$set(item, 'amounts', amounts ?? '')
         this.$set(item, 'procurementAmounts', procurementAmounts ?? '')
+        // drawingNo和productDrawingNo区别 取哪个?
         this.$set(item, 'productDrawingNo', productDrawingNo)
         this.$set(item, 'excludingTaxAmounts', excludingTaxAmounts ?? '')
       });
@@ -984,12 +1003,16 @@ export default {
           item.deliveryDate === ""
         )
         if (index !== -1) {
-          // 使用 splice 插入 newDataArray
-          this.dataFormTwo.lines.splice(index, 0, ...this.selectArr);
+          // 原逻辑：插入到空白行前面，会导致已选择产品后仍保留一条空白行。
+          // this.dataFormTwo.lines.splice(index, 0, ...this.selectArr);
+          this.dataFormTwo.lines.splice(index, 1, ...this.selectArr);
         } else {
           this.dataFormTwo.lines = [...this.selectArr, ...this.dataFormTwo.lines,]
         }
+      } else {
+        this.dataFormTwo.lines = [...this.selectArr]
       }
+      console.log('[salesQuotationOld/depForm] 选择产品确认提交后产品明细:', this.dataFormTwo.lines);
     },
     filterNodeAllProduct(value, data) {
       if (!value) return true;
@@ -1081,7 +1104,9 @@ export default {
         this.getHistoryPriceFun()
     },
     querySearchAsync(queryString, cb) {
-      if (queryString && queryString.length >= 3) {
+      // 原逻辑要求输入至少 3 个字符才搜索，改为和销售订单一样有输入就远程搜索。
+      // if (queryString && queryString.length >= 3) {
+      if (queryString) {
         let ProductListRequestObj = {
           classAttributeList: [],
           classAttribute: "",
@@ -1143,48 +1168,74 @@ export default {
       obj.taxRate = this.taxRate * 1
       if (this.dataFormTwo.lines[index].customerDrawingNumber) customerDrawingNumber = JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerDrawingNumber))
       if (item.value) {
-        let objs = {
+        // 原逻辑：先按型号查历史报价，有历史报价则整行替换为历史报价数据。
+        // let objs = {
+        //   productDrawingNo: item.value,
+        //   customerDrawingNumber: "",
+        //   cooperativePartnerId: this.dataForm.cooperativePartnerId,
+        //   pageNum: 1,
+        //   pageSize: 20,
+        //   orderItems: [{
+        //     asc: false,
+        //     column: "quotationTime"
+        //   }],
+        // }
+        // getQuotationmxLists(objs).then(res => {
+        //   if (res.data.records.length) {
+        //     console.log('有值', res.data.records[0]);
+        //     let data = res.data.records[0]
+        //     // res.data.records[0].customerProductDrawingNo = customerDrawingNumber ? customerDrawingNumber : res.data.records[0].customerProductDrawingNo
+        //     res.data.records[0].taxRate = res.data.records[0].taxRate * 1
+        //     this.$set(this.dataFormTwo.lines, index, res.data.records[0])
+        //     // this.$set(this.dataFormTwo.lines, index, res.data.records[0])
+        //     console.log(111, this.dataFormTwo.lines);
+        //     let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
+        //     if (!exists && res.data.records[0].taxRate) {
+        //       let obj = {
+        //         taxRate: res.data.records[0].taxRate * 1,
+        //         fullName: res.data.records[0].taxRate + '%',
+        //         enCode: res.data.records[0].taxRate + '%',
+        //       }
+        //       this.taxRateList.push(obj)
+        //     }
+        //   } else {
+        //     item.data.taxRate = this.taxRate * 1
+        //     this.$set(item.data, 'productDrawingNo', item.value)
+        //     this.$set(item.data, 'unitPrice', "")
+        //     this.$set(item.data, 'customerProductDrawingNo', customerDrawingNumber)
+        //     item.data.productsId = item.data.id
+        //     this.$set(this.dataFormTwo.lines, index, item.data)
+        //     // this.$set(this.dataFormTwo.lines, index, item.data)
+        //     // this.watchPrice(this.dataFormTwo.lines[index], index)
+        //   }
+        //   console.log(666777);
+        //   this.dataFormTwo.lines.push(obj)
+        // })
+        const product = item.data || {}
+        const newLine = {
+          ...this.dataFormTwo.lines[index],
+          ...product,
+          productName: product.name,
+          productCode: product.code,
+          productsId: product.id,
           productDrawingNo: item.value,
-          customerDrawingNumber: "",
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [{
-            asc: false,
-            column: "quotationTime"
-          }],
+          mainUnit: product.mainUnit,
+          taxRate: product.taxRate * 1 || this.taxRate * 1,
+          unitPrice: "",
+          customerProductDrawingNo: customerDrawingNumber,
         }
-        getQuotationmxLists(objs).then(res => {
-          if (res.data.records.length) {
-            console.log('有值', res.data.records[0]);
-            let data = res.data.records[0]
-            // res.data.records[0].customerProductDrawingNo = customerDrawingNumber ? customerDrawingNumber : res.data.records[0].customerProductDrawingNo
-            res.data.records[0].taxRate = res.data.records[0].taxRate * 1
-            this.$set(this.dataFormTwo.lines, index, res.data.records[0])
-            // this.$set(this.dataFormTwo.lines, index, res.data.records[0])
-            console.log(111, this.dataFormTwo.lines);
-            let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
-            if (!exists && res.data.records[0].taxRate) {
-              let obj = {
-                taxRate: res.data.records[0].taxRate * 1,
-                fullName: res.data.records[0].taxRate + '%',
-                enCode: res.data.records[0].taxRate + '%',
-              }
-              this.taxRateList.push(obj)
-            }
-          } else {
-            item.data.taxRate = this.taxRate * 1
-            this.$set(item.data, 'productDrawingNo', item.value)
-            this.$set(item.data, 'unitPrice', "")
-            this.$set(item.data, 'customerProductDrawingNo', customerDrawingNumber)
-            item.data.productsId = item.data.id
-            this.$set(this.dataFormTwo.lines, index, item.data)
-            // this.$set(this.dataFormTwo.lines, index, item.data)
-            // this.watchPrice(this.dataFormTwo.lines[index], index)
+        this.$set(this.dataFormTwo.lines, index, newLine)
+        let exists = this.taxRateList.some(line => line.taxRate === product.taxRate * 1);
+        if (!exists && product.taxRate) {
+          let taxRateObj = {
+            taxRate: product.taxRate * 1,
+            fullName: product.taxRate + '%',
+            enCode: product.taxRate + '%',
           }
-          console.log(666777);
-          this.dataFormTwo.lines.push(obj)
-        })
+          this.taxRateList.push(taxRateObj)
+        }
+        // 原逻辑：选中产品后追加一条空白行，现去掉，避免未继续选择时出现空白行。
+        // this.dataFormTwo.lines.push(obj)
       }
     },
     changeTaxRate(row, index) {
@@ -1453,8 +1504,9 @@ export default {
       } else {
         this.iszt = true
         this.status = false
-        let obj = JSON.parse(JSON.stringify(this.createdData))
-        this.dataFormTwo.lines.push(obj)
+        // 原逻辑：打开新建/编辑报价时默认追加一条空白产品行。
+        // let obj = JSON.parse(JSON.stringify(this.createdData))
+        // this.dataFormTwo.lines.push(obj)
       }
       console.log('status', this.status);
       // 新建

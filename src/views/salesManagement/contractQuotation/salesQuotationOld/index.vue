@@ -33,7 +33,14 @@
               <el-button type="primary" size="mini" icon="el-icon-download"
                          @click="exportForm('dataTable')">导出</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
-                         @click="exportSingleRecord()">导出单个报价单</el-button>
+                         @click="exportSingleRecord()">导出单个询价单
+              </el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                         @click="downloadSelectedOrder()">导出单个报价单
+              </el-button>
+<!--              <el-button type="primary" size="mini" icon="el-icon-download"-->
+<!--                         @click="exportSingleRecord()">导出单个报价单-->
+<!--              </el-button>-->
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -95,9 +102,6 @@
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="copyFun(row.id, 'copy')">
                       复制
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="downloadOrder(row.id)">
-                      下载报价单
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="handleAgainQuotation(row.id)" :disabled="row.quotationStatus === 'not_submit'">
                       重新询价
@@ -512,6 +516,17 @@ export default {
       this.currentDownloadId = id;
       this.hasInclude = true;
       this.downloadDialogVisible = true;
+    },
+    downloadSelectedOrder() {
+      if (this.selectedRow.length !== 1) {
+        this.$message.error('请选择一条报价单下载')
+        return
+      }
+      this.$confirm('确定下载选中的报价单吗？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        this.downloadOrder(this.selectedRow[0].id)
+      }).catch(() => { })
     },
 
     async confirmDownload() {

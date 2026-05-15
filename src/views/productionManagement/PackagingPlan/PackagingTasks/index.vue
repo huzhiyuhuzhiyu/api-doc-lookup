@@ -1,3 +1,94 @@
+<template>
+  <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout-center  JNPF-flex-main">
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
+      <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-head" style="padding: 8px">
+          <div class="JNPF-common-head-left">
+            <CustomButton
+              :btnList="btnList"
+              @click="handleButtonClick"
+            />
+          </div>
+          <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" content="数据排序设置" placement="top">
+              <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
+                       @click="$refs.dataTable.showSortDrawer()"/>
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                       @click="columnSetFun()"/>
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                       @click="initData()"/>
+            </el-tooltip>
+          </div>
+        </div>
+        <JNPF-table customKey="PackagingPlans"
+                    v-loading="loading"
+                    :data="tableData"
+                    :has-c="true"
+                    @selection-change="(val) => selectedRow = val"
+                    :row-key="'id'"
+                    fixedNO
+                    :setColumnDisplayList="columnList"
+                    ref="dataTable"
+                    custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
+          <template v-for="column in columnsConfig">
+            <el-table-column
+              v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
+              :key="column.prop"
+              :prop="column.prop"
+              :label="column.label"
+              :min-width="column.minWidth"
+              :sortable="column.sortable"
+              :fixed="column.fixed"
+              :align="getAlign(column.align)"
+            >
+              <template v-if="column.slot" v-slot="scope">
+                <template v-if="column.dictType">
+                   <span>
+                <el-tag
+                  :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
+                    global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
+                  }}</el-tag>
+                   </span>
+                </template>
+              </template>
+            </el-table-column>
+          </template>
+          <el-table-column label="操作" width="260" fixed="right">
+            <template slot-scope="{ row }">
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'feed')">
+                投料信息
+              </el-button>
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'work')">
+                工单信息
+              </el-button>
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'report')">
+                报工信息
+              </el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table>
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
+        />
+      </div>
+    </div>
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
+                 :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
+    <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
+    <!--  导入-->
+    <UploadImportData ref="uploadRef" v-if="uploadVisible" :extraFormData="extraFormData" :uploadApi="uploadProduct" @success="importDataSuccess"
+                      @close="uploadVisible = false" templateDownLoadPath="/static/销售订单导入模板.xlsx"/>
+
+    <Form ref="Form" v-if="visible" @close="close"/>
+    <Info ref="Info" v-if="infoVisible" @close="infoVisible = false"/>
+  </div>
+</template>
+
+
 <script>
 import {buttonList, getColumns} from "./data";
 import {getPrintBusInfo} from "@/api/system/printDev";
@@ -221,92 +312,3 @@ export default {
 }
 </script>
 
-<template>
-  <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center  JNPF-flex-main">
-      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="dataTable"/>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding: 8px">
-          <div class="JNPF-common-head-left">
-            <CustomButton
-              :btnList="btnList"
-              @click="handleButtonClick"
-            />
-          </div>
-          <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" content="数据排序设置" placement="top">
-              <el-link icon="icon-ym icon-ym-generator-flow JNPF-common-head-icon" :underline="false"
-                @click="$refs.dataTable.showSortDrawer()"/>
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()"/>
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()"/>
-            </el-tooltip>
-          </div>
-        </div>
-        <JNPF-table customKey="PackagingPlans"
-          v-loading="loading"
-          :data="tableData"
-          :has-c="true"
-          @selection-change="(val) => selectedRow = val"
-          :row-key="'id'"
-          fixedNO
-          :setColumnDisplayList="columnList"
-          ref="dataTable"
-          custom-column :listQuery="listQuery" @queryChange="initData" :queryJson="superQueryJson">
-          <template v-for="column in columnsConfig">
-            <el-table-column
-              v-if="typeof column.show === 'function' ? column.show() : (column.show !== undefined ? column.show : true)"
-              :key="column.prop"
-              :prop="column.prop"
-              :label="column.label"
-              :min-width="column.minWidth"
-              :sortable="column.sortable"
-              :fixed="column.fixed"
-              :align="getAlign(column.align)"
-            >
-              <template v-if="column.slot" v-slot="scope">
-                <template v-if="column.dictType">
-                   <span>
-                <el-tag
-                  :type="global.getDictLabelGlobal(column.dictType, scope.row[column.prop], { withType: true }).type">{{
-                    global.getDictLabelGlobal(column.dictType, scope.row[column.prop])
-                  }}</el-tag>
-                   </span>
-                </template>
-              </template>
-            </el-table-column>
-          </template>
-          <el-table-column label="操作" width="260" fixed="right">
-            <template slot-scope="{ row }">
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'feed')">
-                投料信息
-              </el-button>
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'work')">
-                工单信息
-              </el-button>
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'report')">
-                报工信息
-              </el-button>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData()"
-        />
-      </div>
-    </div>
-    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate"/>
-    <BatchPrintBrowse ref="batchPrint" :fullName="fullName"/>
-    <!--  导入-->
-    <UploadImportData ref="uploadRef" v-if="uploadVisible" :extraFormData="extraFormData" :uploadApi="uploadProduct" @success="importDataSuccess"
-      @close="uploadVisible = false" templateDownLoadPath="/static/销售订单导入模板.xlsx"/>
-
-    <Form ref="Form" v-if="visible" @close="close"/>
-    <Info ref="Info" v-if="infoVisible" @close="infoVisible = false"/>
-  </div>
-</template>

@@ -303,11 +303,16 @@ export default {
       return data.hasOwnProperty('itemRules') && data.itemRules.some(item => item.required === true)
     },
     addth(selectedIds, selectedList) {
+      console.log('[TableForm-product] 接收到 ComSelect-page change:', {
+        selectedIds,
+        selectedList
+      });
       selectedList.forEach(item => {
         item.all.productId = item.id
         item.all.productName = item.name
       })
       let list = selectedList.map(item => item.all)
+      console.log('[TableForm-product] 向外 emit addth:', list);
       this.$emit('addth', list)
     },
     deleteth(scope) {

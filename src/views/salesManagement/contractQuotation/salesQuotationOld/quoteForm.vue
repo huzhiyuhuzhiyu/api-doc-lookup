@@ -157,13 +157,14 @@ export default {
                 this.$message.error(errMsg)
               }), trigger: ['blur', 'change']
             },
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['报价不能为空', (errMsg) => {
-                  this.$message.error(`	报价不能为空`)
-                }]
-              }), trigger: 'blur',
-            },
+            // 原必填校验保留：报价现在允许为空，只在填写时校验格式和非零。
+            // {
+            //   validator: this.formValidate({
+            //     type: 'noEmtry', params: ['报价不能为空', (errMsg) => {
+            //       this.$message.error(`	报价不能为空`)
+            //     }]
+            //   }), trigger: 'blur',
+            // },
             {
               validator: this.formValidate({
                 type: 'decimal', params: [20, 4, null, (errMsg) => {
@@ -172,7 +173,7 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
-            { required: true, message: '报价不能为空', trigger: ['blur', 'change'], },
+            // { required: true, message: '报价不能为空', trigger: ['blur', 'change'], },
           ]
         },
         {
@@ -182,7 +183,8 @@ export default {
           options: this.getDictDataSync('taxrate'),
           minWidth: 160,
           itemRules: [
-            { required: true, message: '税率不能为空', trigger: 'change', },
+            // 原必填校验保留：税率现在允许为空。
+            // { required: true, message: '税率不能为空', trigger: 'change', },
           ]
         },
         {
@@ -215,7 +217,8 @@ export default {
           type: 'input',
           minWidth: 180,
           itemRules: [
-            { required: true, message: '交货日期不能为空', trigger: 'blur', },
+            // 原必填校验保留：交货日期现在允许为空。
+            // { required: true, message: '交货日期不能为空', trigger: 'blur', },
           ]
         },
         {
@@ -304,6 +307,21 @@ export default {
       },
     }
   },
+  // computed: {
+  //   computedLinesList() {
+  //     return this.linesList.map(item => {
+  //       // 计算未税价 = 报价 / (1 + 税率)
+  //       const excludingTaxAmounts = this.jnpf.numberFormat(
+  //         this.calcExcludingTaxAmounts(item.amounts, item.taxRate), 2);
+  //
+  //       return {
+  //         ...item,
+  //         excludingTaxAmounts,
+  //       };
+  //     });
+  //   },
+  // },
+
   computed: {
     computedLinesList() {
       return this.linesList.map(item => {
@@ -342,7 +360,8 @@ export default {
     calcExcludingTaxAmounts(amounts, taxRate) {
       if (!amounts || !taxRate) return 0;
       const rate = parseFloat(taxRate) / 100 || 0;
-      return amounts / (1 + rate);
+      // Old logic: tax-exclusive price = amounts / (1 + rate), e.g. 10000 / 1.03 = 9708.74.
+      return amounts * (1 - rate);
     },
     handleCurrentChange(row) {
       if (row) {

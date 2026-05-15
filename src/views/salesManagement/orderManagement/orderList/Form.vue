@@ -65,6 +65,7 @@ export default {
         deliveryDate: '',
         remark: '',
         remark1: '',
+        paymentTerms: '',
         currencySystem: '',
         exchangeRate: '',
       },
@@ -945,6 +946,7 @@ export default {
           value: item.drawingNo,
           ...item
         }))
+        debugger
         cb(suggestions)
       } catch ( error ) {
         console.error('Error fetching suggestions:', error)

@@ -210,6 +210,11 @@
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType=='look' ? true : false" />
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="付款条约" prop="paymentTerms">
+                        <el-input v-model="dataForm.paymentTerms" type="textarea" placeholder="请输入付款条约" :disabled="btnType=='look' ? true : false" />
+                      </el-form-item>
+                    </el-col>
                   </el-row>
                 </el-collapse-item>
                 <el-collapse-item title="财务信息" name="FinanceInfo">
@@ -399,6 +404,9 @@
                 </template>
               </el-table-column>
               <el-table-column prop="province" label="省" width="180">
+                <template slot="header">
+                  <span class="required">*</span>省
+                </template>
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.province" placeholder="请选择省份" :disabled="scope.row.country !== 'CN' ? true : btnType=='look' ? true : false">
                     <el-option v-for="item in provinces" :key="item.id" :label="item.fullName" :value="item.id" @click.native="changeProvince1(item, scope.row)"></el-option>
@@ -406,6 +414,9 @@
                 </template>
               </el-table-column>
               <el-table-column prop="city" label="市" width="180">
+                <template slot="header">
+                  <span class="required">*</span>市
+                </template>
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.city" placeholder="请选择城市" @focus="focusaction(scope.row)" :loading="loadingcity" :disabled="!scope.row.province ? true : btnType=='look' ? true : false">
                     <el-option v-for="item in cities1" :key="item.id" :label="item.fullName" :value="item.id" @click.native="changeCity1(item, scope.row)"></el-option>
@@ -413,6 +424,9 @@
                 </template>
               </el-table-column>
               <el-table-column prop="area" label="区" width="180">
+                <template slot="header">
+                  <span class="required">*</span>区
+                </template>
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.area" placeholder="请选择区" @focus="focusactionarea(scope.row)" :loading="loadingarea" :disabled="!scope.row.city ? true : btnType=='look' ? true : false">
                     <el-option v-for="item in area1" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
@@ -424,8 +438,11 @@
                   <span class="required">*</span>地址
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.address" :disabled="btnType=='look' ? true : false" maxlength="300" placeholder="请输入地址">{{
-                      scope.row.address }}
+<!--                  <el-input v-model="scope.row.address" :disabled="btnType=='look' ? true : false" maxlength="300" placeholder="请输入地址">{{-->
+<!--                      scope.row.address }}-->
+<!--                  </el-input>-->
+
+                  <el-input v-model="scope.row.address" :disabled="btnType=='look' ? true : false" maxlength="300" placeholder="请输入地址">
                   </el-input>
                 </template>
               </el-table-column>
@@ -606,6 +623,7 @@ export default {
         modeTransport: "",
         transportationTime: "",
         remark: "",
+        paymentTerms: "",
         departmentId: "",
         departmentIdText: "",
         customerStatus: "formal",
@@ -1302,8 +1320,11 @@ export default {
               })
             }
           });
+          if (flag === false) return this.btnLoading = false
           this.deliveryAddressList.forEach((item, index) => {
+            if (flag === false) return
             item.id = ""
+            const address = typeof item.address === 'string' ? item.address.trim() : item.address
             if (item.country === 'CN') {
               if (!item.recipient) {
                 this.activeName = "second"
@@ -1354,7 +1375,7 @@ export default {
                   type: 'error',
                   duration: 1500,
                 })
-              } else if (!item.address) {
+              } else if (!address) {
                 this.activeName = "second"
                 flag = false
                 return this.$message({
@@ -1389,7 +1410,7 @@ export default {
                   type: 'error',
                   duration: 1500,
                 })
-              } else if (!item.address) {
+              } else if (!address) {
                 this.activeName = "second"
                 flag = false
                 return this.$message({

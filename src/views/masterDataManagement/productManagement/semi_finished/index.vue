@@ -9,7 +9,7 @@
 <template>
   <ProductIndex :initListQuery="initListQuery" productName="半成品" :busSetId="'CPBM'" />
  </template>
- 
+
  <script>
  import ProductIndex from '../components/productIndex.vue'
  export default {

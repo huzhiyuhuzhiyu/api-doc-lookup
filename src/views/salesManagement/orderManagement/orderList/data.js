@@ -53,14 +53,18 @@ export function getBasicFormSchema(dataFormRef, context) {
       context.$refs.dataForm.$refs.main.validateField(['cooperativePartnerName', 'cooperativePartnerCode']);
     });
 
-    context.dataForm.cooperativePartnerId = data[0].all.id;
-    context.dataForm.cooperativePartnerCode = data[0].all.code;
-    context.dataForm.cooperativePartnerName = data[0].all.name;
-    context.dataForm.contractRemark = data[0].all.remark;
-    context.dataForm.departmentId = data[0].all.departmentId;
+    const customerInfo = data[0].all;
+    context.dataForm.cooperativePartnerId = customerInfo.id;
+    context.dataForm.cooperativePartnerCode = customerInfo.code;
+    context.dataForm.cooperativePartnerName = customerInfo.name;
+    context.dataForm.contractRemark = customerInfo.remark;
+    // 原逻辑：选中客户时未回填付款条约。
+    // context.dataForm.paymentTerms = '';
+    context.dataForm.remark1 = customerInfo.remark1||customerInfo.paymentTerms || customerInfo.paymentTermsText || '';
+    context.dataForm.departmentId = customerInfo.departmentId;
 
     await context.fetchOrganization()
-    context.dataForm.salesId = data[0].all.salespersonId;
+    context.dataForm.salesId = customerInfo.salespersonId;
     context.originalFormData = deepClone(context.dataForm);
 
     if (isClear) {
@@ -153,6 +157,7 @@ export function getBasicFormSchema(dataFormRef, context) {
             context.dataForm.cooperativePartnerCode = originalData.cooperativePartnerCode;
             context.dataForm.cooperativePartnerName = originalData.cooperativePartnerName;
             context.dataForm.contractRemark = originalData.remark;
+            context.dataForm.paymentTerms = originalData.paymentTerms;
           });
         } else {
           executeCustomerChange(context, data, false);
@@ -282,6 +287,14 @@ export function getBasicFormSchema(dataFormRef, context) {
       type: "textarea",
       sm: 12
     },
+    // 26/6/15
+    // {
+    //   prop: "remark1",
+    //   label: "付款条约",
+    //   value: "",
+    //   type: "textarea",
+    //   sm: 12
+    // },
     {
       prop: "remark1",
       label: "付款条约",

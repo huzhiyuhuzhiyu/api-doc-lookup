@@ -5,7 +5,7 @@
         <el-col :span="4">
           <el-select v-model="selectValue" filterable remote reserve-keyword placeholder="选择视图"
             :remote-method="jnpf.throttle(remoteMethod, 500)" :loading="searchLoading" loading-text="正在查找..."
-            no-data-text="未找到视图，请先添加" @change="selectChange" style="width: 100%;" default-first-option
+            no-data-text="未找到视图，请先添加1" @change="selectChange" style="width: 100%;" default-first-option
             :clearable="false" @visible-change="handleVisibleChange" :key="selectKey" ref="SelectRef"
             popper-class="popper-500">
             <el-option-group label="视图">

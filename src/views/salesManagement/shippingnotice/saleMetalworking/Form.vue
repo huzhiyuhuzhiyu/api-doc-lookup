@@ -153,6 +153,19 @@ export default {
               }),
               trigger: ['blur', 'change'],
             },
+            {
+              validator: this.formValidate({
+                type: 'calc',
+                params: [
+                  (rowIndex, value) => Number(value) <= Number(this.linesList[rowIndex].waitDeliverNum),
+                  '本次发货数不能超过待发货数量',
+                  (errMsg, rowIndex) => {
+                    this.$message.error(`产品信息第${rowIndex + 1}行：${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: ['blur', 'change'],
+            },
             { required: true, message: '本次发货数不能为空', trigger: ['blur', 'change'], },
           ]
         },

@@ -19,6 +19,14 @@ export const buttonList = [
 export function getBasicFormSchema(dataFormRef, context) {
   return [
     {
+      prop: "productName",
+      label: "品名",
+      value: "",
+      type: "input",
+      maxlength: 100,
+      sm: 24,
+    },
+    {
       prop: "name",
       label: "机型",
       value: "",
@@ -26,6 +34,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       maxlength: 100,
       itemRules: [{required: true, trigger: "blur"}],
     },
+
     {
       prop: "cooperativePartnerName",
       label: "客户名称",

@@ -17,7 +17,7 @@ const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 // For example, Mac: sudo npm run
 // You can change the port by the following method:
 // port = 3000 npm run dev OR npm run dev --port = 3000
-const port = process.env.port || process.env.npm_config_port || 3000 // dev port
+const port = process.env.port || process.env.npm_config_port || 3001 // dev port
 
 const isDev = process.env.NODE_ENV === 'development'
 

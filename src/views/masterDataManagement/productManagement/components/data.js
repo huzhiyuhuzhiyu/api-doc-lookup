@@ -9,11 +9,10 @@ import { getProducts } from "@/api/masterDataManagement";
 export function getBasicFormSchema(dataFormRef, context) {
   return [
     {
-      prop: "code",
-      label: "产品编码",
+      prop: "drawingNo",
+      label: "型号",
       value: "",
       type: "input",
-      itemDisabled: true,
       itemRules: [{ required: true, trigger: "blur" }],
       maxlength: 999,
       sm: 12
@@ -28,10 +27,11 @@ export function getBasicFormSchema(dataFormRef, context) {
       sm: 12
     },
     {
-      prop: "drawingNo",
-      label: "型号",
+      prop: "code",
+      label: "产品编码",
       value: "",
       type: "input",
+      itemDisabled: true,
       itemRules: [{ required: true, trigger: "blur" }],
       maxlength: 999,
       sm: 12

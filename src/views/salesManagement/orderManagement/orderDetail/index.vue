@@ -5,16 +5,20 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="6" v-if="abProjectSwitchVisible" >
+            <!-- 原逻辑：项目筛选占 6 栅格，查询项增加后整体容易换行。 -->
+            <!-- <el-col :span="6" v-if="abProjectSwitchVisible" > -->
+            <el-col :span="3" v-if="abProjectSwitchVisible" >
                     <el-form-item>
                       <el-select v-model="orderForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable>
                         <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
                           :value="item.id"></el-option>
                       </el-select>
                     </el-form-item>
-                  </el-col>
+            </el-col>
             <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 4">
+              <!-- 原逻辑：普通查询项固定 span=4，新增查询后会把查询按钮挤到下一行。 -->
+              <!-- <el-col :span="item.searchType === 3 ? 6 : 4"> -->
+              <el-col :span="item.searchType === 3 ? 6 : (item.span || 3)">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                     @keyup.enter.native="search('basic')" />
@@ -40,7 +44,9 @@
             </el-form-item>
           </el-col>
 
-            <el-col :span="6">
+            <!-- 原逻辑：按钮区域占 6 栅格，查询条件变多后会被挤到下一行。 -->
+            <!-- <el-col :span="6"> -->
+            <el-col :span="4">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
@@ -234,9 +240,11 @@ export default {
       basicQuery: {},
       searchList: [
 
-        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 80 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 100 },
+        { field: 'cooperativePartnerCode', fieldValue: '', label: '客户编号', symbol: 'like', searchType: 1, width: 100 },
+        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 100 },
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 100 },
 
       ],
       orderStateList: [
@@ -507,7 +515,7 @@ export default {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
     this.orderForm.shipmentStatus=this.isZY?'not_finish':''
 
-    if(this.isZY) this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },)
+    if(this.isZY) this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 100 },)
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -1031,8 +1039,10 @@ if (classAttributeObj) {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
      this.orderForm = {
+        cooperativePartnerCode: "",
         cooperativePartnerName: "",
         customerProductDrawingNo: "",
+        drawingNo: "",
 
         orderNo: "",
 
@@ -1053,12 +1063,14 @@ if (classAttributeObj) {
     this.orderForm.shipmentStatus=this.isZY?'not_finish':''
 this.superForm = this.orderForm
       this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 100 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 100 },
+        { field: 'cooperativePartnerCode', fieldValue: '', label: '客户编号', symbol: 'like', searchType: 1, width: 100 },
+        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 100 },
+        { field: 'drawingNo', fieldValue: '', label: '型号', symbol: 'like', searchType: 1, width: 100 },
 
       ]
-    if(this.isZY) this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },)
+    if(this.isZY) this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 100 },)
       this.$refs.SuperQuery.conditionList = []
 
       this.search('basic')

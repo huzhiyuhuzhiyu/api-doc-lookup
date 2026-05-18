@@ -146,7 +146,7 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"
-      :classAttribute="listQuery.classAttribute" :productName="productName" :busSetId="busSetId" />
+      :classAttribute="formClassAttribute" :productName="productName" :busSetId="busSetId" />
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 导入产品 -->
@@ -333,6 +333,10 @@ export default {
     busSetId: {
       type: String,
       default: ''
+    },
+    clearClassAttributeOnEdit: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -366,6 +370,7 @@ export default {
         },
       }],
       importProjectId: '',
+      formClassAttribute: this.initListQuery.classAttribute,
       isProductNameSwitch: '',
       isProjectSwitch: '',
       tableFlag: false,
@@ -1388,6 +1393,12 @@ export default {
         })
     },
     addOrUpdateHandle(id, btnType) {
+      // 原逻辑：新增、修改都直接传 listQuery.classAttribute。
+      // this.formClassAttribute = this.listQuery.classAttribute
+      // 新逻辑：由具体页面控制是否在修改时清空产品分类 classAttribute；新增仍使用原分类。
+      this.formClassAttribute = this.clearClassAttributeOnEdit && btnType === 'edit'
+        ? ''
+        : this.listQuery.classAttribute
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType,'',this.isProjectSwitch)

@@ -17,6 +17,7 @@ export default {
       btnLoading: false,
       dataForm: {
         name: '',
+        productName: '',
         cooperativePartnerId: '',
         cooperativePartnerName: '',
         cooperativePartnerCode: '',

@@ -599,6 +599,14 @@ export default {
         if (msg === 'Success') {
           this.linesList = data.purchaseOrderLineVOList
           this.dataForm = Object.assign(this.dataForm, data)
+          // 其他要求页签单独绑定 dataOtherForm，详情回显时需要从接口数据同步一次。
+          this.dataOtherForm = Object.assign(this.dataOtherForm, {
+            paymentTerms: data.paymentTerms || '',
+            qualityRequirements: data.qualityRequirements || '',
+            sealingCoverTyping: data.sealingCoverTyping || '',
+            packagingRequirements: data.packagingRequirements || '',
+            remark: data.remark || '',
+          })
           this.loading = false
         }
       } catch ( err ) {

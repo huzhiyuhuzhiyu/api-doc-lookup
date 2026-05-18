@@ -2,13 +2,18 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { buttonList, getColumns } from "./data";
 import { feedbackDeliveryOrderPool, getSalesOrderPoolPage } from "@/api/salesOrderPool";
+import { getPrintBusInfo } from "@/api/system/printDev";
 import Form from './Form.vue'
 import FeedbackEditDialog from "./feedbackEditDialog.vue";
+import PrintDialog from '@/components/no_mount/printDialog/index.vue';
+import BatchPrintBrowse from "@/components/PrintBrowse/BatchPrintBrowse.vue";
 
 export default {
   name: "index",
   components: {
+    BatchPrintBrowse,
     FeedbackEditDialog,
+    PrintDialog,
     SuperQuery,
     Form
   },

@@ -13,9 +13,9 @@ export const buttonList = [
 
 /** 产品通用字段 */
 const COMMON_PRODUCT_FIELDS = [
-  { prop: 'drawingNo', label: '型号', type: 'input', disabled: true },
-  { prop: 'productName', label: '名称', type: 'input', disabled: true },
-  { prop: 'customerProductDrawingNo', label: '客户型号', type: 'input', disabled: true }
+  { prop: 'drawingNo', label: '型号', type: 'input', /* disabled: true, */ disabled: false },
+  { prop: 'productName', label: '名称', type: 'input', /* disabled: true, */ disabled: false },
+  { prop: 'customerProductDrawingNo', label: '客户型号', type: 'input', /* disabled: true, */ disabled: false }
 ];
 
 /** 报告类开关字段 */
@@ -38,9 +38,10 @@ function getDateFields(type) {
       label: type === 'purchase' ? '订单日期' : '计划开始日期',
       type: 'date',
       sm: 12,
-      disabled: true
+      // disabled: true,
+      disabled: false
     },
-    { prop: 'confirmDate', label: '确认日期', type: 'date', sm: 12, disabled: true }
+    { prop: 'confirmDate', label: '确认日期', type: 'date', sm: 12, /* disabled: true, */ disabled: false }
   ];
 }
 
@@ -48,8 +49,8 @@ function getDateFields(type) {
 function getPartnerFormFields(role) {
   const isSupplier = role === 'supplier';
   return [
-    { prop: 'cooperativePartnerName', label: isSupplier ? '供应商名称' : '客户名称', type: 'input', disabled: true },
-    { prop: 'cooperativePartnerCode', label: isSupplier ? '供应商编码' : '客户编码', type: 'input', disabled: true }
+    { prop: 'cooperativePartnerName', label: isSupplier ? '供应商名称' : '客户名称', type: 'input', /* disabled: true, */ disabled: false },
+    { prop: 'cooperativePartnerCode', label: isSupplier ? '供应商编码' : '客户编码', type: 'input', /* disabled: true, */ disabled: false }
   ];
 }
 
@@ -70,15 +71,15 @@ const TYPE_CONFIG = {
     quantityProp: 'purchaseQuantity',
     quantityLabel: '数量',
     extraFormFields: [
-      { prop: 'purchaser', label: '采购员', type: 'input', disabled: true },
-      { prop: 'cooperativePartnerPhone', label: '联系电话', type: 'input', disabled: true },
-      { prop: 'cooperativePartnerFax', label: '传真', type: 'input', disabled: true },
-      { prop: 'cooperativePartnerContacts', label: '联系人', type: 'input', disabled: true },
-      { prop: 'cooperativePartnerMobilePhone', label: '手机', type: 'input', disabled: true },
-      { prop: 'cooperativePartnerEmail', label: '电子邮箱', type: 'input', disabled: true },
-      { prop: 'paymentTerms', label: '付款条约', type: 'textarea', sm: 24, disabled: true },
-      { prop: 'qualityRequirements', label: '质量要求', type: 'textarea', sm: 24, disabled: true },
-      { prop: 'sealingCoverTyping', label: '打字要求', type: 'textarea', sm: 24, disabled: true }
+      { prop: 'purchaser', label: '采购员', type: 'input', /* disabled: true, */ disabled: false },
+      { prop: 'cooperativePartnerPhone', label: '联系电话', type: 'input', /* disabled: true, */ disabled: false },
+      { prop: 'cooperativePartnerFax', label: '传真', type: 'input', /* disabled: true, */ disabled: false },
+      { prop: 'cooperativePartnerContacts', label: '联系人', type: 'input', /* disabled: true, */ disabled: false },
+      { prop: 'cooperativePartnerMobilePhone', label: '手机', type: 'input', /* disabled: true, */ disabled: false },
+      { prop: 'cooperativePartnerEmail', label: '电子邮箱', type: 'input', /* disabled: true, */ disabled: false },
+      { prop: 'paymentTerms', label: '付款条约', type: 'textarea', sm: 24, /* disabled: true, */ disabled: false },
+      { prop: 'qualityRequirements', label: '质量要求', type: 'textarea', sm: 24, /* disabled: true, */ disabled: false },
+      { prop: 'sealingCoverTyping', label: '打字要求', type: 'textarea', sm: 24, /* disabled: true, */ disabled: false }
     ],
     extraColumns: []
   },
@@ -89,8 +90,8 @@ const TYPE_CONFIG = {
     quantityProp: 'productionQuantity',
     quantityLabel: '数量',
     extraFormFields: [
-      { prop: 'routingName', label: '工艺路线名称', type: 'input', disabled: true },
-      { prop: 'productionLineName', label: '产线', type: 'input', disabled: true }
+      { prop: 'routingName', label: '工艺路线名称', type: 'input', /* disabled: true, */ disabled: false },
+      { prop: 'productionLineName', label: '产线', type: 'input', /* disabled: true, */ disabled: false }
     ],
     extraColumns: [
       { prop: 'routingName', label: '工艺路线名称', minWidth: 180 },
@@ -110,13 +111,13 @@ export function getBasicFormSchema(dataFormRef, context) {
   const config = TYPE_CONFIG[type] || TYPE_CONFIG.purchase;
 
   return [
-    { prop: config.orderProp, label: config.orderLabel, type: 'input', disabled: true },
+    { prop: config.orderProp, label: config.orderLabel, type: 'input', /* disabled: true, */ disabled: false },
     ...getPartnerFormFields(config.role),
     ...COMMON_PRODUCT_FIELDS,
     ...(config.extraFormFields || []),
     ...getDateFields(type),
     ...REPORT_FIELDS,
-    { prop: 'remark', label: '备注', type: 'textarea', sm: 24, disabled: true }
+    { prop: 'remark', label: '备注', type: 'textarea', sm: 24, /* disabled: true, */ disabled: false }
   ];
 }
 

@@ -71,7 +71,9 @@ export function getBasicFormSchema(dataFormRef, context) {
       clearFormOnCustomerChange();
     }
 
-    if (!context.computedLinesList.length) context.addLineForm()
+    // 原逻辑：选择客户后，如果产品明细为空，会自动手动补一条空行。
+    // if (!context.computedLinesList.length) context.addLineForm()
+    // 新逻辑：选择客户只回填客户信息，不再自动新增产品明细行。
   }
 
   function clearFormOnCustomerChange() {
@@ -239,22 +241,12 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "select",
       itemRules: [{ required: true, trigger: "blur" }],
-      render: context.currentSystem == 'dake_wm',
+      render: context.isForeignTradeSystem,
       get options() {
         return context.systemOptions
       },
       change: (val) => {
-        // 修改币种设置汇率
-        const selectedCurrency = context.systemOptions.find(option => option.value === val);
-        context.dataForm.exchangeRate = selectedCurrency ? selectedCurrency.exchangeRate : '';
-         // 同步修改表格中所有行的汇率
-         if (context.linesList && Array.isArray(context.linesList)) {
-           context.linesList.forEach(item => {
-             if (item) {
-               item.exchangeRate = context.dataForm.exchangeRate || ''
-             }
-           })
-         }
+        context.syncCurrencyExchangeRate(val);
       }
     },
     {
@@ -262,23 +254,8 @@ export function getBasicFormSchema(dataFormRef, context) {
       label: "汇率",
       value: "",
       type: "input",
-      render: context.currentSystem == 'dake_wm',
-      get value() {
-        // 默认空或者者根据选中的币种设置汇率
-        const selectedCurrency = context.systemOptions.find(option => option.value === context.dataForm.currencySystem);
-        return selectedCurrency ? selectedCurrency.exchangeRate : '';
-      },
-      change: (val) => {
-        console.log('汇率修改了', val, context.linesList)
-        // 汇率修改后，修改表格的汇率数据同步
-        if (context.linesList && Array.isArray(context.linesList)) {
-          context.linesList.forEach(item => {
-            if (item) {
-              item.exchangeRate = val || ''
-            }
-          })
-        }
-      }
+      disabled: true,
+      render: context.isForeignTradeSystem
     },
     {
       prop: "remark",

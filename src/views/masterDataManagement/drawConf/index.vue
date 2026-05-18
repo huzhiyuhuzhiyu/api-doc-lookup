@@ -115,7 +115,8 @@ export default {
       switch ( type ) {
         case 'drawConf':
           if (!this.validateSelectedRows()) return;
-          if (this.selectedRow[0]?.status) return this.$message.warning('已进行过图纸确认，不能重复操作');
+          // 26.5.18
+          // if (this.selectedRow[0]?.status) return this.$message.warning('已进行过图纸确认，不能重复操作');
           this.visible = true;
           this.$nextTick(() => {
             this.$refs.Form.init(this.selectedRow[0], 'add');

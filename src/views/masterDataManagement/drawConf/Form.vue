@@ -4,7 +4,7 @@ import { getBasicFormSchema } from "./data";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
 import HistoricalDrawings from "./historicalDrawings.vue";
-import { addPurPurchaseDrawing, getProductionDrawing, getPurPurchaseDrawing } from "@/api/drawConf";
+import { addPurPurchaseDrawing, getProductionDrawing, getPurPurchaseDrawing, updatePurPurchaseDrawing } from "@/api/drawConf";
 
 export default {
   name: "Form",
@@ -24,6 +24,7 @@ export default {
       loading: false,
       historicalDrawingsVisible: false,
       btnLoading: false,
+      drawingDetailId: '',
       dataForm: {
         purchaseOrderNo: '',
         purchaser: '',
@@ -83,6 +84,7 @@ export default {
     async init(row, type) {
       this.btnType = type
       this.title = this.getTitle(type)
+      this.drawingDetailId = ''
       // this.getBusInfo('b026')
       const { id, purPurchaseOrderLineId } = row
       const params = {
@@ -90,7 +92,7 @@ export default {
         purchaseLineId: purPurchaseOrderLineId
       }
 
-      await this.getDetail(params)
+      await this.getDetail(params, row)
 
       // this.dataForm.approvalFlag && this.getFlowDetail(row.id)
       this.$nextTick(() => {
@@ -103,21 +105,32 @@ export default {
     handleHistoricalSubmit() {
       this.historicalDrawingsVisible = true
     },
-    async getDetail(params) {
+    async getDetail(params, row = {}) {
       this.loading = true
       try {
         const res = await this.apiMethodDetail[this.type](params)
         const { msg, data } = res
         if (msg === 'Success') {
+          // 新逻辑：只根据详情接口返回的 id 判断提交时走新增还是修改。
+          this.drawingDetailId = data?.id || ''
           this.dataForm = {
             ...this.dataForm,
             ...data,
             confirmDate: this.jnpf.getToday()
           }
           this.fileList = this.fileListMap('', data.attachmentList)
-          this.loading = false
         }
       } catch ( err ) {
+        // 原逻辑：详情报错时只关闭 loading；现在报错也按“无详情 id”处理，后续提交走新增。
+        this.drawingDetailId = ''
+        const { id, attachmentList, ...rowData } = row || {}
+        this.dataForm = {
+          ...this.dataForm,
+          ...rowData,
+          confirmDate: this.jnpf.getToday()
+        }
+        this.fileList = this.fileListMap('', attachmentList) || []
+      } finally {
         this.loading = false
       }
     },
@@ -191,7 +204,11 @@ export default {
       }
       let MSG = '提交成功'
       try {
-        const res = await addPurPurchaseDrawing(params)
+        // 原逻辑：图纸确认固定调用新增接口。
+        // const res = await addPurPurchaseDrawing(params)
+        const apiMethod = this.drawingDetailId ? updatePurPurchaseDrawing : addPurPurchaseDrawing
+        if (this.drawingDetailId) params.purchaseDrawing.id = this.drawingDetailId
+        const res = await apiMethod(params)
         const { msg } = res
         if (msg === 'Success') {
           this.$message.success(MSG)

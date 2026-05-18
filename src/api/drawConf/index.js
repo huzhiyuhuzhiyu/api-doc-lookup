@@ -28,6 +28,15 @@ export function addPurPurchaseDrawing(data) {
   })
 }
 
+// 修改采购图纸确认
+export function updatePurPurchaseDrawing(data) {
+  return request({
+    url: '/api/erp/purPurchaseDrawing/update',
+    method: 'post',
+    data: data
+  })
+}
+
 // 采购图纸确认-变更记录列表
 export function getChangeRecordListPage(data) {
   return request({

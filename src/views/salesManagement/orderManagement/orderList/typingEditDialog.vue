@@ -27,10 +27,29 @@
           <div class="content-box">
             <div class="content-title">内容</div>
             <div class="content-grid">
+              <!-- 原逻辑：上方四格仅展示固定模板。
               <div class="grid-item">DHK</div>
               <div class="grid-item">{{ selectedTemplate === 'customer' ? '客户型号' : '型号' }}</div>
               <div class="grid-item">批次</div>
               <div class="grid-item"></div>
+              -->
+              <div class="grid-item">
+                <el-input v-model="templateContent.content1" size="small" @input="syncTemplateContentToLines('content1')" />
+              </div>
+              <div class="grid-item">
+                <el-input
+                  v-model="templateContent.content2"
+                  size="small"
+                  :placeholder="selectedTemplate === 'customer' ? '默认带入客户型号' : '默认带入型号'"
+                  @input="syncTemplateContentToLines('content2')"
+                />
+              </div>
+              <div class="grid-item">
+                <el-input v-model="templateContent.content3" size="small" @input="syncTemplateContentToLines('content3')" />
+              </div>
+              <div class="grid-item">
+                <el-input v-model="templateContent.sealingCoverTyping" size="small" @input="syncTemplateContentToLines('sealingCoverTyping')" />
+              </div>
             </div>
           </div>
         </div>
@@ -100,6 +119,12 @@ export default {
     return {
       dialogVisible: false,
       selectedTemplate: 'model',
+      templateContent: {
+        content1: 'DHK',
+        content2: '',
+        content3: '批次',
+        sealingCoverTyping: ''
+      },
       templates: [
         {
           prefix: 'DHK',
@@ -169,6 +194,7 @@ export default {
     visible(newVal) {
       this.dialogVisible = newVal
       if (newVal) {
+        this.resetTemplateContent()
         this.updateLinesList('init')
       }
       this.$nextTick(() => {
@@ -182,7 +208,9 @@ export default {
 
       const defaults = {
         content1: template?.prefix || '',
-        content2: template?.model || '',
+        // 原逻辑：内容2默认是“型号/客户型号”文案。
+        // content2: template?.model || '',
+        content2: this.templateContent.content2 || template?.model || '',
         content3: template?.batch || '',
         sealingCoverTyping: ''
       };
@@ -208,19 +236,63 @@ export default {
     updateLinesList(type) {
       this.linesList = (type === 'init' ? this.linesFormList : this.linesList).map(item => {
         const { content1, content2, content3, sealingCoverTyping } = this.extractBatchNumber(item.sealingCoverTyping)
-        const content = item.noTyping
+        const rowContent1 = type === 'init' ? content1 : this.templateContent.content1
+        // 新逻辑：内容2上方未填写时，默认带入每行序号后面的型号值。
+        const rowContent2 = type === 'init' ? (this.templateContent.content2 || this.getRowModelValue(item) || content2 || '') : (this.templateContent.content2 || this.getRowModelValue(item) || '')
+        const rowContent3 = type === 'init' ? content3 : this.templateContent.content3
+        const rowSealingCoverTyping = type === 'init' ? sealingCoverTyping : this.templateContent.sealingCoverTyping
+        // 原逻辑：初始化时强制 noTyping 为 false，外部表格里的“不打字”再次打开会丢失状态。
+        // const isNoTyping = item.noTyping
+        const isNoTyping = item.noTyping || this.isNoTypingContent(item.sealingCoverTyping) || this.isNoTypingContent(item.content)
+        const content = isNoTyping
           ? '不打字'
-          : `"${ content1 } ${ content2 } ${ content3 } ${ sealingCoverTyping }"${ sealingCoverTyping ? '四等分' : '三等分' }`;
+          : `"${ rowContent1 } ${ rowContent2 } ${ rowContent3 } ${ rowSealingCoverTyping }"${ rowSealingCoverTyping ? '四等分' : '三等分' }`;
         return {
           ...item,
-          content1,
-          content2,
-          content3,
-          noTyping: false,
-          sealingCoverTyping,
+          content1: rowContent1,
+          content2: rowContent2,
+          content3: rowContent3,
+          noTyping: isNoTyping,
+          sealingCoverTyping: isNoTyping ? '' : rowSealingCoverTyping,
           content
         };
       });
+    },
+
+    resetTemplateContent() {
+      const template = this.templates.find(t => t.value === this.selectedTemplate)
+      this.templateContent = {
+        content1: template?.prefix || '',
+        // 内容2保持为空，下面表格默认带入每行序号后面的型号值。
+        content2: '',
+        content3: template?.batch || '',
+        sealingCoverTyping: ''
+      }
+    },
+
+    getRowModelValue(row) {
+      return this.selectedTemplate === 'customer'
+        ? row.customerProductDrawingNo
+        : row.drawingNo
+    },
+
+    isNoTypingContent(value) {
+      return String(value || '').trim() === '不打字'
+    },
+
+    syncTemplateContentToLines(prop) {
+      this.linesList.forEach(row => {
+        if (prop === 'content2' && !this.templateContent.content2) {
+          row.content2 = this.getRowModelValue(row)
+        } else {
+          row[prop] = this.templateContent[prop]
+        }
+
+        if (prop === 'sealingCoverTyping' && this.templateContent.sealingCoverTyping.trim() !== '') {
+          row.noTyping = false
+        }
+        this.updateRowContent(row);
+      })
     },
 
     contentChanges(dataOrIndex, prop, value) {
@@ -236,6 +308,10 @@ export default {
     },
 
     updateRowContent(row) {
+      if (row.noTyping) {
+        row.content = '不打字'
+        return
+      }
       row.content = `"${ row.content1 } ${ row.content2 } ${ row.content3 } ${ row.sealingCoverTyping }"${ row.sealingCoverTyping ? '四等分' : '三等分' }`;
     },
 
@@ -260,13 +336,17 @@ export default {
 
     selectTemplate(template) {
       this.selectedTemplate = template;
+      // 切换模板后，内容2继续默认取每行型号/客户型号。
+      this.templateContent.content2 = ''
       this.updateLinesList()
     },
 
     handleConfirm() {
       const confirmedList = this.linesList.map(item => ({
         ...item,
-        sealingCoverTyping: item.noTyping ? '' : item.content
+        // 原逻辑：不打字行确认后回传空字符串，外部表格显示为空。
+        // sealingCoverTyping: item.noTyping ? '' : item.content
+        sealingCoverTyping: item.noTyping ? '不打字' : item.content
       }));
 
       this.$emit('update:visible', false);

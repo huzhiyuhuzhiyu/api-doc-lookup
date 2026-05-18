@@ -3,22 +3,27 @@
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16" style="margin-bottom: 5px !important;">
         <el-form @submit.native.prevent @keyup.enter.native="search()">
-          <el-col :span="4">
+          <el-col :span="3">
             <el-form-item>
               <el-input v-model.trim="listQuery.inquiryNo" placeholder="询价单号" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="3">
             <el-form-item>
               <el-input v-model.trim="listQuery.cooperativePartnerId" placeholder="客户编码" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="3">
             <el-form-item>
               <el-input v-model.trim="listQuery.cooperativePartnerIdText" placeholder="客户名称" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="3">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productsCode" placeholder="产品型号" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
             <el-form-item>
               <el-date-picker v-model="listQuery.quotationTimeArr"
                 :start-placeholder="'请选择询价开始日期'" :end-placeholder="'请选择询价结束日期'"
@@ -107,12 +112,18 @@ export default {
           type: 'select',
           options: this.global.salesOrderState
         },
+        {
+          prop: 'productsCode',
+          label: "产品型号",
+          type: 'input'
+        },
       ],
       initListQuery: {
         inquiryNo: '',
         quotationTimeArr: [],
         cooperativePartnerIdText: '',
         cooperativePartnerId: '',
+        productsCode: '',
         quotationStatus: '',
         orderItems: [
           {

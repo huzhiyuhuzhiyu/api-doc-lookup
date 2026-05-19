@@ -5,7 +5,14 @@ import { getcategoryTree } from "@/api/basicData/materialSettings";
 import flowMixin from "@/mixins/generator/flowMixin";
 import busFlow from "@/mixins/generator/busFlow";
 import { getProducts } from "@/api/masterDataManagement";
-import { editPurchaseOrder, insertPurchaseOrder, purPurchaseOrderdetail } from "@/api/purchasingAndOutsourcingOrders";
+import {
+  detailpurchaseOrderList,
+  editPurchaseOrder,
+  insertPurchaseOrder,
+  purPurchaseOrderdetail
+} from "@/api/purchasingAndOutsourcingOrders";
+import { getEnquiryDetailList } from '@/api/enquiryManagement/enquiryDetail';
+import { getColumns as getEnquiryDetailColumns } from '@/views/enquiryManagement/enquiryOrder/enquiryDetail/data';
 import { purProcurementDemandPoolList } from "@/api/purchasingManagement/purchaseInquirySheet";
 import * as _ from "highcharts";
 import { createEmptyObject, standardizeFields } from "@/utils";
@@ -54,6 +61,35 @@ export default {
       linesListItems: [],
       linesTableHeight: 0,
       productRefType: '',
+      productReferenceType: '',
+      selectedProductLine: null,
+      selectedProductLineIndex: -1,
+      selectedProductLineRows: [],
+      productLineTableRef: null,
+      productReferenceDialogProps: {
+        title: '选择',
+        activeType: '',
+        renderTree: false,
+        multiple: false,
+        listMethod: getProducts,
+        tableItems: [],
+        listRequestObj: {
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [
+            {
+              asc: false,
+              column: ''
+            },
+            {
+              asc: false,
+              column: 'create_time'
+            }
+          ]
+        },
+        beforeSubmit: () => true,
+        searchList: []
+      },
       addProductProps: {
         title: '选择产品',
         activeType: '',
@@ -140,7 +176,7 @@ export default {
       return this.btnType !== 'look'
     },
     computedLinesList() {
-      return this.linesList.map(item => {
+      return this.linesList.map((item, index) => {
         // 计算不含税单价 = 含税单价 / (1 + 税率)
         const excludingTaxPrice = this.jnpf.numberFormat(
           this.calcExcludingTaxPrice(item.price, item.taxRate),
@@ -164,6 +200,7 @@ export default {
 
         return {
           ...item,
+          _lineIndex: index,
           excludingTaxPrice,
           totalAmount,
           excludingTaxAmount,
@@ -199,6 +236,12 @@ export default {
 
     this.autoInit && this.init('', 'add')
   },
+  beforeDestroy() {
+    if (this.productLineTableRef) {
+      this.productLineTableRef.$off('row-click', this.handleProductLineRowClick)
+      this.productLineTableRef = null
+    }
+  },
   methods: {
     async init(params) {
       const { id, type, sourceList, prefillData } = params;
@@ -226,6 +269,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.dataForm.$refs.main.clearValidate()
         this.refreshTableHeight()
+        this.bindProductLineRowClick()
       })
     },
     generateOperation(data) {
@@ -488,6 +532,218 @@ export default {
       maxHeight = maxHeight > 300 ? maxHeight : 300
       this.linesTableHeight = maxHeight
     },
+    getProductReferenceDialogConfigs(line) {
+      const productCode = line.productCode || line.productsCode || line.code || '';
+      const dialogActiveType = this.activeType ? '' : 'look';
+      const purchaseHistoryColumns = [
+        { prop: 'cooperativePartnerCode', label: '供应商编号', minWidth: '140px', sortable: 'custom' },
+        { prop: 'orderNo', label: '采购单号', minWidth: '180px', sortable: 'custom' },
+        { prop: 'orderDate', label: '订单日期', minWidth: '160px', sortable: 'custom' },
+        { prop: 'price', label: '价格', minWidth: '120px', sortable: 'custom' }
+      ];
+      // 旧逻辑：purchaseHistorySearchList 支持按采购单号搜索。新逻辑要求不再额外传搜索条件。
+      const purchaseHistoryRequest = {
+        // 旧逻辑：orderType、productsId、productId、productName、productDrawingNo 也会随请求传递。
+        // 新逻辑：供应商采购历史只传产品编码、可选供应商 id 以及分页排序条件。
+        productCode,
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: 'order_date'
+          }
+        ]
+      };
+      return {
+        currentSupplierPurchase: {
+          title: '当前供应商采购',
+          activeType: dialogActiveType,
+          renderTree: false,
+          multiple: false,
+          listMethod: detailpurchaseOrderList,
+          tableItems: purchaseHistoryColumns,
+          listRequestObj: {
+            ...purchaseHistoryRequest,
+            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          },
+          searchList: [],
+          beforeSubmit: () => true
+        },
+        allSupplierPurchase: {
+          title: '所有供应商采购',
+          activeType: dialogActiveType,
+          renderTree: false,
+          multiple: false,
+          listMethod: detailpurchaseOrderList,
+          tableItems: purchaseHistoryColumns,
+          listRequestObj: purchaseHistoryRequest,
+          searchList: [],
+          beforeSubmit: () => true
+        },
+        quotation: {
+          title: '报价单',
+          activeType: dialogActiveType,
+          renderTree: false,
+          multiple: false,
+          // 旧逻辑：listMethod: () => priceList(productId)
+          // 新逻辑：报价单改查询询价明细分页接口，字段复用询价明细列表。
+          listMethod: getEnquiryDetailList,
+          tableItems: getEnquiryDetailColumns(),
+          listRequestObj: {
+            productsCode: productCode,
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 't1.create_time'
+              }
+            ]
+          },
+          searchList: [],
+          beforeSubmit: () => true
+        },
+        product: {
+          title: '选择产品',
+          activeType: dialogActiveType,
+          renderTree: true,
+          multiple: false,
+          treeTitle: '产品分类',
+          methodArr: {
+            method: getcategoryTree,
+            requestObj: {
+              classAttribute: ''
+            },
+          },
+          listMethod: getProducts,
+          tableItems: [
+            { prop: 'name', label: '产品名称', minWidth: '220px', sortable: 'custom' },
+            { prop: 'code', label: '产品编码', sortable: 'custom' },
+            { prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom' },
+            { prop: 'mainUnit', label: '单位', sortable: 'custom' },
+            { prop: 'createTime', label: '创建时间', sortable: 'custom' }
+          ],
+          listRequestObj: {
+            productCode: '',
+            productName: '',
+            productStatus: 'enable',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 'create_time'
+              }
+            ]
+          },
+          searchList: [
+            { prop: 'productName', label: '产品名称', type: 'input' },
+            { prop: 'productCode', label: '产品编码', type: 'input' },
+          ],
+          beforeSubmit: () => true
+        }
+      }
+    },
+    stripLineMeta(line) {
+      const { _lineIndex, ...realLine } = line || {};
+      return realLine;
+    },
+    getSelectedProductLine() {
+      // 旧逻辑：先用左侧复选框选择的行作为参考弹窗目标。
+      // if (this.selectedProductLineRows.length > 1) return null
+      // if (this.selectedProductLineRows.length === 1) {
+      //   const index = this.resolveProductLineIndex(this.selectedProductLineRows[0])
+      //   this.selectedProductLineIndex = index
+      // }
+      // 新逻辑：优先使用直接点击的当前产品行，复选框只作为未点击行时的兼容兜底。
+      if (this.selectedProductLineIndex < 0 || !this.linesList[this.selectedProductLineIndex]) {
+        if (this.selectedProductLineRows.length > 1) {
+          this.$message.error('请选择一行产品信息')
+          return null
+        }
+        if (this.selectedProductLineRows.length === 1) {
+          const index = this.resolveProductLineIndex(this.selectedProductLineRows[0])
+          if (index > -1) {
+            this.selectedProductLineIndex = index
+            this.selectedProductLine = this.linesList[index]
+          }
+        }
+      }
+      if (this.selectedProductLineIndex < 0 || !this.linesList[this.selectedProductLineIndex]) {
+        this.$message.error('请先选择产品信息中的一行')
+        return null
+      }
+      this.selectedProductLine = this.linesList[this.selectedProductLineIndex]
+      return this.selectedProductLine
+    },
+    resolveProductLineIndex(row) {
+      if (!row) return -1
+      if (row._lineIndex !== undefined && row._lineIndex !== null) return row._lineIndex
+      return this.linesList.findIndex(item => {
+        const productId = item.productsId || item.productId || item.id
+        const rowProductId = row.productsId || row.productId || row.id
+        return productId && rowProductId && productId === rowProductId
+      })
+    },
+    handleProductLineSelectionChange(selection) {
+      this.selectedProductLineRows = selection
+      if (this.$refs.tableForm) this.$refs.tableForm.selectedList = selection
+      if (selection.length === 1) {
+        this.selectedProductLineIndex = this.resolveProductLineIndex(selection[0])
+        this.selectedProductLine = this.linesList[this.selectedProductLineIndex] || null
+      }
+    },
+    handleProductLineCurrentChange(row) {
+      const index = this.resolveProductLineIndex(row)
+      if (index < 0) return
+      this.selectedProductLineIndex = index
+      this.selectedProductLine = this.linesList[index]
+    },
+    bindProductLineRowClick() {
+      const tableRef = this.$refs.tableForm && this.$refs.tableForm.$refs.tableRef
+      if (!tableRef || tableRef === this.productLineTableRef) return
+      if (this.productLineTableRef) {
+        this.productLineTableRef.$off('row-click', this.handleProductLineRowClick)
+      }
+      this.productLineTableRef = tableRef
+      tableRef.$off('row-click', this.handleProductLineRowClick)
+      tableRef.$on('row-click', this.handleProductLineRowClick)
+    },
+    handleProductLineRowClick(row) {
+      // Old logic: users had to tick the left checkbox before opening reference dialogs.
+      this.handleProductLineCurrentChange(row)
+    },
+    openProductReferenceDialog(type) {
+      const line = this.getSelectedProductLine()
+      if (!line) return
+      const productCode = line.productCode || line.productsCode || line.code
+      if (['currentSupplierPurchase', 'allSupplierPurchase', 'quotation'].includes(type) && !productCode) {
+        this.$message.error('请先选择有效的产品编码')
+        return
+      }
+      if (type === 'currentSupplierPurchase' && !this.dataForm.cooperativePartnerId) {
+        this.$message.error('请先选择供应商')
+        return
+      }
+      const config = this.getProductReferenceDialogConfigs(line)[type]
+      this.productReferenceType = type
+      this.productReferenceDialogProps = {
+        ...this.productReferenceDialogProps,
+        ...config
+      }
+      this.$nextTick(() => {
+        this.$refs.ProductReferenceDialogRef.openDialog()
+      })
+    },
     selectProductRefOpenDialog(type) {
       this.productRefType = type
       if (type === 'product') {
@@ -539,10 +795,45 @@ export default {
     },
     contentChanges(dataOrIndex, prop, value) {
       if (Array.isArray(dataOrIndex)) {
-        this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
+        // 旧逻辑：this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
+        this.linesList = JSON.parse(JSON.stringify(dataOrIndex)).map(this.stripLineMeta)
       } else if (prop) {
         this.linesList[dataOrIndex][prop] = value
       }
+    },
+    handleProductReferenceChange(id, data) {
+      const selected = data && data[0] ? data[0].all : null
+      const index = this.selectedProductLineIndex
+      if (!selected || index < 0 || !this.linesList[index]) return
+      if (['currentSupplierPurchase', 'allSupplierPurchase', 'quotation'].includes(this.productReferenceType)) {
+        this.applyReferencePurchasePrice(index, selected)
+        return
+      }
+      if (this.productReferenceType === 'product') {
+        this.replaceSelectedProductLine(index, selected)
+      }
+    },
+    applyReferencePurchasePrice(index, selected) {
+      const price = selected.price || selected.purchasePrice || selected.costPrice || selected.procurementAmounts || selected.sampleAmounts || ''
+      this.$set(this.linesList[index], 'price', price)
+      if (selected.taxRate !== undefined && selected.taxRate !== null) {
+        this.$set(this.linesList[index], 'taxRate', selected.taxRate)
+      }
+      if (selected.excludingTaxPrice !== undefined && selected.excludingTaxPrice !== null) {
+        this.$set(this.linesList[index], 'excludingTaxPrice', selected.excludingTaxPrice)
+      }
+      this.$set(this.linesList[index], 'fixedPrice', selected.fixedPrice || price)
+    },
+    replaceSelectedProductLine(index, selected) {
+      this.$set(this.linesList, index, {
+        ...this.linesList[index],
+        productName: selected.name || selected.productName || '',
+        productCode: selected.code || selected.productCode || '',
+        drawingNo: selected.drawingNo || selected.productDrawingNo || '',
+        productCategoryName: selected.productCategoryName || selected.classAttributeText || '',
+        mainUnit: selected.mainUnit || '',
+        productsId: selected.id || selected.productsId || selected.productId || ''
+      })
     },
     async submitAllProduct(id, data) {
       const isProduct = this.productRefType === 'product';
@@ -625,7 +916,8 @@ export default {
       const deepParams = _.merge({}, this.dataForm, this.dataOtherForm)
       const params = {
         ...deepParams,
-        purchaseOrderLines: this.computedLinesList,
+        // 旧逻辑：purchaseOrderLines: this.computedLinesList
+        purchaseOrderLines: this.computedLinesList.map(this.stripLineMeta),
         flowData: this.flowData
       }
       let MSG = '提交成功'
@@ -690,8 +982,7 @@ export default {
                     <el-collapse-item class="productInfo"
                                       title="产品信息"
                                       name="productInfo">
-                      <div class="TableForm_title">
-                      </div>
+                      <!-- 原逻辑：引用按钮单独占一行放在 TableForm_title 中。现在统一放到表格工具栏同一行展示。 -->
                       <TableForm-product
                         @input="contentChanges"
                         :value="computedLinesList"
@@ -700,6 +991,9 @@ export default {
                         :tableItems="linesListItems"
                         :btnType="btnType"
                         :hasActionbar="false"
+                        :single="true"
+                        :selectionChange="handleProductLineSelectionChange"
+                        @currentChange="handleProductLineCurrentChange"
                         :tableProps="{
                         is: 'JNPF-table',
                         fixedNO: true,
@@ -718,7 +1012,14 @@ export default {
                                 <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog">从需求单选择</el-button>
                                 <span>|</span>
                                 <el-button type="text" icon="el-icon-delete" class="JNPF-table-delBtn" @click="$refs.tableForm.batchDelete()">批量删除</el-button>
+                                <span>|</span>
                               </template>
+                              <el-button type="text" icon="el-icon-view" @click="openProductReferenceDialog('currentSupplierPurchase')">当前供应商采购</el-button>
+                              <span>|</span>
+                              <el-button type="text" icon="el-icon-view" @click="openProductReferenceDialog('allSupplierPurchase')">所有供应商采购</el-button>
+                              <span>|</span>
+                              <!-- 原逻辑：<el-button type="text" icon="el-icon-plus" @click="openProductReferenceDialog('product')">选择产品</el-button> -->
+                              <el-button type="text" icon="el-icon-view" @click="openProductReferenceDialog('quotation')">报价单</el-button>
                             </div>
                             <div class="right">
                               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -750,6 +1051,17 @@ export default {
         </div>
       </div>
       <ComSelect-page v-bind="addProductProps" ref="ComSelectProductRef" :element-show="false" @change="submitAllProduct"/>
+      <ComSelect-page
+        v-bind="productReferenceDialogProps"
+        ref="ProductReferenceDialogRef"
+        :element-show="false"
+        @change="handleProductReferenceChange"
+      >
+        <template slot="table-action">
+          <!-- 旧逻辑：使用 ComSelect-page 默认“选择”操作列。三个固定参考弹窗都只展示数据，不显示操作列。 -->
+          <span></span>
+        </template>
+      </ComSelect-page>
     </div>
   </transition>
 </template>

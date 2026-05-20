@@ -45,8 +45,18 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addEnquiry('', 'add')" :addText="'新建'">
-              <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportSingleRecord()">导出单个询价单</el-button>
+              <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-download"
+                @click="exportSingleRecord()"
+              >导出单个询价单</el-button>
+              <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-document-copy"
+                @click="copySingleRecord()"
+              >复制</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -308,6 +318,14 @@ export default {
       this.$nextTick(() => {
         this.$refs.establishForm.init(id, type)
       })
+    },
+    // 复制询价单：按新增打开表单，并带入当前选中行的数据
+    copySingleRecord() {
+      if (this.selectedRow.length !== 1) {
+        this.$message.error('请选择一条询价单复制')
+        return
+      }
+      this.addEnquiry(this.selectedRow[0].id, 'copy')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()

@@ -66,6 +66,9 @@
               <el-button size="mini" type="text" @click="handleColumnClick(row, 'look')">
                 查看详情
               </el-button>
+              <el-button size="mini" type="text" @click="handleColumnClick(row, 'look')">
+                询价记录
+              </el-button>
             </template>
           </el-table-column>
         </JNPF-table>

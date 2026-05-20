@@ -115,7 +115,21 @@ export default {
           { label: '无需采购', value: 'no_need_purchase' },
           { label: '需要采购', value: 'need_purchase' }
         ]
-      }
+      },
+      menuList: [
+        { label: '复制', type: 'copy' },
+        {
+          label: '关单',
+          type: 'close',
+          disabled: "row.documentStatus === 'draft' || row.orderState === 'finish'"
+        },
+        {
+          label: '打印',
+          type: 'print',
+          disabled: "row.documentStatus === 'draft'"
+        },
+        { label: '查看详情', type: 'look' }
+      ]
     }
   },
   created() {
@@ -136,6 +150,22 @@ export default {
         this.total = total
       } finally {
         this.loading = false
+      }
+    },
+    onMenuClick(type, row) {
+      switch (type) {
+        case 'copy':
+          this.handleColumnClick(row, 'copy')
+          break
+        case 'close':
+          this.handleColumnClick(row, 'close')
+          break
+        case 'print':
+          this.printView(row, 'p002', '销售单打印')
+          break
+        case 'look':
+          this.handleColumnClick(row, 'look')
+          break
       }
     },
 
@@ -440,28 +470,33 @@ export default {
                          @click="handleColumnClick(row, 'delete')">
                 删除
               </el-button>
-              <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleColumnClick(row, 'copy')">
-                    复制
-                  </el-dropdown-item>
-                  <el-dropdown-item @click.native="handleColumnClick(row, 'close')" :disabled="row.documentStatus === 'draft' || row.orderState === 'finish'">
-                    关单
-                  </el-dropdown-item>
-                  <el-dropdown-item :disable="row.documentStatus === 'draft'"
-                                    @click.native="printView(row,'p002','销售单打印')">
-                    打印
-                  </el-dropdown-item>
-                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">
-                    查看详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+              <Com-Dropdown
+                :row="row"
+                :menu-list="menuList"
+                @menu-click="onMenuClick"
+              />
+<!--              <el-dropdown hide-on-click>-->
+<!--                  <span class="el-dropdown-link">-->
+<!--                    <el-button type="text" size="mini">-->
+<!--                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+<!--                    </el-button>-->
+<!--                  </span>-->
+<!--                <el-dropdown-menu slot="dropdown">-->
+<!--                  <el-dropdown-item @click.native="handleColumnClick(row, 'copy')">-->
+<!--                    复制-->
+<!--                  </el-dropdown-item>-->
+<!--                  <el-dropdown-item @click.native="handleColumnClick(row, 'close')" :disabled="row.documentStatus === 'draft' || row.orderState === 'finish'">-->
+<!--                    关单-->
+<!--                  </el-dropdown-item>-->
+<!--                  <el-dropdown-item :disable="row.documentStatus === 'draft'"-->
+<!--                                    @click.native="printView(row,'p002','销售单打印')">-->
+<!--                    打印-->
+<!--                  </el-dropdown-item>-->
+<!--                  <el-dropdown-item @click.native="handleColumnClick(row, 'look')">-->
+<!--                    查看详情-->
+<!--                  </el-dropdown-item>-->
+<!--                </el-dropdown-menu>-->
+<!--              </el-dropdown>-->
             </template>
           </el-table-column>
         </JNPF-table>

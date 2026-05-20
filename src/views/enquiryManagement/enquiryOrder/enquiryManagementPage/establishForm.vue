@@ -482,10 +482,12 @@ export default {
       const { quotationId, cooperativePartnerId, id } = this.dataForm
       const paramsObj = {
         bimInquiry: {
-          quotationId,
+          // 旧逻辑同时写了 quotationId 和 quotationId: id；这里按新增/复制场景优先使用当前表单 id。
+          // quotationId,
+          quotationId: id || quotationId,
           cooperativePartnerId,
-          documentStatus: type,
-          quotationId: id
+          documentStatus: type
+          // quotationId: id
         },
         bimInquiryLineList: this.dataFormTwoList,
         flowData: this.flowData
@@ -521,6 +523,8 @@ export default {
         ...this.dataForm,
         inquiryNo: row.quotationNo,
         ...row,
+        // 独立待询价页沿用弹窗数据源，兼容列表返回 quotationTime 的场景。
+        quotationDate: row.quotationDate || row.quotationTime || this.dataForm.quotationDate,
         quotationId: row.id,
         createOrder: row.createByName
       }
@@ -561,11 +565,12 @@ export default {
       this.dataFormTwoList.splice(row.$index, 1)
     },
     // 初始化方法
-    init(id, type) {
+    init(id, type, waitEnquiryRow = null) {
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
       this.btnType = type
-      if (type === 'add') {
+      const hasWaitEnquiryRow = !!(waitEnquiryRow && waitEnquiryRow.id)
+      if (type === 'add' && !hasWaitEnquiryRow) {
         const defaultData = this.linesListItems.reduce((acc, item) => {
           acc[item.prop] = '';
           return acc;
@@ -574,6 +579,9 @@ export default {
       }
       if (id) {
         this.getEnquiryDetails(id)
+      } else if (hasWaitEnquiryRow) {
+        // 旧逻辑新增时先展示空产品行；从待询价独立列表进入时，直接带入所选待询价单和产品明细。
+        this.setBasicInfo(waitEnquiryRow)
       } else {
         const end = new Date();//获取当前的日期
         end.setTime(end.getTime())
@@ -590,13 +598,22 @@ export default {
           inquiryNo: inquiry.quotationNo,
           cooperativePartnerName: inquiry.supplierName
         }
+        if (this.btnType === 'copy') {
+          // 旧逻辑直接保留原询价单 id；复制按新增提交时需要使用原报价单 id 作为关联。
+          this.dataForm.id = inquiry.quotationId
+        }
         this.getUserInfo(inquiry.quotationId)
         this.dataFormTwoList = inquiryLineList.map(item => {
-          return {
+          const line = {
             ...item,
             productCode: item.productsCode,
             productName: item.productsName
           }
+          if (this.btnType === 'copy') {
+            // 旧逻辑直接保留原询价明细 id；复制新增时改为沿用原报价明细关联。
+            line.id = item.quotationLineId || item.id
+          }
+          return line
         })
       })
     },

@@ -31,53 +31,55 @@ export function getBasicFormSchema(dataFormRef, context) {
       prop: "partnerName",
       label: "供应商名称",
       value: "",
-      type: "custom",
-      customComponent: "ComSelect-page",
+      type: "input",
+      disabled: true,
       itemRules: [{required: true, trigger: "change"}],
-      title: '选择供应商',
-      treeTitle: "供应商分类",
-      renderTree: true,
-      multiple: false,
-      clearable: true,
-      methodArr: {
-        method: getcategoryTrees,
-        requestObj: {
-          type: 'supplier'
-        }
-      },
-      listMethod: getCooperativeData,
-      tableItems: [
-        {prop: 'code', label: '供应商编码'},
-        {prop: 'name', label: '供应商名称'},
-        {prop: 'nameEn', label: '英文名称'},
-        {prop: 'taxId', label: '税号'}
-      ],
-      listRequestObj: {
-        name: '',
-        code: '',
-        type: "supplier",
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ]
-      },
-      searchList: [
-        {prop: 'code', label: '供应商编码', type: 'input'},
-        {prop: 'name', label: '供应商名称', type: 'input'}
-      ],
-      change: (id, data) => {
-        context.dataForm.cooperativePartnerId = data[0].all.id;
-        context.dataForm.cooperativePartnerCode = data[0].all.code;
-        context.dataForm.partnerName = data[0].all.name;
-      },
+      // type: "custom",
+      // customComponent: "ComSelect-page",
+      // title: '选择供应商',
+      // treeTitle: "供应商分类",
+      // renderTree: true,
+      // multiple: false,
+      // clearable: true,
+      // methodArr: {
+      //   method: getcategoryTrees,
+      //   requestObj: {
+      //     type: 'supplier'
+      //   }
+      // },
+      // listMethod: getCooperativeData,
+      // tableItems: [
+      //   {prop: 'code', label: '供应商编码'},
+      //   {prop: 'name', label: '供应商名称'},
+      //   {prop: 'nameEn', label: '英文名称'},
+      //   {prop: 'taxId', label: '税号'}
+      // ],
+      // listRequestObj: {
+      //   name: '',
+      //   code: '',
+      //   type: "supplier",
+      //   pageNum: 1,
+      //   pageSize: 20,
+      //   orderItems: [
+      //     {
+      //       asc: false,
+      //       column: ''
+      //     },
+      //     {
+      //       asc: false,
+      //       column: 'create_time'
+      //     }
+      //   ]
+      // },
+      // searchList: [
+      //   {prop: 'code', label: '供应商编码', type: 'input'},
+      //   {prop: 'name', label: '供应商名称', type: 'input'}
+      // ],
+      // change: (id, data) => {
+      //   context.dataForm.cooperativePartnerId = data[0].all.id;
+      //   context.dataForm.cooperativePartnerCode = data[0].all.code;
+      //   context.dataForm.partnerName = data[0].all.name;
+      // },
     },
     {
       prop: "cooperativePartnerCode",

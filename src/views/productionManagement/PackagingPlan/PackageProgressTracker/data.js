@@ -128,25 +128,21 @@ export function getColumns() {
       label: "全检日期",
       minWidth: 160,
     },
-    {
-      prop: "typingQualifiedQuantity",
-      label: "已打字数量",
-      minWidth: 120,
-    },
-    {
+     {
       prop: "waitTypingQuantity",
       label: "未打字数量",
       minWidth: 120,
     },
     {
+      prop: "typingQualifiedQuantity",
+      label: "已打字数量",
+      minWidth: 120,
+    },
+   
+    {
       prop: "typingDate",
       label: "打字日期",
       minWidth: 160,
-    },
-    {
-      prop: "packingQualifiedQuantity",
-      label: "已包装数量",
-      minWidth: 120,
     },
     {
       prop: "waitPackingQuantity",
@@ -154,20 +150,27 @@ export function getColumns() {
       minWidth: 120,
     },
     {
+      prop: "packingQualifiedQuantity",
+      label: "已包装数量",
+      minWidth: 120,
+    },
+    
+    {
       prop: "packingDate",
       label: "包装日期",
       minWidth: 160,
+    },
+       {
+      prop: "waitPackQuantity",
+      label: "未装箱数量",
+      minWidth: 120,
     },
     {
       prop: "packQuantity",
       label: "装箱数量",
       minWidth: 120,
     },
-    {
-      prop: "waitPackQuantity",
-      label: "未装箱数量",
-      minWidth: 120,
-    },
+ 
     {
       prop: "packDate",
       label: "装箱日期",

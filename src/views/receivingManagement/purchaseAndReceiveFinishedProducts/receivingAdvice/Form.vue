@@ -52,8 +52,13 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="供应商名称" prop="partnerName">
+                      <!-- 原供应商名称展示逻辑保留 -->
+                      <!-- <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
+                          :disabled="btnType == 'look'"></el-input>
+                      </el-form-item> -->
+                      <el-form-item label="供应商编码" prop="cooperativePartnerCode">
+                        <el-input v-model="dataForm.cooperativePartnerCode" placeholder="请选择供应商" readonly @focus="openDialog"
                           :disabled="btnType == 'look'"></el-input>
                       </el-form-item>
                     </el-col>
@@ -939,6 +944,7 @@ export default {
         //   delivery: '',
         //   shipperId: '',
         cooperativePartnerId: '',
+        cooperativePartnerCode: '',
         remark: '',
         source: '',
         approvalFlag: false
@@ -1584,6 +1590,7 @@ export default {
               this.ProductListRequestObj.cooperativePartnerCode = e.code
               this.code = e.code
               this.dataForm.partnerName = e.name
+              this.dataForm.cooperativePartnerCode = e.code
               this.dataForm.code = e.code
               this.customerVisible = false
             })
@@ -1615,6 +1622,7 @@ export default {
           this.ProductListRequestObj.cooperativePartnerCode = e.code
           this.code = e.code
           this.dataForm.partnerName = e.name
+          this.dataForm.cooperativePartnerCode = e.code
           this.dataForm.code = e.code
           this.customerVisible = false
         }
@@ -1747,6 +1755,7 @@ export default {
           this.dataFormTwo.productData = data
           this.dataForm.partnerName = data[0].cooperativePartnerName
           this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+          this.dataForm.cooperativePartnerCode = data[0].cooperativePartnerCode
           this.dataForm.source = data[0].source
           data.forEach((item) => {
             item.ordersNo = item.orderNo
@@ -1839,6 +1848,7 @@ export default {
         orderNo: '',
         logisticsNumber: '',
         cooperativePartnerId: '',
+        cooperativePartnerCode: '',
         remark: '',
         approvalFlag: false
       };

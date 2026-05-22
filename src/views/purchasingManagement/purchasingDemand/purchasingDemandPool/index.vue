@@ -99,6 +99,7 @@
               {{ scope.row.orderedQuantity?scope.row.orderedQuantity:0 }}
             </template>
           </el-table-column>
+          <el-table-column v-if="queryObject.sourceList && queryObject.sourceList.includes('sale_order_finished_product')" prop="sealingCoverTyping" label="打字内容" min-width="140" />
           <el-table-column prop="feedbackDeliveryDate" label="反馈交期" width="120" sortable="custom" />
 <!--          <el-table-column prop="source" label="来源" width="100" sortable="custom">-->
 <!--            <template slot-scope="scope">-->

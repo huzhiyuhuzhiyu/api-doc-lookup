@@ -91,7 +91,7 @@
             </el-table-column>
             <el-table-column prop="saleOrderNo" label="销售单号" min-width="160" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
+            <!-- <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" /> -->
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="型号" min-width="200" sortable="custom" />
@@ -188,6 +188,7 @@ export default {
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
+      // columnList: ['cooperativePartnerCode', 'departmentName', 'productName', 'createTime'],
       columnList: ['cooperativePartnerCode', 'departmentName', 'productName', 'createTime'],
       deliveryDateArr: [],
       orderFollowVisible: false,

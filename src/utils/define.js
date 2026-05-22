@@ -1,6 +1,6 @@
 // 开发环境接口配置
 // const APIURl = 'http://api.zgt.test.iiot.nbjuxuan.com'
-const APIURl = 'http://api.zgt.test.iiot.nbjuxuan.com' // 佘  // http://192.168.0.62:30029
+const APIURl = 'http://192.168.0.62:30029' // 佘  // http://192.168.0.62:30029
 // const APIURl = 'http://192.168.0.74:30029' // 毛
 module.exports = {
   APIURl: APIURl,

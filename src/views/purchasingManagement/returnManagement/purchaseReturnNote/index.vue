@@ -3,7 +3,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 
 import {buttonList, getColumns} from "./data";
 import Form from '../pendingNotifyOrders/Form.vue'
-import {purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders";
+import {purPurchaseReceiptReturnGoodsList, batchWithdrawalOrder} from "@/api/purchasingAndOutsourcingOrders";
 
 export default {
   name: "index",
@@ -42,6 +42,7 @@ export default {
       btnList: buttonList,
       columnList: [],
       columnsConfig: getColumns(),
+      selectedRow: [],
     }
   },
   created() {
@@ -63,11 +64,27 @@ export default {
 
     handleButtonClick(type) {
       switch (type) {
-        case '':
+        case 'reback':
+          this.reback()
           break;
 
         default:
       }
+    },
+
+    reback() {
+      if (!this.selectedRow.length) {
+        return this.$message.warning('请至少选择一条数据')
+      }
+      this.$confirm('确认撤回选中的数据？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        const ids = this.selectedRow.map(item => item.id)
+        batchWithdrawalOrder(ids).then(() => {
+          this.$message.success('撤回成功')
+          this.initData()
+        })
+      }).catch(() => {})
     },
 
     handleColumnClick(row, type) {
@@ -138,7 +155,7 @@ export default {
           <el-col :span="4">
             <el-form-item>
               <el-input v-model.trim="listQuery.partnerName"
-                placeholder="客户名称"
+                placeholder="客户名称1"
                 clearable/>
             </el-form-item>
           </el-col>
@@ -182,6 +199,8 @@ export default {
         <JNPF-table customKey="returnSalesmemo"
           v-loading="loading"
           :data="tableData"
+          :has-c="true"
+          @selection-change="(val) => selectedRow = val"
           :row-key="'id'"
           fixedNO
           :setColumnDisplayList="columnList"

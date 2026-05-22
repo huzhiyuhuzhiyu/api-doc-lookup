@@ -1,7 +1,15 @@
 /**
  * @description 按钮权限列表
  */
-export const buttonList = []
+export const buttonList = [
+  {
+    buttonType: 'primary',
+    type: 'reback',
+    permission: 'btn_reback',
+    icon: 'el-icon-back',
+    text: '撤回'
+  }
+]
 
 export function getColumns() {
   return [

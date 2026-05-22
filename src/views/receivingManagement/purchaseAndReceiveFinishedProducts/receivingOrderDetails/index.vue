@@ -99,6 +99,15 @@
                       <div v-if="scope.row.inspectionStatus === 'inspected'"><el-tag type="success">已检验</el-tag></div>
                   </template>
               </el-table-column>
+              <el-table-column v-if="queryObject.sourceList && queryObject.sourceList.includes('sale_order_material')" prop="inspectionResult" label="检验结果" width="120">
+                  <!-- <template slot-scope="scope">
+                      <div v-if="scope.row.inspectionResult === 'qualified'"><el-tag type="success">合格</el-tag></div>
+                      <div v-else-if="scope.row.inspectionResult === 'unqualified'"><el-tag type="danger">不合格</el-tag></div>
+                  </template> -->
+              </el-table-column>
+              <el-table-column v-if="queryObject.sourceList && queryObject.sourceList.includes('sale_order_material')" prop="qualifiedQuantity" label="合格数量" width="120" />
+              <el-table-column v-if="queryObject.sourceList && queryObject.sourceList.includes('sale_order_material')" prop="unqualifiedQuantity" label="不合格数量" width="120" />
+              <el-table-column v-if="queryObject.sourceList && queryObject.sourceList.includes('sale_order_material')" prop="defectReason" label="不良原因" width="160" show-overflow-tooltip />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
 

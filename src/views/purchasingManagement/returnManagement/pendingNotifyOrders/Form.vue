@@ -63,8 +63,15 @@ export default {
           type: 'view',
           minWidth: 180,
         },
-        {
-          prop: 'receivedQuantity',
+        // {
+        //   prop: 'receivedQuantity',
+        //   label: '数量',
+        //   type: 'view',
+        //   minWidth: 90,
+        // },
+        // 5.22
+         {
+          prop: 'returnQuantity',
           label: '数量',
           type: 'view',
           minWidth: 90,
@@ -132,7 +139,9 @@ export default {
       this.dataForm = _.merge(this.dataForm, firstData, {
         notificationType: 'procure'
       })
-      this.dataForm.partnerName = firstData.cooperativePartnerName
+      // this.dataForm.partnerName = firstData.cooperativePartnerName
+      this.dataForm.partnerName = firstData.supplierName || firstData.cooperativePartnerName
+      this.dataForm.cooperativePartnerCode = firstData.supplierCode || firstData.cooperativePartnerCode
 
       this.linesList = prefillData || []
     },

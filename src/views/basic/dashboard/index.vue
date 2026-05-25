@@ -10,7 +10,7 @@
       </template>
       <div class="portal-layout-nodata" v-else>
         <img src="@/assets/images/dashboard-nodata.png" alt="" class="layout-nodata-img">
-        <p class="layout-nodata-txt">暂无数据</p>
+        <p class="layout-nodata-txt">暂无数据 </p>
       </div>
     </template>
     <!-- <Setting ref="Setting" @refresh="refresh" /> -->

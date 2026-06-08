@@ -285,7 +285,7 @@ export default {
           </template>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="{ row }">
-              <el-button size="mini" type="text" :disabled="row.documentStatus !== 'draft'"
+              <el-button size="mini" type="text" :disabled="row.documentStatus !== 'draft' && row.approvalStatus !== 'withdrawn'"
                          @click="handleColumnClick(row, 'edit')">
                 编辑
               </el-button>

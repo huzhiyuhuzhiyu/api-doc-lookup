@@ -479,9 +479,9 @@ export default {
           label: '确认交期',
           type: 'date',
           minWidth: 180,
-          itemRules: [
-            { required: true, message: '订单交期不能为空', trigger: 'change', },
-          ]
+          // itemRules: [
+          //   { required: true, message: '订单交期不能为空', trigger: 'change', },
+          // ]
         },
       ]
     },

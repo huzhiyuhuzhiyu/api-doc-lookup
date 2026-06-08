@@ -258,11 +258,25 @@ export default {
           if (this.dataForm.processId) {
             const _data = {processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity}
             let res = await getSamplingQuantityByProcessId(_data).catch(() => false)
-            this.$set(this.dataForm, 'samplingQuantity', res.data)
+            // this.$set(this.dataForm, 'samplingQuantity', res.data)
+            if (res && res.data !== undefined) {
+              this.autosamplingQuantity = res.data
+              // API返回大于0时才自动填充，避免0残留导致输入时前置0
+              if (res.data > 0) {
+                this.$set(this.dataForm, 'samplingQuantity', res.data)
+              }
+            }
           } else {
             const _data = [{productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity}]
             let res = await getSamplingQuantityByProductId(_data).catch(() => false)
-            this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+            // this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+            if (res && res.data && res.data[0] !== undefined) {
+              this.autosamplingQuantity = res.data[0].spotCheckNum
+              // API返回大于0时才自动填充，避免0残留导致输入时前置0
+              if (res.data[0].spotCheckNum > 0) {
+                this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+              }
+            }
           }
 
         } else {
@@ -1029,13 +1043,27 @@ export default {
         if (this.dataForm.processId) {
           const _data = {processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity}
           let res = await getSamplingQuantityByProcessId(_data).catch(() => false)
-          this.$set(this.dataForm, 'samplingQuantity', res.data)
-          this.autosamplingQuantity = res.data
+          // this.$set(this.dataForm, 'samplingQuantity', res.data)
+          // this.autosamplingQuantity = res.data
+          if (res && res.data !== undefined) {
+            this.autosamplingQuantity = res.data
+            // API返回大于0时才自动填充，避免0残留导致输入时前置0
+            if (res.data > 0) {
+              this.$set(this.dataForm, 'samplingQuantity', res.data)
+            }
+          }
         } else {
           const _data = [{productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity}]
           let res = await getSamplingQuantityByProductId(_data).catch(() => false)
-          this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
-          this.autosamplingQuantity = res.data[0].spotCheckNum
+          // this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+          // this.autosamplingQuantity = res.data[0].spotCheckNum
+          if (res && res.data && res.data[0] !== undefined) {
+            this.autosamplingQuantity = res.data[0].spotCheckNum
+            // API返回大于0时才自动填充，避免0残留导致输入时前置0
+            if (res.data[0].spotCheckNum > 0) {
+              this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+            }
+          }
         }
 
         // 抽检

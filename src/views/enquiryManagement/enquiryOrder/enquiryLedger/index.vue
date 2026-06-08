@@ -66,7 +66,7 @@
               <el-button size="mini" type="text" @click="handleColumnClick(row, 'look')">
                 查看详情
               </el-button>
-              <el-button size="mini" type="text" @click="handleColumnClick(row, 'look')">
+              <el-button size="mini" type="text" @click="handleEnquiryRecord(row)">
                 询价记录
               </el-button>
             </template>
@@ -81,12 +81,14 @@
       table-ref="dataTable" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
       @close="superQueryVisible = false" />
     <Form ref="Form" v-if="visible" @close="close" />
+    <EnquiryRecordDialog ref="enquiryRecordDialog" />
   </div>
 </template>
 
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form.vue'
+import EnquiryRecordDialog from './enquiryRecordDialog.vue'
 import { deepClone } from "@/utils";
 import { getColumns } from "./data";
 import { getEnquiryLedgerList } from '@/api/enquiryManagement/enquiryLedger'
@@ -95,7 +97,8 @@ export default {
   name: "EnquiryLedger",
   components: {
     SuperQuery,
-    Form
+    Form,
+    EnquiryRecordDialog
   },
   data() {
     return {
@@ -212,6 +215,10 @@ export default {
           break;
         default:
       }
+    },
+
+    handleEnquiryRecord(row) {
+      this.$refs.enquiryRecordDialog.open(row)
     },
 
     close(isInitData = true) {

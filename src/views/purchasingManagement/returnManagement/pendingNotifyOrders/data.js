@@ -1,5 +1,5 @@
-import {getCooperativeData} from "@/api/basicData";
-import {getcategoryTrees} from "@/api/salesManagement/assemblyOrders";
+import { getCooperativeData } from "@/api/basicData";
+import { getcategoryTrees } from "@/api/salesManagement/assemblyOrders";
 
 /**
  * @description 按钮权限列表
@@ -25,7 +25,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       disabled: true,
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "partnerName",
@@ -33,7 +33,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       disabled: true,
-      itemRules: [{required: true, trigger: "change"}],
+      itemRules: [{ required: true, trigger: "change" }],
       // type: "custom",
       // customComponent: "ComSelect-page",
       // title: '选择供应商',
@@ -87,14 +87,14 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       disabled: true,
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "deliverDate",
       label: "退货日期",
       value: "",
       type: "date",
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "remark",
@@ -185,7 +185,7 @@ export function getColumns() {
     },
     {
       prop: "receivedQuantity",
-      label: "数量",
+      label: "不合格数量",
       minWidth: 120,
       sortable: 'custom'
     },

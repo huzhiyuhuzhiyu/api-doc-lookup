@@ -43,7 +43,7 @@
     </div>
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="tableForm" />
+      <JNPF-tableQuery :listQuery="listQuery" :systemSearchView="systemSearchView" tableRef="tableForm" :searchList="searchList" />
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <topOpts @add="addOrUpdateHandle()">
@@ -277,6 +277,9 @@ export default {
       loadingText: '',
       btnLoading: false,
       selectedData: [],
+      searchList: [
+        { prop: 'drawNo', label: '型号', type: 'input' }
+      ],
       columnList: ['pickingWay', 'createTime'],
       showAppCodeFlag: true,
       uploadVisib: false,

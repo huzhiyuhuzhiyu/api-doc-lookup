@@ -48,7 +48,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="24">
+                <!-- <el-col :span="24">
                   <el-form-item label="计算方案">
                     <div>
                       <el-select v-model="dataForm.schemeNames" placeholder="请选择计算方案" @change="selectsChemeFun">
@@ -61,8 +61,8 @@
 
 
                   </el-form-item>
-                </el-col>
-                <el-col :span="10">
+                </el-col> -->
+                <el-col :span="24">
                   <el-form-item label="公式">
                     <el-checkbox-group v-model="dataForm.type" style="line-height: 33px;height: 33px">
                       <el-checkbox label="考虑安全库存" name="type"></el-checkbox>
@@ -109,16 +109,15 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="10">
+                <!-- <el-col :span="10">
                   <el-form-item label="方案名称">
                     <div>
                       <el-input v-model="dataForm.schemeName" placeholder="方案名称" style="width: auto;" clearable />
                       <el-button type="primary" size="mini" @click="addSchemeFun()" style="margin-left: 10px;">
                         保存方案</el-button>
-
                     </div>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
 
               </el-row>
             </el-form>

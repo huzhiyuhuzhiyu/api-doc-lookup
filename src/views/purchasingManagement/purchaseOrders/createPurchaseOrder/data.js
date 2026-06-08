@@ -1,7 +1,7 @@
-import {getCooperativeData} from "@/api/basicData";
+import { getCooperativeData } from "@/api/basicData";
 import global from "@/utils/global";
-import {deepClone} from "@/utils";
-import {getcategoryTrees} from "@/api/salesManagement/assemblyOrders";
+import { deepClone } from "@/utils";
+import { getcategoryTrees } from "@/api/salesManagement/assemblyOrders";
 
 /**
  * @description 按钮权限列表
@@ -50,7 +50,7 @@ export function getBasicFormSchema(dataFormRef, context) {
       get disabled() {
         return context.isOrderNoEditable
       },
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "currency",
@@ -58,14 +58,14 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "select",
       options: global.currencyType,
-      itemRules: [{required: true, trigger: "change"}],
+      itemRules: [{ required: true, trigger: "change" }],
     },
     {
       prop: "orderDate",
       label: "订单日期",
       value: "",
       type: "date",
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "cooperativePartnerName",
@@ -73,19 +73,19 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "custom",
       customComponent: "ComSelect-page",
-      itemRules: [{required: true, trigger: "change"}],
+      itemRules: [{ required: true, trigger: "change" }],
       title: '选择供应商',
       treeTitle: '供应商分类',
       renderTree: true,
       multiple: false,
       clearable: true,
-      methodArr: {method: getcategoryTrees, requestObj: {type: 'supplier'}},
+      methodArr: { method: getcategoryTrees, requestObj: { type: 'supplier' } },
       listMethod: getCooperativeData,
       tableItems: [
-        {prop: 'code', label: '供应商编码'},
-        {prop: 'name', label: '供应商名称'},
-        {prop: 'nameEn', label: '英文名称'},
-        {prop: 'taxId', label: '税号'}
+        { prop: 'code', label: '供应商编码' },
+        { prop: 'name', label: '供应商名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
       ],
       listRequestObj: {
         code: '',
@@ -106,8 +106,8 @@ export function getBasicFormSchema(dataFormRef, context) {
         ]
       },
       searchList: [
-        {prop: 'code', label: '供应商编码', type: 'input'},
-        {prop: 'name', label: '供应商名称', type: 'input'}
+        { prop: 'code', label: '供应商编码', type: 'input' },
+        { prop: 'name', label: '供应商名称', type: 'input' }
       ],
       change: (id, data) => {
         // dom更新后重新校验此元素
@@ -131,14 +131,14 @@ export function getBasicFormSchema(dataFormRef, context) {
       value: "",
       type: "input",
       disabled: true,
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
     },
     {
       prop: "deliveryDate",
       label: "确认交期",
       value: "",
       type: "date",
-      itemRules: [{required: true, trigger: "blur"}],
+      itemRules: [{ required: true, trigger: "blur" }],
       change: () => {
         if (!context.linesList.length) return
         context.linesList.forEach(item => {

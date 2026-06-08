@@ -103,7 +103,7 @@ export default {
           minWidth: 150,
         },
         {
-          prop: 'inventoryQuantity ',
+          prop: 'inventoryQuantity',
           label: '当前库存',
           type: 'view',
           minWidth: 150,

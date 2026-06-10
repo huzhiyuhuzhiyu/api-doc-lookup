@@ -1,0 +1,269 @@
+<template>
+  <div class="JNPF-common-layout">
+
+      <div class="JNPF-common-layout-center  JNPF-flex-main">
+      <!-- <el-row class="JNPF-common-search-box" :gutter="16">
+        <el-form @submit.native.prevent>
+          <el-col :span="6">
+            <el-form-item :label="$t('common.keyword')">
+              <el-input v-model="listQuery.keyword" :placeholder="$t('common.enterKeyword')"
+                clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" icon="el-icon-search" @click="search()">
+                {{$t('common.search')}}</el-button>
+              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row> -->
+      <div class="tag-group JNPF-common-search-box treeBox_bot"
+               style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0">
+              <el-radio-group  @input="typeChange" v-model="listQuery.type" style="background-color:#fff;">
+                  <!--                        <el-radio-button label="" style="margin:3px 0">全部</el-radio-button>-->
+                  <el-radio-button style="margin:2px 0;border-left: 1px solid #DCDFE6" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
+              </el-radio-group>
+  </div>
+      <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-head">
+          <topOpts @add="addOrUpdateHandle()" :isJudgePer="true" :addPerCode="'btn_add'" />
+          <!-- <el-dropdown> -->
+
+          <!-- <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="addOrUpdateHandle('','company')">新建公司
+              </el-dropdown-item>
+              <el-dropdown-item >新建部门</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown> -->
+          <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" content="展开" placement="top">
+              <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon" :underline="false" @click="toggleExpand()" />
+            </el-tooltip>
+            <el-tooltip effect="dark" content="折叠" placement="top">
+              <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon" :underline="false" @click="toggleExpand()" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+            </el-tooltip>
+          </div>
+        </div>
+        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" :default-expand-all="expands" :tree-props="{children: 'childrenList', hasChildren: ''}" custom-column customKey="JNPFTableKey_959073">
+            <el-table-column prop="name" label="名称">
+            <template slot-scope="scope">
+              <i :class="[scope.row.childrenList.length>=1?'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{scope.row.name}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="parentName" label="上级分类" />
+          <el-table-column prop="sortCode" label="排序">
+            <template slot-scope="scope">
+              <el-input @blur="switchShow(scope.row)" clearable v-model="scope.row.sortCode"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
+          <el-table-column prop="remark" label="备注" width="200"></el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id,scope.row.parentId)" >编辑</el-button>
+              <el-button type="text" @click="handleDel(scope.row.id,scope.row.parentId)" style=" color: #ff3a3a">删除</el-button> -->
+
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)" @del="handleDel(scope.row.id, scope.row.parentId)" />
+              <!-- <tableOpts @edit="addOrUpdateHandle(scope.row.id,scope.row.parentId)"
+                @del="handleDel(scope.row.id)"> -->
+              <!-- <el-dropdown>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">{{$t('common.moreBtn')}}<i
+                        class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="checkMembers(scope.row.id,scope.row.fullName)">
+                      查看成员</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown> -->
+              <!-- </tableOpts> -->
+            </template>
+          </el-table-column>
+        </JNPF-table>
+      </div>
+    </div>
+
+    <DepForm v-if="depFormVisible" ref="depForm" @close="closeDepForm" />
+    <CheckUser v-if="checkUserFormVisible" ref="checkUserForm" @close="checkUserFormVisible=false" />
+  </div>
+</template>
+
+<script>
+import { getOrganizeList, delOrganize } from '@/api/permission/organize'
+import { getcategoryTree, deleteCategory, editCategory } from '@/api/basicData/index'
+import DepForm from './depForm'
+import CheckUser from './checkUser.vue'
+import {FileCategoryTypeList} from "@/views/esop/fileCategoryManagement/constants";
+import {optimizeArrayPush} from "@/utils";
+export default {
+  name: 'customerCategory',
+  components: { DepForm, CheckUser },
+  data() {
+    return {
+      categoryList:FileCategoryTypeList,
+      listQuery: {
+        keyword: '',
+        type: FileCategoryTypeList[2].enCode
+      },
+      treeList: [],
+      expands: true,
+      refreshTable: true,
+      btnLoading: false,
+      listLoading: true,
+      formVisible: false,
+      depFormVisible: false,
+      checkUserFormVisible: false
+    }
+  },
+  created() {
+    this.initData()
+  },
+  methods: {
+      typeChange(val){
+        this.listQuery.type = val;
+        this.initData();
+      },
+    // 切换input框的显示状态
+    switchShow(row) {
+      let obj = {
+        sortCode: row.sortCode,
+        name: row.name,
+        remark: row.remark,
+        id: row.id,
+        type: 'customer',
+        parentId: row.parentId,
+        parentName: row.parentName
+      }
+      editCategory(obj).then(res => {
+        this.$message({
+          message: "修改成功",
+          type: 'success',
+          duration: 1500,
+          onClose: () => {
+            this.initData()
+          }
+        })
+      })
+    },
+    initData() {
+      this.listLoading = true
+      getcategoryTree(this.listQuery).then(res => {
+        if (res.data.length > 0) {
+            const list = this.setTableIndex(res.data)
+            this.treeList = []
+            optimizeArrayPush(this.treeList, list,5)
+        }
+        setTimeout(()=>{
+            this.listLoading = false
+        },500)
+
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
+    search() {
+      this.initData()
+    },
+    // 树形列表index层级，实现方法（可复制直接调用）
+    setTableIndex(arr, index) {
+      arr.forEach((item, key) => {
+        item.index = key + 1;
+        if (index) {
+          item.index = index + 1;
+        }
+        if (item.childrenList.length > 0) {
+          this.setTableIndex(item.childrenList, item.index);
+        }
+      });
+      return arr;
+    },
+    reset() {
+      this.listQuery.keyword = ''
+      this.initData()
+    },
+    addOrUpdateHandle(id, parentId) {
+      this.addOrUpdateDep(id, parentId)
+
+    },
+    addOrUpdateOrganize(id, parentId) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, parentId)
+      })
+    },
+    addOrUpdateDep(id, parentId) {
+      this.depFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.depForm.init(id, parentId,this.listQuery.type)
+      })
+    },
+    closeForm(isRefresh) {
+      this.formVisible = false
+      if (isRefresh) {
+        this.keyword = ''
+        this.initData()
+      }
+    },
+    closeDepForm(isRefresh) {
+      this.depFormVisible = false
+      if (isRefresh) {
+        this.keyword = ''
+        this.initData()
+      }
+    },
+    checkMembers(id, name) {
+      this.checkUserFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.checkUserForm.init(id, name)
+      })
+    },
+    checkUser() {
+
+    },
+    toggleExpand() {
+      this.refreshTable = false;
+      this.expands = !this.expands;
+      this.$nextTick(() => {
+        this.refreshTable = true;
+      });
+    },
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deleteCategory(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        }).catch((error) => {
+          if (error == "Error: 当前标签分类存在子标签分类") {
+            this.$message({
+              message: "当前供应商分类存在档案数据，不允许删除！",
+              type: "error"
+            })
+          }
+        })
+      }).catch(() => { })
+    }
+  }
+}
+</script>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style lang="scss" scoped>
+.table-icon {
+  vertical-align: bottom;
+  font-size: 16px;
+  margin-right: 6px;
+  line-height: 23px;
+}
+</style>

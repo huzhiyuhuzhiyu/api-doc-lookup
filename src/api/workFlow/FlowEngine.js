@@ -1,0 +1,164 @@
+import request from '@/utils/request'
+
+// 获取流程引擎列表
+export function FlowEngineList(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine`,
+    method: 'get',
+    data
+  })
+}
+// 获取流程引擎列表 post
+export function getFlowEngineList(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/list`,
+    method: 'post',
+    data
+  })
+}
+// 更新流程状态
+export function changeFlowSwitch(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/switch/${id}`,
+    method: 'get',
+  })
+}
+// 获取流程引擎信息
+export function FlowEngineInfo(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/${id}`,
+    method: 'get'
+  })
+}
+// 通过businessFlow获取流程引擎信息
+export function getBusinessFlowInfo(businessFlow) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/infoByBusinessFlow/${businessFlow}`,
+    method: 'get'
+  })
+}
+// 通过业务id 获取流程信息
+export function getBusinessFlowDetail(businessId) {
+  return request({
+    url: `/api/workflow/Engine/FlowBefore/infoByBusinessId/${businessId}`,
+    method: 'get'
+  })
+}
+// 删除流程引擎
+export function Delete(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/${id}`,
+    method: 'DELETE'
+  })
+}
+// 新建流程引擎
+export function Create(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine`,
+    method: 'post',
+    data
+  })
+}
+//  更新流程引擎
+export function Update(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
+// 复制流程表单
+export function Copy(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/${id}/Actions/Copy`,
+    method: 'post'
+  })
+}
+// 导出流程表单
+export function exportData(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/${id}/Actions/ExportData`,
+    method: 'GET'
+  })
+}
+// 发布流程引擎
+export function Release(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/Release/${id}`,
+    method: 'post'
+  })
+}
+// 停止流程引擎
+export function Stop(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/Stop/${id}`,
+    method: 'post'
+  })
+}
+// 列表ListAll
+export function FlowEngineListAll(businessFlag) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/ListAll?businessFlag=${businessFlag}`,
+    method: 'get'
+  })
+}
+// 列表ListAll
+export function FlowEnginePageList(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/PageListAll`,
+    method: 'get',
+    data
+  })
+}
+// 流程引擎下拉框
+export function FlowEngineSelector(type) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/Selector`,
+    method: 'get',
+    data: { type }
+  })
+}
+// 流程表单主表属性
+export function getFormDataFields(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/${id}/FormDataFields`,
+    method: 'get'
+  })
+}
+// 流程表单数据
+export function FieldDataSelect(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/${id}/FieldDataSelect`,
+    method: 'get'
+  })
+}
+// 获取流程表单详情
+export function getFlowTaskData(flowId, id) {
+  return request({
+    url: `/api/workflow/Engine/FlowTask/${flowId}/${id}`,
+    method: 'get'
+  })
+}
+// 获取流程评论列表
+export function getCommentList(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowComment`,
+    method: 'get',
+    data
+  })
+}
+// 新建流程评论
+export function createComment(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowComment`,
+    method: 'post',
+    data
+  })
+}
+// 删除流程评论
+export function delComment(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowComment/${id}`,
+    method: 'delete'
+  })
+}

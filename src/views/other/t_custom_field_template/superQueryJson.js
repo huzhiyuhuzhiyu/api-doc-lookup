@@ -1,0 +1,2 @@
+const superQueryJson = [{"__config__":{"formId":101,"visibility":["pc","app"],"jnpfKey":"textarea","dragDisabled":false,"label":"模板内容（JSON）","trigger":"blur","showLabel":true,"required":false,"tableName":"t_custom_field_template","renderKey":1678193412156,"layout":"colFormItem","tagIcon":"icon-ym icon-ym-generator-textarea","tag":"el-input","regList":[],"span":24},"readonly":false,"__vModel__":"content","style":{"width":"100%"},"disabled":false,"placeholder":"请输入","show-word-limit":true,"type":"textarea","autosize":{"minRows":20,"maxRows":20}}]
+export default superQueryJson

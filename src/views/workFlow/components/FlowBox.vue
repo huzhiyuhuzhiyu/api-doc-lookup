@@ -1,0 +1,1168 @@
+<template>
+  <transition name="el-zoom-in-center">
+    <div class="JNPF-preview-main flow-form-main">
+      <div class="JNPF-common-page-header">
+        <el-page-header @back="goBack" :content="title" />
+        <template v-if="!loading || title">
+          <el-dropdown placement="bottom" @command="handleFlowUrgent" trigger="click" v-show="setting.opType == '-1'">
+            <div class="flow-urgent-value" style="cursor:pointer">
+              <span :style="{ 'background-color': flowUrgentList[selectState].color }" class="color-box"></span>
+              <span :style="{ 'color': flowUrgentList[selectState].color }">
+                {{ flowUrgentList[selectState].name }}</span>
+            </div>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="(item, index) in flowUrgentList" :key="index" :command="item.state">
+                <span :style="{ 'background-color': item.color }" class="color-box">
+                </span>
+                {{ item.name }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <div class="flow-urgent-value" v-show="setting.opType !== '-1'">
+            <span :style="{ 'background-color': flowUrgentList[selectState].color }" class="color-box"></span>
+            <span :style="{ 'color': flowUrgentList[selectState].color }">{{ flowUrgentList[selectState].name }}</span>
+          </div>
+        </template>
+        <div class="options">
+          <el-button type="primary" @click="addComment" v-if="activeTab === 'comment'">评 论</el-button>
+          <template v-if="setting.opType != 4 && setting.id">
+            <el-button type="primary" @click="printBrowseVisible = true"
+              v-if="properties.hasPrintBtn && properties.printId">
+              {{ properties.printBtnText || '打 印' }}</el-button>
+          </template>
+          <template v-if="setting.opType == '-1'">
+            <el-button type="primary" @click="eventLauncher('submit')" :loading="candidateLoading"
+              :disabled="allBtnDisabled">{{ properties.submitBtnText || '提 交' }}</el-button>
+            <el-button type="warning" @click="eventLauncher('save')" :loading="btnLoading" :disabled="allBtnDisabled">{{
+              properties.saveBtnText || '暂 存' }}</el-button>
+          </template>
+          <template v-if="setting.opType == 1">
+            <el-button type="warning" @click="openUserBox('transfer')" v-if="properties.hasTransferBtn && !messageFlag">{{
+              properties.transferBtnText || '转 审' }}</el-button>
+            <el-button type="primary" @click="eventLauncher('audit')" :loading="candidateLoading"
+              v-if="properties.hasAuditBtn && !messageFlag">{{ properties.auditBtnText || '通 过' }}</el-button>
+            <el-button type="warning" @click="eventLauncher('saveAudit')" v-if="properties.hasSaveBtn && !messageFlag"
+              :loading="btnLoading">{{ properties.saveBtnText || '暂 存' }}
+            </el-button>
+            <el-button type="danger" @click="eventReceiver({}, 'reject')" v-if="properties.hasRejectBtn && !messageFlag">
+              {{ properties.rejectBtnText || '拒 绝' }}</el-button>
+          </template>
+          <template v-if="setting.opType == 0 && setting.status == 1">
+            <el-button type="primary" @click="press()"
+              v-if="properties.hasPressBtn || properties.hasPressBtn === undefined">
+              {{ properties.pressBtnText || '催 办' }}</el-button>
+            <el-button type="danger" @click="revoke()"
+              v-if="properties.hasRevokeBtn || properties.hasRevokeBtn === undefined">
+              {{ properties.revokeBtnText || '撤 回' }}</el-button>
+          </template>
+          <el-button type="danger"
+            v-if="setting.opType == 2 && properties.hasRevokeBtn && flowTaskInfo.completion !== 100" @click="recall()">{{
+              properties.revokeBtnText || '撤 回' }}</el-button>
+          <template v-if="setting.opType == 4">
+            <!-- 判断流程复活按钮和节点变更 -->
+            <!-- <el-button type="primary" @click="flowResurgence" v-if="flowTaskInfo.completion==100">
+              复 活</el-button> -->
+            <!-- <el-button type="primary" @click="flowResurgence"
+              v-if="flowTaskInfo.completion>0&&flowTaskInfo.completion<100&&(setting.status==1||setting.status==3)">
+              变 更</el-button> -->
+            <el-button type="primary" @click="openAssignBox" v-if="setting.status == 1 && assignNodeList.length">指 派
+            </el-button>
+            <el-button type="danger" v-if="setting.status == 1" @click="cancel()">终 止</el-button>
+          </template>
+          <el-button @click="goBack()" v-if="!setting.hideCancelBtn" :disabled="allBtnDisabled">
+            {{ $t('common.cancelButton') }}
+          </el-button>
+        </div>
+      </div>
+      <div class="approve-result" v-if="(setting.opType == 0 || setting.opType == 4) && activeTab === '0'">
+        <div class="approve-result-img" :class="flowTaskInfo.status | flowStatus()"></div>
+      </div>
+      <el-tabs class="JNPF-el_tabs" v-model="activeTab">
+        <el-tab-pane label="表单信息" v-loading="loading">
+          <component :approvalFlags="true" :is="currentView" @close="goBack" ref="form" @eventReceiver="eventReceiver" @setLoad="setLoad"
+            @setCandidateLoad="setCandidateLoad" @setPageLoad="setPageLoad" />
+        </el-tab-pane>
+        <el-tab-pane label="流程信息" v-loading="loading">
+          <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+        </el-tab-pane>
+        <el-tab-pane label="流转记录" v-if="setting.opType != '-1'" v-loading="loading">
+          <div class="mb-20" v-if="flowTaskInfo.status === 2">
+            <el-alert
+              :title="'共耗时' + (flowTaskInfo.processingTime || '') + '小时,' + '超过' + (flowTaskInfo.timeFastRatio || '') + '%的同类申请'"
+              type="success" show-icon :closable="false"></el-alert>
+          </div>
+          <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+        </el-tab-pane>
+        <el-tab-pane label="审批汇总" v-if="setting.opType != '-1' && isSummary" v-loading="loading" name="recordSummary">
+          <RecordSummary :id='setting.id' :summaryType="summaryType" ref="recordSummary" />
+        </el-tab-pane>
+        <el-tab-pane label="流程评论" v-if="setting.opType != '-1' && isComment" v-loading="loading" name="comment">
+          <Comment :id='setting.id' ref="comment" />
+        </el-tab-pane>
+      </el-tabs>
+      <el-dialog :title="eventType === 'audit' ? '审批通过' : '审批拒绝'" :close-on-click-modal="false" :visible.sync="visible"
+        class="JNPF-dialog JNPF-dialog_center" lock-scroll append-to-body width='600px'>
+        <el-form ref="candidateForm" :model="candidateForm"
+          :label-width="candidateForm.candidateList.length || branchList.length ? '130px' : '80px'">
+          <template v-if="eventType === 'audit'">
+            <el-form-item label="分支选择" prop="branchList" v-if="branchList.length"
+              :rules="[{ required: true, message: `分支不能为空`, trigger: 'change' }]">
+              <el-select v-model="candidateForm.branchList" multiple placeholder="请选择审批分支" clearable
+                @change="onBranchChange">
+                <el-option v-for="item in branchList" :key="item.nodeId" :label="item.nodeName" :value="item.nodeId" />
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="item.nodeName + item.label" :prop="'candidateList.' + i + '.value'"
+              v-for="(item, i) in candidateForm.candidateList" :key="i" :rules="item.rules">
+              <candidate-user-select v-model="item.value" multiple :placeholder="'请选择' + item.label"
+                :taskId="setting.taskId" :formData="formData" :nodeId="item.nodeId" v-if="item.hasCandidates" />
+              <user-select v-model="item.value" multiple :placeholder="'请选择' + item.label" title="候选人员" v-else />
+            </el-form-item>
+            <el-form-item label="加签人员" v-if="properties.hasFreeApprover">
+              <user-select v-model="handleId" placeholder="请选择加签人员,不选即该节点审核结束" />
+            </el-form-item>
+          </template>
+          <el-form-item label="审批意见" v-if="properties.hasOpinion" prop="handleOpinion">
+            <el-input v-model="candidateForm.handleOpinion" placeholder="请输入审批意见" type="textarea" :rows="4" />
+          </el-form-item>
+          <el-form-item label="手写签名" required v-if="properties.hasSign">
+            <div class="sign-main">
+              <div class="sign-head">
+                <div class="sign-tip">请在这里输入你的签名</div>
+                <div class="sign-action">
+                  <el-button class="clear-btn" size="mini" @click="handleReset">清空</el-button>
+                  <el-button class="sure-btn" size="mini" @click="handleGenerate" :disabled="!!signImg">确定签名</el-button>
+                </div>
+              </div>
+              <div class="sign-box">
+                <vue-esign ref="esign" :height="330" v-if="!signImg" :lineWidth="5" />
+                <img :src="signImg" alt="" v-if="signImg" class="sign-img">
+              </div>
+            </div>
+          </el-form-item>
+          <el-form-item label="抄送人员" v-if="properties.isCustomCopy">
+            <user-select v-model="copyIds" placeholder="请选择" multiple />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" @click="handleApproval()" :loading="approvalBtnLoading">
+            {{ $t('common.confirmButton') }}
+          </el-button>
+        </span>
+      </el-dialog>
+      <el-dialog title="指派" :close-on-click-modal="false" :visible.sync="assignVisible"
+        class="JNPF-dialog JNPF-dialog_center" lock-scroll append-to-body width='600px'>
+        <el-form label-width="90px" :model="assignForm" :rules="assignRules" ref="assignForm">
+          <el-form-item label="指派节点" prop="nodeCode">
+            <el-select v-model="assignForm.nodeCode" placeholder="请选择指派节点">
+              <el-option v-for="item in assignNodeList" :key="item.nodeCode" :label="item.nodeName"
+                :value="item.nodeCode" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="指派给谁" prop="freeApproverUserId">
+            <user-select v-model="assignForm.freeApproverUserId" placeholder="请选择指派给谁" />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="assignVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" @click="handleAssign()">{{ $t('common.confirmButton') }}
+          </el-button>
+        </span>
+      </el-dialog>
+      <!-- 流程节点变更复活对话框 -->
+      <el-dialog :title="flowTaskInfo.completion == 100 ? '复活' : '变更'" :close-on-click-modal="false"
+        :visible.sync="resurgenceVisible" class="JNPF-dialog JNPF-dialog_center" lock-scroll append-to-body width='600px'>
+        <el-form label-width="90px" :model="resurgenceForm" :rules="resurgenceRules" ref="resurgenceForm">
+          <el-form-item :label="flowTaskInfo.completion == 100 ? '复活节点' : '变更节点'" prop="nodeCode">
+            <el-select v-model="resurgenceForm.nodeCode"
+              :placeholder="flowTaskInfo.completion == 100 ? '请选择复活节点' : '请选择变更节点'">
+              <el-option v-for="item in resurgenceNodeList" :key="item.id" :label="item.nodeName" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="flowTaskInfo.completion == 100 ? '复活意见' : '变更意见'" prop="handleOpinion">
+            <el-input type="textarea" v-model="resurgenceForm.handleOpinion" placeholder="请填写意见" :rows="4" />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="resurgenceVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" @click="handleResurgence()" :loading="resurgenceBtnLoading">
+            {{ $t('common.confirmButton') }}
+          </el-button>
+        </span>
+      </el-dialog>
+      <print-browse :visible.sync="printBrowseVisible" :id="properties.printId" :formId="setting.id"
+        :fullName="setting.fullName" />
+      <candidate-form :visible.sync="candidateVisible" :candidateList="candidateList" :branchList="branchList"
+        :taskId="setting.taskId" :formData="formData" @submitCandidate="submitCandidate"
+        :isCustomCopy="properties.isCustomCopy" />
+      <error-form :visible.sync="errorVisible" :nodeList="errorNodeList" @submit="handleError" />
+      <actionDialog v-if="actionVisible" ref="actionDialog" @submit="handleRecall" />
+    </div>
+  </transition>
+</template>
+
+<script>
+import { FlowEngineInfo } from '@/api/workFlow/FlowEngine'
+import { FlowBeforeInfo, Audit, Reject, Transfer, Recall, Cancel, Assign, SaveAudit, Candidates, CandidateUser, Resurgence, ResurgenceList } from '@/api/workFlow/FlowBefore'
+import { Revoke, Press } from '@/api/workFlow/FlowLaunch'
+import { Create, Update, DynamicCreate, DynamicUpdate } from '@/api/workFlow/workFlowForm'
+import recordList from './RecordList'
+import Comment from './Comment'
+import RecordSummary from './RecordSummary'
+import CandidateForm from './CandidateForm'
+import ErrorForm from './ErrorForm'
+import CandidateUserSelect from './CandidateUserSelect'
+import Process from '@/components/Process/Preview'
+import PrintBrowse from '@/components/PrintBrowse'
+import vueEsign from 'vue-esign'
+import ActionDialog from '@/views/workFlow/components/ActionDialog'
+import { indAndoutTypeList } from './indAndout'
+import { detailWarehouseData } from "@/api/warehouseManagement/inboundAndOutbound"
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+export default {
+  components: {
+    recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog,
+  },
+  data() {
+    return {
+      assignVisible: false,
+      resurgenceVisible: false,
+      assignForm: {
+        nodeCode: '',
+        freeApproverUserId: ''
+      },
+      actionVisible: false,
+      resurgenceForm: {
+        nodeCode: '',
+        handleOpinion: '',
+        freeApproverUserId: ''
+      },
+      assignRules: {
+        nodeCode: [
+          { required: true, message: '请选择指派节点', trigger: 'change' }
+        ],
+        freeApproverUserId: [
+          { required: true, message: '请选择指派给谁', trigger: 'click' }
+        ]
+      },
+      resurgenceRules: {
+        nodeCode: [
+          {
+            required: true,
+            message: '请选择节点',
+            trigger: 'change'
+          }
+        ],
+      },
+      assignNodeList: [],
+      resurgenceNodeList: [],
+      currentView: '',
+      formData: {},
+      setting: {},
+      flowFormInfo: {},
+      flowTaskInfo: {},
+      flowTaskNodeList: [],
+      flowTemplateJson: {},
+      flowTaskOperatorRecordList: [],
+      properties: {},
+      endTime: 0,
+      visible: false,
+      handleId: '',
+      activeTab: '0',
+      isComment: false,
+      isSummary: false,
+      summaryType: 0,
+      loading: false,
+      btnLoading: false,
+      approvalBtnLoading: false,
+      resurgenceBtnLoading: false,
+      candidateLoading: false,
+      candidateVisible: false,
+      candidateType: 1,
+      branchList: [],
+      candidateList: [],
+      candidateForm: {
+        branchList: [],
+        candidateList: [],
+        handleOpinion: ''
+      },
+      printBrowseVisible: false,
+      eventType: '',
+      signImg: '',
+      copyIds: [],
+      fullName: '',
+      thisStep: '',
+      allBtnDisabled: false,
+      flowUrgent: 1,
+      flowUrgentList: [
+        { name: '普通', color: '#409EFF', state: 1, },
+        { name: '重要', color: '#E6A23C', state: 2, },
+        { name: '紧急', color: '#F56C6C', state: 3, },
+      ],
+      errorVisible: false,
+      errorNodeList: [],
+      isValidate: false,
+      pageView: {
+        'b001': 'salesManagement/contractQuotation/salesQuotationOld/depForm.vue',
+        'b002': 'purchasingManagement/fixedPointPricing/pricingListedSeparately/Form.vue',
+        'b012': 'purchasingManagement/purReconciliationManagement/purReconciliation/Form.vue',
+        'b013': 'salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue',
+        'b014': 'externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue',
+        'b003': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b074': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b075': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b004': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b006': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b023': 'basicData/bomSettings/productionBom/Form.vue',
+        'b021': 'salesManagement/orderManagement/orderChanges/Form.vue',
+        'b024': 'basicData/processSettings/processSettingss/Form.vue',
+        'b025': 'salesManagement/orderManagement/orderList/Form.vue',
+        'b026': 'salesManagement/shippingnotice/saleMetalworking/Form.vue',
+        'b027': 'salesManagement/shippingnotice/returnSalesmemo/Form.vue',
+        'b009': 'purchasingManagement/purchaseOrders/purchaseOrder/Form.vue',
+        'b028': 'purchasingManagement/finishedProductPurchaseOrders/purchaseOrder/Form.vue',
+        'b029': 'purchasingManagement/returnManagement/purchaseReturnNote/Form.vue',
+        'b030': 'purchasingManagement/finishedProductReturnManagement/purchaseReturnNote/Form.vue',
+        'b010': 'outsourcingManagement/productOutsourcingOrder/orderList/Form.vue',
+        'b011': 'outsourcingManagement/processOutsourcingOrders/orderList/Form.vue',
+        'b031': 'outsourcingManagement/externalMaterialIssuance/materialsIssueNotice/Form.vue',
+        'b034': 'receivingManagement/procurementReceiving/receivingAdvice/Form.vue',
+        'b035': 'receivingManagement/purchaseAndReceiveFinishedProducts/receivingAdvice/Form.vue',
+        'b036': 'receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue',
+        'b015': 'purchasingManagement/purchasingDemand/buyingRequisition/Form.vue',
+        'b037': 'productionManagement/assemblyPick/assemblyPickManagement/Form.vue',
+        'b047': 'productionManagement/assemblyPick/assemblyReturnMaterManagement/Form.vue',
+        'b038': 'productionManagement/ringPick/ringPickManagement/Form.vue',
+        'b039': 'productionManagement/ringPick/ringReturnMaterManagement/Form.vue',
+        'b040': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b041': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b042': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b043': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b044': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b045': '',   // 出入库单独处理
+        'b046': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
+        'b048': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b049': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b050': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b052': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b051': 'warehouseManagement/finishedProductWarehouseManagement/transferManagement/Form.vue',
+        'b053': 'dailyManagement/sparepartsmanagement/sparepartsrequisition/Form.vue',
+        'b054': 'dailyManagement/equipmentrequisitionreturn/equipmentrequisition/Form.vue',
+        'b055': 'dailyManagement/borrowingReturn/circulate/Form.vue',
+        'b056': 'dailyManagement/sparepartsmanagement/sparepartsReturn/Form',
+        'b057': 'dailyManagement/equipmentrequisitionreturn/equipmentreturn/Form',
+        'b058': 'dailyManagement/borrowingReturn/toolreturn/Form',
+        'b059': 'dailyManagement/scrapManagement/announceInvalidated/Form',
+        'b060': 'toolclampmeasuring/scrapManagement/announceInvalidated/Form',
+        'b061': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b065': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b008': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b062': 'warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly/Form.vue',
+        'b063': 'warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly/Form.vue',
+        'b064': 'warehouseManagement/finishedProductWarehouseManagement/modalShift/Form.vue',
+        'b066': 'warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition/Form.vue',
+        'b067': 'planManagement/MRPoperation/pendClculationPlan/ReplaceRulesForm.vue',
+        'b068': 'productionManagement/assemblyPick/orderAwitPick/Form/index.vue',
+        'b069': 'productionManagement/assemblyPick/orderAwitPick/Form/index.vue',
+        'b0128': 'inspectionManagement/ReInspectionManagement/StockBatches/module/Form.vue',
+      },
+      inspectionTypeList: [
+        // 不良品
+        { label: 'b003', value: 'procure' },
+        { label: 'b004', value: 'external' },
+        { label: 'b008', value: 'produce' },
+        { label: 'b006', value: 'sale_back' },
+        { label: 'b007', value: 'back_material' },
+        { label: 'b005', value: 'process' },
+        { label: 'b022', value: 'finished' },
+        // 检验单
+        { label: 'b040', value: 'procure' },
+        { label: 'b041', value: 'external' },
+        { label: 'b042', value: 'process' },
+        { label: 'b043', value: 'finished' },
+      ],
+      inspectionType: '',
+      businessFlow: '',
+      messageFlag: false,
+      saleFlag: false,
+      purchaseFlag: false,
+      externalFlag: false,
+      pageViewVisible: false,
+    }
+  },
+  computed: {
+    title() {
+      if ([2, 3, 4].includes(this.setting.opType)) return this.fullName
+      return this.thisStep ? this.fullName + '/' + this.thisStep : this.fullName
+    },
+    selectState() {
+      const index = this.flowUrgentList.findIndex(c => this.flowUrgent === c.state)
+      return index
+    }
+  },
+  watch: {
+    activeTab(val) {
+      if (val === 'comment') {
+        this.$refs.comment && this.$refs.comment.init()
+      }
+      if (val === 'recordSummary') {
+        this.$refs.recordSummary && this.$refs.recordSummary.init()
+      }
+    }
+  },
+  methods: {
+    handleResurgence(errorRuleUserList) {
+      this.$refs['resurgenceForm'].validate((valid) => {
+        if (!valid) return
+        let query = {
+          handleOpinion: this.resurgenceForm.handleOpinion,
+          taskNodeId: this.resurgenceForm.nodeCode,
+          taskId: this.setting.taskId,
+          resurgence: this.flowTaskInfo.completion == 100
+        }
+        if (errorRuleUserList) query.errorRuleUserList = errorRuleUserList
+        this.resurgenceBtnLoading = true
+        Resurgence(query).then(res => {
+          const errorData = res.data
+          if (errorData && Array.isArray(errorData) && errorData.length) {
+            this.errorNodeList = errorData
+            this.eventType = 'resurgence'
+            this.errorVisible = true
+            this.resurgenceBtnLoading = false
+          } else {
+            this.$message({
+              type: 'success',
+              message: res.msg,
+              duration: 1000,
+              onClose: () => {
+                this.resurgenceBtnLoading = false
+                this.visible = false
+                this.errorVisible = false
+                this.$emit('close', true)
+              }
+            })
+          }
+        }).catch(() => { this.resurgenceBtnLoading = false })
+      })
+    },
+    flowResurgence() {
+      this.resurgenceVisible = true
+      ResurgenceList(this.setting.taskId).then(res => {
+        this.resurgenceNodeList = res.data
+      })
+    },
+    goBack(isRefresh) {
+      this.$emit('close', isRefresh)
+    },
+    init(data, messageFlag) {
+      this.loading = true
+      this.activeTab = '0'
+      this.setting = data
+      this.messageFlag = messageFlag
+      /**
+       * opType
+       * -1 - 我发起的新建/编辑
+       * 0 - 我发起的详情
+       * 1 - 待办事宜
+       * 2 - 已办事宜
+       * 3 - 抄送事宜
+       * 4 - 流程监控
+       */
+      if (this.setting.opType == '-1') {
+        this.getEngineInfo(data)
+      } else {
+        console.log(data, 'datadata');
+
+        this.getBeforeInfo(data)
+      }
+    },
+    getEngineInfo(data) {
+
+      console.log(data, '预览流程');
+      FlowEngineInfo(data.flowId).then(res => {
+        data.type = res.data.type
+        data.fullName = res.data.fullName
+        this.fullName = res.data.fullName
+        if (data.formType == 1) {
+          if (res.data.formUrl) {
+            const formUrl = res.data.formUrl.replace(/\s*/g, "");
+            console.log(formUrl);
+            this.currentView = (resolve) => require([`@/views/${formUrl}`], resolve)
+          } else {
+            this.currentView = (resolve) => require([`@/views/workFlow/workFlowForm/${data.enCode}`], resolve)
+          }
+        } else {
+          this.currentView = (resolve) => require([`@/views/workFlow/workFlowForm/dynamicForm`], resolve)
+        }
+        data.formConf = res.data.formData
+        this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+        this.flowTemplateJson.state = 'state-curr'
+        data.formOperates = []
+        this.properties = this.flowTemplateJson && this.flowTemplateJson.properties || {}
+        if (this.flowTemplateJson && this.flowTemplateJson.properties && this.flowTemplateJson.properties.formOperates) {
+          data.formOperates = this.flowTemplateJson.properties.formOperates || []
+        }
+        data.flowTemplateJson = this.flowTemplateJson
+        setTimeout(() => {
+          this.$nextTick(() => {
+            this.$refs.form && this.$refs.form.init(data)
+          })
+        }, 500)
+      }).catch(() => { this.loading = false })
+    },
+    // 获取是按销售通知单还是发货通知单
+    async getPickingConfig() {
+      let obj = { "pageSize": -1, "businessCode": "warehouse" }
+      const res = await getBimBusinessSwitchConfigList(obj)
+      try {
+        this.saleFlag = res.data.warehouse[2].configValue1 == '1' ? true : false
+        this.purchaseFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
+        this.externalFlag = res.data.warehouse[1].configValue1 == '1' ? true : false
+      } catch (error) {
+        this.saleFlag = false
+        this.purchaseFlag = false
+        this.externalFlag = false
+      }
+    },
+    getBeforeInfo(data) {
+      FlowBeforeInfo(data.id, { taskNodeId: data.taskNodeId, taskOperatorId: data.taskId }).then(async res => {
+        this.flowFormInfo = res.data.flowFormInfo
+        this.flowTaskInfo = res.data.flowTaskInfo
+        data.fullName = this.flowTaskInfo.fullName
+        this.fullName = this.flowTaskInfo.fullName
+        this.thisStep = this.flowTaskInfo.thisStep
+        this.flowUrgent = this.flowTaskInfo.flowUrgent || 1
+        data.type = this.flowTaskInfo.type
+        data.draftData = res.data.draftData || null
+        this.businessFlow = data.businessFlow || ''
+        if (data.formType == 1) {
+          if (this.flowTaskInfo.formUrl) {
+            this.currentView = (resolve) => require([`@/views/${this.flowTaskInfo.formUrl}`], resolve)
+          } else {
+            this.currentView = (resolve) => require([`@/views/workFlow/workFlowForm/${data.enCode}`], resolve)
+          }
+        } else if (data.formType == 2) {
+          this.currentView = (resolve) => require([`@/views/workFlow/workFlowForm/dynamicForm`], resolve)
+        } else {
+          console.log(this.pageView[data.businessFlow]);
+          console.log(data);
+          let page = this.pageView[data.businessFlow]
+          // this.currentView = (resolve) => require([`@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue`], resolve)
+          if (data.businessFlow === 'b045') {
+            try {
+              this.getPickingConfig()
+              const res = await detailWarehouseData(data.businessId)
+              let orderOrNotice = indAndoutTypeList.find(item => item.label === res.data.stockMove.businessType)
+              console.log(orderOrNotice);
+              if (['outbound_sale_send', 'inbound_purchase', 'outbound_sale_send', 'inbound_external'].includes(res.data.stockMove.businessType)) {
+                if (this.saleFlag || this.purchaseFlag || this.externalFlag) {
+                  page = orderOrNotice.value
+                }
+              } else {
+                page = orderOrNotice.value2
+              }
+              if ((this.saleFlag && res.data.businessType === 'outbound_sale_send') || (this.purchaseFlag && res.data.businessType === 'inbound_purchase') || (this.externalFlag && res.data.businessType === 'outbound_sale_send')) {
+                page = orderOrNotice.value
+              } else {
+                page = orderOrNotice.value2
+              }
+            } catch (error) {
+            }
+          }
+          this.currentView = (resolve) => require([`@/views/${page}`], resolve)
+        }
+        this.flowTaskNodeList = res.data.flowTaskNodeList
+        this.flowTemplateJson = this.flowTaskInfo.flowTemplateJson ? JSON.parse(this.flowTaskInfo.flowTemplateJson) : null
+        console.log(this.flowTemplateJson, '流程数据')
+        console.log(this.flowTaskNodeList, 'flowTaskNodeList')
+        this.isComment = this.flowTemplateJson.properties.isComment
+        this.isSummary = this.flowTemplateJson.properties.isSummary
+        this.summaryType = this.flowTemplateJson.properties.summaryType
+        this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+        this.properties = res.data.approversProperties || {}
+        this.endTime = this.flowTaskInfo.completion == 100 ? this.flowTaskInfo.endTime : 0
+        data.formConf = res.data.flowFormInfo
+        if (data.opType != 1) data.readonly = true
+        data.formOperates = []
+        if (data.opType == 0) {
+          this.properties = this.flowTemplateJson && this.flowTemplateJson.properties || {}
+          if (this.flowTemplateJson && this.flowTemplateJson.properties && this.flowTemplateJson.properties.formOperates) {
+            data.formOperates = this.flowTemplateJson.properties.formOperates || []
+          }
+          for (let i = 0; i < data.formOperates.length; i++) {
+            data.formOperates[i].write = false
+          }
+        } else {
+          data.formOperates = res.data.formOperates || []
+        }
+        data.flowTemplateJson = this.flowTemplateJson
+        if (this.flowTaskNodeList.length) {
+          let assignNodeList = []
+          for (let i = 0; i < this.flowTaskNodeList.length; i++) {
+            const nodeItem = this.flowTaskNodeList[i]
+            data.opType == 4 && nodeItem.type == 1 && nodeItem.nodeType === 'approver' && assignNodeList.push(nodeItem)
+            const loop = data => {
+              if (Array.isArray(data)) data.forEach(d => loop(d))
+              if (data.nodeId === nodeItem.nodeCode) {
+                if (nodeItem.type == 0) data.state = 'state-past'
+                if (nodeItem.type == 1) data.state = 'state-curr'
+                if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                // if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
+                return
+              }
+              if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+              if (data.childNode) loop(data.childNode)
+            }
+            loop(this.flowTemplateJson)
+          }
+          this.assignNodeList = assignNodeList
+        }
+        // setTimeout(() => {
+        //   this.$nextTick(async () => {
+        //     if (!this.$refs.form) {
+        //       console.warn('$refs.form is not defined yet, waiting...');
+        //       await new Promise(resolve => setTimeout(resolve, 1000)); // 再等待一秒
+        //       if (!this.$refs.form) {
+        //         console.error('Still unable to find $refs.form after waiting.');
+        //         return;
+        //       }
+        //     }
+
+        //     if (data.formType === 3) {
+        //       console.log(data, 'data');
+        //       console.log(this.$refs.form, 'this.$refs.form');
+
+        //       let targetPage = this.inspectionTypeList.find(item => item.label === data.businessFlow);
+        //       this.inspectionType = targetPage ? targetPage.value : '';
+        //       this.pageViewVisible = true;
+
+        //       if (data.businessFlow === 'b045') {
+        //         this.$refs.form && this.$refs.form.flowInit(data.businessId, 'look', true);
+        //       } else {
+        //         console.log('哈哈哈哈');
+        //         console.log(this.$refs, 'this.$refs.form');
+        //         this.$refs.form && this.$refs.form.init(data.businessId, 'look', true, this.inspectionType);
+        //       }
+        //     } else {
+        //       this.$refs.form && this.$refs.form.init(data);
+        //     }
+        //     this.loading = false;
+        //   });
+        // }, 500);
+        try {
+          const form = await this.waitForRef('form');
+          if (data.formType === 3) {
+
+            let targetPage = this.inspectionTypeList.find(item => item.label === data.businessFlow);
+            this.inspectionType = targetPage ? targetPage.value : '';
+            this.pageViewVisible = true;
+
+            if (data.businessFlow === 'b045') {
+              form.flowInit(data.businessId, 'look', true);
+            } else {
+              form.init(data.businessId, 'look', true, this.inspectionType);
+            }
+          } else {
+            form.init(data);
+          }
+          this.loading = false;
+        } catch (error) {
+          console.error(error.message);
+        }
+      }).catch(() => { this.loading = false })
+    },
+    waitForRef(refName, timeout = 5000) {
+      return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const intervalId = setInterval(() => {
+          attempts++;
+          if (this.$refs[refName]) {
+            clearInterval(intervalId);
+            resolve(this.$refs[refName]);
+          } else if (attempts * 100 >= timeout) {
+            clearInterval(intervalId);
+            reject(new Error(`Failed to find $refs.${refName} after ${timeout} ms.`));
+          }
+        }, 100);
+      });
+    },
+    eventLauncher(eventType) {
+      this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent, this.inspectionType, this.$refs.form, this.businessFlow)
+    },
+    eventReceiver(formData, eventType) {
+      this.formData = formData
+      this.formData.flowId = this.setting.flowId
+      this.eventType = eventType
+      if (eventType === 'save' || eventType === 'submit') {
+        return this.submitOrSave()
+      }
+      if (eventType === 'saveAudit') {
+        return this.saveAudit()
+      }
+      if (eventType === 'audit' || eventType === 'reject') {
+        this.handleId = ''
+        this.candidateForm.handleOpinion = ''
+        this.copyIds = []
+        this.isValidate = false
+        this.handleReset()
+        if (eventType === 'reject') {
+          if (!this.properties.hasSign && !this.properties.hasOpinion) {
+            this.$confirm('此操作将驳回该审批单，是否继续？', '提示', {
+              type: 'warning'
+            }).then(() => {
+              this.handleApproval()
+            }).catch(() => { });
+            return
+          }
+          this.isValidate = true
+          this.visible = true
+          return
+        }
+        this.candidateLoading = true
+        Candidates(this.setting.taskId, { formData: this.formData }).then(res => {
+          let data = res.data
+          this.candidateType = data.type
+          this.candidateLoading = false
+          this.candidateForm.branchList = []
+          this.branchList = []
+          if (data.type == 1) {
+            this.branchList = res.data.list
+            this.$nextTick(() => {
+              this.$refs['candidateForm'].resetFields()
+            })
+            this.isValidate = true
+            this.visible = true
+          } else if (data.type == 2) {
+            let list = res.data.list.filter(o => o.isCandidates)
+            this.candidateForm.candidateList = list.map(o => ({
+              ...o,
+              label: '审批人',
+              value: [],
+              rules: [{ required: true, message: `审批人不能为空`, trigger: 'click' }]
+            }))
+            this.$nextTick(() => {
+              this.$refs['candidateForm'].resetFields()
+            })
+            this.isValidate = true
+            this.visible = true
+          } else {
+            this.candidateForm.candidateList = []
+            if (!this.properties.hasSign && !this.properties.hasOpinion && !this.properties.hasFreeApprover && !this.properties.isCustomCopy) {
+              this.$confirm('此操作将通过该审批单，是否继续？', '提示', {
+                type: 'warning'
+              }).then(() => {
+                this.handleApproval()
+              }).catch(() => { });
+              return
+            }
+            this.isValidate = true
+            this.visible = true
+          }
+        }).catch(() => {
+          this.candidateLoading = false
+        })
+      }
+    },
+    onBranchChange(val) {
+      if (!val.length) return this.candidateForm.candidateList = []
+      let list = []
+      for (let i = 0; i < val.length; i++) {
+        inner: for (let j = 0; j < this.branchList.length; j++) {
+          let o = this.branchList[j]
+          if (val[i] === o.nodeId && o.isCandidates) {
+            list.push({
+              ...o,
+              label: '审批人',
+              value: [],
+              rules: [{ required: true, message: `审批人不能为空`, trigger: 'click' }]
+            })
+            break inner
+          }
+        }
+      }
+      this.candidateForm.candidateList = list
+    },
+    saveAudit() {
+      this.btnLoading = true
+      let query = {
+        formData: this.formData
+      }
+      SaveAudit(this.setting.taskId, query).then(res => {
+        this.$message({
+          message: res.msg,
+          type: 'success',
+          duration: 1500,
+          onClose: () => {
+            this.btnLoading = false
+            this.$emit('close', true)
+          }
+        })
+      }).catch(() => {
+        this.btnLoading = false
+      })
+    },
+    submitOrSave() {
+      this.formData.status = this.eventType === 'submit' ? 0 : 1
+      this.formData.flowUrgent = this.flowUrgent
+      if (this.eventType === 'save') return this.handleRequest()
+      this.candidateLoading = true
+      Candidates(0, { formData: this.formData }).then(res => {
+        let data = res.data
+        this.candidateLoading = false
+        this.candidateType = data.type
+        if (data.type == 1) {
+          this.branchList = res.data.list
+          this.candidateList = []
+          this.candidateVisible = true
+        } else if (data.type == 2) {
+          this.branchList = []
+          this.candidateList = res.data.list.filter(o => o.isCandidates)
+          this.candidateVisible = true
+        } else {
+          if (this.properties.isCustomCopy) {
+            this.branchList = []
+            this.candidateList = []
+            this.candidateVisible = true
+            return
+          }
+          this.$confirm('您确定要提交当前流程吗, 是否继续?', '提示', {
+            type: 'warning'
+          }).then(() => {
+            this.handleRequest()
+          }).catch(() => { });
+        }
+      }).catch(() => {
+        this.candidateLoading = false
+      })
+    },
+    handleRequest(candidateData) {
+      if (candidateData) this.formData = { ...this.formData, ...candidateData }
+      this.formData.candidateType = this.candidateType
+      if (!this.formData.id) delete (this.formData.id)
+      if (this.eventType === 'save') this.btnLoading = true
+      this.allBtnDisabled = true
+      let formMethod = null
+      if (this.setting.formType == 1) {
+        formMethod = this.formData.id ? Update : Create
+      } else {
+        formMethod = this.formData.id ? DynamicUpdate : DynamicCreate
+      }
+      formMethod(this.setting.enCode, this.formData).then(res => {
+        const errorData = res.data
+        if (errorData && Array.isArray(errorData) && errorData.length) {
+          this.errorNodeList = errorData
+          this.errorVisible = true
+          this.allBtnDisabled = false
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              if (this.eventType === 'save') this.btnLoading = false
+              this.candidateVisible = false
+              this.allBtnDisabled = false
+              this.errorVisible = false
+              this.$emit('close', true)
+            }
+          })
+        }
+      }).catch(() => {
+        if (this.eventType === 'save') this.btnLoading = false
+        this.allBtnDisabled = false
+        this.errorVisible = false
+      })
+    },
+    submitCandidate(data) {
+      this.handleRequest(data)
+    },
+    revoke() {
+      this.eventType = 'revoke'
+      this.showDialog()
+    },
+    recall() {
+      this.eventType = 'recall'
+      this.showDialog()
+    },
+    openUserBox(type) {
+      this.eventType = 'transfer'
+      this.actionVisible = true
+      this.$nextTick(() => {
+        this.$refs.actionDialog.init(this.properties, this.eventType)
+      })
+    },
+    showDialog() {
+      if (!this.properties.hasOpinion && !this.properties.hasSign) {
+        const title = this.eventType == 'revoke' ? '此操作将撤回该流程，是否继续？' : '此操作将撤回该审批单，是否继续？'
+        this.$confirm(title, '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.handleRecall()
+        }).catch(() => { });
+        return
+      }
+      this.actionVisible = true
+      this.$nextTick(() => {
+        this.$refs.actionDialog.init(this.properties, this.eventType)
+      })
+    },
+    handleRecall(query) {
+      if (!query) {
+        query = {
+          handleOpinion: '',
+          freeApproverUserId: '',
+          signImg: '',
+        }
+      }
+      const id = this.eventType == 'revoke' ? this.setting.id : this.setting.taskId
+      const formMethod = this.eventType == 'revoke' ? Revoke : this.eventType == 'transfer' ? Transfer : Recall
+      this.approvalBtnLoading = true
+      formMethod(id, query).then(res => {
+        this.approvalBtnLoading = false
+        this.$message({
+          type: 'success',
+          message: res.msg,
+          duration: 1000,
+          onClose: () => {
+            this.$emit('close', true)
+          }
+        })
+      }).catch(() => {
+        this.$refs.actionDialog.btnLoading = false
+        this.approvalBtnLoading = false
+      })
+    },
+    press() {
+      this.$confirm('此操作将提示该节点尽快处理，是否继续?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        Press(this.setting.id).then(res => {
+          this.$message({
+            type: 'success',
+            message: res.msg,
+            duration: 1000
+          })
+        })
+      }).catch(() => { })
+    },
+    cancel() {
+      this.$prompt('', "终止审核不可恢复", {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPlaceholder: '请输入终止原因（选填）',
+        inputType: 'textarea',
+        inputValue: "",
+        closeOnClickModal: false
+      }).then(({ value }) => {
+        Cancel(this.setting.taskId, { handleOpinion: value }).then(res => {
+          this.$message({
+            type: 'success',
+            message: res.msg,
+            duration: 1000,
+            onClose: () => {
+              this.$emit('close', true)
+            }
+          })
+        })
+      }).catch(() => { })
+    },
+    openAssignBox() {
+      this.assignVisible = true
+      this.$nextTick(() => {
+        this.$refs['assignForm'].resetFields()
+      })
+    },
+    handleError(data) {
+      if (this.eventType === 'submit') {
+        this.formData.errorRuleUserList = data
+        this.handleRequest()
+        return
+      }
+      if (this.eventType === 'audit' || this.eventType === 'reject') {
+        this.handleApproval(data)
+        return
+      }
+      if (this.eventType === 'resurgence') {
+        this.handleResurgence(data)
+        return
+      }
+    },
+    handleAssign() {
+      this.$refs['assignForm'].validate((valid) => {
+        if (!valid) return
+        Assign(this.setting.taskId, this.assignForm).then(res => {
+          this.$message({
+            type: 'success',
+            message: res.msg,
+            duration: 1000,
+            onClose: () => {
+              this.$emit('close', true)
+            }
+          })
+        })
+      })
+    },
+    handleApproval(errorRuleUserList) {
+      const handleRequest = () => {
+        if (this.properties.hasSign && !this.signImg) {
+          this.$message({
+            message: '请签名',
+            type: 'error'
+          })
+          return
+        }
+        let query = {
+          handleOpinion: this.candidateForm.handleOpinion,
+          formData: this.formData,
+          enCode: this.setting.enCode,
+          signImg: this.signImg,
+          copyIds: this.copyIds.join(','),
+          branchList: this.candidateForm.branchList,
+          candidateType: this.candidateType
+        }
+        if (errorRuleUserList) query.errorRuleUserList = errorRuleUserList
+        if (this.candidateForm.candidateList.length) {
+          let candidateList = {}
+          for (let i = 0; i < this.candidateForm.candidateList.length; i++) {
+            candidateList[this.candidateForm.candidateList[i].nodeId] = this.candidateForm.candidateList[i].value
+          }
+          query.candidateList = candidateList
+        }
+        if (this.eventType === 'audit' && this.properties.hasFreeApprover) {
+          query = { freeApproverUserId: this.handleId, ...query }
+        }
+        const approvalMethod = this.eventType === 'audit' ? Audit : Reject
+        this.approvalBtnLoading = true
+        approvalMethod(this.setting.taskId, query).then(res => {
+          const errorData = res.data
+          if (errorData && Array.isArray(errorData) && errorData.length) {
+            this.errorNodeList = errorData
+            this.errorVisible = true
+            this.approvalBtnLoading = false
+          } else {
+            this.$message({
+              type: 'success',
+              message: res.msg,
+              duration: 1000,
+              onClose: () => {
+                this.approvalBtnLoading = false
+                this.visible = false
+                this.errorVisible = false
+                this.$emit('close', true)
+              }
+            })
+          }
+        }).catch(() => { this.approvalBtnLoading = false })
+      }
+      if (!this.isValidate) return handleRequest()
+      this.$refs['candidateForm'].validate((valid) => {
+        if (valid) {
+          handleRequest()
+        }
+      })
+    },
+    handleReset() {
+      this.signImg = ''
+      this.$nextTick(() => {
+        this.$refs.esign && this.$refs.esign.reset()
+      })
+    },
+    handleGenerate() {
+      this.$refs.esign.generate().then(res => {
+        if (res) this.signImg = res
+      }).catch(err => {
+        this.$message({
+          message: '请签名',
+          type: 'warning'
+        })
+      })
+    },
+    addComment() {
+      this.$refs.comment && this.$refs.comment.showCommentDialog()
+    },
+    setPageLoad(val) {
+      this.loading = !!val
+    },
+    setCandidateLoad(val) {
+      this.candidateLoading = !!val
+    },
+    setLoad(val) {
+      this.btnLoading = !!val
+    },
+    handleFlowUrgent(e) {
+      this.flowUrgent = e
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.sign-main {
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  overflow: hidden;
+
+  .sign-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #dcdfe6;
+
+    .sign-tip {
+      color: #a5a5a5;
+      font-size: 12px;
+    }
+
+    .sign-action {
+      display: flex;
+      align-items: center;
+
+      .clear-btn,
+      .sure-btn {
+        margin-left: 5px;
+      }
+    }
+  }
+
+  .sign-box {
+    border-top: 0;
+    height: 100px;
+  }
+
+  .sign-img {
+    width: 100%;
+  }
+}
+
+.flow-form-main {
+  .JNPF-el_tabs {
+    overflow: hidden;
+  }
+}
+
+.color-box {
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.flow-urgent-value {
+  display: flex;
+  align-items: center;
+
+  span:first-child {
+    margin: 0 3px 0 10px;
+  }
+}
+
+::v-deep .el-tabs__header {
+  margin-bottom: 5px !important;
+  padding: 0 !important;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+</style>

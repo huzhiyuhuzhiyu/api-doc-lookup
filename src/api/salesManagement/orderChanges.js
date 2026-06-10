@@ -1,0 +1,134 @@
+import request from '@/utils/request'
+// 申请停止订单
+
+//  列表数据
+export function getOrdersChangeList(data) {
+  return request({
+    url: `/api/erp/sale/orders/change/page`,
+    method: 'post',
+    data
+  })
+}
+
+// 新增
+
+export function addOrdersChange(data) {
+  return request({
+    url: `/api/erp/sale/orders/change/add`,
+    method: 'post',
+    data
+  })
+}
+
+// 删除
+export function deleteOrdersChange(id) {
+  return request({
+    url: `/api/erp/sale/orders/change/del/${ id }`,
+    method: 'delete',
+  })
+}
+
+// 修改
+export function editOrdersChange(data) {
+  return request({
+    url: `/api/erp/sale/orders/change/update`,
+    method: 'put',
+    data
+  })
+}
+
+// 详情
+export function getOrdersChangeInfo(id) {
+  return request({
+    url: `/api/erp/sale/orders/change/detail/${ id }`,
+    method: 'get',
+  })
+}
+
+
+// 详情
+export function getOrdersChangeLineList(data) {
+  return request({
+    url: `/api/erp/sale/orders/change/line/list`,
+    method: 'post',
+    data
+  })
+}
+
+// 采购订单变更-新增
+export function addPurchaseChange(data) {
+  return request({
+    url: `/api/erp/purPurchaseOrdersChange/add`,
+    method: 'post',
+    data
+  })
+}
+
+// 删除
+export function deletePurchaseChange(id) {
+  return request({
+    url: `/api/erp/purPurchaseOrdersChange/del/${ id }`,
+    method: 'delete',
+  })
+}
+
+// 修改
+export function editPurchaseChange(data) {
+  return request({
+    url: `/api/erp/purPurchaseOrdersChange/update`,
+    method: 'put',
+    data
+  })
+}
+
+// 详情
+export function getPurchaseChangeDetail(id) {
+  return request({
+    url: `/api/erp/purPurchaseOrdersChange/detail/${ id }`,
+    method: 'get',
+  })
+}
+
+//明细
+export function getPurchaseChangeLineList(data) {
+  return request({
+    url: `/api/erp/purPurchaseOrdersChange/line/list`,
+    method: 'post',
+    data
+  })
+}
+
+//列表
+export function getPurchaseChangeList(data) {
+  return request({
+    url: `/api/erp/purPurchaseOrdersChange/page`,
+    method: 'post',
+    data
+  })
+}
+
+
+// 销售订单-查询确认信息
+export function getOrdersConfirmed(id) {
+  return request({
+    url: `/api/erp/sale/orders/confirmed/${ id }`,
+    method: 'get',
+  })
+}
+
+// 销售订单-确认下发
+export function getOrdersConfirmedIssuance(data) {
+  return request({
+    url: `/api/erp/sale/orders/confirmedIssuance`,
+    method: 'post',
+    data
+  })
+}
+
+// 销售订单-确认交期
+export function ordersFeedbackDeliveryFinished(id) {
+  return request({
+    url: `/api/erp/sale/orders/feedbackDeliveryFinished/${ id }`,
+    method: 'get',
+  })
+}

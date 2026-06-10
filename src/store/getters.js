@@ -1,0 +1,50 @@
+const getters = {
+    token: state => state.user.token,
+    accessToken: state => state.user.accessToken,
+    theme: state => state.user.theme,
+    isLock: state => state.user.isLock,
+    menuList: state => state.user.menuList,
+    userInfo: state => state.user.userInfo,
+    permissionList: state => state.user.permissionList,
+    sidebar: state => state.app.sidebar,
+    language: state => state.app.language,
+    size: state => state.app.size,
+    device: state => state.app.device,
+    visitedViews: state => state.tagsView.visitedViews,
+    cachedViews: state => state.tagsView.cachedViews,
+    permission_routes: state => state.permission.routes,
+    dictionaryList: state => state.base.dictionaryList,
+    dictionaryMap: state => state.base.dictionaryMap,
+    productionLineList: state => state.base.productionLineList,  // 生产线列表
+    userList: state => state.base.userList,
+    positionList: state => state.base.positionList,
+    roleList: state => state.base.roleList,
+    departmentList: state => state.generator.departmentList,
+    groupList: state => state.generator.groupList,
+    socket: state => state.user.socket,
+    currentSystem: state => state.user.currentSystem,
+    hasTable: state => state.generator.hasTable,
+    leftMenuList: state => state.user.leftMenuList,
+    sysConfig: state => state.settings.sysConfig,
+    systemVO: state => state.settings.systemVO,
+    configData: state => state.base.configData,
+    bimProductAttributesList: state => state.base.bimProductAttributesList,
+    configGlobal: state => state.base.configGlobal,
+    newDate: state => state.jx.newDate,
+    newTimestamp: state => state.jx.newTimestamp,
+    iot_data: state => state.jx.iot_data,
+
+    urlv1: state => state.jx.iotURLv1,
+    urlv2: state => state.jx.iotURLv2,
+
+    loadingText: state => state.jx.loadingText,
+    loadingBackground: state => state.jx.loadingText,
+    loadingSpinner: state => state.jx.loadingSpinner,
+    sealingCoverTyping: state => state.base.sealingCoverTyping,  // 打字内容
+    specialRequire: state => state.base.specialRequire,  // 特殊要求
+    colour: state => state.base.colour,  // 颜色
+    accuracyLevel: state => state.base.accuracyLevel,  // 精度等级
+    divideEqually: state => state.base.divideEqually,  // 开等分
+    protrusion: state => state.base.protrusion,  // 凸出量
+}
+export default getters

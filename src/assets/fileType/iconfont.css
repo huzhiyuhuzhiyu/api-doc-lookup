@@ -1,0 +1,146 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4430750 */
+  src: url('./iconfont.woff2') format('woff2'),
+  url('./iconfont.woff') format('woff'),
+  url('./iconfont.ttf') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-file_folder_multiple:before {
+  content: "\e67a";
+  color: rgba(255, 206, 63);
+}
+
+/** 执行文件 */
+.icon-file_exe:before {
+  content: "\e645";
+  color: rgb(145, 187, 165);
+}
+
+/** ppt */
+.icon-file_ppt:before {
+  content: "\e652";
+  color: rgba(255, 152, 67);
+}
+
+.icon-file_pptx:before {
+  content: "\e652";
+  color: rgba(255, 152, 67);
+}
+
+/** 文档 */
+.icon-file_word:before {
+  content: "\e653";
+  color: rgba(77, 151, 225);
+}
+
+.icon-file_doc:before {
+  content: "\e653";
+  color: rgba(77, 151, 225);
+}
+
+.icon-file_docx:before {
+  content: "\e653";
+  color: rgba(77, 151, 225);
+}
+
+/** 文件夹 */
+.icon-file_folder:before {
+  content: "\e654";
+  color: rgba(255, 206, 63);
+}
+
+/** 音频 */
+.icon-file_music:before {
+  content: "\e655";
+  color: rgb(0, 190, 202);
+}
+
+/** 压缩包 */
+.icon-file_zip:before {
+  content: "\e656";
+  color: rgb(253, 141, 89);
+}
+.icon-file_7z:before {
+  content: "\e656";
+  color: rgb(253, 141, 89);
+}
+
+/** 表格 */
+.icon-file_excel:before {
+  content: "\e657";
+  color: rgb(88, 192, 18);
+}
+.icon-file_xls:before {
+  content: "\e657";
+  color: rgb(88, 192, 18);
+}
+
+.icon-file_xlsx:before {
+  content: "\e657";
+  color: rgb(88, 192, 18);
+}
+
+/** 图片 */
+.icon-file_img:before {
+  content: "\e658";
+  color: rgb(255, 102, 104);
+}
+.icon-file_png:before {
+  content: "\e658";
+  color: rgb(255, 102, 104);
+}
+
+.icon-file_jpg:before {
+  content: "\e658";
+  color: rgb(255, 102, 104);
+}
+
+.icon-file_jpeg:before {
+  content: "\e658";
+  color: rgb(255, 102, 104);
+}
+.icon-file_webp:before {
+  content: "\e658";
+  color: rgb(255, 102, 104);
+}
+
+.icon-file_svg:before {
+  content: "\e658";
+  color: rgb(255, 102, 104);
+}
+
+.icon-file_gif:before {
+  content: "\e658";
+  color: rgb(255, 102, 104);
+}
+
+.icon-file_bmp:before {
+  content: "\e658";
+  color: rgb(255, 102, 104);
+}
+
+/** 文本 */
+.icon-file_txt:before {
+  content: "\e659";
+  color: rgb(145, 167, 185);
+}
+
+/** 未知文件 */
+.icon-file_unknown:before {
+  content: "\e65a";
+  color: rgb(190, 189, 189);
+}
+
+/** pdf */
+.icon-file_pdf:before {
+  content: "\e65b";
+  color: rgba(225, 91, 90);
+}

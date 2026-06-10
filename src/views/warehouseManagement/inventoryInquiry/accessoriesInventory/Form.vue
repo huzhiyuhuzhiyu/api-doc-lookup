@@ -1,0 +1,300 @@
+<template>
+  <div>
+    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible="visible"
+      lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body @close="visible = false">
+      <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+        <div class="JNPF-common-layout-center JNPF-flex-main">
+          <el-row class="JNPF-common-search-box" :gutter="16">
+            <el-form @submit.native.prevent>
+              <el-col :span="6">
+                <el-form-item>
+                  <el-input v-model="listQuery.batchNumber" placeholder="批次号" clearable
+                    @keyup.enter.native="search()" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item>
+                  <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                    {{ $t('common.search') }}
+                  </el-button>
+                  <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
+                    {{ $t('common.reset') }}
+                  </el-button>
+                </el-form-item>
+              </el-col>
+            </el-form>
+          </el-row>
+          <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-head">
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportForm('dataTables')">导出</el-button>
+            </div>
+            <JNPF-table v-loading="listLoading" :data="tableData" hasNO fixedNO @sort-change="sortChange"
+              ref="dataTables" customKey="JNPFTableKey_311941">
+
+              <el-table-column prop="productDrawingNo" label="型号" min-width="330" />
+              <el-table-column prop="productCode" label="产品编码" width="160" />
+              <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+
+              <el-table-column prop="mainUnit" label="单位" width="80" />
+              <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
+              <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
+              <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
+              <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
+              <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
+              <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
+                
+              </el-table-column>
+              <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.warehouseName + '/' + scope.row.shelfSpaceName }}</div>
+                  </template>
+                </el-table-column> -->
+              <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
+                sortable="custom" />
+            </JNPF-table>
+            <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+              @pagination="initData">
+              <div class="text">
+                <span>合计：</span>
+                <span style="margin-left: 10px">库存数量：{{ totalData.totalInventory }}</span>
+                <span style="margin-left: 10px">可用数量：{{ totalData.totalAvailable }}</span>
+                <span style="margin-left: 10px">占用数量：{{ totalData.totalOccupancy }}</span>
+              </div>
+            </pagination>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+  </div>
+
+
+</template>
+
+<script>
+import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
+import { getWarehouseList } from '@/api/basicData/index' // 仓库树
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
+import { excelExport } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+export default {
+  components: { ExportForm },
+  mixins: [getProjectList],
+  data() {
+    return {
+      exportFormVisible: false,
+      title: "明细",
+      tableData: [],
+      visible: false,
+      treeLoading: false,
+      listLoading: false,
+      originalListQuery: {},
+      total: 0,
+      totalData: {
+        totalInventory: 0,
+        totalAvailable: 0,
+        totalOccupancy: 0,
+      },
+
+      listQuery: {
+        orderItems: [
+          {
+            asc: true,
+            column: ''
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+
+        scrapFlag: false,
+        virtuallyFlag: false,
+        warehouseId: '',
+        productDrawingNo: "",
+        productsId: "",
+        batchNumber: "",
+      isProjectSwitch:"",
+    }
+    }
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    
+    
+  },
+  methods: {
+    // 导出
+    exportForm(exportTableRef) {
+      console.log("object,", exportTableRef);
+      this.exportTableRef = exportTableRef
+      this.exportFormVisible = true
+      console.log(this.$refs[exportTableRef].$refs.JNPFTable);
+      let columnList = this.$refs[exportTableRef].$refs.JNPFTable.columns.filter(item => !!item.label && !!item.property)
+      columnList = columnList.filter(item => !(item.label === "序号" && item.property === "index"));
+      console.log("columnList", columnList);
+      columnList = columnList.map(item => { return { label: item.label, prop: item.property } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      this.exportFormVisible = false
+      let includeFieldMap = {}
+      for (let i = 0; i < data.selectKey.length; i++) {
+        includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+      }
+      const targetListQuery = this.listQuery
+      let _data = {
+        ...targetListQuery,
+        exportType: '1008',
+        exportName: this.title,
+        includeFieldMap,
+        pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
+      }
+      excelExport(_data).then(res => {
+        this.exportFormVisible = false
+        if (!res.data.url) return
+        this.jnpf.downloadFile(res.data.url, res.data.name)
+      })
+    },
+    init(id, type) {
+      if (type === 'inventoryFlag') { this.title = '库存数明细' }
+      else if (type === 'occupancyFlag') { this.title = '占用数明细' }
+      else if (type === 'availableFlag') { this.title = '可用数明细' }
+      this.visible = true
+      let tempListQuery = {
+
+        productsId: id,
+        batchNumber: "",
+        availableFlag: 0, // 可用数标识（0 否 1是）默认否
+        inventoryFlag: 0, // 库存数标识（0 否 1是）默认否
+        occupancyFlag: 0, // 占用数标识（0 否 1是）默认否
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "latest_storage_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      }
+      tempListQuery[type] = 1
+      this.originalListQuery = tempListQuery
+      this.listQuery = JSON.parse(JSON.stringify(this.originalListQuery))
+      this.initData()
+    },
+    search() {
+      Object.keys(this.listQuery).forEach(key => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.listQuery.pageNum = 1
+      this.initData()
+    },
+    reset() {
+      this.listQuery = JSON.parse(JSON.stringify(this.originalListQuery))
+      this.initData()
+    },
+    initData() {
+      this.listLoading = true
+      inventorySpaceList(this.listQuery).then(res => {
+        this.treeLoading = false
+        this.listLoading = false
+        if (!res.data.whPage.records.length) return
+        this.tableData = res.data.whPage.records
+        this.total = res.data.whPage.total
+        this.totalData = res.data.stockSts||{
+          totalInventory: 0,
+        totalOccupancy: 0,
+        totalAvailable: 0,
+        }
+
+      }).catch(err => {
+        this.treeLoading = false
+        this.listLoading = false
+      })
+    },
+
+
+    sortChange({ prop, order }) {
+      let newProp
+      if (prop === 'productCode' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName') { newProp = prop }
+      else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
+      this.listQuery.orderItems[0].asc = order === 'ascending'
+      this.listQuery.orderItems[0].column = order === null ? "" : newProp
+      this.initData()
+    },
+
+
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
+  padding: 0;
+}
+
+::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
+  padding: 0 !important;
+}
+
+::v-deep .el-dialog__body {
+  margin-bottom: 10px;
+}
+
+::v-deep .el-dialog__footer {
+  padding: 0 20px 10px;
+}
+
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
+  padding: 0 10px;
+}
+
+.JNPF-common-search-box {
+  padding: 8px 0 0 0;
+  margin-left: 0 !important;
+  margin-bottom: 5px;
+}
+
+.JNPF-common-search-box .el-form-item {
+  margin-bottom: 8px !important;
+}
+
+.pagination-container {
+  background-color: #f5f7fa;
+  margin-top: 0px;
+  padding-right: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.JNPF-common-layout-center .JNPF-common-layout-main {
+  padding: 0;
+}
+
+::v-deep.el-tree-node__content {
+  height: 30px;
+  line-height: 30px;
+}
+
+.JNPF-common-el-tree {
+  margin: 5px 0;
+}
+
+.el-tabs__nav-scroll {
+  padding-left: 0;
+}
+
+.noPaddingLeft {
+  padding-left: 0 !important;
+}
+
+.tableContainer {
+  padding: 0 10px;
+}
+</style>

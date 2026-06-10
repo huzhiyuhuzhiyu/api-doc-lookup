@@ -1,0 +1,36 @@
+// theme color
+$purple: #722ED1;
+$purpleSub: #C34AFF;
+$azure: #211BCE;
+$azureSub: #4D89F1;
+$blackblue:#211BCE;
+$blackblueSub:#4D89F1;
+$blue:#0066cc;
+$blueSub:#3FB9F8;
+$ocean:#13C2C2;
+$oceanSub:#69D5E6;
+$green: #3EAC12;
+$greenSub: #5BDECC;
+$grey: #394664;
+$greySub: #454e63;
+$orange: #F5811C;
+$orangeSub: #FEB814;
+$red: #F5222D;
+$redSub: #FF5D65;
+$black: #000;
+$girlPink:#ED1299;
+
+:export {
+  purpleHead: $purple;
+  azureHead: $azure;
+  blackblueHead: $blackblue;
+  blueHead: $blue;
+  oceanHead: $ocean;
+  greenHead: $green;
+  greyHead: $grey;
+  orangeHead: $orange;
+  redHead: $red;
+  blackHead: $black;
+  defaultHead: #409EFF;
+  girlPinkHead:$girlPink
+}

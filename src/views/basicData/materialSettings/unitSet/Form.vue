@@ -1,0 +1,390 @@
+<template>
+  <el-dialog :title="dialogTitle" :close-on-click-modal="false" append-to-body :visible.sync="visible"
+    class="JNPF-dialog JNPF-dialog_center" lock-scroll width="1000px" @close="$emit('refresh')">
+    <el-row :gutter="15" class="" v-loading="loading">
+      <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top"
+        hide-required-asterisk="fasle">
+        <template>
+          <!-- <el-col :span="12">
+            <el-form-item label="单位编码" prop="unitCode" ref="unitCode">
+              <el-input v-model="dataForm.unitCode" placeholder="请输入单位编码" clearable :style='{ "width": "100%" }'
+                maxlength="20"></el-input>
+            </el-form-item>
+          </el-col> -->
+          <el-col :span="12">
+            <el-form-item label="单位名称" prop="name" ref="name">
+              <template slot="label">
+                单位名称<span class="required">*</span>
+              </template>
+              <el-input v-model="dataForm.name" placeholder="请输入单位名称" clearable :style="{ width: '100%' }"
+                maxlength="20"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="分类" prop="unitType" ref="unitType">
+              <template slot="label">
+                分类<span class="required">*</span>
+              </template>
+              <el-radio-group v-model="dataForm.unitType">
+                <el-radio v-for="item in getDictDataSync('uom')" :label="item.value">{{ item.label }}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="dataForm.remark" type="textarea" placeholder="请输入备注" :style="{ width: '100%' }"
+                maxlength="200" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label-width="0">
+              <JNPF-col-table v-model="dataFormTwo" ref="tableForm" :tableItems="tableFormItem" :openMode="openMode"
+                @addth="addequipment_process_relList" @deleteth="delequipment_process_relList" />
+            </el-form-item>
+          </el-col>
+        </template>
+      </el-form>
+    </el-row>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="$emit('refresh')">{{ $t('common.cancelButton') }}</el-button>
+      <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
+        {{ $t('common.submitButton') }}
+      </el-button>
+    </span>
+  </el-dialog>
+</template>
+<script>
+import {
+  addUnitData,
+  updateUnitData,
+  detailUnitData,
+  getEffectUnitList,
+  checkUnitCodeExist,
+  checkUnitNameExist,
+  getUnitData
+} from '@/api/basicData/materialSettings'
+
+export default {
+  components: {},
+  props: [],
+  data() {
+    return {
+      dialogTitle: '',
+      visible: false,
+      loading: false,
+      btnLoading: false,
+      autoUnitCode: undefined,
+      autoName: undefined,
+      dataForm: {
+        id: 0,
+        unitCode: '',
+        name: '',
+        unitType: '',
+        remark: ''
+      },
+      dataFormTwo: [],
+      tableFormItem: [
+        {
+          prop: 'ratio',
+          label: '转换系数',
+          value: '',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  12,
+                  6,
+                  false,
+                  (errMsg) => {
+                    this.$message.error(`${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ]
+        },
+        {
+          prop: 'calculationDirection',
+          label: '计算方向',
+          value: '',
+          type: 'select',
+          options: [{ label: '乘', value: 'multiplication' }, { label: '除', value: 'division' }],
+          itemRules: [{ required: true, trigger: 'change' }]
+        },
+        {
+          prop: 'targetName',
+          label: '转换后单位名称',
+          value: '',
+          type: 'select',
+          options: [],
+          itemRules: [{ required: true, trigger: 'change' }]
+        }
+      ],
+      tableFormQuery: {
+        pageSize: -1,
+        pageNum: 1
+      },
+      rules: {
+        name: [
+          {
+            required: true,
+            message: '请输入单位名称',
+            trigger: ['blur']
+          },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback()
+              } else if (this.dataForm.name === this.autoName) {
+                callback()
+              } else {
+                if (this.dataForm.id) {
+                  checkUnitNameExist(this.dataForm.name, this.dataForm.id).then((res) => {
+                    if (!res.data) {
+                      callback()
+                    } else {
+                      callback(new Error('此单位名称已存在'))
+                    }
+                  })
+                } else {
+                  checkUnitNameExist(this.dataForm.name, '').then((res) => {
+                    if (!res.data) {
+                      callback()
+                    } else {
+                      callback(new Error('此单位名称已存在'))
+                    }
+                  })
+                }
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        unitCode: [
+          {
+            required: true,
+            message: '请输入单位编码',
+            trigger: ['blur']
+          },
+          {
+            validator: this.formValidate('enCode'),
+            trigger: 'blur'
+          },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback()
+              } else if (this.dataForm.unitCode === this.autoUnitCode) {
+                callback()
+              } else {
+                checkUnitCodeExist(this.dataForm.unitCode).then((res) => {
+                  if (!res.data) {
+                    callback()
+                  } else {
+                    callback(new Error('此单位编码已存在'))
+                  }
+                })
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        unitType: [
+          {
+            required: true,
+            message: '请选择分类',
+            trigger: 'change'
+          }]
+      },
+      unitList: []
+    }
+  },
+  computed: {
+    openMode() {
+      return this.dialogTitle === '新建常用单位' ? '新建' : this.dialogTitle === '编辑常用单位' ? '编辑' : '只读'
+    }
+  },
+  created() {
+    // this.getUnitList()
+    this.tableFormItem.forEach(async (item) => {
+      if (item.prop === 'targetName') {
+        let obj = {
+          pageNum: 1,
+          pageSize: -1
+        }
+        let tempOptions = (await getUnitData(obj)).data.records
+
+        tempOptions.forEach((o) => {
+          o.label = o.name
+          o.value = o.name
+        })
+        item.options = tempOptions
+      }
+    })
+  },
+  methods: {
+    async getUnitList() {
+      let tempOptions = (await getEffectUnitList()).data
+      tempOptions.forEach((o) => {
+        o.label = o.name
+        o.value = o.name
+      })
+      this.unitList = tempOptions
+    },
+    clearData() {
+      this.dataForm.id = ''
+      this.dataForm.name = ''
+      this.dataForm.remark = ''
+      this.dataForm.unitCode = ''
+
+      this.dataFormTwo = []
+    },
+    init(rowData, btntype) {
+      rowData = JSON.parse(rowData)
+      // 此处判断用户选择新增还是编辑
+      this.dataForm.id = Object.keys(rowData).length ? rowData.id : 0
+      this.visible = true
+
+      this.$nextTick(() => {
+        this.$refs['elForm'].resetFields()
+        if (btntype == 'add') {
+          this.dialogTitle = '新建常用单位'
+          this.clearData()
+        } else if (btntype == 'edit') {
+          this.loading = true
+          this.dataForm = rowData
+          this.autoName = rowData.name
+          // 获取当前项对应关系
+          detailUnitData(rowData.name).then((res) => {
+            this.dataFormTwo = res.data.unitRelList
+            let ind = 0
+            this.dataFormTwo.forEach((item) => {
+              item.index = ind++
+            })
+            this.dialogTitle = `编辑常用单位`
+            this.loading = false
+          })
+        } else if (btntype == 'copy') {
+          this.loading = true
+          this.dataForm = rowData
+          this.autoName = rowData.name
+          // 获取当前项对应关系
+          detailUnitData(rowData.name).then((res) => {
+            this.dataFormTwo = res.data.unitRelList
+            let ind = 0
+            this.dataFormTwo.forEach((item) => {
+              item.index = ind++
+            })
+            delete this.dataForm.id
+            this.dialogTitle = '新建常用单位'
+            this.loading = false
+          })
+        }
+      })
+    },
+    // 表单提交
+    async dataFormSubmit() {
+      this.btnLoading = true
+      let submitFlag = true // 自动聚焦是否已经使用过
+
+      // 校验基本信息
+      const form_1 = this.$refs['elForm']
+      const valid_1 = await form_1.validate().catch(() => false)
+      if (!valid_1 && submitFlag) {
+        // 聚焦第一个失败的表单元素
+        let formItems = form_1.fields
+        for (let j = 0; j < formItems.length; j++) {
+          let formItem = formItems[j]
+          if (formItem.validateState === 'error') {
+            submitFlag = false
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => {
+              this.jnpf.formItemValidate(formItem)
+            })
+            break
+          }
+        }
+      }
+      // 校验表格表单
+      const form_2 = this.$refs['tableForm'].$children[0]
+      let valid_2 = await form_2.validate().catch((err) => false)
+      if (!valid_2 && submitFlag) {
+        let formItems = form_2.fields
+        for (let j = 0; j < formItems.length; j++) {
+          let formItem = formItems[j]
+          if (formItem.validateState === 'error') {
+            submitFlag = false
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => {
+              this.jnpf.formItemValidate(formItem)
+            })
+            break
+          }
+        }
+      }
+      if (submitFlag) {
+        let _data = {
+          unit: JSON.parse(JSON.stringify(this.dataForm)),
+          unitRelList: JSON.parse(JSON.stringify(this.dataFormTwo))
+        }
+        _data.unitRelList.forEach((item) => {
+          item.sourceUnitCode = _data.unit.unitCode
+          item.sourceName = _data.unit.name
+          item.targetUnitCode = item.targetName
+        })
+
+        // this.btnLoading = false
+        // return
+        let queryMehtod = this.dataForm.id ? updateUnitData : addUnitData
+        queryMehtod(_data)
+          .then((res) => {
+            this.$emit('refresh', true)
+            this.$message.success(this.dataForm.id ? '修改成功' : '新建成功')
+          })
+          .catch((err) => {
+            this.btnLoading = false
+          })
+      } else {
+        this.btnLoading = false
+      }
+    },
+    // 添加项
+    addequipment_process_relList() {
+      let ind = this.dataFormTwo.length
+      let item = {
+        index: ind,
+        ratio: '',
+        sourceName: '',
+        targetName: ''
+      }
+      this.dataFormTwo.push(item)
+
+    },
+    // 删除项
+    delequipment_process_relList(scope) {
+      let index = scope.$index
+      this.dataFormTwo.splice(index, 1)
+    }
+  }
+}
+</script>
+<style scoped>
+::v-deep#table .el-form-item--small.el-form-item {
+  margin-bottom: 0px;
+}
+.custom_title {
+  line-height: 24px;
+  font-size: 18px;
+  color: #303133;
+  margin-left: -12px;
+}
+.required {
+  color: red;
+  margin-left: 4px;
+}
+</style>
+

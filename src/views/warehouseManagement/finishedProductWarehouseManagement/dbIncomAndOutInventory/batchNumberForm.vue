@@ -1,0 +1,335 @@
+<template>
+
+  <el-dialog title="选择批次号" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+    lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body
+    @close="customerVisible = false">
+
+    <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+      <div class="JNPF-common-layout-center JNPF-flex-main">
+        <el-row class="JNPF-common-search-box" :gutter="16">
+          <el-form @submit.native.prevent>
+            <el-col :span="6">
+              <el-form-item>
+                <el-input @keyup.native.enter="search()"  v-model="form.batchNumber" placeholder="请输入批次号" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-input @keyup.native.enter="search()"  v-model="form.partnerName" placeholder="请输入客户/供应商名称" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-input @keyup.native.enter="search()"  v-model="form.shelfSpaceName" placeholder="请输入库位" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                  {{ $t('common.search') }}</el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
+
+          </el-form>
+        </el-row>
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head">
+            <div></div>
+            <div></div>
+            <div class="JNPF-common-head-right">
+
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+            </div>
+          </div>
+
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange"   :setColumnDisplayList="columnList"  custom-column ref="dataTable" customKey="JNPFTableKey_404359">
+            <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"  key="batchNumber"></el-table-column>
+            <el-table-column prop="partnerName" label="客户/供应商名称" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')"></el-table-column>
+            <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120" />
+            <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
+            <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120" />
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
+
+            <el-table-column prop="weight" label="重量(KG)" sortable="custom" min-width="120" v-if="type == 'wxfl'" />
+            <el-table-column prop="proportion" label="比重" sortable="custom" min-width="120" v-if="type == 'wxfl'" />
+            <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
+                <div v-if="scope.row.inspectionResults == 'unqualified'">不合格</div>
+                <div v-if="scope.row.inspectionResults == 'partially_qualified'">部分合格</div>
+                <div v-if="scope.row.inspectionResults == 'discard'">报废</div>
+                <div v-if="scope.row.inspectionResults == 'concessive_acceptance'">让步接收</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120" />
+              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+              <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
+              <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+            <el-table-column label="操作" width="100" fixed="right">
+              <template slot-scope="scope">
+                <el-button type="text" @click="selectBatchNum(scope.row)">选择</el-button>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <pagination v-if="!requestFlag" :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
+            @pagination="getbatchNumList" />
+        </div>
+      </div>
+    </div>
+
+  </el-dialog>
+</template>
+<script>
+import { getlistOutBatchStock } from "@/api/warehouseManagement/inboundAndOutbound"
+import { getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
+import { mapGetters, mapState } from 'vuex'
+import TenantMinix from '@/mixins/generator/TenantMinix'
+export default {
+  mixins: [TenantMinix],
+  props:{
+      cooperativePartnerId:{
+          type:String,
+          default:''
+      },
+      productCategoryId:{
+          type:String,
+          default:''
+      },
+      productSymbol:{
+          type:String,
+          default:''
+      },
+  },
+  data() {
+    return {
+      columnList:[],
+      defaultProps: {
+        children: 'childrenList',
+        label: 'name'
+      },
+      customerVisible: false,
+      treeLoading: false,
+      treeData: [],
+      form: {
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        },],
+        partnerName: "",
+        shelfSpaceName: "",
+        batchNumber: "",
+        warehouseId: "",
+        vibrationLevel: "",
+        sealingCoverTyping: "",
+        availableBatch: 1,
+        oil: "",
+        clearance: "",
+        accuracyLevel: "",
+        productsId: "",
+        packagingMethod: "",
+        specialRequire: "",
+        inspectStockFlag: true,
+        processId: "",
+        pairingModeId:"",
+        excludeProcessFlag:false,
+        cooperativePartnerId:this.isYS ? this.cooperativePartnerId : '',
+        productCategoryId: this.productCategoryId ,
+        productSymbol:this.productSymbol,
+      },
+      refreshTree: true,
+      listLoading: false,
+      total: 0,
+      tableDataList: [],
+      cpData: {},
+      cpIndex: "",
+      type: "",
+      dataForm: {},
+      requestFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
+      standardValueFlag: "",
+      colourFlag: "",
+      processFlag: "",
+      isPairingModeSwitch: '', // 配对方式显示隐藏
+      excludeProcessFlag:null,
+
+    }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getOrderFiledMap()
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
+
+
+  },
+  methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop == 'warehouseName'||prop=='pairingModeName' || prop == 'shelfSpaceName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order === 'ascending'
+      this.form.orderItems[0].column = order === null ? "" : newProp
+      this.search()
+    },
+    getOrderFiledMap() {
+      return getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
+    init(data, index, type, requestFlag) {
+      this.customerVisible = true
+      this.type = type || ''
+      this.requestFlag = requestFlag || ""
+      this.cpData = JSON.parse(JSON.stringify(data))
+      this.cpIndex = JSON.parse(JSON.stringify(index))
+      this.form.productsId = data.productsId
+      this.form.vibrationLevel = ""
+      this.form.sealingCoverTyping = ""
+      if(type=='sale') this.excludeProcessFlag=true
+      // this.form.vibrationLevel = data.vibrationLevel
+      // this.form.sealingCoverTyping = data.sealingCoverTyping
+      // this.form.clearance = data.clearance
+      // this.form.oil = data.oil
+      // this.form.accuracyLevel = data.accuracyLevel
+      // this.form.packagingMethod = data.packagingMethod
+      // this.form.specialRequire = data.specialRequire
+      // this.form.material = data.material
+      // this.form.standardValue = data.standardValue
+      this.form.oil = ""
+      this.form.processId = data.processId ? data.processId : ""
+      this.form.clearance = ""
+      this.form.accuracyLevel = ""
+      this.form.warehouseId = data.warehouseId
+      this.form.packagingMethod = ""
+      this.form.specialRequire = ""
+      this.form.pairingModeId = data.pairingModeId
+      this.form.material = ""
+      this.form.standardValue = ""
+      this.form.excludeProcessFlag=this.excludeProcessFlag
+      this.form.cooperativePartnerId = this.isYS ? this.cooperativePartnerId : ''
+      this.form.productCategoryId = this.productCategoryId
+      this.form.productSymbol = this.productSymbol
+      this.dataForm = data
+      console.log(requestFlag,'requestFlag')
+      if (!requestFlag) {
+
+        this.getbatchNumList()
+      } else {
+        this.getlistOutBatchStockFun()
+      }
+
+    },
+    getlistOutBatchStockFun() {
+      getlistOutBatchStock(this.dataForm.ordersLineId).then(res => {
+        this.tableDataList = res.data
+        this.total = res.data.total
+      })
+    },
+    // 选择批次
+    selectBatchNum(row) {
+      this.$emit("selectBatchNumberFun", row, this.cpIndex)
+      this.customerVisible = false
+    },
+    getbatchNumList() {
+      this.listLoading = true
+      // this.form.projectId=this.cpData.projectId
+      getBatchNumber(this.form).then(res => {
+        this.tableDataList = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
+
+    search() {
+      if (this.requestFlag) {
+        this.getlistOutBatchStockFun()
+      } else {
+
+        this.getbatchNumList()
+      }
+    },
+    reset() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.form = {
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        },],
+        shelfSpaceName:"" ,
+        batchNumber: "",
+        warehouseId: this.dataForm.warehouseId,
+        vibrationLevel: "",
+        sealingCoverTyping: "",
+        oil: "",
+        clearance: "",
+        accuracyLevel: "",
+        packagingMethod: "",
+        specialRequire: "",
+        inspectStockFlag: true,
+        availableBatch:true,
+        partnerName:"",
+        standardValue:"",
+        colour:"",
+        excludeProcessFlag:"",
+        cooperativePartnerId:this.isYS ? this.cooperativePartnerId : '',
+        productCategoryId: this.productCategoryId,
+        productSymbol:this.productSymbol,
+      }
+      if (this.requestFlag) {
+        this.getlistOutBatchStockFun()
+      } else {
+
+        this.init(this.cpData, this.cpIndex)
+      }
+    },
+  }
+}
+</script>

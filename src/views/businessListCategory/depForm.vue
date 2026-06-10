@@ -1,0 +1,127 @@
+<template>
+  <el-dialog :title="!dataForm.id ? '新建业务分类' : '编辑业务分类'" :close-on-click-modal="false" :close-on-press-escape="false"
+    :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px" @close="$emit('close')">
+    <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
+      label-position="top" label-width="120px">
+      <el-form-item label="上级分类" prop="parentName">
+      
+        <ComSelect-list  v-model="dataForm.parentName" placeholder="请选择上级分类" auth
+          @change="onOrganizeChange" :title="'选择上级分类'" :method="getBusinessListCategoryAPI" :requestObj="requestObjTwo"
+          :paramsObj="{}" />
+      </el-form-item>
+      <!-- :isdisabled="dataForm.id?true:false" -->
+      <el-form-item label="分类编码" prop="code">
+        <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
+      </el-form-item>
+      <el-form-item label="分类名称" prop="name">
+        <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
+      </el-form-item>
+  
+      <el-form-item label="备注" prop="remark">
+        <el-input v-model="dataForm.remark" type="textarea" maxlength="200" placeholder="请输入备注" />
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
+      <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
+        {{ $t('common.submitButton') }}
+      </el-button>
+    </span>
+  </el-dialog>
+</template>
+
+<script>
+import {
+  checkBusinessListCategoryCode, detailBusinessListCategoryAPI, delBusinessListCategoryAPI, editBusinessListCategoryAPI, addBusinessListCategoryAPI, getBusinessListCategoryAPI
+} from "@/api/masterDataManagement/index.js";
+export default {
+  data() {
+    return {
+      requestObjTwo: {
+        pageSize: -1,
+        classAttribute: ''
+      },
+      getBusinessListCategoryAPI,
+      visible: false,
+      formLoading: false,
+      btnLoading: false,
+      dataForm: {
+        parentId: '',
+        parentName: "",
+        code: '',
+        name: '',
+        remark: '',
+      },
+       
+      autoCode: '',
+      dataRule: {
+        name: [{ required: true, message: '请输入分类名称', trigger: 'blur' }],
+        code: [
+          { required: true, message: '请输入分类编码', trigger: 'blur' },
+          { validator: this.formValidate('enCode'), trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) { callback() }
+              else if (value === this.autoCode) { callback() }
+              else {
+                checkBusinessListCategoryCode({ code: value,id:this.dataForm.id }).then((res) => {
+                  if (!res.data) { callback() }
+                  else { callback(new Error('此分类编码已存在')) }
+                }).catch((err) => { callback(new Error(" ")) })
+              }
+            },
+            trigger: 'blur'
+          }]
+      },
+      
+    }
+  },
+  methods: {
+    init(id, parentId,btntype) {
+      console.log(btntype);
+      this.visible = true
+      this.dataForm.id = id || ''
+      this.dataForm.parentId = parentId || '-1'
+      this.formLoading = true
+      this.$nextTick(() => {
+        if (this.dataForm.id) {
+          detailBusinessListCategoryAPI(this.dataForm.id).then(res => {
+            this.dataForm = res.data
+            this.autoCode = res.data.code
+            this.formLoading = false
+          })
+        } else {
+          this.formLoading = false
+        }
+      })
+    },
+    onOrganizeChange(val, data) {
+      console.log("data", data);
+      if (!data) {
+        this.dataForm.parentId = ''
+        this.dataForm.parentName = ''
+      } else {
+        this.dataForm.parentId = data[0].id
+        this.dataForm.parentName = data[0].name
+        this.dataForm.classAttribute=data[0].all.classAttribute
+      }
+    },
+    async dataFormSubmit() {
+      let valid = await this.$refs['dataForm'].validate().catch(err => false)
+      this.btnLoading = true
+      if (valid) {
+        if (!this.dataForm.parentId) this.dataForm.parentId = '-1'
+        let formMethod = this.dataForm.id ? editBusinessListCategoryAPI : addBusinessListCategoryAPI
+        formMethod(this.dataForm).then(res => {
+          this.$emit('close', true)
+          this.$message({
+            message: this.dataForm.id ? '修改成功' : '新建成功',
+            type: 'success',
+            duration: 1500
+          })
+        }).catch(() => { this.btnLoading = false })
+      } else { this.btnLoading = false }
+    }
+  }
+}
+</script>

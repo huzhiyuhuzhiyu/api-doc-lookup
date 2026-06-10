@@ -1,0 +1,2039 @@
+<template>
+  <transition name="el-zoom-in-center">
+    <div class="JNPF-preview-main transitionForm">
+      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
+        <el-page-header @back="$emit('close')"
+          :content="btnType == 'add' || btnType == 'copy' ? quoteText : btnType == 'edit' ? '编辑销售报价' : '查看销售报价'" />
+        <div class="options">
+          <el-button size="mini" type="success" :loading="btnLoading" @click="handleConfirm('draft')"
+            v-if="btnType !== 'look'">
+            保存草稿</el-button>
+          <el-button size="mini" type="primary" v-if="btnType !== 'look'" :loading="btnLoading"
+            @click="handleConfirm('submit')">
+            保存并提交</el-button>
+          <el-button size="mini" @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
+        </div>
+      </div>
+      <div class="main" v-loading="formLoading" ref="main" :element-loading-text="loadingText">
+        <el-tabs v-model="activeName" v-if="!approvalFlag" class="JNPF-el_tabs">
+          <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <JNPF-col v-model="dataForm" :tabContent="basicFormSchema" ref="dataForm" :btnType="btnType" />
+              </el-collapse-item>
+              <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
+                <div v-if="btnType != 'look'">
+                  <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
+                    icon="el-icon-plus" @click="addProduct">选择产品</el-button>
+                  |
+                  <el-button type="text" icon="el-icon-plus" @click="selectProductRefOpenDialog">选择客户产品</el-button>
+                </div>
+                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                  <JNPF-table customKey="salesQuotationOld" ref="product" :has-c="this.btnType !== 'look'" fixedNO :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
+                    v-if="tableFlag" v-bind="customStyleData" custom-column>
+<!--                    <el-table-column prop="productCode" label="产品型号" width="180"-->
+<!--                      show-overflow-tooltip></el-table-column>-->
+<!--                    原产品型号仅展示产品编码，保留旧逻辑方便回退。-->
+<!--                    <el-table-column prop="productCode" label="产品型号" width="180"-->
+<!--                                     show-overflow-tooltip></el-table-column>-->
+                    <el-table-column prop="productDrawingNo" label="产品型号" width="180" show-overflow-tooltip>
+                      <template slot-scope="scope">
+                        <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
+                          placeholder="请输入产品型号" prefix-icon="el-icon-search" style="width: 100%;"
+                          :disabled="status" @select="handleSelect(scope.row, scope.$index, $event)" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="180"
+                      show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="customerProductDrawingNo" label="客户型号" width="160" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" width="90" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="num" label="数量" width="160">
+                      <template slot="header">
+                        <span class="required">*</span>数量
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'numStr'" :rules='productRules.numStr'>
+                          <el-input v-model="scope.row.numStr" placeholder="数量" :disabled="status"
+                            maxlength="20">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="sampleNumStr" label="样品数" width="160">
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'sampleNumStr'"
+                          :rules='productRules.sampleNumStr'>
+                          <el-input :title="scope.row.sampleNumStr" v-model="scope.row.sampleNumStr"
+                            placeholder="请输入样品数" :disabled="status" maxlength="20">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="sampleQuotationFlag" label="样品报价" width="170">
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'sampleQuotationFlag'"
+                          :rules='productRules.sampleQuotationFlag'>
+                          <el-select v-model="scope.row.sampleQuotationFlag" placeholder="选择是否样品报价" style="width: 100%;"
+                            :disabled="status">
+                            <el-option v-for="(item, index) in sampleQuotationFlagOption" :key="index" :label="item.text"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="minNumStr" label="起订量" width="160" v-if="quoteType === 'directly_quotation'">
+                      <template slot="header">
+                        <span class="required">*</span>起订量
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'minNumStr'"
+                          :rules='productRules.minNumStr'>
+                          <el-input :title="scope.row.minNumStr" v-model="scope.row.minNumStr" placeholder="请输入起订量"
+                            :disabled="status" maxlength="20">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="procurementAmounts" label="采购价" width="160"
+                      v-if="quoteType === 'directly_quotation'">
+                      <template slot="header">
+                        <span class="required">*</span>采购价
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'procurementAmounts'"
+                          :rules='productRules.procurementAmounts'>
+                          <el-input :title="scope.row.procurementAmounts" v-model="scope.row.procurementAmounts"
+                            placeholder="请输入采购价" :disabled="status" maxlength="20">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="amounts" label="报价" width="160" v-if="quoteType === 'directly_quotation'">
+                      <template slot="header">
+                        <span class="required">*</span>报价
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'amounts'" :rules='productRules.amounts'>
+                          <el-input :title="scope.row.amounts" v-model="scope.row.amounts" placeholder="请输入报价"
+                            :disabled="status" maxlength="20">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="excludingTaxAmounts" label="未税价" width="160"
+                      v-if="quoteType === 'directly_quotation'">
+                      <template slot="header">
+                        <span class="required">*</span>未税价
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'excludingTaxAmounts'"
+                          :rules='productRules.excludingTaxAmounts'>
+                          <el-input :title="scope.row.excludingTaxAmounts" v-model="scope.row.excludingTaxAmounts"
+                            placeholder="请输入未税价" :disabled="status" maxlength="11">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="moldAmounts" label="模具费" width="160"
+                      v-if="quoteType === 'directly_quotation'">
+                      <template slot="header">
+                        <span class="required">*</span>模具费
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'moldAmounts'"
+                          :rules='productRules.moldAmounts'>
+                          <el-input :title="scope.row.moldAmounts" v-model="scope.row.moldAmounts" placeholder="请输入模具费"
+                            :disabled="status" maxlength="11">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="deliveryDate" label="交期" width="170"
+                      v-if="quoteType === 'directly_quotation'">
+                      <template slot="header">
+                        <span class="required">*</span>交期
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'deliveryDate'"
+                          :rules='productRules.deliveryDate'>
+                          <el-input :title="scope.row.deliveryDate" v-model="scope.row.deliveryDate" placeholder="请输入交期"
+                                    :disabled="status" maxlength="10">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="remark" label="备注1" min-width="180">
+                      <template slot-scope="scope">
+                        <!-- 原逻辑保留：备注最多 200 字。 -->
+                        <!-- <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="status" maxlength="200" /> -->
+                        <el-input type="textarea"  v-model="scope.row.remark" placeholder="请输入备注" :disabled="status"   />
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="remark2" label="反馈备注" min-width="180" v-if="dataForm.quotationStatus === 'feedback_received'">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.remark2" disabled maxlength="200" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="160" fixed="right" v-if="btnType == 'add' || btnType == 'edit'">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="deltable(scope)" class="JNPF-table-delBtn">删除</el-button>
+                        <el-button type="text" v-if="quoteType !== 'directly_quotation'"
+                          @click="historyPriceFun(scope)">历史价格</el-button>
+                      </template>
+                    </el-table-column>
+                  </JNPF-table>
+                </el-form>
+              </el-collapse-item>
+            </el-collapse>
+          </el-tab-pane>
+          <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+          </el-tab-pane>
+          <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+          </el-tab-pane>
+          <el-tab-pane label="附件" name="annex">
+            <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+      <el-dialog title="历史价格" :close-on-click-modal="false" :close-on-press-escape="false"
+        :visible.sync="historyVisiblt" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
+        append-to-body>
+        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="getHistoryPriceFun()"
+                      v-model="historyPriceRequestObj.customerDrawingNumber" placeholder="请输入客户料号" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="getHistoryPriceFun()"
+                      v-model="historyPriceRequestObj.productDrawingNo" placeholder="请输入型号" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="getHistoryPriceFun()" v-model="historyPriceRequestObj.ask"
+                      placeholder="请输入要求" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getHistoryPriceFun()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetHistoryPriceFun()">{{
+                      $t('common.reset')
+                      }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <div class="JNPF-common-head">
+                <el-button type="primary" size="mini" icon="el-icon-download"
+                  @click="exportForm('dataTable')">导出</el-button>
+              </div>
+              <JNPF-table :data="historyPriceData" ref="dataTable" custom-column customKey="JNPFTableKey_861720">
+                <el-table-column prop="quotationNo" label="报价单号" width="150" />
+                <el-table-column prop="quotationTime" label="报价日期" width="150" />
+                <el-table-column prop="cooperativePartnerId" label="客户编号" width="150" />
+                <el-table-column prop="productCode" label="产品型号" width="200" />
+                <el-table-column prop="productName" label="产品名称" width="160" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="minNumStr" label="起订量" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="sampleNumStr" label="样品数" width="80" />
+                <el-table-column prop="procurementAmounts" label="采购报价" width="80" />
+                <el-table-column prop="amounts" label="报价" width="130" />
+                <el-table-column prop="excludingTaxAmounts" label="未税价" width="110"></el-table-column>
+                <el-table-column prop="moldAmounts" label="模具费" width="140" />
+                <el-table-column prop="excludingTaxUnitPrice" label="报模具费" width="140" />
+                <el-table-column prop="deliveryDate" label="交期" width="140" />
+                <el-table-column prop="sampleAmounts" label="样品报价" width="140" />
+                <el-table-column prop="remark" label="备注" width="130" />
+              </JNPF-table>
+              <pagination :total="historyPriceTotal" :page.sync="historyPriceRequestObj.pageNum"
+                :limit.sync="historyPriceRequestObj.pageSize" @pagination="getHistoryPriceFun" />
+            </div>
+          </div>
+        </div>
+      </el-dialog>
+      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible"
+        lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
+        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+          <div class="JNPF-common-layout-left">
+            <div class="JNPF-common-title">
+              <h2>产品分类</h2>
+              <span class="options">
+                <el-dropdown>
+                  <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                    <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                    <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </span>
+            </div>
+
+            <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+              <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
+                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
+                <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+                  <i
+                    :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+                  <span class="text" :title="data.name">{{ data.name }}</span>
+                </span>
+              </el-tree>
+            </el-scrollbar>
+          </div>
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productCode"
+                      placeholder="请输入产品编码" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productName"
+                      placeholder="请输入产品名称" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productDrawingNo"
+                      placeholder="请输入型号" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
+                      $t('common.reset')
+                      }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
+                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick"
+                customKey="JNPFTableKey_612241">
+                <el-table-column prop="drawingNo" label="型号" min-width="150" sortable="custom"></el-table-column>
+                <el-table-column prop="code" label="产品编码" show-overflow-tooltip sortable="custom"></el-table-column>
+                <el-table-column prop="name" label="产品名称" show-overflow-tooltip sortable="custom"></el-table-column>
+                <el-table-column prop="mainUnit" label="单位" />
+                <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom">
+                  <template slot-scope="scope">
+                    <el-link type="primary" @click.native="viewFun(scope.row, 'inventoryFlag')">
+                      {{ scope.row.inventoryQuantity }}
+                    </el-link>
+                  </template>
+                </el-table-column>
+
+              </JNPF-table>
+              <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
+                :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
+            </div>
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="allProVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+            确定</el-button>
+        </span>
+      </el-dialog>
+      <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+      <Form v-if="formVisible" ref="Form"></Form>
+      <ComSelect-page v-bind="addCustomerProductProps" ref="ComSelectCustomerProductRef" :element-show="false" @change="submitAllCustomerProduct"/>
+    </div>
+  </transition>
+</template>
+<script>
+import {
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
+} from "@/api/masterDataManagement/index"
+import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct, getHistoricalQuotationByProductsId } from "@/api/salesManagement/index";
+import { getCounryData, getPrivateList, deletePrivate, getcategoryTree, privateDetail } from '@/api/basicData/index'
+import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
+import { getcategoryTrees, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
+import { getCooperativeInfo, getCooperativeData, getOrderFiledMap } from '@/api/basicData/index'
+import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
+import { mapGetters, mapState } from 'vuex'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
+import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
+import flowMixin from '@/mixins/generator/flowMixin'
+import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
+import {deepClone} from "@/utils";
+export default {
+  components: { ExportForm, Process, recordList, Form },
+  mixins: [busFlow, flowMixin, getProjectList,],
+  data() {
+    return {
+      addCustomerProductProps: {
+        title: '选择产品',
+        activeType: '',
+        renderTree: false,
+        multiple: true,
+        listMethod: getcooperativeProduct,
+        tableItems: [
+          {prop: 'customerProductNo', label: ' 客户料号', fixed: 'left'},
+          {prop: 'customerProductName', label: ' 客户产品名称', fixed: 'left'},
+          {prop: 'customerProductDrawingNo', label: '客户型号', minWidth: '220px', sortable: 'custom'},
+          {prop: 'productName', label: '产品名称', minWidth: '220px', sortable: 'custom'},
+          {prop: 'productCode', label: '产品编码', sortable: 'custom'},
+          {prop: 'drawingNo', label: '型号', minWidth: '220px', sortable: 'custom'},
+          {prop: 'mainUnit', label: '单位', sortable: 'custom'},
+          {prop: 'createTime', label: '创建时间', minWidth: '220px', sortable: 'custom'}
+        ],
+        listRequestObj: {
+          partnerId: '',
+          partnerType: 'customer',
+          productCode: "",
+          productName: "",
+          productStatus: 'enable',
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [
+            {
+              asc: false,
+              column: ''
+            },
+            {
+              asc: false,
+              column: 'create_time'
+            }
+          ]
+        },
+        beforeSubmit: (data, paramsObj) => {
+          if (!data || !data.length) {
+            this.$message.error(`请进行产品选择！`)
+            return false
+          }
+          return true
+        },
+        searchList: [
+          {prop: 'productName', label: '产品名称', type: 'input'},
+          {prop: 'productCode', label: '产品编码', type: 'input'},
+        ]
+      },
+      highlightCurrentFlag: false,
+      isProductNameSwitch: "",
+      isProjectSwitch: '',
+      list1: [],
+      list2: [],
+      list3: [],
+      list4: [],
+      list5: [],
+      list6: [],
+      list7: [],
+      list8: [],
+      enterFlag: false,
+      exportFormVisible: false,
+      historyPriceTotal: 0,
+      historyPriceData: [],
+      historyPriceRequestObj: {
+        ask: "",
+        productDrawingNo: "",
+        customerDrawingNumber: "",
+        cooperativePartnerId: "",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: "quotationTime"
+        }],
+      },
+      btnText: "",
+      uploadVisib: false,
+      getcategoryTree, // 意向客户分类
+      submitmethodsTitle: "",
+      historyVisiblt: false,
+      getcategoryTrees, // 客户列表
+      getCooperativeData, // 客户列表
+      datafilelist: [],
+      iszt: true,
+      status: false,
+      dataFormTwo: {
+        lines: []
+      },
+      iszhi: false,
+      attributeLines: [],
+      index: null,
+      btnType: undefined,
+      area: [],
+      deliveryAddressList: [],
+      activeName: "orderInfo",
+      btnLoading: false,
+      formLoading: false,
+      dataForm: {
+        quotationType: '',
+        quotationNo: "",
+        deliver: '',
+        publicPrivateSeaId: '',
+        cooperativePartnerId: '',
+        bidder: '',
+        quotationTime: '',
+        validEnd: '',
+        address: '',
+        phone: '',
+        fax: '',
+        totalAmount: 0,
+        documentStatus: '',
+        remark: '',
+        approvalFlag: false
+      },
+      taxRateList: [],
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 1000 * 3600 * 24;
+        }
+      },
+      selectRows: [],
+      taxRate: '13', // 默认税率
+      dataRule: {
+        quotationNo: [{ required: true, message: '报价单号不能为空', trigger: 'blur' }],
+        cooperativePartnerIdText: [{ required: true, message: '所属客户不能为空', trigger: 'change' }],
+        bidder: [{ required: true, message: '业务员不能为空', trigger: 'blur' }],
+        quotationTime: [{ required: true, message: '报价日期不能为空', trigger: 'change' }],
+      },
+      productRules: {
+        // 数量
+        numStr: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+        ],
+        // 样品数
+        sampleNumStr: [
+          { required: false, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '样品数必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ],
+        // // 样品报价
+        // sampleQuotationFlag: [
+        //   { validator: this.formValidate({ type: 'noEmtry', params: ["样品报价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
+        //   { required: true, trigger: 'change' },
+        // ],
+        // 起订量
+        minNumStr: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["起订量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '起订量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ],
+        // 采购价
+        procurementAmounts: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["采购价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '采购价必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ],
+        // 报价
+        amounts: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["报价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '报价必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ],
+        // 未税价
+        excludingTaxAmounts: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["未税价不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '未税价必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ],
+        // 模具费
+        moldAmounts: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["模具费不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '模具费必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ],
+        // 交期
+        deliveryDate: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["交期不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+        ],
+      },
+      activeNames: ["productInfo", "basicInfo"],
+      customStyleData: {},
+      tableVisible: true,
+      loadingText: '',
+      fontSizeValue: '',
+      oldId: "",
+      oldType: "",
+      createdData: {
+        salesQuotationId: '',
+        customerProductDrawingNo: '',
+        customerDrawingNumber: '',
+        materialDescription: "",
+        productDrawingNo: "",
+        num: "",
+        listPrice: "",
+        unitPrice: "",
+        excludingTaxUnitPrice: "",
+        discount: "",
+        amounts: "",
+        excludingTaxAmounts: "",
+        totalTaxAmount: "",
+        mainUnit: "",
+        taxRate: "",
+        sealingCoverTyping: "",
+        accuracyLevel: "",
+        vibrationLevel: "",
+        oil: "",
+        oilQuantity: "",
+        clearance: "",
+        packagingMethod: "",
+        specialRequire: "",
+        remark: "",
+        remark2: ""
+      },
+      codeConfig: {},
+      selectName: [],
+      partnerInfo: {},
+      flowTemplateJson: {},
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime: 0,
+      isattachmentswitch: '',
+      ProductMethodArr: [
+        {
+          label: "产品分类", classAttribute: "", method: productTree, requeseObj: {
+            classAttribute: "", type: "material",
+          }
+        },
+      ],
+      allproductData: [],
+      allProductTotal: 0,
+      ProductTreeData: [],
+      allProVisible: false,
+      ProductListRequestObj: {
+        classAttributeList: [],
+        classAttribute: "",
+        productDrawingNo: "",
+        productCategoryId: "",
+        queryType: 2,
+        saleFlag: true,
+        productStatus: 'enable',
+        productCode: "",
+        productName: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      },
+      productData: [],
+      expands: true,
+      refreshTree: true,
+      defaultProps: {
+        children: 'childrenList',
+        label: 'name'
+      },
+      selectArr: [],
+      tableFlag: false,
+      formVisible: false,
+      sampleQuotationFlagOption: [
+        { text: '是', value: true },
+        { text: '否', value: false },
+      ],
+      renderTree: false,
+      basicFormSchema: [
+        {
+          prop: "quotationNo",
+          label: "报价单号",
+          value: "",
+          type: "input",
+        },
+        {
+          prop: "cooperativePartnerIdText",
+          label: "所属客户",
+          value: "",
+          type: "custom",
+          customComponent: "ComSelect-page",
+          itemRules: [{ required: true, trigger: "change" }],
+          title: '请选择客户',
+          renderTree: false,
+          multiple: false,
+          listMethod: getCooperativeData,
+          tableItems: [
+            { prop: 'name', label: '客户名称', minWidth: '220px', sortable: 'custom' },
+            { prop: 'code', label: '客户编码', sortable: 'custom' },
+            { prop: 'contacts', label: '联系人', sortable: 'custom' },
+            { prop: 'mobilePhone', label: '手机', sortable: 'custom' },
+            { prop: 'phone', label: '电话', sortable: 'custom' },
+            { prop: 'salespersonIdText', label: '所属销售', sortable: 'custom' },
+          ],
+          listRequestObj: {
+            name: '',
+            type: "customer",
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 'create_time'
+              }
+            ]
+          },
+          searchList: [
+            { prop: 'code', label: '客户编码', type: 'input' },
+            { prop: 'name', label: '客户名称', type: 'input' },
+          ],
+          change: (id, data) => {
+            if (this.changeNum !== 0 && this.dataForm.cooperativePartnerName && this.dataForm.cooperativePartnerName !== this.oldSupplierData.id) {
+              this.$confirm('切换供应商，是否继续？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                this.supplierdata(id, data, true);
+              }).catch((err) => {
+                this.setOldSupplierData();
+              });
+            } else {
+              this.supplierdata(id, data, false);
+            }
+            this.changeNum++
+          },
+        },
+        {
+          prop: "bidder",
+          label: "业务员",
+          value: "",
+          type: "input",
+        },
+        {
+          prop: "quotationTime",
+          label: "报价日期",
+          value: "",
+          type: "date",
+        },
+        {
+          prop: "remark",
+          label: "备注",
+          value: "",
+          type: "textarea",
+          maxlength:'9999'
+        },
+      ],
+      changeNum: 0,
+      oldSupplierData: {}
+    }
+  },
+  watch: {
+    activeName(val) {
+      // 如果切换到订单信息tab并且表格表单处于适配模式，触发计算高度
+      if (val === 'orderInfo' && JSON.stringify(this.customStyleData) !== '{}') this.$nextTick(() => { this.switchStyle('onresize') })
+    }
+  },
+  props: {
+    quoteType: {
+      type: String,
+      default: ''
+    }
+  },
+  beforeDestroy() {
+    window.onresize = null
+  },
+  computed: {
+    totalNum: function () {
+      var totalNum = 0;
+      for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
+        totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [totalNum, this.dataFormTwo.lines[i].num]), 2)
+      }
+      return totalNum
+    },
+    totalAmount: function () {
+      console.log(5555);
+      var totalAmount = 0;
+      for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
+        totalAmount = this.jnpf.numberFormat(this.jnpf.math('add', [totalAmount, this.dataFormTwo.lines[i].amounts]), 2)
+      }
+      return totalAmount
+    },
+    quoteText: function () {
+      return this.quoteType === 'directly_quotation' ? '直接报价' : '新建报价'
+    },
+    ...mapGetters(['userInfo']),
+    ...mapState('user', ['token']),
+  },
+  mounted() {
+    this.getTaxRateFun()
+    this.getBimBusinessDetail()
+    this.$nextTick(() => {
+      if (this.$refs.product) {
+        this.$refs.product.doLayout()
+      }
+    })
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProductNameSwitch = this.$store.getters.configData.product.enable_productName ? '1' : '0'
+    this.tableFlag = true
+  },
+  methods: {
+    submitAllCustomerProduct(id,data){
+      const newData = data.map(item => ({
+        ...item.all,
+        productName: item.all.productName,
+        productCode: item.all.productCode,
+        productsDrawingNo: item.all.drawingNo,
+        productsId: item.all.productsId,
+        cooperativePartnerProductId: item.all.id
+      }));
+
+      this.dataFormTwo.lines = [...this.dataFormTwo.lines, ...newData]
+    },
+    selectProductRefOpenDialog() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+      this.addCustomerProductProps.listRequestObj.partnerId = this.dataForm.cooperativePartnerId
+      this.$refs.ComSelectCustomerProductRef.openDialog()
+    },
+    setOldSupplierData() {
+      const data = deepClone(this.oldSupplierData)
+      this.dataForm.cooperativePartnerIdText = data.name
+      this.dataForm.cooperativePartnerCode = data.code
+      this.dataForm.cooperativePartnerId = data.id
+    },
+    supplierdata(id, data) {
+      // 如果传入的data为空数组
+      if (data.length === 0) {
+        // 将dataForm中的合作伙伴名称设为空字符串
+        this.dataForm.cooperativePartnerIdText = ''
+        this.dataForm.cooperativePartnerCode = ''
+        this.dataForm.cooperativePartnerId = ''
+      } else {
+        this.oldSupplierData = deepClone(data[0].all)
+        this.dataForm.cooperativePartnerIdText = data[0].all.name
+        this.dataForm.cooperativePartnerCode = data[0].all.code
+        this.dataForm.cooperativePartnerId = data[0].all.id
+        // 清除供应商的验证爆红
+        this.$refs['dataForm'].$refs.main.clearValidate(['cooperativePartnerIdText'])
+      }
+    },
+    getProductsHistoryPriceFun(productsId) {
+      getHistoricalQuotationByProductsId(productsId).then(res => {
+        this.historyPriceData = res.data.records
+        this.historyPriceTotal = res.data.total
+      })
+    },
+    // 点击历史查询
+    historyPriceFun({row, index}) {
+      console.log(row);
+      if (!row.productName) return this.$message.error("请先选择产品")
+      this.historyVisiblt = true
+      this.getProductsHistoryPriceFun(row.productsId)
+    },
+    // 查看库存明细
+    viewFun(row) {
+      this.formVisible = true
+      this.$set(row, 'productsId', row.id)
+      this.$nextTick(() => {
+        this.$refs.Form.init(row, 'inventoryFlag', "", row.projectId)
+      })
+    },
+    //多选
+    handleRowClick(row) {
+      this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)
+    },
+    sortChange({ prop, order }) {
+      let newProp
+      if (prop == 'cooperativePartnerIdText' || prop == 'cooperativePartnerCode') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.ProductListRequestObj.orderItems[0].asc = order !== 'descending'
+      this.ProductListRequestObj.orderItems[0].column = newProp
+      this.listLoading = true
+      this.searchAllProduct()
+    },
+    // 点击选择产品
+    addProduct() {
+      this.allProVisible = true
+      let arr = [];
+      this.ProductListRequestObj = {
+        classAttributeList: [],
+        classAttribute: "",
+        productDrawingNo: "",
+        queryType: 2,
+        productStatus: 'enable',
+        saleFlag: true,
+        productCategoryId: "",
+        code: "",
+        name: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      }
+      this.allproductData = []
+      let successTotal = 0;
+      let tempTreeData = [...this.ProductMethodArr]
+      this.ProductMethodArr.forEach((item, index) => {
+        item.method(item.requeseObj).then(res => {
+          if (Array.isArray(res.data)) {
+            tempTreeData[index] = {
+              id: item.label,
+              name: item.label,
+              classAttribute: item.classAttribute,
+              childrenList: res.data
+            }
+          } else {
+            tempTreeData[index] = {
+              id: item.label,
+              name: item.label,
+              classAttribute: item.classAttribute,
+              childrenList: res.data.records
+            }
+          }
+          if ((++successTotal) === this.ProductMethodArr.length) {
+            this.ProductTreeData = tempTreeData
+            this.initData2()
+          }
+        })
+      });
+    },
+    // 获取所有产品列表数据
+    initData2() {
+      this.listLoading = true
+
+      getProducts(this.ProductListRequestObj).then(listRes => {
+        console.log('[salesQuotationOld/depForm] 选择产品列表接口返回 /api/zgt/product/list:', listRes);
+        if (Array.isArray(listRes.data)) {
+          this.allproductData = listRes.data
+        } else {
+          this.allproductData = listRes.data.records
+        }
+        this.allProductTotal = listRes.data.total
+        this.$forceUpdate()
+        this.treeLoading = false
+        this.listLoading = false
+      })
+    },
+    // 搜索所有产品 列表
+    searchAllProduct() {
+      this.ProductListRequestObj.pageNum = 1
+      this.initData2()
+    },
+    // 所有产品弹框 重置搜索条件
+    resetAllProduct() {
+      this.$refs.dataTable.$refs.JNPFTable.clearSort()
+      this.$refs.treeBox.setCurrentKey(null)
+      this.highlightCurrentFlag = false
+      this.ProductListRequestObj = {
+        classAttributeList: [],
+        classAttribute: "",
+        productDrawingNo: "",
+        productCategoryId: "",
+        queryType: 2,
+        saleFlag: true,
+
+        productCode: "",
+        productName: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      },
+        this.searchAllProduct()
+    },
+    // 所有产品列表 多选
+    handleSelectionChangeAllPruduct(val) {
+      console.log('[salesQuotationOld/depForm] 选择产品弹框选中值:', val);
+      this.selectArr = val
+    },
+    submitAllProduct() {
+      console.log('[salesQuotationOld/depForm] 选择产品确认提交前 selectArr:', this.selectArr);
+      this.allProVisible = false
+      this.selectArr.forEach(item => {
+        // const { name: productName, purchasePrice: procurementAmounts, id: productsId, code: productCode, salesPrice: amounts, drawingNo: productDrawingNo, salesExcludingTaxPrice: excludingTaxUnitPrice, excludingTaxPrice: excludingTaxAmounts } = item
+        const { name: productName, purchasePrice: procurementAmounts, id: productsId, code: productCode, salesPrice: amounts, drawingNo: productDrawingNo, salesExcludingTaxPrice: excludingTaxUnitPrice, excludingTaxPrice: excludingTaxAmounts } = item
+
+        item.productName = productName
+        item.productCode = productCode
+        item.productsId = productsId
+        item.price = amounts
+        item.excludingTaxUnitPrice = excludingTaxUnitPrice
+        this.$set(item, 'amounts', amounts ?? '')
+        this.$set(item, 'procurementAmounts', procurementAmounts ?? '')
+        // drawingNo和productDrawingNo区别 取哪个?
+        this.$set(item, 'productDrawingNo', productDrawingNo)
+        this.$set(item, 'excludingTaxAmounts', excludingTaxAmounts ?? '')
+      });
+      if (this.dataFormTwo.lines.length) {
+        let index = this.dataFormTwo.lines.findIndex(item =>
+          item.productDrawingNo === "" &&
+          item.productsId === "" &&
+          item.num === "" &&
+          item.price === "" &&
+          item.deliveryDate === ""
+        )
+        if (index !== -1) {
+          // 原逻辑：插入到空白行前面，会导致已选择产品后仍保留一条空白行。
+          // this.dataFormTwo.lines.splice(index, 0, ...this.selectArr);
+          this.dataFormTwo.lines.splice(index, 1, ...this.selectArr);
+        } else {
+          this.dataFormTwo.lines = [...this.selectArr, ...this.dataFormTwo.lines,]
+        }
+      } else {
+        this.dataFormTwo.lines = [...this.selectArr]
+      }
+      console.log('[salesQuotationOld/depForm] 选择产品确认提交后产品明细:', this.dataFormTwo.lines);
+    },
+    filterNodeAllProduct(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    handleNodeAllProduct(data, node) {
+      if (this.ProductListRequestObj.productCategoryId === data.id) return
+      this.ProductListRequestObj.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ""
+      const nodePath = this.getNodePathProduct(node)
+      this.organizeIdTree = nodePath.map(o => o.id)
+      this.ProductListRequestObj.classAttribute = data.classAttribute
+      this.searchAllProduct()
+    },
+    getNodePathProduct(node) {
+      let fullPath = []
+      const loop = (node) => {
+        if (node.level) fullPath.unshift(node.data)
+        if (node.parent) loop(node.parent)
+      }
+      loop(node)
+      return fullPath
+    },
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.companyId)
+        })
+      })
+    },
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_quotation'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
+    // 导出
+    exportForm(exportTableRef) {
+      this.exportTableRef = exportTableRef
+      this.exportFormVisible = true
+      let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      this.exportFormVisible = false
+      let includeFieldMap = {}
+      for (let i = 0; i < data.selectKey.length; i++) {
+        includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+      }
+      const targetListQuery = this.historyPriceRequestObj
+      let _data = {
+        ...targetListQuery,
+        exportType: '1055',
+        exportName: '历史价格',
+        includeFieldMap,
+        pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
+      }
+      excelExport(_data).then(res => {
+        this.exportFormVisible = false
+        if (!res.data.url) return
+        this.jnpf.downloadFile(res.data.url, res.data.name)
+      })
+    },
+    getHistoryPriceFun() {
+      getQuotationmxLists(this.historyPriceRequestObj).then(res => {
+        this.historyPriceData = res.data.records
+        this.historyPriceTotal = res.data.total
+      })
+    },
+    resetHistoryPriceFun() {
+      this.historyPriceRequestObj = {
+        ask: "",
+        productDrawingNo: "",
+        customerDrawingNumber: "",
+        cooperativePartnerId: this.dataForm.cooperativePartnerId,
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: "quotationTime"
+        }],
+      },
+        this.getHistoryPriceFun()
+    },
+    querySearchAsync(queryString, cb) {
+      // 原逻辑要求输入至少 3 个字符才搜索，改为和销售订单一样有输入就远程搜索。
+      // if (queryString && queryString.length >= 3) {
+      if (queryString) {
+        let ProductListRequestObj = {
+          classAttributeList: [],
+          classAttribute: "",
+          productDrawingNo: queryString,
+          productCategoryId: "",
+          queryType: 2,
+          productStatus: 'enable',
+          code: "",
+          name: "",
+          orderItems: [{
+            "asc": false,
+            "column": ""
+          }, {
+            "asc": false,
+            "column": "create_time"
+          }],
+          pageNum: 1,
+          pageSize: 20,
+        }
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          getProducts(ProductListRequestObj).then(res => {
+            let datas = res.data.records
+            if (datas !== []) {
+              var restaurants = datas
+              var arr = []
+              restaurants.forEach((item, index) => {
+                arr.push({
+                  value: item.drawingNo,
+                  data: item,
+                })
+              })
+              cb(arr)
+            } else {
+              let air = []
+              this.$message.error("您输入的型号暂未匹配到对应的产品数据，请重新输入!")
+              queryString = ""
+              cb(air)
+            }
+          })
+            .catch(res => {
+              this.$message({
+                type: 'error',
+                message: '获取数据失败'
+              })
+            })
+        }, 500)
+      } else {
+        let air = []
+        cb(air)
+      }
+      // }
+    },
+    handleSelect(row, index, item) {
+      console.log(666, item);
+      //返回的意见点击选择触发事件
+      let customerDrawingNumber
+      let obj = JSON.parse(JSON.stringify(this.createdData))
+      obj.taxRate = this.taxRate * 1
+      if (this.dataFormTwo.lines[index].customerDrawingNumber) customerDrawingNumber = JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerDrawingNumber))
+      if (item.value) {
+        // 原逻辑：先按型号查历史报价，有历史报价则整行替换为历史报价数据。
+        // let objs = {
+        //   productDrawingNo: item.value,
+        //   customerDrawingNumber: "",
+        //   cooperativePartnerId: this.dataForm.cooperativePartnerId,
+        //   pageNum: 1,
+        //   pageSize: 20,
+        //   orderItems: [{
+        //     asc: false,
+        //     column: "quotationTime"
+        //   }],
+        // }
+        // getQuotationmxLists(objs).then(res => {
+        //   if (res.data.records.length) {
+        //     console.log('有值', res.data.records[0]);
+        //     let data = res.data.records[0]
+        //     // res.data.records[0].customerProductDrawingNo = customerDrawingNumber ? customerDrawingNumber : res.data.records[0].customerProductDrawingNo
+        //     res.data.records[0].taxRate = res.data.records[0].taxRate * 1
+        //     this.$set(this.dataFormTwo.lines, index, res.data.records[0])
+        //     // this.$set(this.dataFormTwo.lines, index, res.data.records[0])
+        //     console.log(111, this.dataFormTwo.lines);
+        //     let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
+        //     if (!exists && res.data.records[0].taxRate) {
+        //       let obj = {
+        //         taxRate: res.data.records[0].taxRate * 1,
+        //         fullName: res.data.records[0].taxRate + '%',
+        //         enCode: res.data.records[0].taxRate + '%',
+        //       }
+        //       this.taxRateList.push(obj)
+        //     }
+        //   } else {
+        //     item.data.taxRate = this.taxRate * 1
+        //     this.$set(item.data, 'productDrawingNo', item.value)
+        //     this.$set(item.data, 'unitPrice', "")
+        //     this.$set(item.data, 'customerProductDrawingNo', customerDrawingNumber)
+        //     item.data.productsId = item.data.id
+        //     this.$set(this.dataFormTwo.lines, index, item.data)
+        //     // this.$set(this.dataFormTwo.lines, index, item.data)
+        //     // this.watchPrice(this.dataFormTwo.lines[index], index)
+        //   }
+        //   console.log(666777);
+        //   this.dataFormTwo.lines.push(obj)
+        // })
+        const product = item.data || {}
+        const newLine = {
+          ...this.dataFormTwo.lines[index],
+          ...product,
+          productName: product.name,
+          productCode: product.code,
+          productsId: product.id,
+          productDrawingNo: item.value,
+          mainUnit: product.mainUnit,
+          taxRate: product.taxRate * 1 || this.taxRate * 1,
+          unitPrice: "",
+          customerProductDrawingNo: customerDrawingNumber,
+        }
+        this.$set(this.dataFormTwo.lines, index, newLine)
+        let exists = this.taxRateList.some(line => line.taxRate === product.taxRate * 1);
+        if (!exists && product.taxRate) {
+          let taxRateObj = {
+            taxRate: product.taxRate * 1,
+            fullName: product.taxRate + '%',
+            enCode: product.taxRate + '%',
+          }
+          this.taxRateList.push(taxRateObj)
+        }
+        // 原逻辑：选中产品后追加一条空白行，现去掉，避免未继续选择时出现空白行。
+        // this.dataFormTwo.lines.push(obj)
+      }
+    },
+    changeTaxRate(row, index) {
+      console.log(row, index);
+      let productArr = [...this.dataFormTwo.lines]
+      productArr[index].excludingTaxUnitPrice = this.jnpf.numberFormat(row.unitPrice / (1 + (row.taxRate * 1 / 100)), 2)
+      productArr[index].excludingTaxAmounts = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 2)
+      productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts), 2)
+      this.dataFormTwo.lines = productArr
+    },
+    getTaxRateFun() {
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log("税率", this.taxRateList);
+      })
+    },
+    goBack() {
+      this.$emit('close', true)
+    },
+    submit() {
+      if (this.dataFormTwo.lines.length) {
+        let index = this.dataFormTwo.lines.findIndex(item =>
+          item.customerDrawingNumber === "" &&
+          item.num === "" &&
+          item.unitPrice === "" &&
+          item.productDrawingNo == ""
+        )
+        if (index !== -1) {
+          if (this.dataFormTwo.lines.length == 1) {
+            this.UploadProduct(this.file)
+
+          } else {
+            this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
+              this.UploadProduct(this.file)
+            }).catch(() => { })
+          }
+        } else {
+          this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
+            this.UploadProduct(this.file)
+          }).catch(() => { })
+
+        }
+      } else {
+        this.UploadProduct(this.file)
+
+      }
+    },
+    handleFileChange(file) {
+      console.log("所选文件:", file);
+      this.file = file.raw
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    // 上传产品
+    UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.formLoading = true
+      var formData = new FormData()
+      formData.append("file", data)
+      //调用上传文件接口
+      saleUploadData(formData).then(res => {
+        if (!res.data.url) {
+          this.$message.success(`导入成功`)
+          if (res.data.length > 0) {
+            this.dataFormTwo.lines = res.data.list
+          }
+          this.formLoading = false
+          this.loadingText = ''
+          this.uploadVisib = false
+        } else {
+          this.handleMessage(res.data)
+          this.formLoading = false
+        }
+      }).catch(err => {
+        this.$message.error(`文件上传失败`)
+        this.formLoading = false
+        this.loadingText = ''
+      })
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在产品相关信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+    },
+    // 意向客户分类节点点击
+    yxPartnerTreeNodeClick(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.id
+      return listQuery
+    },
+    // 客户选框传值
+    partnerChange(val, data, paramsObj) {
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerIdText') }) // 校验操作的元素(name是组件绑定的value)
+      if (data && data.length) { // 数据有效，进行更新
+        const partnerInfo = data[0].all
+        this.partnerInfo = data[0].all
+        this.dataForm.cooperativePartnerId = partnerInfo.id
+        this.dataForm.cooperativePartnerIdText = partnerInfo.name
+        if (!this.status) {
+          this.dataForm = {
+            ...this.dataForm,
+            phone: partnerInfo.phone,
+            fax: partnerInfo.fax,
+            country: partnerInfo.country,
+            province: partnerInfo.province,
+            city: partnerInfo.city,
+            area: partnerInfo.area,
+            address: partnerInfo.address
+          }
+          this.taxRate = partnerInfo.taxRate || ""
+          this.dataFormTwo.lines.forEach(row => {
+            row.taxRate = this.taxRate * 1
+          })
+        }
+      } else { // 不选择任何内容，置空绑定的值
+        this.dataForm.cooperativePartnerId = ""
+        this.dataForm.cooperativePartnerIdText = ""
+      }
+    },
+    // 联系人信息删除当前行
+    deltable(row, index) {
+      if (this.dataFormTwo.lines.length === 1) return this.$message.error('至少需要保留一条产品数据')
+      this.dataFormTwo.lines.splice(row.$index, 1)
+    },
+
+    // 监听单价(含税)输入
+    watchPrice(row, index) {
+      let productArr = [...this.dataFormTwo.lines]
+      row.unitPrice = row.unitPrice ? row.unitPrice.replace(/[^\d.]/g, '') : ''
+      // 单价处理
+      if (row.unitPrice.length == 1 && row.unitPrice == '.') {
+        // 如果第一位是小数点，则清空输入框
+        row.unitPrice = '';
+      } else if (row.unitPrice.length == 2 && row.unitPrice[0] == '0' && row.unitPrice[1] != '.') {
+        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+        row.unitPrice = row.unitPrice.slice(0, 1) + '.' + row.unitPrice.slice(1);
+      } else if (row.unitPrice.length > 2 && row.unitPrice[0] == '0' && row.unitPrice[1] != '.') {
+        row.unitPrice = row.unitPrice.substring(1, row.unitPrice.length)
+      }
+      if (row.unitPrice.includes('.')) {
+        let dotCount = 0; // 小数点的数量
+        let result = ''; // 处理后的结果
+        for (let i = 0; i < row.unitPrice.length; i++) {
+          const char = row.unitPrice[i];
+          if (char === '.') {
+            if (dotCount === 0) {
+              // 第一个小数点保留
+              result += char;
+              dotCount++;
+            }
+          } else {
+            result += char;
+          }
+        }
+        row.unitPrice = result;
+        let arr = row.unitPrice.split('.')
+        if (arr[0].length > 12) {
+          arr[0] = arr[0].substring(0, 12)
+        }
+        if (arr[1].length > 6) {
+          arr[1] = arr[1].substring(0, 6)
+        }
+        row.unitPrice = arr[0] + '.' + arr[1]
+      } else {
+        if (row.unitPrice.length > 20) {
+          row.unitPrice = row.unitPrice.substring(0, 20);
+        }
+      }
+      if (row.unitPrice && row.unitPrice != '0') {
+        let b = this.jnpf.numberFormat(this.jnpf.math('divide', [row.unitPrice, 1 + row.taxRate / 100]), 2)
+        row.excludingTaxUnitPrice = b ? b : 0
+        productArr[index].excludingTaxUnitPrice = b ? b : 0
+      } else {
+        row.excludingTaxUnitPrice = ''
+      }
+      let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.unitPrice, row.num]), 2)
+      console.log("aaa", a);
+      row.amounts = a ? a : '' // 含税金额
+      productArr[index].amounts = a ? a : 0
+      console.log(this.dataFormTwo.lines);
+      if (row.excludingTaxUnitPrice && row.num) {
+        let c = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.excludingTaxUnitPrice, row.num]), 2)
+        row.excludingTaxAmounts = c ? c : ''
+        productArr[index].excludingTaxAmounts = c ? c : 0
+      } else {
+        row.excludingTaxAmounts = ''
+      }
+      if (row.excludingTaxAmounts && row.amounts) { // 税额计算
+        let d = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.amounts, row.excludingTaxAmounts]), 2)
+        row.totalTaxAmount = d ? d : 0
+        productArr[index].totalTaxAmount = d ? d : 0
+      }
+      this.dataFormTwo.lines = productArr
+    },
+    // 产品列表选中
+    handeleProductInfoData(val) {
+      this.selectRows = val
+    },
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.quotationNo = data.number
+        }
+      } catch (error) {
+      }
+    },
+    init(id, btnType, approvalFlag) {
+      // 表格表单适配模式
+      this.$nextTick(() => { this.switchStyle('onresize') });
+      this.dataForm.id = id || ''
+      this.approvalFlag = approvalFlag
+      this.btnType = btnType
+      if (btnType == 'look') {
+        this.iszt = false
+        this.status = true
+      } else {
+        this.iszt = true
+        this.status = false
+        // 原逻辑：打开新建/编辑报价时默认追加一条空白产品行。
+        // let obj = JSON.parse(JSON.stringify(this.createdData))
+        // this.dataFormTwo.lines.push(obj)
+      }
+      console.log('status', this.status);
+      // 新建
+      if ((this.btnType == 'add' && !this.dataForm.id) || this.btnType == 'copy') {
+        const end = new Date();//获取当前的日期
+        end.setTime(end.getTime())
+        //计算，将当期日期-1天
+        //此时得到的是中国标准时间，格式不是yyyy-MM-dd，需要用dateFormat这个函数转换下
+        this.dataForm.quotationTime = this.jnpf.dateFormat(end, 'YYYY-MM-DD')
+        this.dataForm.validEnd = this.jnpf.dateFormat(end, 'YYYY-MM-DD')
+        // 向后推20年存放到dataForm.validEnd
+        var originalDate = new Date(this.dataForm.validEnd);
+        originalDate.setFullYear(originalDate.getFullYear() + 20);
+        var newDate = originalDate.toISOString().slice(0, 10);
+        this.dataForm.validEnd = newDate
+        this.dataForm.bidder = this.userInfo.userName
+        this.dataForm.quotationType = this.quoteType ? this.quoteType : 'latest'
+        if (this.btnType == 'copy') {
+          this.formLoading = true
+          getQuotationInfo(this.dataForm.id).then(res => {
+            this.dataForm = res.data.sale
+            this.dataFormTwo.lines = res.data.lines
+            this.dataForm.totalAmount = 0
+            this.dataForm.approvalStatus = ''
+            this.dataForm.submitDate = ''
+            this.dataForm.approvalCompletionDate = ''
+            this.dataForm.id = ''
+            this.dataForm.reasonRejection = ''
+            this.datafilelist = this.fileListMap('', res.data.attachmentList)
+            this.fetchData("XSBJ", true)
+            // 审批
+            this.$nextTick(() => {
+              this.getBusInfo('b001')
+            })//暂时注释
+            this.formLoading = false
+          }).catch(err => {
+            this.formLoading = false
+          })
+        } else {
+          this.fetchData("XSBJ", true)
+          this.getBusInfo('b001')
+        }
+      }
+      // 重新提交
+      if (this.btnType == 'add' && this.dataForm.id) {
+        const end = new Date();//获取当前的日期
+        end.setTime(end.getTime())
+        //计算，将当期日期-1天
+        //此时得到的是中国标准时间，格式不是yyyy-MM-dd，需要用dateFormat这个函数转换下
+        this.dataForm.quotationTime = this.jnpf.dateFormat(end, 'YYYY-MM-DD')
+        this.dataForm.validEnd = this.jnpf.dateFormat(end, 'YYYY-MM-DD')
+        // 向后推20年存放到dataForm.validEnd
+        var originalDate = new Date(this.dataForm.validEnd);
+        originalDate.setFullYear(originalDate.getFullYear() + 20);
+        var newDate = originalDate.toISOString().slice(0, 10);
+        this.dataForm.validEnd = newDate
+        this.dataForm.bidder = this.userInfo.userName
+        // 判断是否是直接报价
+        this.dataForm.quotationType = this.quoteType ? this.quoteType : 'latest'
+        this.formLoading = true
+        getQuotationInfo(this.dataForm.id).then(res => {
+          // this.$nextTick(() => {
+          this.dataForm = res.data.sale
+          this.dataFormTwo.lines = res.data.lines
+          this.dataForm.totalAmount = 0
+          this.dataForm.approvalStatus = ''
+          this.dataForm.submitDate = ''
+          this.dataForm.approvalCompletionDate = ''
+          this.dataForm.id = ''
+          this.dataForm.reasonRejection = ''
+          this.datafilelist = this.fileListMap('', res.data.attachmentList)
+          this.fetchData("XSBJ", true)
+          // 审批
+          this.$nextTick(() => {
+            this.getBusInfo('b001')
+          })//暂时注释
+          this.formLoading = false
+          // })
+        }).catch(err => {
+          this.formLoading = false
+        })
+      }
+      if (this.btnType !== 'add' && this.btnType !== 'copy') {
+        this.formLoading = true
+        this.fetchData("XSBJ", false)
+        getQuotationInfo(this.dataForm.id).then(res => {
+          this.$nextTick(() => {
+            this.dataForm = res.data.sale
+            res.data.lines.forEach(item => {
+              item.taxRate = item.taxRate * 1
+            });
+            this.dataFormTwo.lines = res.data.lines
+            this.dataForm.totalAmount = 0
+            this.datafilelist = this.fileListMap('', res.data.attachmentList)
+            this.formLoading = false
+            if (this.btnType === 'edit') {
+              this.getBusInfo('b001')
+            } else {
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
+          })
+        }).catch(err => {
+          this.formLoading = false
+        })
+      }
+    },
+    fileListMap(type, fileList) {
+      if (!fileList && !fileList?.length) return
+      if (['submit', 'draft'].includes(type)) {
+        return fileList.map((item, index) => ({
+          ...item,
+          bimAttachments: {
+            businessType: '',
+            configKey: '',
+            documentId: item.id,
+            fileFlag: '',
+            sort: index
+          }
+        }))
+      } else {
+        return fileList.map((item, index) => ({
+          ...item,
+          name: item.document.fullName,
+          fileSize: item.document.fileSize,
+          filename: item.document.filePath,
+          id: item.document.id,
+          url: item.url
+        }))
+      }
+    },
+    async handleConfirm(value) {
+      this.dataForm.documentStatus = value
+      let submitFlag = true
+      // 校验主表
+      const form_1 = this.$refs['dataForm'].$refs.main
+      const valid_1 = await form_1.validate().catch(err => false)
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        const formItems = form_1.fields
+        formItems.some(formItem => {
+          if (formItem.validateState === 'error') {
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            return true
+          }
+        });
+      }
+      // 校验子表
+      if (!this.dataFormTwo.lines.length && submitFlag) {
+        submitFlag = false
+        this.$message.error('请添加产品')
+      }
+      const form_2 = this.$refs['productForm']
+      const valid_2 = await form_2.validate().catch(err => false)
+      if (!valid_2 && submitFlag) {
+        submitFlag = false
+        const formItems = form_2.fields
+        formItems.some(formItem => {
+          if (formItem.validateState === 'error') {
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            return true
+          }
+        });
+      }
+      if (this.dataFormTwo.lines.length) {
+        for (let index = 0; index < this.dataFormTwo.lines.length; index++) {
+          const item = this.dataFormTwo.lines[index];
+
+          // 需要校验的字段
+          const requiredFields = ['customerDrawingNumber', 'customerProductName','productDrawingNo','num'];
+
+          // 检查是否所有需要校验的字段都为空
+          const isEmptyRow = requiredFields.every(field => !item[field]);
+
+          if (isEmptyRow) {
+            // 如果所有字段都为空，则删除该行，但至少保留一条数据
+            if (this.dataFormTwo.lines.length > 1) {
+              this.dataFormTwo.lines.splice(index, 1);
+              index--; // 因为删除了当前行，所以需要调整索引
+              submitFlag = true;
+            } else {
+              // 如果只剩一条数据，不能删除，直接跳过
+              continue;
+            }
+          } else {
+            // 如果至少有一个字段填写，则进行校验
+            if (!item.productDrawingNo) {
+              submitFlag = false;
+              this.$message.error("产品信息第" + (index + 1) + "行产品不能为空");
+              return;
+            }
+            if (!item.productsId) {
+              submitFlag = false;
+              this.$message({
+                message: "第" + (index + 1) + "行产品不存在",
+                type: 'error',
+                duration: 1500,
+              });
+              break;
+            }
+          }
+        }
+      }
+      if (submitFlag) {
+        if (this.dataFormTwo.lines.length) {
+          let index = this.dataFormTwo.lines.findIndex(item =>
+            item.customerDrawingNumber === "" &&
+            item.num === "" &&
+            item.unitPrice === "" &&
+            item.productDrawingNo == ""
+          )
+          console.log(index);
+          if (index !== -1) {
+            this.dataFormTwo.lines.splice(index, 1);
+          }
+        }
+        this.btnLoading = true
+        if (localStorage.getItem('loginTenant')) {
+          this.dataForm.tenant = localStorage.getItem('loginTenant')
+        }
+        let filteredArr = this.dataFormTwo.lines.filter(item => item.productDrawingNo && item.productsId);
+        // 计算arr中所有amount的总和
+        // const totalAmount = filteredArr.reduce((sum, item) => sum + item.amounts, 0);
+        // 将总和赋值给form中的amounts
+        // this.dataForm.totalAmount = totalAmount;
+        const attachmentList = this.fileListMap(value, this.datafilelist)
+        let obj = {
+          attachmentList: attachmentList,
+          sale: this.dataForm,
+          lines: filteredArr,
+          flowData: this.flowData
+        }
+        let formMethod = null;
+        if (this.btnType == 'edit' || this.btnType == 'bjkh') {
+          formMethod = editQuotationMData
+        } else if (this.btnType == 'add' || this.btnType == 'copy') {
+          formMethod = addQuotationData
+        }
+        formMethod(obj).then(res => {
+          console.log("res ✈️ ", res)
+          let MSG = '提交成功'
+          if (value == "draft") {
+            MSG = "保存成功"
+          }
+          if (res.msg === 'Success') {
+            this.$message.success(MSG)
+            this.goBack()
+          }
+        }).catch(() => {
+          console.log('1212321')
+          this.btnLoading = false
+        })
+      } else {
+        this.btnLoading = false
+      }
+    },
+    async switchStyle(type) {
+      await this.$nextTick();
+      const mainRegion = this.$refs.main // 可用区域
+      if (JSON.stringify(this.customStyleData) === "{}" || type === 'onresize') {
+        if (type !== 'onresize') this.$message.success('适配模式')
+        // 获取可用区域的高度
+        const mainHeight = mainRegion.clientHeight;
+        // 其他同级组件占用高度
+        let bortherHeight = 0
+        const bortherItems = mainRegion.querySelectorAll('.orderInfo > *')
+        bortherItems.forEach(item => {
+          if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+        })
+        // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+        let maxHeight = mainHeight - bortherHeight - 112
+        // 计算高度最低500
+        maxHeight = maxHeight > 500 ? maxHeight : 500
+        this.customStyleData = {
+          height: 10000,
+          maxHeight
+        }
+        // 附带防抖的监听适配模式屏幕缩放
+        window.onresize = () => {
+          clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            this.switchStyle('onresize')
+          }, 100);
+        };
+      } else {
+        this.$message.success('全展模式')
+        window.onresize = null
+        this.customStyleData = {}
+        // 重新加载表格
+        this.tableVisible = false
+        this.$nextTick(() => this.$refs.product.doLayout())
+      }
+    },
+    // 生成客户产品  下载无产品档案列表
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '生成失败，存在客户产品找不到产品档案！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载无档案列表')
+          ]
+        ),
+      })
+      return
+    },
+  }
+}
+</script>
+<style lang="scss" scoped>
+// .main {
+//   padding: 10px 30px 0;
+// }
+::v-deep .data-form {
+  .el-form-item--small.el-form-item {
+    margin-bottom: 0 !important;
+  }
+}
+
+::v-deep .el-tabs__header {
+  padding: 0 !important;
+  margin-bottom: 5px !important;
+}
+
+::v-deep .workNode {
+  background-color: #f5f5f7 !important;
+}
+
+//.el-button--small {
+// padding: 1;</style>
+<style scoped>
+::v-deep .el-tabs {
+  height: 100% !important;
+}
+
+::v-deep .el-tabs__content {
+  /* height: auto !important; */
+  height: calc(100% - 47px) !important;
+  overflow: auto !important;
+  padding: 0;
+}
+
+::v-deep .JNPF-common-page-header {
+  padding: 5px 10px;
+}
+</style>
+<style scoped>
+.tableContainer {
+  padding: 0 10px;
+}
+
+.required {
+  color: red;
+  margin-right: 4px;
+}
+
+.el-dialog .el-dialog__body {
+  padding: 20px 0px 2px !important;
+}
+
+.el-button span {
+  font-size: 14px !important;
+}
+
+.pagination-container {
+  background-color: #f5f7fa;
+}
+
+::v-deep .JNPF-common-page-header.noButtons {
+  padding: 11px 10px;
+}
+
+::v-deep .el-input-group__append {
+  background-color: #48a2ff;
+  color: #fff;
+}
+</style>
+<style lang="scss" scoped>
+$footerPadding: '10px';
+
+::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
+  padding: 0;
+}
+
+::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
+  padding: 0 !important;
+}
+
+::v-deep .el-dialog__body {
+  margin-bottom: 10px;
+}
+
+::v-deep .el-dialog__footer {
+  padding: 0 20px 10px;
+}
+
+::v-deep .even-row,
+::v-deep .odd-row {
+  cursor: pointer;
+}
+
+.killPadding {
+  padding: 0;
+}
+
+.killPaddingLeft {
+  padding-left: 0 !important;
+}
+
+.pagination-container {
+  background-color: #f5f7fa;
+  margin-top: 0px;
+  padding: 2px 10px 2px 0;
+}
+
+::v-deep .JNPF-common-search-box.noSearchList {
+  padding: 3px 0;
+}
+
+::v-deep .has-gutter .el-table__cell.gutter {
+  border-bottom: 1px solid #ebeef5;
+  background-color: #f5f7fa;
+}
+
+.noDataTip {
+  text-align: center;
+  padding: 20%;
+  font-size: 16px;
+  min-height: 1045px !important;
+  background-color: #f5f5f7 !important;
+  color: #576a95;
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
+}
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  // background: #dcdfe6;
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  // border-bottom:none;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
+}
+
+.orderInfo ::v-deep .el-collapse-item__wrap {
+  border-bottom: none !important
+}
+
+.productInfo ::v-deep.el-collapse-item__wrap {
+  padding: 0;
+}
+</style>
+<style>
+.my-message {
+  font-size: 16px !important;
+}
+</style>

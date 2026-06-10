@@ -759,7 +759,7 @@ export default {
           ],
           listRequestObj: {
             ...this.addProductProps.listRequestObj,
-            saleFlag: true,
+            // saleFlag: true,
           },
           searchList: [
             { prop: 'productName', label: '产品名称', type: 'input' },

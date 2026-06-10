@@ -5,7 +5,7 @@
   "author": "数字化智造",
   "license": "MIT",
   "scripts": {
-    "dev": "vue-cli-service serve --open",
+    "dev": "node update-openapi.js && vue-cli-service serve --open",
     "build": "cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=10240 vue-cli-service --mode production build",
     "build:test": "cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 && vue-cli-service --mode test build",
     "build:staging": "cross-env NODE_ENV=production vue-cli-service build --mode staging",

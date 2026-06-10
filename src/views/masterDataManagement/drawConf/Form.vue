@@ -85,6 +85,10 @@ export default {
       this.btnType = type
       this.title = this.getTitle(type)
       this.drawingDetailId = ''
+      // 从列表页新增时，禁用采购单号到打字要求之间的基础信息字段
+      if (type === 'add') {
+        this.disableBasicInfoFields()
+      }
       // this.getBusInfo('b026')
       const { id, purPurchaseOrderLineId } = row
       const params = {
@@ -98,6 +102,14 @@ export default {
       this.$nextTick(() => {
         this.$refs.dataForm.$refs.main.clearValidate()
       })
+    },
+    // 从列表页新增图纸确认时，禁用"采购单号"到"打字要求"（或"生产任务单号"到"产线"）之间的字段
+    disableBasicInfoFields() {
+      const disabledBoundary = this.isPurchase ? 'sealingCoverTyping' : 'productionLineName'
+      for (const item of this.basicFormSchema) {
+        item.disabled = true
+        if (item.prop === disabledBoundary) break
+      }
     },
     handleQuoteCallBack(data) {
       this.fileList = this.fileListMap('', data?.attachmentList)
@@ -116,7 +128,7 @@ export default {
           this.dataForm = {
             ...this.dataForm,
             ...data,
-            confirmDate: this.jnpf.getToday()
+            confirmDate: data?.confirmDate || this.jnpf.getToday()
           }
           this.fileList = this.fileListMap('', data.attachmentList)
         }
@@ -127,7 +139,7 @@ export default {
         this.dataForm = {
           ...this.dataForm,
           ...rowData,
-          confirmDate: this.jnpf.getToday()
+          confirmDate: rowData?.confirmDate || this.jnpf.getToday()
         }
         this.fileList = this.fileListMap('', attachmentList) || []
       } finally {

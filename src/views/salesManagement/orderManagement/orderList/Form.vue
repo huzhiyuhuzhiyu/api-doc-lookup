@@ -655,13 +655,14 @@ export default {
           renderTree: false,
           tableItems: [
             { prop: 'name', label: '机型', minWidth: '180px' },
-            { prop: 'productName', label: '品名', minWidth: '180px' },
+            { prop: 'articleName', label: '品名', minWidth: '180px' },
             { prop: 'cooperativePartnerCode', label: '客户编码', minWidth: '180px', sortable: 'custom' },
             { prop: 'cooperativePartnerName', label: '客户名称', minWidth: '180px', sortable: 'custom' },
             { prop: 'num', label: '数量', minWidth: '160px', },
           ],
           searchList: [
             { prop: 'name', label: '机型', type: 'input' },
+            { prop: 'articleName', label: '品名', type: 'input' },
           ],
           listRequestObj: () => ({
             pageNum: 1,
@@ -1295,7 +1296,8 @@ export default {
               drawingNo: sub.productsDrawingNo,
               oil: selectedItem.name,
               // 原逻辑：选择组合件后只同步机型到外部表格，未同步品名。
-              accuracyLevel: selectedItem.productName,
+              // 修正：组合件数据中品名字段为 articleName，非 productName
+              accuracyLevel: selectedItem.articleName,
               taxRate: '13',
               num: actualNum,
               exchangeRate: this.dataForm.exchangeRate || '',

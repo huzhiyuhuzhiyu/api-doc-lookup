@@ -141,6 +141,13 @@ export default {
           </el-col>
           <el-col :span="4">
             <el-form-item>
+              <el-input v-model.trim="listQuery.productDrawingNo"
+                        placeholder="型号"
+                        clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
               <el-input v-model.trim="listQuery.orderNo"
                 placeholder="检验单号"
                 clearable/>

@@ -72,7 +72,7 @@ export default {
       ],
       listQuery: {
         planStatus: 'order_pool',
-        waitIssuanceNumFlag: true,
+        // waitIssuanceNumFlag: true,
       },
       btnList: buttonList,
       columnList: [],

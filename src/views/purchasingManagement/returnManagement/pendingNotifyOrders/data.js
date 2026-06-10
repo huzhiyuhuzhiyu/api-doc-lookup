@@ -184,7 +184,7 @@ export function getColumns() {
       sortable: 'custom'
     },
     {
-      prop: "receivedQuantity",
+      prop: "unqualifiedQuantity",
       label: "不合格数量",
       minWidth: 120,
       sortable: 'custom'

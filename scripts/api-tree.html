@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>API 接口查询</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','PingFang SC',sans-serif;background:#f0f2f5;color:#1a1a2e;height:100vh;display:flex;flex-direction:column}
+h1{font-size:15px;padding:12px 16px;background:#1a1a2e;color:#fff;display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+/* 搜索栏 */
+.search-bar{background:#fff;padding:10px 16px;border-bottom:1px solid #e8e8e8;display:flex;gap:8px;align-items:center;flex-shrink:0}
+.search-bar input{flex:1;border:1px solid #ddd;border-radius:6px;padding:8px 12px;font-size:14px;outline:0;transition:.2s}
+.search-bar input:focus{border-color:#4a7cff;box-shadow:0 0 0 3px rgba(74,124,255,.15)}
+.search-bar button{padding:8px 20px;background:#4a7cff;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;transition:.2s;white-space:nowrap}
+.search-bar button:hover{background:#3a66d9}
+
+/* 搜索结果提示 */
+.match-tip{padding:10px 16px;font-size:13px;color:#888;flex-shrink:0}
+.match-tip strong{color:#1a1a2e}
+.match-tip .method-tags{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+
+/* 主内容区 */
+.main{flex:1;overflow:auto;padding:16px}
+
+/* 方法标签 */
+.method-badge{display:inline-block;font-size:11px;padding:0 8px;border-radius:4px;font-weight:600;line-height:22px;cursor:pointer;transition:.15s}
+.method-badge:hover{opacity:.85}
+.mb-get{background:#e8f5e9;color:#1b7a2b}
+.mb-post{background:#e3f2fd;color:#1565c0}
+.mb-put{background:#fff3e0;color:#bf6a00}
+.mb-delete{background:#fce4ec;color:#c62828}
+.mb-patch{background:#f3e5f5;color:#7b1fa2}
+.mb-active{box-shadow:0 0 0 2px #4a7cff}
+
+/* 请求信息头 */
+.request-header{background:#fff;border-radius:8px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.request-header .method{font-size:13px;font-weight:700}
+.request-header .path{font-size:14px;color:#333;font-family:'Cascadia Code','Consolas',monospace}
+.request-header .summary{font-size:12px;color:#888;margin-left:auto}
+
+/* 区块卡片 */
+.section{margin-bottom:16px}
+.section-title{font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.section-title .count{font-weight:400;font-size:11px;color:#999}
+.section-card{background:#fff;border-radius:8px;border:1px solid #e8e8e8;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+/* 参数表格 */
+.param-table{width:100%;border-collapse:collapse;font-size:13px}
+.param-table th{background:#f8f9fc;text-align:left;padding:8px 12px;font-weight:600;color:#555;font-size:12px;border-bottom:1px solid #e8e8e8}
+.param-table td{padding:7px 12px;border-bottom:1px solid #f0f0f0;vertical-align:top}
+.param-table tr:last-child td{border-bottom:none}
+.param-table .p-in{background:#e3f2fd;color:#1565c0;border-radius:3px;padding:0 6px;font-size:11px;font-weight:500;line-height:20px;display:inline-block}
+.param-table .p-query{background:#e8f5e9;color:#1b7a2b}
+.param-table .p-path{background:#fff3e0;color:#bf6a00}
+.param-table .p-header{background:#f3e5f5;color:#7b1fa2}
+.param-table .req-yes{color:#d32f2f;font-weight:500}
+.param-table .req-no{color:#999}
+.param-table .p-type{color:#7b1fa2;font-family:'Consolas',monospace;font-size:12px}
+
+/* 树形结构 */
+.schema-tree{font-size:13px;padding:4px 0}
+.st-line{display:flex;align-items:center;padding:3px 12px 3px 8px;cursor:pointer;border-radius:2px;gap:4px}
+.st-depth-even{background:#f8faff}
+.st-depth-odd{background:#f0f2f5}
+.st-depth-even:hover,.st-depth-odd:hover{background:#e8edff}
+.st-arr{width:14px;text-align:center;font-size:9px;color:#999;flex-shrink:0;transition:.15s;cursor:pointer}
+.st-arr.o{transform:rotate(90deg)}
+.st-arr.e{visibility:hidden}
+.st-name{color:#7b1fa2;font-weight:500;white-space:nowrap;margin-right:8px;min-width:80px}
+.st-typed{font-family:'Consolas',monospace;font-size:12px;color:#1565c0;background:#e3f2fd;border-radius:3px;padding:0 6px;line-height:18px;white-space:nowrap}
+.st-extra{font-size:11px;color:#999;margin-left:4px;white-space:nowrap}
+.st-desc{color:#888;font-size:12px;margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-children{padding-left:20px}
+
+/* 空状态 */
+.placeholder{margin-top:60px;text-align:center;color:#bbb}
+.placeholder .icon{font-size:40px;margin-bottom:10px}
+.placeholder p{font-size:14px}
+.placeholder .eg{margin-top:12px;font-size:12px;color:#ccc}
+.placeholder .eg code{background:#f5f5f5;padding:2px 6px;border-radius:3px;color:#888;cursor:pointer}
+.placeholder .eg code:hover{background:#eef2ff;color:#4a7cff}
+
+
+</style>
+</head>
+<body>
+
+<h1>🔍 API 接口查询</h1>
+
+<div class="search-bar">
+  <input id="searchInput" placeholder="输入接口路径，如 /api/wms/unqualified/detail/{id}" autofocus
+         onkeydown="if(event.key==='Enter') search()">
+  <button onclick="search()">查询</button>
+</div>
+
+<div id="matchTip" class="match-tip" style="display:none"></div>
+
+<div class="main" id="main">
+  <div class="placeholder" id="placeholder">
+    <div class="icon">🔎</div>
+    <p>输入接口路径，回车查询</p>
+    <div class="eg">
+      试试搜 <code onclick="fillSearch('/api/wms/unqualified/detail/{id}')">/api/wms/unqualified/detail/{id}</code>
+      或 <code onclick="fillSearch('unqualified')">unqualified</code>
+    </div>
+  </div>
+</div>
+
+<script>
+let openApiData = null;
+
+fetch('./default_OpenAPI.json')
+  .then(r=>r.json())
+  .then(d=>{
+    openApiData = d;
+    // 支持 URL 参数 ?search=xxx 自动查询
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('search');
+    if(q){
+      document.getElementById('searchInput').value = q;
+      search();
+    }
+  })
+  .catch(e=>{ document.getElementById('main').innerHTML='<div style="color:red;padding:20px">加载失败: '+e.message+'</div>'; });
+
+function fillSearch(path){
+  document.getElementById('searchInput').value = path;
+  search();
+}
+
+function search(){
+  const val = document.getElementById('searchInput').value.trim();
+  if(!val || !openApiData) return;
+
+  const paths = openApiData.paths;
+  if(!paths) return;
+
+  // 收集匹配的接口
+  const f = val.toLowerCase();
+  const matches = [];
+  for(const [path, methods] of Object.entries(paths)){
+    if(path.toLowerCase().includes(f)){
+      for(const method of Object.keys(methods)){
+        matches.push({path, method, info: methods[method]});
+      }
+    }
+  }
+
+  // 展示匹配提示
+  const tip = document.getElementById('matchTip');
+  const main = document.getElementById('main');
+
+  if(matches.length === 0){
+    tip.style.display = 'block';
+    tip.innerHTML = '未找到匹配 "<strong>'+val+'</strong>" 的接口';
+    showEmpty();
+    return;
+  }
+
+  // 展示匹配列表 + 自动选中第一个
+  let html = '找到 <strong>'+matches.length+'</strong> 个匹配接口';
+  const tags = new Map();
+  for(const m of matches){
+    const k = m.path;
+    if(!tags.has(k)) tags.set(k, []);
+    tags.get(k).push(m);
+  }
+  html += '<div class="method-tags">';
+  for(const [path, ms] of tags){
+    for(const m of ms){
+      html += '<span class="method-badge mb-'+m.method+'" onclick="showDetail(\''+
+        path.replace(/'/g,"\\'")+'\',\''+m.method+'\')">'+m.method.toUpperCase()+' '+path+'</span>';
+    }
+  }
+  html += '</div>';
+  tip.style.display = 'block';
+  tip.innerHTML = html;
+
+  // 自动选中第一个
+  showDetail(matches[0].path, matches[0].method);
+}
+
+function showEmpty(){
+  const main = document.getElementById('main');
+  main.innerHTML = '<div class="placeholder"><div class="icon">🔎</div><p>输入接口路径，回车查询</p></div>';
+}
+
+function showDetail(path, method){
+  const main = document.getElementById('main');
+  const info = openApiData.paths[path][method];
+  if(!info){ main.innerHTML = '<div style="color:red;padding:20px">未找到接口数据</div>'; return; }
+
+  main.innerHTML = '';
+
+  // ===== 请求信息头 =====
+  const hdr = document.createElement('div');
+  hdr.className = 'request-header';
+  const tag = document.createElement('span');
+  tag.className = 'method-badge mb-'+method;
+  tag.textContent = method.toUpperCase();
+
+  const pathSpan = document.createElement('span');
+  pathSpan.className = 'path';
+  pathSpan.textContent = path;
+
+  const summary = document.createElement('span');
+  summary.className = 'summary';
+  summary.textContent = info.summary || info.description || '';
+
+  hdr.appendChild(tag);
+  hdr.appendChild(pathSpan);
+  hdr.appendChild(summary);
+  main.appendChild(hdr);
+
+  // ===== 请求参数 =====
+  if(info.parameters && info.parameters.length){
+    const sec = createSection('📥 请求参数', info.parameters.length);
+    const table = createParamTable(info.parameters);
+    sec.appendChild(table);
+    main.appendChild(sec);
+  }
+
+  // ===== 请求体 =====
+  if(info.requestBody){
+    const sec = createSection('📤 请求体', '');
+    const schema = resolveRef(info.requestBody);
+    const content = schema.content;
+    if(content){
+      for(const [ctype, cval] of Object.entries(content)){
+        const card = document.createElement('div');
+        card.className = 'section-card';
+        const typeLabel = document.createElement('div');
+        typeLabel.style.cssText = 'padding:6px 12px;font-size:12px;color:#666;background:#fafafa;border-bottom:1px solid #eee';
+        typeLabel.textContent = 'Content-Type: ' + ctype;
+        card.appendChild(typeLabel);
+        if(cval.schema){
+          card.appendChild(renderSchemaTree(cval.schema));
+        }
+        sec.appendChild(card);
+      }
+    } else {
+      const card = document.createElement('div');
+      card.className = 'section-card';
+      card.appendChild(renderSchemaTree(schema));
+      sec.appendChild(card);
+    }
+    main.appendChild(sec);
+  }
+
+  // ===== 响应结果 =====
+  if(info.responses){
+    const sec = createSection('📥 响应结果', '');
+    const card = document.createElement('div');
+    card.className = 'section-card';
+    const respSchema = extractResponseSchema(info.responses);
+    if(respSchema){
+      card.appendChild(renderSchemaTree(respSchema));
+    } else {
+      card.innerHTML = '<div style="padding:12px;color:#999">无响应数据结构</div>';
+    }
+    sec.appendChild(card);
+    main.appendChild(sec);
+  }
+
+  // 没数据
+  if(!info.parameters && !info.requestBody && !info.responses){
+    main.innerHTML += '<div style="color:#999;padding:12px">该接口暂无详细数据结构</div>';
+  }
+}
+
+function createSection(title, count){
+  const sec = document.createElement('div');
+  sec.className = 'section';
+  const t = document.createElement('div');
+  t.className = 'section-title';
+  t.innerHTML = title;
+  if(count !== '' && count > 0){
+    const c = document.createElement('span');
+    c.className = 'count';
+    c.textContent = '共 '+count+' 项';
+    t.appendChild(c);
+  }
+  sec.appendChild(t);
+  return sec;
+}
+
+// ===== 参数表格 =====
+function createParamTable(params){
+  const table = document.createElement('table');
+  table.className = 'param-table';
+  table.innerHTML = '<thead><tr><th>参数名</th><th>位置</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>';
+
+  for(const p of params){
+    const tr = document.createElement('tr');
+    const locClass = 'p-'+p.in || 'p-query';
+    const required = p.required ? '<span class="req-yes">是</span>' : '<span class="req-no">否</span>';
+    const desc = p.description || '';
+    const schema = p.schema || {};
+    const type = schema.type || 'string';
+    let typeHtml = '<span class="p-type">'+type+'</span>';
+    if(schema.enum) typeHtml += ' <span style="font-size:11px;color:#999">enum</span>';
+
+    tr.innerHTML =
+      '<td><code>'+p.name+'</code></td>' +
+      '<td><span class="p-in '+locClass+'">'+p.in+'</span></td>' +
+      '<td>'+typeHtml+'</td>' +
+      '<td>'+required+'</td>' +
+      '<td class="st-desc">'+desc+'</td>';
+    table.appendChild(tr);
+  }
+  return table;
+}
+
+// ===== schema 树形渲染（$ref 内联展开，第一级默认展开） =====
+function renderSchemaTree(obj, defaultExpanded){
+  const root = document.createElement('div');
+  root.className = 'schema-tree';
+  if(!obj || typeof obj !== 'object'){
+    root.innerHTML = '<div style="padding:12px;color:#999">无数据</div>';
+    return root;
+  }
+
+  const resolved = resolveRef(obj);
+  if(resolved !== obj && resolved && typeof resolved === 'object'){
+    return renderSchemaTree(resolved, defaultExpanded);
+  }
+
+  // 提取 properties
+  let props = resolved.properties;
+  let arrItem = null;
+  let isArray = false;
+
+  if(!props && resolved.type === 'array' && resolved.items){
+    isArray = true;
+    const item = resolveRef(resolved.items);
+    if(item && item.properties){
+      arrItem = { _label: (resolved.items.$ref ? resolved.items.$ref.split('/').pop() : '元素'), _prop: item.properties };
+    } else if(item && item.$ref){
+      arrItem = { _label: item.$ref.split('/').pop(), _prop: null, _ref: item };
+    }
+  }
+
+  if(!props && !isArray){
+    // 可能 obj 自己就是 {key: {type,description}} 结构
+    const keys = Object.keys(resolved).filter(k=>!k.startsWith('_') && k!=='type'&&k!=='required'&&k!=='format'&&k!=='example'&&k!=='description');
+    if(keys.length && keys.some(k=>typeof resolved[k]==='object')){
+      props = resolved;
+    } else {
+      root.innerHTML = '<div style="padding:12px 16px;font-size:13px;color:#888">'+JSON.stringify(resolved).slice(0,100)+'</div>';
+      return root;
+    }
+  }
+
+  if(isArray && arrItem){
+    buildPropLine(root, arrItem._label, arrItem, defaultExpanded !== false);
+    return root;
+  }
+
+  if(!props){
+    root.innerHTML = '<div style="padding:12px;color:#999">无详细字段</div>';
+    return root;
+  }
+
+  const expand = defaultExpanded !== false;
+  const entries = Object.entries(props).filter(([k])=>k!=='type'&&k!=='required'&&k!=='format'&&k!=='example'&&k!=='description');
+  for(const [key, val] of entries){
+    buildPropLine(root, key, val, expand);
+  }
+  return root;
+}
+
+function buildPropLine(parent, key, val, expanded, depth = 0){
+  const resolved = val.$ref ? resolveRef(val) : val;
+  const hasChildren = resolved && typeof resolved === 'object' &&
+    !Array.isArray(resolved) && !resolved.type &&
+    (resolved.properties || Object.keys(resolved).some(k=>!k.startsWith('_')&&k!=='type'));
+
+  const line = document.createElement('div');
+  line.className = 'st-line st-depth-' + (depth % 2 === 0 ? 'even' : 'odd');
+
+  // 展开箭头
+  const arrow = document.createElement('span');
+  if(hasChildren || (resolved && resolved.type === 'object' && val.properties) || (resolved && resolved.type === 'array')){
+    arrow.className = 'st-arr' + (expanded ? ' o' : '');
+    arrow.textContent = '▶';
+  } else {
+    arrow.className = 'st-arr e';
+    arrow.textContent = '▶';
+  }
+
+  // 字段名
+  const nameSpan = document.createElement('span');
+  nameSpan.className = 'st-name';
+  nameSpan.textContent = key;
+
+  // 类型标签
+  let typeText = '';
+  if(val.$ref){
+    typeText = val.$ref.split('/').pop();
+  } else if(val.type === 'array'){
+    typeText = 'array<' + (val.items && val.items.$ref ? val.items.$ref.split('/').pop() : (val.items && val.items.type || 'any')) + '>';
+  } else {
+    typeText = val.type || (val.properties ? 'object' : 'string');
+  }
+  const typeSpan = document.createElement('span');
+  typeSpan.className = 'st-typed';
+  typeSpan.textContent = typeText;
+
+  // 枚举
+  const extra = document.createElement('span');
+  extra.className = 'st-extra';
+  if(val.enum){
+    extra.textContent = '[' + val.enum.join(', ') + ']';
+  } else if(val.format){
+    extra.textContent = '(' + val.format + ')';
+  }
+
+  // 描述
+  const desc = document.createElement('span');
+  desc.className = 'st-desc';
+  desc.textContent = val.description || '';
+
+  line.appendChild(arrow);
+  line.appendChild(nameSpan);
+  line.appendChild(typeSpan);
+  line.appendChild(extra);
+  line.appendChild(desc);
+  parent.appendChild(line);
+
+  // 子节点
+  if(val.$ref || (resolved && resolved.properties)){
+    const children = document.createElement('div');
+    children.className = 'st-children';
+    if(!expanded) children.style.display = 'none';
+
+    let targetProps = null;
+    if(val.$ref){
+      const r = resolved;
+      const subResolved = resolveRef(val);
+      if(subResolved && subResolved.properties) targetProps = subResolved.properties;
+      else if(r && r.properties) targetProps = r.properties;
+    } else if(val.properties){
+      targetProps = val.properties;
+    } else if(resolved && resolved.properties){
+      targetProps = resolved.properties;
+    }
+
+    if(targetProps){
+      const subEntries = Object.entries(targetProps).filter(([k])=>k!=='type'&&k!=='required'&&k!=='format'&&k!=='example'&&k!=='description');
+      for(const [sk, sv] of subEntries){
+        buildPropLine(children, sk, sv, false, depth + 1);
+      }
+    }
+
+    parent.appendChild(children);
+
+    // 展开/折叠
+    if(hasChildren || val.properties || val.$ref){
+      arrow.className = 'st-arr' + (expanded ? ' o' : '');
+      arrow.textContent = expanded ? '▼' : '▶';
+      const toggle = ()=>{
+        const isOpen = children.style.display !== 'none';
+        children.style.display = isOpen ? 'none' : '';
+        arrow.textContent = isOpen ? '▶' : '▼';
+        arrow.className = 'st-arr' + (isOpen ? '' : ' o');
+      };
+      arrow.addEventListener('click', e=>{ e.stopPropagation(); toggle(); });
+      line.addEventListener('click', e=>{ e.stopPropagation(); toggle(); });
+    }
+  }
+
+  // array items
+  if(val.type === 'array' && val.items){
+    const children = document.createElement('div');
+    children.className = 'st-children';
+    if(!expanded) children.style.display = 'none';
+
+    const itemResolved = resolveRef(val.items);
+    if(itemResolved && itemResolved.properties){
+      const subEntries = Object.entries(itemResolved.properties).filter(([k])=>k!=='type'&&k!=='required'&&k!=='format'&&k!=='example'&&k!=='description');
+      for(const [sk, sv] of subEntries){
+        buildPropLine(children, sk, sv, false, depth + 1);
+      }
+    } else if(val.items.$ref){
+      // 已经在上面的类型标签显示了名称，递归渲染 ref 内容
+      const itemRef = resolveRef(val.items);
+      if(itemRef && itemRef.properties){
+        buildPropLine(children, '(元素)', itemRef, false, depth + 1);
+      }
+    } else if(itemResolved && itemResolved.type === 'array' && itemResolved.items){
+      // 嵌套 array
+      buildPropLine(children, '(元素)', itemResolved, false, depth + 1);
+    }
+    parent.appendChild(children);
+
+    if(children.children.length > 0){
+      const toggle = ()=>{
+        const isOpen = children.style.display !== 'none';
+        children.style.display = isOpen ? 'none' : '';
+        arrow.textContent = isOpen ? '▶' : '▼';
+        arrow.className = 'st-arr' + (isOpen ? '' : ' o');
+      };
+      arrow.addEventListener('click', e=>{ e.stopPropagation(); toggle(); });
+      line.addEventListener('click', e=>{ e.stopPropagation(); toggle(); });
+    }
+  }
+}
+
+// 提取成功响应的数据 schema（跳过 401/403 等状态码）
+function extractResponseSchema(responses){
+  // 优先找 200/201
+  for(const code of ['200','201','default']){
+    const resp = responses[code];
+    if(!resp) continue;
+    const schema = extractContentSchema(resp);
+    if(schema) return schema;
+  }
+  // 兜底：找第一个有 content 的
+  for(const resp of Object.values(responses)){
+    const schema = extractContentSchema(resp);
+    if(schema) return schema;
+  }
+  return null;
+}
+
+function extractContentSchema(resp){
+  if(!resp || !resp.content) return null;
+  for(const v of Object.values(resp.content)){
+    if(v.schema){
+      // 如果有 $ref，直接解析成完整对象
+      return resolveRef(v.schema);
+    }
+  }
+  return null;
+}
+
+function resolveRef(obj){
+  if(!obj || !obj.$ref) return obj;
+  const parts = obj.$ref.replace('#/','').split('/');
+  let cur = openApiData;
+  for(const p of parts) if(cur) cur = cur[p];
+  return cur || obj;
+}
+
+
+</script>
+</body>
+</html>

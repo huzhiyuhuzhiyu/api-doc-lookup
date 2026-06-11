@@ -45,7 +45,7 @@ scripts/update-openapi.bat
 「订单列表接口有哪些请求参数？」
 ```
 
-AI 会自动加载此 Skill，按规范从 `default_OpenAPI.json` 中查找并结构化输出。
+AI 会自动加载此 Skill或者直接设置永久记忆，按规范从 `default_OpenAPI.json` 中查找并结构化输出。
 
 ## 工作原理
 
